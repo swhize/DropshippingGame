@@ -1,0 +1,503 @@
+<title>HustleOS Schreibtisch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Martian+Mono:wght@400;600&family=Caveat:wght@600&display=swap">
+<style>
+:root {
+  --ground: #DDE3E1;
+  --desk: #2E7C80;
+  --desk-2: #3A8F92;
+  --desk-dot: rgba(255, 255, 255, .09);
+  --window: #FBFAF7;
+  --chrome: #ECE9E1;
+  --chrome-line: #D6D2C6;
+  --text: #1E2426;
+  --muted: #667073;
+  --field: #F1EFE9;
+  --accent: #2F5BD3;
+  --accent-ink: #FFFFFF;
+  --good: #1D8A55;
+  --bad: #C8402F;
+  --taskbar: rgba(251, 250, 247, .92);
+  --note: #FFE27A;
+  --note-ink: #3B3320;
+  --shadow: 0 18px 40px -18px rgba(9, 30, 32, .55), 0 2px 6px rgba(9, 30, 32, .18);
+  --bezel: #1D2224;
+  --ui: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --mono: "Martian Mono", ui-monospace, Menlo, monospace;
+  --hand: "Caveat", "Comic Sans MS", cursive;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #0B1214;
+    --desk: #0F2A30;
+    --desk-2: #143740;
+    --desk-dot: rgba(255, 255, 255, .05);
+    --window: #1B2226;
+    --chrome: #232C31;
+    --chrome-line: #34414A;
+    --text: #E6ECEE;
+    --muted: #93A1A6;
+    --field: #252F35;
+    --accent: #7C97FF;
+    --accent-ink: #0D1433;
+    --good: #5FD39A;
+    --bad: #FF8272;
+    --taskbar: rgba(27, 34, 38, .92);
+    --note: #D9B84A;
+    --note-ink: #2A220D;
+    --shadow: 0 22px 48px -18px rgba(0, 0, 0, .8), 0 2px 6px rgba(0, 0, 0, .4);
+    --bezel: #030607;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #0B1214;
+  --desk: #0F2A30;
+  --desk-2: #143740;
+  --desk-dot: rgba(255, 255, 255, .05);
+  --window: #1B2226;
+  --chrome: #232C31;
+  --chrome-line: #34414A;
+  --text: #E6ECEE;
+  --muted: #93A1A6;
+  --field: #252F35;
+  --accent: #7C97FF;
+  --accent-ink: #0D1433;
+  --good: #5FD39A;
+  --bad: #FF8272;
+  --taskbar: rgba(27, 34, 38, .92);
+  --note: #D9B84A;
+  --note-ink: #2A220D;
+  --shadow: 0 22px 48px -18px rgba(0, 0, 0, .8), 0 2px 6px rgba(0, 0, 0, .4);
+  --bezel: #030607;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--text); font-family: var(--ui); font-size: 15px; line-height: 1.45; padding: 24px 20px 40px; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: .92em; }
+
+.intro { max-width: 1180px; margin: 0 auto 18px; display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+.intro h1 { font-weight: 900; font-size: clamp(24px, 3.2vw, 32px); margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+.intro p { margin: 4px 0 0; color: var(--muted); max-width: 62ch; }
+.eyebrow { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.seg { display: inline-flex; gap: 4px; }
+.seg button { border: 1.5px solid var(--chrome-line); background: var(--window); border-radius: 10px; padding: 6px 12px; font-weight: 700; font-size: 13px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+.laptop { max-width: 1180px; margin: 0 auto; background: var(--bezel); border-radius: 20px; padding: 14px; box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .5); }
+.screen {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  height: min(760px, 78vw);
+  min-height: 580px;
+  background:
+    radial-gradient(var(--desk-dot) 1.2px, transparent 1.3px) 0 0 / 22px 22px,
+    radial-gradient(120% 90% at 80% 10%, var(--desk-2), var(--desk));
+  display: flex;
+  flex-direction: column;
+}
+.desktop { position: relative; flex: 1; min-height: 0; }
+
+.icons { position: absolute; top: 14px; left: 12px; display: grid; grid-template-columns: repeat(2, 84px); gap: 6px 4px; z-index: 1; }
+.dicon { border: 0; background: transparent; width: 84px; padding: 6px 4px; border-radius: 10px; display: grid; justify-items: center; gap: 5px; cursor: pointer; color: #fff; }
+.dicon:hover, .dicon:focus-visible { background: rgba(255, 255, 255, .14); }
+.dicon .tile { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; box-shadow: 0 6px 12px -6px rgba(0, 0, 0, .5), inset 0 -3px 0 rgba(0, 0, 0, .15); position: relative; }
+.dicon .tile svg { width: 24px; height: 24px; color: #fff; }
+.dicon span.l { font-size: 12px; font-weight: 800; text-shadow: 0 1px 2px rgba(0, 0, 0, .55); text-align: center; line-height: 1.2; }
+.dicon .badge { position: absolute; top: -5px; right: -6px; background: #E5484D; color: #fff; font-size: 11px; font-weight: 900; min-width: 19px; height: 19px; border-radius: 10px; display: grid; place-items: center; border: 2px solid var(--desk); }
+
+.note {
+  position: absolute;
+  right: 22px;
+  bottom: 18px;
+  width: 190px;
+  background: var(--note);
+  color: var(--note-ink);
+  padding: 12px 14px 14px;
+  transform: rotate(2.5deg);
+  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, .5);
+  font-family: var(--hand);
+  font-size: 21px;
+  line-height: 1.15;
+  z-index: 1;
+}
+.note ul { margin: 4px 0 0; padding-left: 18px; }
+.note s { opacity: .6; }
+
+.win {
+  position: absolute;
+  background: var(--window);
+  border: 1px solid var(--chrome-line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 300px;
+}
+.win.focus { outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); }
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 8px 7px 10px;
+  background: var(--chrome);
+  border-bottom: 1px solid var(--chrome-line);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.titlebar:active { cursor: grabbing; }
+.titlebar .tile { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; flex: none; }
+.titlebar .tile svg { width: 14px; height: 14px; color: #fff; }
+.titlebar b { font-weight: 800; font-size: 14px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wbtn { width: 26px; height: 26px; border: 0; border-radius: 8px; background: transparent; cursor: pointer; font-weight: 900; color: var(--muted); }
+.wbtn:hover { background: var(--field); color: var(--text); }
+.wbtn.close:hover { background: #E5484D; color: #fff; }
+.wbody { overflow: auto; padding: 16px 18px 18px; flex: 1; }
+.wbody h2 { margin: 0 0 2px; font-size: 22px; font-weight: 900; letter-spacing: -.01em; }
+.lead { color: var(--muted); margin: 0 0 14px; max-width: 58ch; }
+.sect { font-size: 12px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 14px 0 8px; }
+
+/* Einkauf */
+.plist { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.pbtn { border: 1.5px solid var(--chrome-line); background: var(--window); border-radius: 12px; padding: 9px 10px; text-align: left; cursor: pointer; display: grid; grid-template-columns: 30px 1fr; gap: 2px 9px; align-items: center; }
+.pbtn .sw { width: 30px; height: 30px; border-radius: 9px; grid-row: span 2; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .15); }
+.pbtn .n { font-weight: 800; font-size: 13.5px; line-height: 1.2; }
+.pbtn .m { font-size: 12px; color: var(--muted); }
+.pbtn[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--window)); }
+.pbtn[disabled] { opacity: .5; cursor: not-allowed; }
+.radios { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.radio { border: 1.5px solid var(--chrome-line); border-radius: 12px; padding: 9px 11px; background: var(--window); text-align: left; cursor: pointer; }
+.radio[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.radio .n { font-weight: 800; font-size: 13.5px; }
+.radio .m { font-size: 12px; color: var(--muted); }
+.stars { color: #E9A23B; }
+.buyrow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.bigbtn { border: 0; border-radius: 12px; background: var(--accent); color: var(--accent-ink); padding: 10px 12px; text-align: left; cursor: pointer; display: grid; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .2); }
+.bigbtn .q { font-weight: 900; font-size: 17px; }
+.bigbtn .c { font-size: 12px; font-weight: 700; opacity: .9; }
+.bigbtn.alt { background: var(--field); color: var(--text); box-shadow: inset 0 -3px 0 var(--chrome-line); }
+.bigbtn[disabled] { opacity: .45; cursor: not-allowed; }
+.check { display: flex; gap: 9px; align-items: center; margin-top: 12px; font-weight: 700; font-size: 14px; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+/* Postfach */
+.mails { display: grid; gap: 6px; }
+.mrow { border: 0; background: var(--field); border-radius: 10px; padding: 8px 10px; text-align: left; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 0 8px; }
+.mrow[aria-current="true"] { background: color-mix(in srgb, var(--accent) 16%, var(--window)); }
+.mrow b { font-weight: 800; font-size: 13.5px; }
+.mrow .m { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+.mrow .new { background: #E5484D; color: #fff; font-size: 10.5px; font-weight: 900; border-radius: 6px; padding: 1px 6px; align-self: start; }
+.readpane { margin-top: 12px; border-top: 1px dashed var(--chrome-line); padding-top: 12px; }
+.readpane h3 { margin: 0; font-size: 17px; font-weight: 900; }
+.readpane .m { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.readpane p { margin: 0 0 10px; }
+.acts { display: grid; gap: 6px; }
+
+/* Übersicht / Webshop */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.stat { background: var(--field); border-radius: 12px; padding: 10px 12px; }
+.stat .k { font-size: 12px; font-weight: 800; color: var(--muted); }
+.stat .v { font-size: 22px; font-weight: 900; letter-spacing: -.01em; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 520px; font-size: 14px; }
+th { text-align: left; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; }
+td { padding: 8px; border-top: 1px solid var(--chrome-line); }
+.step { display: inline-flex; align-items: center; gap: 2px; background: var(--field); border-radius: 9px; }
+.step button { border: 0; background: transparent; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-weight: 900; }
+.step button:hover { background: var(--chrome-line); }
+.step span { min-width: 52px; text-align: center; font-weight: 800; }
+.up { color: var(--good); } .down { color: var(--bad); }
+.bars { display: flex; align-items: end; gap: 6px; height: 110px; padding-top: 6px; }
+.bars div { flex: 1; background: var(--accent); border-radius: 6px 6px 2px 2px; position: relative; min-width: 0; }
+.bars div span { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.bars div.today { background: var(--good); }
+.axis { display: flex; gap: 6px; font-size: 11px; color: var(--muted); margin-top: 4px; }
+.axis span { flex: 1; text-align: center; }
+
+.taskbar { height: 48px; flex: none; background: var(--taskbar); backdrop-filter: blur(10px); border-top: 1px solid var(--chrome-line); display: flex; align-items: center; gap: 6px; padding: 0 8px; position: relative; z-index: 50; }
+.start { border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-ink); font-weight: 900; padding: 7px 12px; cursor: pointer; display: flex; gap: 7px; align-items: center; }
+.tasks { display: flex; gap: 4px; overflow-x: auto; flex: 1; min-width: 0; }
+.task { border: 0; border-radius: 9px; background: transparent; padding: 6px 10px; display: flex; gap: 7px; align-items: center; cursor: pointer; font-weight: 700; font-size: 13px; white-space: nowrap; }
+.task .tile { width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; }
+.task .tile svg { width: 12px; height: 12px; color: #fff; }
+.task[aria-current="true"] { background: var(--field); box-shadow: inset 0 -2px 0 var(--accent); }
+.tray { display: flex; gap: 12px; align-items: center; font-weight: 800; font-size: 13px; white-space: nowrap; padding-right: 4px; }
+.tray .money { color: var(--good); }
+
+.toast { position: fixed; right: 24px; bottom: 24px; background: var(--window); color: var(--text); border: 1px solid var(--chrome-line); border-radius: 14px; padding: 12px 16px; font-weight: 800; box-shadow: var(--shadow); max-width: calc(100% - 32px); }
+
+@media (max-width: 760px) {
+  body { padding-inline: 16px; }
+  .laptop { padding: 8px; border-radius: 14px; }
+  .screen { height: auto; min-height: 0; }
+  .desktop { display: flex; flex-direction: column; gap: 12px; padding: 12px; }
+  .icons { position: static; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); width: 100%; }
+  .dicon { width: auto; }
+  .win { position: static !important; width: 100% !important; height: auto !important; min-width: 0; }
+  .wbody { max-height: none; }
+  .note { position: static; transform: none; width: auto; }
+  .radios, .buyrow, .stats { grid-template-columns: 1fr 1fr; }
+  .tray .hide-sm { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="intro">
+  <div>
+    <div class="eyebrow">Entwurf C · Laptop-Oberfläche</div>
+    <h1>HustleOS Schreibtisch</h1>
+    <p>Ein richtiger Computer-Desktop wie in Supermarket Simulator: App-Symbole auf dem Hintergrund, Fenster zum Verschieben, unten eine Taskleiste mit Kontostand und Uhr. Zieh die Fenster an der Titelleiste herum.</p>
+  </div>
+  <div class="seg" role="group" aria-label="Farbschema">
+    <button type="button" data-set="light" aria-pressed="false">Hell</button>
+    <button type="button" data-set="dark" aria-pressed="false">Dunkel</button>
+    <button type="button" data-set="system" aria-pressed="true">System</button>
+  </div>
+</header>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7M5.5 9.5V20h13V9.5M10 20v-5h4v5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M2.5 4h2.3l2.4 10.3a1 1 0 0 0 1 .7h8.9a1 1 0 0 0 1-.8L20 8H6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="19" r="1.7" fill="currentColor"/><circle cx="17" cy="19" r="1.7" fill="currentColor"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5zm0 0 9 4.5 9-4.5M12 12v9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z" fill="none" stroke="currentColor" stroke-width="2.2"/></symbol>
+    <symbol id="i-mega" viewBox="0 0 24 24"><path d="M3 10v4h3l7 4.5v-13L6 10zM16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-7 7z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="7.5" cy="8" r="1.8" fill="currentColor"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8M15 7h6v6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path d="m3 9 9-5 9 5M5 10.5v7M9.7 10.5v7M14.3 10.5v7M19 10.5v7M3 20h18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18.2 14.2A6.5 6.5 0 0 1 21.5 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-build" viewBox="0 0 24 24"><path d="M3.5 20.5h17M5 20.5V9.5L12 5l7 4.5v11M9.5 20.5v-6h5v6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4.5M16 6h3a3 3 0 0 1-3 4.5M12 13v4M8.5 20h7M9.5 17h5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<div class="laptop">
+  <div class="screen">
+    <div class="desktop" id="desktop">
+      <div class="icons" id="icons"></div>
+      <aside class="note" aria-label="Notizzettel">
+        To-do heute
+        <ul>
+          <li>Kartons L nachkaufen!</li>
+          <li><s>Lieferung einräumen</s></li>
+          <li>Shitstorm klären</li>
+          <li>Oma anrufen</li>
+        </ul>
+      </aside>
+    </div>
+    <div class="taskbar">
+      <button class="start" type="button"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" fill="currentColor"/></svg>Hustle</button>
+      <div class="tasks" id="tasks"></div>
+      <div class="tray"><span class="hide-sm">★ 4,2</span><span class="money num" id="money">1.284 €</span><span class="num">Tag 6 · 14:32</span></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  const root = document.documentElement;
+  const seg = document.querySelectorAll('.seg button');
+  function applyTheme(mode) {
+    if (mode === 'system') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', mode);
+    seg.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.set === mode)));
+  }
+  seg.forEach(b => b.addEventListener('click', () => applyTheme(b.dataset.set)));
+  if (root.getAttribute('data-theme')) applyTheme(root.getAttribute('data-theme'));
+
+  const apps = {
+    home: { label: 'Übersicht', icon: 'i-home', color: '#5B6BD6' },
+    mail: { label: 'Postfach', icon: 'i-mail', color: '#E5484D', badge: 2 },
+    buy: { label: 'Einkauf', icon: 'i-cart', color: '#E98A2B' },
+    pack: { label: 'Verpackung', icon: 'i-box', color: '#A0724A' },
+    shop: { label: 'Webshop', icon: 'i-globe', color: '#2F9E6F' },
+    mkt: { label: 'Marketing', icon: 'i-mega', color: '#D6457F' },
+    brand: { label: 'Branding', icon: 'i-tag', color: '#8B5CD6' },
+    trade: { label: 'Trading', icon: 'i-trend', color: '#1E9FB8' },
+    bank: { label: 'Bank', icon: 'i-bank', color: '#51606B' },
+    staff: { label: 'Personal', icon: 'i-users', color: '#3E7BD9' },
+    build: { label: 'Ausbau', icon: 'i-build', color: '#C0873A' },
+    goals: { label: 'Ziele', icon: 'i-trophy', color: '#D9A21E' }
+  };
+  const products = [
+    { name: 'Handyhülle', size: 'S', cost: 2, market: 23, stock: 46, color: '#EE6B9E', demand: .78 },
+    { name: 'LED-Lichterkette', size: 'M', cost: 4, market: 42, stock: 18, color: '#E8B923', demand: .55 },
+    { name: 'Massagepistole', size: 'L', cost: 12, market: 95, stock: 7, color: '#5B6076', demand: .3 },
+    { name: 'Bluetooth-Kopfhörer', size: 'M', cost: 8, market: 64, stock: 0, color: '#4C8BF5', lock: 'braucht Lagerhalle' },
+    { name: 'Ringlicht', size: 'M', cost: 6, market: 57, stock: 0, color: '#9FB0DA', lock: 'ab Level 5' },
+    { name: 'Katzen-Trinkbrunnen', size: 'L', cost: 9, market: 74, stock: 0, color: '#3FB4C0', lock: 'ab Level 6' }
+  ];
+  const suppliers = [
+    { name: 'Billig-Fabrik', stars: 1, mult: .65, lead: 81 },
+    { name: 'Standard-Großhändler', stars: 2, mult: 1, lead: 45 },
+    { name: 'Premium-Hersteller', stars: 3, mult: 1.75, lead: 25 }
+  ];
+  const bulks = [{ qty: 20, disc: 1 }, { qty: 50, disc: .85 }, { qty: 200, disc: .68 }, { qty: 500, disc: .55, lock: 'Lagerhalle' }];
+  const mails = [
+    { t: 'Shitstorm!', from: 'Social Media', time: '13:10', pending: true, text: 'Ein Kunde behauptet auf TikTok, dein Produkt hätte sein Handy „geschmolzen“. 40.000 Kommentare. Was tust du?', choices: ['Entschuldigen + Gutscheine (100 €)', 'Ignorieren', 'Mit einem Meme antworten'] },
+    { t: 'Kooperationsanfrage', from: '@lara.lifestyle', time: '12:44', pending: true, text: 'Hey! Ich würde dein Produkt in meiner Story zeigen. Kostet dich nur 300 €. Deal?', choices: ['Deal! (300 €)', 'Ablehnen'] },
+    { t: 'Lieferung angekommen', from: 'PaketBlitz', time: '11:52', text: '20 × Handyhülle stehen am Wareneingang neben dem Tor.' },
+    { t: 'Ein Brief von Oma', from: 'Oma Gerda', time: 'gestern', text: 'Mein Enkel, der Geschäftsmann! Ich hab dir 100 Euro beigelegt. Kauf dir was Warmes.' }
+  ];
+  const state = { money: 1284, product: 0, supplier: 1, express: false, mail: 0, prices: [22, 39, 99], listed: [true, true, false] };
+  const euro = v => (v < 0 ? '−' : '') + Math.abs(Math.round(v)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' €';
+  const cents = v => v.toFixed(2).replace('.', ',') + ' €';
+  const tile = (id, cls = 'tile') => `<span class="${cls}" style="background:${apps[id].color}"><svg aria-hidden="true"><use href="#${apps[id].icon}"/></svg></span>`;
+
+  // Fenster: Position in Prozent der Arbeitsfläche, damit es bei jeder Breite passt
+  let wins = [
+    { id: 'buy', x: 20, y: 4, w: 50, h: 88 },
+    { id: 'mail', x: 61, y: 5, w: 36, h: 60 }
+  ];
+  let z = 10;
+  wins.forEach(w => { w.z = ++z; });
+
+  const views = {
+    home: () => `<h2>Guten Tag, NovaGoods</h2><p class="lead">Tag 6, 14:32 Uhr. Heute läuft es besser als gestern.</p>
+      <div class="stats"><div class="stat"><div class="k">Umsatz heute</div><div class="v">412 €</div></div><div class="stat"><div class="k">Bestellungen</div><div class="v">4 / 6</div></div><div class="stat"><div class="k">Bewertung</div><div class="v">4,2 ★</div></div><div class="stat"><div class="k">Level</div><div class="v">4</div></div></div>
+      <div class="sect">Umsatz der letzten 7 Tage</div>
+      <div class="bars">${[96, 188, 240, 205, 361, 452, 412].map((v, i) => `<div style="height:${Math.round(v / 480 * 100)}%" class="${i === 6 ? 'today' : ''}"><span class="num">${v}</span></div>`).join('')}</div>
+      <div class="axis">${['Tag 0', '1', '2', '3', '4', '5', 'heute'].map(d => `<span>${d}</span>`).join('')}</div>`,
+    buy: () => {
+      const p = products[state.product], s = suppliers[state.supplier];
+      let h = `<h2>Einkauf</h2><p class="lead">Bestellte Ware kommt als Kiste am Wareneingang an.</p><div class="sect">Produkt</div><div class="plist">`;
+      products.forEach((q, i) => {
+        h += `<button type="button" class="pbtn" data-prod="${i}" ${q.lock ? 'disabled' : `aria-pressed="${i === state.product}"`}><span class="sw" style="background:${q.color}"></span><span class="n">${q.name}</span><span class="m">${q.lock ? q.lock : 'Lager ' + q.stock + ' · ~' + q.market + ' €'}</span></button>`;
+      });
+      h += '</div><div class="sect">Lieferant</div><div class="radios">';
+      suppliers.forEach((q, i) => {
+        h += `<button type="button" class="radio" data-sup="${i}" aria-pressed="${i === state.supplier}"><div class="n">${q.name}</div><div class="m"><span class="stars">${'★'.repeat(q.stars)}</span> · ×${q.mult.toFixed(2).replace('.', ',')} · ~${Math.round(q.lead * (state.express ? .5 : 1))} min</div></button>`;
+      });
+      h += `</div><div class="sect">Menge · ${p.name}</div><div class="buyrow">`;
+      bulks.forEach((b, i) => {
+        const cost = Math.round(p.cost * b.qty * b.disc * s.mult) + (state.express ? 8 : 0);
+        h += `<button type="button" class="bigbtn ${i ? 'alt' : ''}" data-bulk="${i}" ${b.lock || cost > state.money ? 'disabled' : ''}><span class="q">${b.qty} Stück</span><span class="c">${b.lock ? 'braucht ' + b.lock : euro(cost) + ' · ' + cents(cost / b.qty)}</span></button>`;
+      });
+      return h + `</div><label class="check"><input type="checkbox" id="express" ${state.express ? 'checked' : ''}> Express: halbe Lieferzeit, +8 €</label>`;
+    },
+    mail: () => {
+      const m = mails[state.mail];
+      let h = '<div class="mails">';
+      mails.forEach((q, i) => { h += `<button type="button" class="mrow" data-mail="${i}" ${i === state.mail ? 'aria-current="true"' : ''}><b>${q.t}</b>${q.pending ? '<span class="new">offen</span>' : '<span></span>'}<span class="m">${q.from} · ${q.time}</span></button>`; });
+      h += `</div><div class="readpane"><h3>${m.t}</h3><div class="m">Von ${m.from} · ${m.time}</div><p>${m.text}</p>`;
+      if (m.pending) h += '<div class="acts">' + m.choices.map((c, i) => `<button type="button" class="bigbtn ${i ? 'alt' : ''} answer"><span class="c" style="font-size:13.5px">${c}</span></button>`).join('') + '</div>';
+      return h + '</div>';
+    },
+    shop: () => {
+      let h = `<h2>Webshop</h2><p class="lead">Preise setzen und Produkte online stellen. Grün heißt: du liegst unter dem Marktpreis.</p><div class="tablewrap"><table><thead><tr><th>Online</th><th>Produkt</th><th>Preis</th><th>Markt</th><th>Marge</th></tr></thead><tbody>`;
+      products.slice(0, 3).forEach((p, i) => {
+        const pr = state.prices[i];
+        h += `<tr><td><input type="checkbox" data-list="${i}" ${state.listed[i] ? 'checked' : ''} aria-label="${p.name} online" style="width:18px;height:18px;accent-color:var(--accent)"></td><td><b>${p.name}</b></td>
+          <td><span class="step"><button type="button" data-price="${i}" data-d="-1" aria-label="Preis senken">−</button><span class="num">${pr} €</span><button type="button" data-price="${i}" data-d="1" aria-label="Preis erhöhen">+</button></span></td>
+          <td class="num ${pr <= p.market ? 'up' : 'down'}">${p.market} €</td><td class="num">${euro(pr - p.cost)}</td></tr>`;
+      });
+      return h + '</tbody></table></div>';
+    }
+  };
+
+  const desktop = document.getElementById('desktop');
+  const icons = document.getElementById('icons');
+  const tasks = document.getElementById('tasks');
+  icons.innerHTML = Object.keys(apps).map(id => `<button type="button" class="dicon" data-open="${id}"><span class="tile" style="background:${apps[id].color}"><svg aria-hidden="true"><use href="#${apps[id].icon}"/></svg>${apps[id].badge ? `<span class="badge">${apps[id].badge}</span>` : ''}</span><span class="l">${apps[id].label}</span></button>`).join('');
+
+  function renderWindows() {
+    const scrolls = {};
+    desktop.querySelectorAll('.win').forEach(w => { scrolls[w.dataset.win] = w.querySelector('.wbody').scrollTop; w.remove(); });
+    const top = wins.reduce((a, b) => (b.z > (a ? a.z : -1) ? b : a), null);
+    wins.forEach(w => {
+      const el = document.createElement('section');
+      el.className = 'win' + (top && top.id === w.id ? ' focus' : '');
+      el.dataset.win = w.id;
+      el.style.left = w.x + '%'; el.style.top = w.y + '%'; el.style.width = w.w + '%'; el.style.height = w.h + '%'; el.style.zIndex = w.z;
+      el.setAttribute('aria-label', apps[w.id].label);
+      const body = views[w.id] ? views[w.id]() : `<h2>${apps[w.id].label}</h2><p class="lead">Im Entwurf nicht ausgearbeitet. Im Spiel öffnet sich hier die App im gleichen Fensterstil.</p>`;
+      el.innerHTML = `<div class="titlebar">${tile(w.id)}<b>${apps[w.id].label}</b><button type="button" class="wbtn" data-min="${w.id}" aria-label="Minimieren">–</button><button type="button" class="wbtn close" data-close="${w.id}" aria-label="Schließen">✕</button></div><div class="wbody">${body}</div>`;
+      desktop.appendChild(el);
+      if (scrolls[w.id]) el.querySelector('.wbody').scrollTop = scrolls[w.id];
+    });
+    tasks.innerHTML = wins.map(w => `<button type="button" class="task" data-focus="${w.id}" ${top && top.id === w.id ? 'aria-current="true"' : ''}>${tile(w.id)}${apps[w.id].label}</button>`).join('');
+  }
+  function raise(id) {
+    const w = wins.find(x => x.id === id);
+    if (!w) return;
+    w.z = ++z;
+    desktop.querySelectorAll('.win').forEach(el => {
+      const on = el.dataset.win === id;
+      el.classList.toggle('focus', on);
+      if (on) el.style.zIndex = w.z;
+    });
+    tasks.querySelectorAll('.task').forEach(b => b.toggleAttribute('aria-current', false));
+    const tb = tasks.querySelector(`[data-focus="${id}"]`);
+    if (tb) tb.setAttribute('aria-current', 'true');
+  }
+  function focus(id) { const w = wins.find(x => x.id === id); if (w) { w.z = ++z; renderWindows(); } }
+  function open(id) {
+    if (wins.find(x => x.id === id)) { focus(id); return; }
+    const n = wins.length;
+    wins.push({ id, x: 24 + (n % 4) * 5, y: 6 + (n % 4) * 5, w: 46, h: 72, z: ++z });
+    renderWindows();
+  }
+
+  let tt;
+  function toast(s) { const t = document.getElementById('toast'); t.textContent = s; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, 2600); }
+
+  document.addEventListener('click', e => {
+    const t = e.target;
+    const o = t.closest('[data-open]'); if (o) { open(o.dataset.open); return; }
+    const f = t.closest('[data-focus]'); if (f) { focus(f.dataset.focus); return; }
+    const c = t.closest('[data-close]'); if (c) { wins = wins.filter(w => w.id !== c.dataset.close); renderWindows(); return; }
+    const m = t.closest('[data-min]'); if (m) { wins = wins.filter(w => w.id !== m.dataset.min); renderWindows(); toast(apps[m.dataset.min].label + ' minimiert'); return; }
+    const win = t.closest('.win');
+    const pb = t.closest('[data-prod]'); if (pb && !pb.disabled) { state.product = +pb.dataset.prod; renderWindows(); return; }
+    const sb = t.closest('[data-sup]'); if (sb) { state.supplier = +sb.dataset.sup; renderWindows(); return; }
+    const bb = t.closest('[data-bulk]');
+    if (bb && !bb.disabled) {
+      const p = products[state.product], b = bulks[+bb.dataset.bulk], s = suppliers[state.supplier];
+      const cost = Math.round(p.cost * b.qty * b.disc * s.mult) + (state.express ? 8 : 0);
+      state.money -= cost;
+      document.getElementById('money').textContent = euro(state.money);
+      toast(`${b.qty} × ${p.name} bestellt (−${euro(cost)})`);
+      renderWindows(); return;
+    }
+    const pr = t.closest('[data-price]'); if (pr) { const i = +pr.dataset.price; state.prices[i] = Math.max(1, state.prices[i] + (+pr.dataset.d)); renderWindows(); return; }
+    const mb = t.closest('[data-mail]'); if (mb) { state.mail = +mb.dataset.mail; renderWindows(); return; }
+    if (t.closest('.answer')) { toast('Im Spiel wird die Entscheidung jetzt ausgewertet.'); return; }
+    if (win && !t.closest('button, input')) raise(win.dataset.win);
+  });
+  document.addEventListener('change', e => {
+    if (e.target.id === 'express') { state.express = e.target.checked; renderWindows(); }
+    if (e.target.dataset.list) { state.listed[+e.target.dataset.list] = e.target.checked; renderWindows(); }
+  });
+
+  // Fenster an der Titelleiste verschieben (nur auf breiten Bildschirmen)
+  let drag = null;
+  desktop.addEventListener('pointerdown', e => {
+    const bar = e.target.closest('.titlebar');
+    if (!bar || e.target.closest('button') || window.matchMedia('(max-width: 760px)').matches) return;
+    const el = bar.parentElement;
+    const w = wins.find(x => x.id === el.dataset.win);
+    const r = desktop.getBoundingClientRect();
+    drag = { w, el, r, sx: e.clientX, sy: e.clientY, ox: w.x, oy: w.y };
+    w.z = ++z; el.style.zIndex = w.z;
+    bar.setPointerCapture(e.pointerId);
+  });
+  desktop.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const { w, el, r } = drag;
+    w.x = Math.max(-w.w + 12, Math.min(96, drag.ox + (e.clientX - drag.sx) / r.width * 100));
+    w.y = Math.max(0, Math.min(90, drag.oy + (e.clientY - drag.sy) / r.height * 100));
+    el.style.left = w.x + '%'; el.style.top = w.y + '%';
+  });
+  desktop.addEventListener('pointerup', () => { if (drag) { const id = drag.w.id; drag = null; raise(id); } });
+
+  renderWindows();
+})();
+</script>
