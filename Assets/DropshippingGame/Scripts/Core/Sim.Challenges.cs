@@ -283,19 +283,19 @@ namespace DropshippingGame.Core
                 default:
                     return null;
             }
-            c.Reward = Round5Int((60f + 35f * Level) * factor * Math.Max(0.5f, scale));
-            c.Xp = 30 + 15 * Level;
+            c.Reward = Round5Int((GameData.ChallengeRewardBase + GameData.ChallengeRewardPerLevel * Level) * factor * Math.Max(0.5f, scale));
+            c.Xp = GameData.ChallengeXpBase + GameData.ChallengeXpPerLevel * Level;
             return c;
         }
 
-        /// <summary>Zusatz-Wochenziel (z. B. aus einem Ereignis). Zählt ab jetzt.</summary>
+        /// <summary>Zusatz-Wochenziel (z. B. aus einem Ereignis). Zählt ab jetzt. product nur für Typ "product".</summary>
         public WeeklyChallenge AddBonusChallenge(string type, float target, int reward, int xp, string sponsor, string title, string desc,
-                                                 string icon = "trophy")
+                                                 string icon = "trophy", string product = "")
         {
             var c = new WeeklyChallenge
             {
                 Id = "bonus_" + type + "_" + Day + "_" + Challenges.Count, Type = type, Target = Math.Max(1f, target), Reward = reward, Xp = xp,
-                Week = Week, Bonus = true, Sponsor = sponsor ?? "", Title = title, Desc = desc, Icon = icon,
+                Week = Week, Bonus = true, Sponsor = sponsor ?? "", Title = title, Desc = desc, Icon = icon, Product = product ?? "",
             };
             Challenges.Add(c);
             ChallengesChanged?.Invoke();

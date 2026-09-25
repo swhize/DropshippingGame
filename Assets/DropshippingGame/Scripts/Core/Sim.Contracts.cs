@@ -30,7 +30,7 @@ namespace DropshippingGame.Core
         public int Payment, Penalty, Xp;
         /// <summary>Bewertungseffekt bei Erfolg (+) bzw. Misserfolg (−, als positiver Wert gespeichert).</summary>
         public float RepBonus, RepPenalty;
-        /// <summary>Mindestqualität der Ware (0 = egal, 1,0 = Standard, 1,3 = Premium).</summary>
+        /// <summary>Mindestqualität der Ware (0 = egal, 0,8 = mind. Standard, 1,3 = Premium – wie <see cref="GameData.QualityName"/>).</summary>
         public float MinQuality;
         /// <summary>Frist in Tagen ab Annahme (inklusive Annahmetag, bis 20:00 Uhr).</summary>
         public int Days = 3;
@@ -47,7 +47,8 @@ namespace DropshippingGame.Core
         public bool IsActive => State == ContractState.Active;
         public bool IsClosed => State != ContractState.Offered && State != ContractState.Active;
         public string Title => Quantity + "× " + GameData.Product(Product).Name;
-        public string QualityText => MinQuality >= 1.3f ? "nur Premium-Qualität" : (MinQuality >= 1f ? "mind. Standard-Qualität" : "Qualität egal");
+        public string QualityText => MinQuality >= GameData.QualityPremium - 0.001f ? "nur Premium-Qualität"
+            : (MinQuality >= GameData.QualityStandard - 0.001f ? "mind. Standard-Qualität" : "Qualität egal");
         public string Description => Company + " braucht " + Title + " " + Reason + ".";
 
         public Dictionary<string, object> ToJson() => new Dictionary<string, object>
@@ -203,15 +204,14 @@ namespace DropshippingGame.Core
         // =====================================================================================
         private int RoundTo5(float v) => Math.Max(5, Mathx.RoundToInt(v / 5f) * 5);
 
-        private int ContractQuantity()
-        {
-            int[] opts;
-            if (Level <= 3) opts = new[] { 20, 30, 40 };
-            else if (Level == 4) opts = new[] { 30, 40, 50, 60 };
-            else if (Level <= 6) opts = new[] { 40, 50, 60, 80, 100 };
-            else opts = new[] { 60, 80, 100, 150, 200 };
-            return opts[Rng.Index(opts.Length)];
-        }
+        /// <summary>Grundwert eines Auftrags (€): wächst mit Level und Standort, damit Aufträge ein Bonus bleiben.</summary>
+        private float ContractValue() =>
+            (GameData.ContractValueBase + GameData.ContractValuePerLevel * Level) * (LocationStage >= 1 ? GameData.ContractWarehouseMult : 1f) *
+            Rng.Range(0.85f, 1.25f);
+
+        /// <summary>Stückzahl zum Auftragswert (teure Produkte = weniger Stück), auf 5 gerundet.</summary>
+        private int ContractQuantity(ProductDef p) =>
+            Mathx.Clamp(Mathx.RoundToInt(ContractValue() / (p.RefPrice * 0.35f) / 5f) * 5, 10, 250);
 
         /// <summary>
         /// Erzeugt ein neues Angebot (auch für Ereignisse). payBonus multipliziert die Vergütung,
@@ -230,17 +230,18 @@ namespace DropshippingGame.Core
             if (pool.Count == 0) return null;
             string pid = !string.IsNullOrEmpty(product) && ProductAvailable(product) ? product : pool[Rng.Index(pool.Count)];
             var pd = GameData.Product(pid);
-            int qty = ContractQuantity();
+            int qty = ContractQuantity(pd);
+            // Qualitätsanspruch nach den Stufen von GameData.QualityName (Standard ab 0,8, Premium ab 1,3).
             float minQ = 0f, qMult = 1f;
             float r = Rng.Value();
             if (Level >= 5 && r < 0.1f)
             {
-                minQ = 1.3f;
+                minQ = GameData.QualityPremium;
                 qMult = 1.45f;
             }
             else if (r < 0.3f)
             {
-                minQ = 1f;
+                minQ = GameData.QualityStandard;
                 qMult = 1.15f;
             }
             int days = qty <= 40 ? Rng.RangeInt(2, 3) : (qty <= 100 ? Rng.RangeInt(2, 4) : Rng.RangeInt(3, 4));
@@ -308,11 +309,19 @@ namespace DropshippingGame.Core
             return true;
         }
 
+        /// <summary>Angebote pro Tag: werktags 1 (Level 3-4), 1-2 (Level 5-7), 1-3 (ab Level 8); am Wochenende 0-1.</summary>
+        public int ContractOffersToday()
+        {
+            if (!ContractsUnlocked) return 0;
+            if (Weekday >= 5) return Rng.Value() < 0.5f ? 1 : 0;
+            if (Level < 5) return 1;
+            return Level < 8 ? Rng.RangeInt(1, 2) : Rng.RangeInt(1, 3);
+        }
+
         private void ContractsNewDay()
         {
             ContractOfferTimes.Clear();
-            if (!ContractsUnlocked) return;
-            int count = Weekday >= 5 ? 1 : (Level < 5 ? Rng.RangeInt(1, 2) : Rng.RangeInt(1, 3));
+            int count = ContractOffersToday();
             for (int i = 0; i < count; i++) ContractOfferTimes.Add(Rng.Range(500f, 900f));
             ContractOfferTimes.Sort();
         }
@@ -460,6 +469,28 @@ namespace DropshippingGame.Core
             Stock[id].Qty -= 1;
             RaiseEconomyChanged();
             return new ItemData { Kind = ItemKind.Item, Product = id, Quality = StockQuality(id), ContractId = c.Id, Created = BClock() };
+        }
+
+        /// <summary>
+        /// Lagerist:in bestückt die Palette des dringendsten Auftrags aus dem Lager (bis zu 10 Stück je
+        /// Arbeitsgang, 20 Stück bleiben als Reserve für Kundenbestellungen im Regal).
+        /// </summary>
+        private bool StaffStockContract()
+        {
+            foreach (var c in ActiveContracts())
+            {
+                if (c.Remaining <= 0 || StockQuality(c.Product) < c.MinQuality - 0.001f) continue;
+                int n = Math.Min(Math.Min(10, c.Remaining), StockQty(c.Product) - GameData.ContractStockReserve);
+                if (n <= 0) continue;
+                Stock[c.Product].Qty -= n;
+                c.Delivered += n;
+                ContractDelivered?.Invoke(c, n);
+                if (c.Remaining <= 0) CompleteContract(c);
+                ContractsChanged?.Invoke();
+                RaiseEconomyChanged();
+                return true;
+            }
+            return false;
         }
 
         private void CompleteContract(Contract c)

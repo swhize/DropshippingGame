@@ -195,7 +195,11 @@ namespace DropshippingGame.Core
         public static readonly string[] LogoNames = { "Kreis", "Quadrat", "Raute", "Stern", "Blitz", "Herz" };
 
         // ---- Fortschritt ------------------------------------------------------------------------------
-        public static readonly int[] LevelXp = { 0, 150, 500, 1200, 2500, 4500, 7500, 12000, 18000, 26000 };
+        /// <summary>
+        /// XP-Schwellen je Level. v3.0: ab Level 3 gestreckt, weil Express, Großaufträge, Wochenziele
+        /// und Ziel-XP deutlich mehr Erfahrung bringen (Level 2 bleibt am ersten Tag erreichbar).
+        /// </summary>
+        public static readonly int[] LevelXp = { 0, 150, 800, 1700, 3000, 5000, 8000, 13000, 20000, 30000 };
         public const int MaxLevel = 10;
 
         public static readonly Dictionary<int, string> LevelUnlocks = new Dictionary<int, string>
@@ -220,7 +224,7 @@ namespace DropshippingGame.Core
                 Desc = "Ein Stand vor der Garage. Stell eine Kiste drauf – Passanten kaufen direkt, ganz ohne Karton und Versand." },
             new UpgradeDef { Id = "server", Name = "Shop-Server-Upgrade", Icon = "server", Cost = 800, Level = 3, Requires = "",
                 Desc = "+6 Plätze in der Bestell-Warteschlange. Weniger verlorene Bestellungen." },
-            new UpgradeDef { Id = "warehouse", Name = "Lagerhalle kaufen", Icon = "building", Cost = 4500, Level = 4, Requires = "",
+            new UpgradeDef { Id = "warehouse", Name = "Lagerhalle kaufen", Icon = "building", Cost = 6000, Level = 4, Requires = "",
                 Desc = "Endlich raus aus der Garage: 3.000 Lagerplätze, 10 Regale, Platz für Personal. Miete 140 €/Tag." },
             new UpgradeDef { Id = "van", Name = "Eigener Lieferwagen", Icon = "truck", Cost = 3500, Level = 5, Requires = "",
                 Desc = "Alle Einkäufe kommen 25 % schneller an." },
@@ -261,9 +265,9 @@ namespace DropshippingGame.Core
             new GoalDef { Id = "rev1k", Title = "Vierstellig", Desc = "Erreiche 1.000 € Umsatz.", Type = "revenue", Target = 1000, Reward = 150, Xp = 40 },
             new GoalDef { Id = "stand10", Title = "Straßenhändler", Desc = "Verkaufe 10 Artikel am Verkaufsstand.", Type = "stand", Target = 10, Reward = 120, Xp = 30 },
             new GoalDef { Id = "rating4", Title = "Kundenliebling", Desc = "Erreiche eine Bewertung von 4,0 Sternen.", Type = "rating", Target = 4.0f, Reward = 200, Xp = 40 },
-            new GoalDef { Id = "first_contract", Title = "Business to Business", Desc = "Erfülle deinen ersten Großauftrag (App 'Aufträge', ab Level 3).", Type = "contracts", Target = 1, Reward = 250, Xp = 50 },
+            new GoalDef { Id = "first_contract", Title = "Business to Business", Desc = "Erfülle deinen ersten Großauftrag (App 'Aufträge', ab Level 3).", Type = "contracts", Target = 1, Reward = 150, Xp = 50 },
             new GoalDef { Id = "ship100", Title = "Paketprofi", Desc = "Verschicke 100 Pakete.", Type = "shipped", Target = 100, Reward = 300, Xp = 60 },
-            new GoalDef { Id = "challenges3", Title = "Wochenheld", Desc = "Schaffe insgesamt 3 Wochenziele.", Type = "challenges", Target = 3, Reward = 300, Xp = 60 },
+            new GoalDef { Id = "challenges3", Title = "Wochenheld", Desc = "Schaffe insgesamt 3 Wochenziele.", Type = "challenges", Target = 3, Reward = 200, Xp = 60 },
             new GoalDef { Id = "warehouse", Title = "Raus aus der Garage", Desc = "Kaufe die Lagerhalle (Ausbau-App).", Type = "stage", Target = 1, Reward = 500, Xp = 80 },
             new GoalDef { Id = "staff1", Title = "Chef sein", Desc = "Stelle deinen ersten Mitarbeiter ein.", Type = "staff", Target = 1, Reward = 200, Xp = 50 },
             new GoalDef { Id = "rev10k", Title = "Fünfstellig", Desc = "Erreiche 10.000 € Umsatz.", Type = "revenue", Target = 10000, Reward = 1000, Xp = 120 },
@@ -275,7 +279,7 @@ namespace DropshippingGame.Core
         public static readonly StaffRoleDef[] StaffRoles =
         {
             new StaffRoleDef { Id = "lager", Name = "Lagerist:in", Icon = "box", Wage = 60, Interval = 16f, Max = 2,
-                Desc = "Holt Kisten vom Wareneingang und räumt sie ins passende Regal.", Shirt = new RGBA(0.25f, 0.45f, 0.8f) },
+                Desc = "Räumt Kisten vom Wareneingang ein, bestückt Großauftrags-Paletten aus dem Lager und bearbeitet Retouren.", Shirt = new RGBA(0.25f, 0.45f, 0.8f) },
             new StaffRoleDef { Id = "packer", Name = "Packer:in", Icon = "package", Wage = 70, Interval = 12f, Max = 2,
                 Desc = "Kommissioniert offene Bestellungen und verpackt sie (braucht Kartons!).", Shirt = new RGBA(0.3f, 0.65f, 0.4f) },
             new StaffRoleDef { Id = "versand", Name = "Versandkraft", Icon = "truck", Wage = 65, Interval = 10f, Max = 2,
@@ -452,6 +456,10 @@ namespace DropshippingGame.Core
         public static int LevelThreshold(int lvl) => LevelXp[Mathx.Clamp(lvl - 1, 0, LevelXp.Length - 1)];
         public static string SizeName(int size) => PackagingSizes[Mathx.Clamp(size, 0, 2)].Name;
 
-        public static string QualityName(float q) => q >= 1.3f ? "Premium" : (q < 0.8f ? "Billig" : "Standard");
+        /// <summary>Qualitätsstufen: Billig unter 0,8, Standard ab 0,8, Premium ab 1,3.</summary>
+        public const float QualityStandard = 0.8f;
+        public const float QualityPremium = 1.3f;
+
+        public static string QualityName(float q) => q >= QualityPremium ? "Premium" : (q < QualityStandard ? "Billig" : "Standard");
     }
 }

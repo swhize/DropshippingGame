@@ -1615,7 +1615,7 @@ namespace DropshippingGame.Core
                             return true;
                         }
                     }
-                    return StaffProcessReturn();
+                    return StaffStockContract() || StaffProcessReturn();
                 case "packer":
                 {
                     // Dringendster Zettel zuerst, für den Ware und ein (notfalls größerer) Karton da ist.

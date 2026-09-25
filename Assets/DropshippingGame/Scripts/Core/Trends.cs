@@ -357,13 +357,16 @@ namespace DropshippingGame.Core
             var sim = st.CloneState();
             int pi = GameData.ProductIndex(id);
             bool riseAhead = false;
+            float truthMax = f.Now;
             for (int d = 1; d <= days; d++)
             {
                 sim.Start = sim.Hype;
                 sim.DaysLeft--;
                 if (sim.DaysLeft <= 0)
                 {
-                    if (sim.Phase == TrendPhase.Normal && d > sight) sim.DaysLeft = 1;
+                    // Neue Hypes sieht das Radar nur innerhalb seiner Sichtweite – und nur, wenn der Markt
+                    // nicht schon mit anderen Hypes gesättigt ist (sonst verschiebt sich der Start).
+                    if (sim.Phase == TrendPhase.Normal && (d > sight || HypedOthersAt(id, d) >= GameData.MaxHypedProducts)) sim.DaysLeft = 1;
                     else
                     {
                         if (sim.Phase == TrendPhase.Normal) riseAhead = true;
@@ -372,13 +375,13 @@ namespace DropshippingGame.Core
                 }
                 float truth = Target(sim, false);
                 sim.Hype = truth;
+                truthMax = Math.Max(truthMax, truth);
                 float amp = (1f - acc) * 0.45f * (0.4f + 0.6f * d / days);
                 float v = Mathx.Clamp(truth + amp * Noise(_sim.Day, pi, d), GameData.TrendMin, GameData.TrendMax);
                 f.Values[d - 1] = v;
                 f.Low[d - 1] = Mathx.Clamp(v - amp, GameData.TrendMin, GameData.TrendMax);
                 f.High[d - 1] = Mathx.Clamp(v + amp, GameData.TrendMin, GameData.TrendMax);
             }
-            float last = f.Values[days - 1];
             switch (st.Phase)
             {
                 case TrendPhase.Rising:
@@ -402,11 +405,18 @@ namespace DropshippingGame.Core
                     f.Hint = "Keiner will's gerade. Preis senken oder aussitzen.";
                     break;
                 default:
-                    if (riseAhead || last > f.Now + 0.2f)
+                    // Das Label folgt dem, was das Radar wirklich sieht – das Rauschen betrifft nur die Zahlen.
+                    if (riseAhead)
                     {
                         f.Label = "Hype im Anflug";
                         f.Icon = "trend";
                         f.Hint = "Der Trendradar sieht etwas kommen. Vorräte anlegen?";
+                    }
+                    else if (f.Now < 0.9f && truthMax > f.Now + 0.05f)
+                    {
+                        f.Label = "erholt sich";
+                        f.Icon = "trend";
+                        f.Hint = "Die Nachfrage kommt langsam zurück.";
                     }
                     else
                     {
@@ -417,6 +427,33 @@ namespace DropshippingGame.Core
                     break;
             }
             return f;
+        }
+
+        /// <summary>
+        /// Schätzung für die Prognose: wie viele andere Produkte am step-ten Tag ab heute noch (oder schon)
+        /// im Hype sind. Steigende bleiben bis zum Ende ihres Peaks, stabile starten, wenn ihr Zähler vorher abläuft.
+        /// </summary>
+        private int HypedOthersAt(string id, int step)
+        {
+            int n = 0;
+            foreach (var kv in States)
+            {
+                if (kv.Key == id) continue;
+                var q = kv.Value;
+                switch (q.Phase)
+                {
+                    case TrendPhase.Rising:
+                        if (step < q.DaysLeft + q.PeakDays) n++;
+                        break;
+                    case TrendPhase.Peak:
+                        if (step < q.DaysLeft) n++;
+                        break;
+                    case TrendPhase.Normal:
+                        if (q.DaysLeft < step && step < q.DaysLeft + q.RiseDays + q.PeakDays) n++;
+                        break;
+                }
+            }
+            return n;
         }
 
         /// <summary>Deterministisches Rauschen in [-1, 1] (verbraucht keine Zufallszahlen).</summary>

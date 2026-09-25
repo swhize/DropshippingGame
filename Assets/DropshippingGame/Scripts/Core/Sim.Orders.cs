@@ -277,6 +277,26 @@ namespace DropshippingGame.Core
             OnLabeled();
         }
 
+        /// <summary>
+        /// Ein Gegenstand ist unwiederbringlich verloren (z. B. aus der Welt gefallen). Gehört er zu einem
+        /// Bestellzettel, wird der Zettel storniert und zählt als verlorene Bestellung (ohne Bewertung).
+        /// Kisten, Retouren und Großauftrags-Artikel verschwinden einfach.
+        /// </summary>
+        public void DiscardItem(ItemData item)
+        {
+            if (item == null) return;
+            var o = TakeFromWork(item.OrderId);
+            if (o != null)
+            {
+                TotalLostOrders++;
+                Daily.Lost++;
+                Notify("Bestellung " + o.Number + " (" + GameData.Product(o.Product).Name + ") ist verloren gegangen.", "bad");
+                OrderExpired?.Invoke(o);
+                OrdersChanged?.Invoke();
+            }
+            RaiseEconomyChanged();
+        }
+
         /// <summary>Entfernt angefangene Zettel, zu denen kein Gegenstand mehr existiert (nach dem Laden).</summary>
         private void ReconcileOrdersInWork()
         {

@@ -283,11 +283,17 @@ namespace DropshippingGame.Core
         // F4 Großaufträge (B2B)
         // =====================================================================================
         public const int ContractLevel = 3;
+        /// <summary>Grundwert eines Auftrags in €: (Basis + je Level) × Faktor in der Lagerhalle × Zufall 0,85-1,25.</summary>
+        public const float ContractValueBase = 60f;
+        public const float ContractValuePerLevel = 55f;
+        public const float ContractWarehouseMult = 1.25f;
         /// <summary>Vergütung je Stück als Anteil am Richtpreis (B2B = Großhandelspreis).</summary>
         public const float ContractPayMin = 0.3f;
-        public const float ContractPayMax = 0.42f;
+        public const float ContractPayMax = 0.4f;
         public const float ContractPenaltyFactor = 0.25f;
-        public const float ContractXpFactor = 0.25f;
+        public const float ContractXpFactor = 0.2f;
+        /// <summary>So viele Stück lässt die Lagerist:in beim Bestücken von Paletten im Regal (für Kundenbestellungen).</summary>
+        public const int ContractStockReserve = 20;
         public const float ContractRepBonus = 0.06f;
         public const float ContractRepPenalty = 0.18f;
         /// <summary>Scheitert ein Auftrag, werden bereits gelieferte Stück zu diesem Anteil bezahlt.</summary>
@@ -383,6 +389,11 @@ namespace DropshippingGame.Core
         // F6 Wochenziele
         // =====================================================================================
         public const int ChallengesPerWeek = 3;
+        /// <summary>Belohnung je Wochenziel: (Basis + je Level) × Schwierigkeitsfaktor (0,8-1,2) in €, dazu XP.</summary>
+        public const float ChallengeRewardBase = 50f;
+        public const float ChallengeRewardPerLevel = 30f;
+        public const int ChallengeXpBase = 30;
+        public const int ChallengeXpPerLevel = 15;
 
         // =====================================================================================
         // Erklär-Nachrichten (einmalig ins Postfach)
