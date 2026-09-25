@@ -166,7 +166,7 @@ namespace DropshippingGame.EditorTools
             {
                 QualitySettings.SetQualityLevel(i, false);
                 QualitySettings.renderPipeline = asset;
-                QualitySettings.shadows = ShadowQuality.All;
+                QualitySettings.shadows = UnityEngine.ShadowQuality.All;
                 QualitySettings.vSyncCount = 1;
             }
             QualitySettings.SetQualityLevel(Mathf.Max(current, QualitySettings.names.Length - 1), true);
