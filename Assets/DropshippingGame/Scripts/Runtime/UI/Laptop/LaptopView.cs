@@ -262,8 +262,10 @@ namespace DropshippingGame.UI
         public bool IsOpen { get; private set; }
         public string Current => _current;
         public string CurrentTab => _currentTab;
-        /// <summary>Bildschirm (für die Fokus-Steuerung per Controller).</summary>
+        /// <summary>Bildschirm des Laptops.</summary>
         public VisualElement Screen => _screen;
+        /// <summary>Bereich für die Controller-Fokus-Steuerung (App-Seite ohne Kopfzeile/Navigation).</summary>
+        public VisualElement FocusRoot => _pageHost;
         public bool Booting => _boot != null && UIX.IsShown(_boot);
 
         public LaptopView(VisualElement layer)
@@ -326,7 +328,6 @@ namespace DropshippingGame.UI
             _rating = Chip("BEWERTUNG", "star", "rating");
             _money = Chip("KONTO", "wallet", "money");
             _moneyChip = _money.parent;
-            if (!hype) UIX.Spacer(_top);
             var close = UIX.Button(_top, "", () => Game.Sim?.ClosePc(), "", false, "close");
             close.AddToClassList("os-close");
             close.tooltip = "Schließen (Esc)";
@@ -352,6 +353,7 @@ namespace DropshippingGame.UI
             _nav = new ScrollView(hype ? ScrollViewMode.Horizontal : ScrollViewMode.Vertical);
             _nav.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
             _nav.verticalScrollerVisibility = hype ? ScrollerVisibility.Hidden : ScrollerVisibility.Auto;
+            _nav.style.flexGrow = 1;
             _navHost.Add(_nav);
             var inner = UIX.Div(_nav.contentContainer, "os-nav-inner");
             string group = "";
@@ -605,7 +607,7 @@ namespace DropshippingGame.UI
         {
             if (_app == null || _appRoot == null) return;
             var offset = _content.scrollOffset;
-            int focus = GameInput.UsingGamepad ? UIX.FocusIndex(_screen) : -1;
+            int focus = GameInput.UsingGamepad ? UIX.FocusIndex(_pageHost) : -1;
             try
             {
                 _app.Closed();
@@ -619,7 +621,7 @@ namespace DropshippingGame.UI
             _content.schedule.Execute(() =>
             {
                 _content.scrollOffset = offset;
-                if (focus >= 0) UIX.RestoreFocus(_screen, focus);
+                if (focus >= 0) UIX.RestoreFocus(_pageHost, focus);
             });
             UpdateBadges();
         }

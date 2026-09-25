@@ -154,7 +154,7 @@ namespace DropshippingGame.UI
             if (BigModal != null && BigModal.IsOpen) return BigModal.Card;
             if (Modal != null && Modal.IsOpen) return Modal.Card;
             if (Dialogue != null && Dialogue.ChoicesShown) return Dialogue.Panel;
-            if (Laptop != null && Laptop.IsOpen) return Laptop.Booting ? null : Laptop.Screen;
+            if (Laptop != null && Laptop.IsOpen) return Laptop.Booting ? null : Laptop.FocusRoot;
             if (Phone != null && Phone.IsOpen) return Phone.Screen;
             return null;
         }

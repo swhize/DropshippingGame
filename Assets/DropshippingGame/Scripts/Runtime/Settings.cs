@@ -116,6 +116,19 @@ namespace DropshippingGame
             }
         }
 
+        /// <summary>Während ein Regler gezogen wird: sofort anwenden, aber noch nicht speichern.</summary>
+        public static void ApplyLive()
+        {
+            try
+            {
+                Changed?.Invoke();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+
         public static void ApplyDisplay()
         {
             if (Application.isEditor) return;

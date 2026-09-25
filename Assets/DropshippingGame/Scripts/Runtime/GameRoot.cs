@@ -26,8 +26,16 @@ namespace DropshippingGame
         private float _menuT, _lightAcc, _autosaveAcc;
         private bool _inMenu = true;
 
-        /// <summary>true, solange Menü, Laptop, Fenster oder Dialog die Steuerung übernehmen.</summary>
-        public bool InputLocked => _inMenu || _locks.Count > 0;
+        /// <summary>Frame, in dem die letzte Sperre gelöst wurde (dieser Frame bleibt noch gesperrt).</summary>
+        private int _unlockFrame = -1;
+
+        /// <summary>
+        /// true, solange Menü, Handy, Laptop, Fenster oder Dialog die Steuerung übernehmen – und noch
+        /// im Frame, in dem das letzte Fenster geschlossen wurde. Sonst würde derselbe Tastendruck
+        /// (B = Zurück/Ablegen, A = Bestätigen/Springen, E = Weiter/Benutzen) auch im Spiel wirken.
+        /// </summary>
+        public bool InputLocked => UiLocked || Time.frameCount <= _unlockFrame;
+        private bool UiLocked => _inMenu || _locks.Count > 0;
         public bool Paused => _pauses.Count > 0;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -194,11 +202,16 @@ namespace DropshippingGame
         // =====================================================================================
         public void Lock(string key, bool on)
         {
+            bool wasLocked = _locks.Count > 0;
             if (on) _locks.Add(key);
             else _locks.Remove(key);
             // Zurück im Spiel: Fokus von UI-Buttons lösen, sonst lösen Leertaste/Enter
             // (Springen) versteckte Buttons erneut aus.
-            if (!on && _locks.Count == 0) BlurUi();
+            if (!on && wasLocked && _locks.Count == 0)
+            {
+                BlurUi();
+                _unlockFrame = Time.frameCount;
+            }
             ApplyCursor();
         }
 
@@ -226,7 +239,7 @@ namespace DropshippingGame
 
         private void ApplyCursor()
         {
-            bool free = InputLocked;
+            bool free = UiLocked;
             Cursor.lockState = free ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = free;
         }

@@ -3449,7 +3449,7 @@ Label {
 /* Diagramme */
 .chart {
     height: 200px;
-    flex-grow: 1;
+    flex-shrink: 0;
 }
 
 .chart-label {

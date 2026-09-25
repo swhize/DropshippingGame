@@ -271,6 +271,7 @@ namespace DropshippingGame.UI
         {
             var b = Pressable(parent, onClick, classes);
             b.AddToClassList("row");
+            b.style.flexDirection = FlexDirection.Row;
             b.userData = new Gap { Size = gap, Horizontal = true };
             return b;
         }
@@ -279,6 +280,7 @@ namespace DropshippingGame.UI
         {
             var b = Pressable(parent, onClick, classes);
             b.AddToClassList("col");
+            b.style.flexDirection = FlexDirection.Column;
             b.userData = new Gap { Size = gap, Horizontal = false };
             return b;
         }
@@ -332,13 +334,20 @@ namespace DropshippingGame.UI
         public static VisualElement Bar(VisualElement parent, float value, Color? color = null, float height = 8f, float width = -1f)
         {
             var track = Div(parent, "bar");
+            // Feste Höhe (auch in gestreckten Spalten nicht höher werden), in Zeilen in die Breite wachsen.
             track.style.height = height;
+            track.style.minHeight = height;
+            track.style.maxHeight = height;
             if (width > 0)
             {
                 track.style.width = width;
                 track.style.flexShrink = 0;
             }
-            else track.style.flexGrow = 1;
+            else
+            {
+                track.style.flexGrow = 1;
+                track.style.flexShrink = 1;
+            }
             var fill = new VisualElement();
             fill.AddToClassList("bar-fill");
             fill.style.width = Length.Percent(Mathf.Clamp01(value) * 100f);

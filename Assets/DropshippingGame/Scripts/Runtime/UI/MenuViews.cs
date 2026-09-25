@@ -18,17 +18,17 @@ namespace DropshippingGame.UI
 
             Func<float, string> pct = v => Mathf.RoundToInt(v * 100f) + " %";
             var audio = Section(parent, "AUDIO", "music");
-            UIX.Slider(audio, "Gesamtlautstärke", 0f, 1f, Settings.MasterVolume, 0.05f, pct, v => { Settings.MasterVolume = v; Settings.Apply(); });
-            UIX.Slider(audio, "Musik", 0f, 1f, Settings.MusicVolume, 0.05f, pct, v => { Settings.MusicVolume = v; Settings.Apply(); });
-            UIX.Slider(audio, "Effekte", 0f, 1f, Settings.SfxVolume, 0.05f, pct, v => { Settings.SfxVolume = v; Settings.Apply(); });
+            UIX.Slider(audio, "Gesamtlautstärke", 0f, 1f, Settings.MasterVolume, 0.05f, pct, v => { Settings.MasterVolume = v; Settings.ApplyLive(); }, Commit);
+            UIX.Slider(audio, "Musik", 0f, 1f, Settings.MusicVolume, 0.05f, pct, v => { Settings.MusicVolume = v; Settings.ApplyLive(); }, Commit);
+            UIX.Slider(audio, "Effekte", 0f, 1f, Settings.SfxVolume, 0.05f, pct, v => { Settings.SfxVolume = v; Settings.ApplyLive(); }, Commit);
 
             var ctrl = Section(parent, "STEUERUNG", "gamepad");
-            UIX.Slider(ctrl, "Mausempfindlichkeit", 0.2f, 3f, Settings.MouseSensitivity, 0.1f, v => Fmt.Dec(v, 1), v => { Settings.MouseSensitivity = v; Settings.Apply(); });
-            UIX.Slider(ctrl, "Controller-Empfindlichkeit", 0.2f, 3f, Settings.PadSensitivity, 0.1f, v => Fmt.Dec(v, 1), v => { Settings.PadSensitivity = v; Settings.Apply(); });
+            UIX.Slider(ctrl, "Mausempfindlichkeit", 0.2f, 3f, Settings.MouseSensitivity, 0.1f, v => Fmt.Dec(v, 1), v => { Settings.MouseSensitivity = v; Settings.ApplyLive(); }, Commit);
+            UIX.Slider(ctrl, "Controller-Empfindlichkeit", 0.2f, 3f, Settings.PadSensitivity, 0.1f, v => Fmt.Dec(v, 1), v => { Settings.PadSensitivity = v; Settings.ApplyLive(); }, Commit);
             UIX.Toggle(ctrl, "Y-Achse invertieren", Settings.InvertY, on => { Settings.InvertY = on; Settings.Apply(); });
 
             var gfx = Section(parent, "GRAFIK", "sun");
-            UIX.Slider(gfx, "Sichtfeld (FOV)", 60f, 100f, Settings.Fov, 1f, v => Mathf.RoundToInt(v) + "°", v => { Settings.Fov = v; Settings.Apply(); });
+            UIX.Slider(gfx, "Sichtfeld (FOV)", 60f, 100f, Settings.Fov, 1f, v => Mathf.RoundToInt(v) + "°", v => { Settings.Fov = v; Settings.ApplyLive(); }, Commit);
             var q = UIX.Row(gfx, 14f, "slider-row");
             UIX.Text(q, "Grafikqualität", "slider-label");
             UIX.Segmented(q, Settings.QualityNames, Mathf.Clamp(Settings.Quality, 0, Settings.QualityNames.Length - 1), i =>
@@ -63,6 +63,9 @@ namespace DropshippingGame.UI
 
             if (onBack != null) UIX.Button(parent, "Fertig", onBack, "accent", false, "check").style.alignSelf = Align.FlexStart;
         }
+
+        /// <summary>Regler losgelassen (bzw. Tastatur/Controller): speichern.</summary>
+        private static void Commit(float _) => Settings.Apply();
 
         private static VisualElement Section(VisualElement parent, string title, string icon)
         {
