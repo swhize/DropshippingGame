@@ -10,9 +10,12 @@ namespace DropshippingGame
     /// Input System (bevorzugt) und mit dem alten Input Manager - je nachdem, was im Projekt aktiv ist.
     ///
     /// Belegung Tastatur: WASD laufen · Maus umsehen · E interagieren · G ablegen · Leertaste springen
-    /// · Shift sprinten · Strg/C ducken · Tab Laptop · Esc Pause · F1 Hilfe · F12 Screenshot
+    /// · Shift sprinten · Strg/C ducken · Tab Handy · Esc Pause/Zurück · F1 Hilfe · F12 Screenshot
+    /// · 1–4 Handy-App wählen
     /// Controller: linker Stick laufen · rechter Stick umsehen · X/Quadrat interagieren · B/Kreis ablegen
-    /// · A/Kreuz springen · L3 sprinten · R3 ducken · Y/Dreieck Laptop · Start Pause · Select Hilfe
+    /// bzw. zurück · A/Kreuz springen · L3 sprinten · R3 ducken · Y/Dreieck Handy · LB/RB App wechseln
+    /// · Start Pause · Select Hilfe
+    /// Den vollen Laptop „HustleOS“ gibt es nur am Schreibtisch (Station benutzen).
     /// </summary>
     public static class GameInput
     {
@@ -92,16 +95,77 @@ namespace DropshippingGame
             }
         }
 
+        /// <summary>
+        /// Einmal pro Frame (aus der Oberfläche) aufrufen: erkennt das zuletzt benutzte Gerät auch dann,
+        /// wenn gerade niemand Laufen/Umsehen abfragt (Menüs, Handy, Laptop).
+        /// </summary>
+        public static void PollDevice()
+        {
+#if ENABLE_INPUT_SYSTEM
+            var pad = Gamepad.current;
+            if (pad != null)
+            {
+                if (pad.dpad.ReadValue().sqrMagnitude > 0.25f || pad.leftStick.ReadValue().sqrMagnitude > 0.25f ||
+                    pad.rightStick.ReadValue().sqrMagnitude > 0.25f || pad.buttonSouth.wasPressedThisFrame ||
+                    pad.buttonEast.wasPressedThisFrame || pad.buttonWest.wasPressedThisFrame || pad.buttonNorth.wasPressedThisFrame ||
+                    pad.startButton.wasPressedThisFrame || pad.leftShoulder.wasPressedThisFrame || pad.rightShoulder.wasPressedThisFrame)
+                    UsingGamepad = true;
+            }
+            var mouse = Mouse.current;
+            if (mouse != null && (mouse.delta.ReadValue().sqrMagnitude > 9f || mouse.leftButton.wasPressedThisFrame)) UsingGamepad = false;
+            var kb = Keyboard.current;
+            if (kb != null && kb.anyKey.wasPressedThisFrame) UsingGamepad = false;
+#endif
+        }
+
+        /// <summary>Rechter Stick (vertikal) zum Scrollen in Handy, Laptop und Menüs. Positiv = nach unten.</summary>
+        public static float UiScroll
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                var pad = Gamepad.current;
+                if (pad == null) return 0f;
+                float y = pad.rightStick.ReadValue().y;
+                if (Mathf.Abs(y) < 0.2f) return 0f;
+                UsingGamepad = true;
+                return -y;
+#else
+                return 0f;
+#endif
+            }
+        }
+
         public static bool InteractDown => Key(KeyId.E) || PadDown(PadButton.West);
         public static bool DropDown => Key(KeyId.G) || PadDown(PadButton.East);
         public static bool JumpDown => Key(KeyId.Space) || PadDown(PadButton.South);
         public static bool SprintHeld => Held(KeyId.Shift) || PadHeld(PadButton.LeftStick);
         public static bool CrouchHeld => Held(KeyId.Ctrl) || Held(KeyId.C) || PadHeld(PadButton.RightStick);
-        public static bool LaptopDown => Key(KeyId.Tab) || PadDown(PadButton.North);
+        /// <summary>Handy öffnen/schließen (Tab / Y). Schließt auch den Laptop.</summary>
+        public static bool PhoneDown => Key(KeyId.Tab) || PadDown(PadButton.North);
+        /// <summary>Alter Name, bleibt für Kompatibilität erhalten (= <see cref="PhoneDown"/>).</summary>
+        public static bool LaptopDown => PhoneDown;
         public static bool PauseDown => Key(KeyId.Escape) || PadDown(PadButton.Start);
         public static bool CancelDown => Key(KeyId.Escape) || PadDown(PadButton.East) || PadDown(PadButton.Start);
         public static bool HelpDown => Key(KeyId.F1) || PadDown(PadButton.Select);
         public static bool ScreenshotDown => Key(KeyId.F12);
+        /// <summary>Vorherige App / vorheriger Reiter (LB).</summary>
+        public static bool PrevTabDown => PadDown(PadButton.LeftShoulder);
+        /// <summary>Nächste App / nächster Reiter (RB).</summary>
+        public static bool NextTabDown => PadDown(PadButton.RightShoulder);
+
+        /// <summary>Zifferntaste 1–4 gedrückt (für die Handy-Apps), sonst 0.</summary>
+        public static int NumberDown
+        {
+            get
+            {
+                if (Key(KeyId.D1)) return 1;
+                if (Key(KeyId.D2)) return 2;
+                if (Key(KeyId.D3)) return 3;
+                if (Key(KeyId.D4)) return 4;
+                return 0;
+            }
+        }
 
         /// <summary>Weiter im Dialog: E, Leertaste, Enter, linke Maustaste oder A/X am Controller.</summary>
         public static bool AdvanceDown =>
@@ -121,42 +185,82 @@ namespace DropshippingGame
             }
         }
 
-        public static string KeyLabel(string action)
+        /// <summary>Beschriftung der Taste für eine Aktion – passend zum zuletzt benutzten Gerät.</summary>
+        public static string KeyLabel(string action) => UsingGamepad ? PadLabel(action) : KeyboardLabel(action);
+
+        public static string KeyboardLabel(string action)
         {
-            if (!UsingGamepad)
-            {
-                switch (action)
-                {
-                    case "interact": return "E";
-                    case "drop": return "G";
-                    case "laptop": return "Tab";
-                    case "pause": return "Esc";
-                    case "help": return "F1";
-                    case "jump": return "Leertaste";
-                }
-                return action;
-            }
             switch (action)
             {
-                case "interact": return "X";
-                case "drop": return "B";
-                case "laptop": return "Y";
-                case "pause": return "Start";
-                case "help": return "Select";
-                case "jump": return "A";
+                case "interact": return "E";
+                case "drop": return "G";
+                case "phone":
+                case "laptop": return "Tab";
+                case "pause": return "Esc";
+                case "back": return "Esc";
+                case "help": return "F1";
+                case "jump": return "Leertaste";
+                case "sprint": return "Shift";
+                case "crouch": return "Strg";
+                case "tabs": return "1–4";
+                case "screenshot": return "F12";
+                case "confirm": return "Enter";
             }
             return action;
         }
 
+        public static string PadLabel(string action)
+        {
+            switch (action)
+            {
+                case "interact": return "X";
+                case "drop": return "B";
+                case "phone":
+                case "laptop": return "Y";
+                case "pause": return "Start";
+                case "back": return "B";
+                case "help": return "Select";
+                case "jump": return "A";
+                case "sprint": return "L3";
+                case "crouch": return "R3";
+                case "tabs": return "LB/RB";
+                case "screenshot": return "–";
+                case "confirm": return "A";
+            }
+            return action;
+        }
+
+        /// <summary>Tabelle für den Hilfe-Bildschirm: Aktion, Tastatur &amp; Maus, Controller.</summary>
+        public static readonly string[][] HelpTable =
+        {
+            new[] { "Laufen", "W A S D", "Linker Stick" },
+            new[] { "Umsehen", "Maus", "Rechter Stick" },
+            new[] { "Sprinten", "Shift", "L3" },
+            new[] { "Ducken", "Strg / C", "R3" },
+            new[] { "Springen", "Leertaste", "A" },
+            new[] { "Benutzen / Aufheben", "E", "X" },
+            new[] { "Ablegen", "G", "B" },
+            new[] { "Handy öffnen / schließen", "Tab", "Y" },
+            new[] { "Handy-App wechseln", "1 2 3 4", "LB / RB" },
+            new[] { "Laptop (am Schreibtisch)", "E", "X" },
+            new[] { "Laptop-App wechseln", "Maus", "LB / RB" },
+            new[] { "Auswählen", "Linksklick / Enter", "A" },
+            new[] { "Zurück / Schließen", "Esc", "B" },
+            new[] { "Scrollen", "Mausrad", "Rechter Stick" },
+            new[] { "Pause-Menü", "Esc", "Start" },
+            new[] { "Hilfe", "F1", "Select" },
+            new[] { "Screenshot", "F12", "–" },
+        };
+
         // ---- Intern -----------------------------------------------------------------------------------
         private enum KeyId
         {
-            E, G, Space, Shift, Ctrl, C, Tab, Escape, F1, F12, Enter,
+            E, G, Space, Shift, Ctrl, C, Tab, Escape, F1, F12, Enter, D1, D2, D3, D4,
         }
 
         private enum PadButton
         {
-            South, East, West, North, Start, Select, LeftStick, RightStick,
+            South, East, West, North, Start, Select, LeftStick, RightStick, LeftShoulder, RightShoulder,
         }
 
         private static bool Key(KeyId k)
@@ -177,13 +281,18 @@ namespace DropshippingGame
                 case KeyId.Escape: down = kb.escapeKey.wasPressedThisFrame; break;
                 case KeyId.F1: down = kb.f1Key.wasPressedThisFrame; break;
                 case KeyId.F12: down = kb.f12Key.wasPressedThisFrame; break;
-                case KeyId.Enter: down = kb.enterKey.wasPressedThisFrame; break;
+                case KeyId.Enter: down = kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame; break;
+                case KeyId.D1: down = kb.digit1Key.wasPressedThisFrame; break;
+                case KeyId.D2: down = kb.digit2Key.wasPressedThisFrame; break;
+                case KeyId.D3: down = kb.digit3Key.wasPressedThisFrame; break;
+                case KeyId.D4: down = kb.digit4Key.wasPressedThisFrame; break;
                 default: down = false; break;
             }
             if (down) UsingGamepad = false;
             return down;
 #elif ENABLE_LEGACY_INPUT_MANAGER
             bool down = Input.GetKeyDown(ToKeyCode(k));
+            if (k == KeyId.Enter && !down) down = Input.GetKeyDown(KeyCode.KeypadEnter);
             if (down) UsingGamepad = false;
             return down;
 #else
@@ -232,6 +341,10 @@ namespace DropshippingGame
                 case KeyId.F1: return KeyCode.F1;
                 case KeyId.F12: return KeyCode.F12;
                 case KeyId.Enter: return KeyCode.Return;
+                case KeyId.D1: return KeyCode.Alpha1;
+                case KeyId.D2: return KeyCode.Alpha2;
+                case KeyId.D3: return KeyCode.Alpha3;
+                case KeyId.D4: return KeyCode.Alpha4;
             }
             return KeyCode.None;
         }
@@ -263,6 +376,8 @@ namespace DropshippingGame
                 case PadButton.Select: down = pad.selectButton.wasPressedThisFrame; break;
                 case PadButton.LeftStick: down = pad.leftStickButton.wasPressedThisFrame; break;
                 case PadButton.RightStick: down = pad.rightStickButton.wasPressedThisFrame; break;
+                case PadButton.LeftShoulder: down = pad.leftShoulder.wasPressedThisFrame; break;
+                case PadButton.RightShoulder: down = pad.rightShoulder.wasPressedThisFrame; break;
                 default: down = false; break;
             }
             if (down) UsingGamepad = true;
