@@ -63,6 +63,7 @@ namespace DropshippingGame.UI
         private string _themeSig = "", _badgeSig = "", _tabSig = "";
         private int _animToken;
         private int _lastMinute = -1;
+        private float _pressedAt = -10f;
         private string _joke = "";
 
         public bool IsOpen { get; private set; }
@@ -112,6 +113,9 @@ namespace DropshippingGame.UI
         {
             _phone = UIX.Col(_layer, 0f, "smartphone", "os-theme");
             _phone.pickingMode = PickingMode.Position;
+            // Während eine Maustaste gedrückt ist, nicht neu bauen (sonst geht der Klick verloren).
+            _phone.RegisterCallback<PointerDownEvent>(_ => _pressedAt = Time.unscaledTime, TrickleDown.TrickleDown);
+            _phone.RegisterCallback<PointerUpEvent>(_ => _pressedAt = -10f, TrickleDown.TrickleDown);
             _screen = UIX.Col(_phone, 0f, "phone-screen");
             var status = UIX.Row(_screen, 0f, "phone-status");
             _time = UIX.Num(status, "08:00", true, "phone-time");
@@ -286,7 +290,8 @@ namespace DropshippingGame.UI
             }
             UIX.PadScroll(_scroll, dt);
             _dirtyT += dt;
-            if (_dirty && _dirtyT > 0.35f)
+            bool pressed = Time.unscaledTime - _pressedAt < 1.5f;
+            if (_dirty && _dirtyT > 0.35f && !pressed)
             {
                 _dirty = false;
                 _dirtyT = 0f;

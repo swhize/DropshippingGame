@@ -258,6 +258,7 @@ namespace DropshippingGame.UI
         private float _dirtyT, _topT;
         private string _themeSig = "", _badgeSig = "", _footSig = "";
         private bool _booted;
+        private float _pressedAt = -10f;
 
         public bool IsOpen { get; private set; }
         public string Current => _current;
@@ -296,6 +297,9 @@ namespace DropshippingGame.UI
                 if (e.target == _laptop) Game.Sim?.ClosePc();
             });
             _frame = UIX.Col(_laptop, 0f, "os-frame");
+            // Während eine Maustaste gedrückt ist, nicht neu bauen (sonst geht der Klick verloren).
+            _frame.RegisterCallback<PointerDownEvent>(_ => _pressedAt = Time.unscaledTime, TrickleDown.TrickleDown);
+            _frame.RegisterCallback<PointerUpEvent>(_ => _pressedAt = -10f, TrickleDown.TrickleDown);
             _screen = UIX.Col(_frame, 0f, "os-screen");
             var glow = UIX.Div(_screen, "os-glow");
             glow.style.position = Position.Absolute;
@@ -669,7 +673,8 @@ namespace DropshippingGame.UI
             {
                 Debug.LogException(e);
             }
-            if (_dirty && _dirtyT > 0.25f && canRebuild)
+            bool pressed = Time.unscaledTime - _pressedAt < 1.5f;
+            if (_dirty && _dirtyT > 0.25f && canRebuild && !pressed)
             {
                 _dirty = false;
                 _dirtyT = 0f;

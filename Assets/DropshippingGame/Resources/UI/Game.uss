@@ -2421,7 +2421,7 @@ Label {
 }
 
 .wordmark {
-    font-size: 80px;
+    font-size: 74px;
     -unity-font-style: bold;
     color: #FFFFFF;
     letter-spacing: -1.5px;

@@ -50,6 +50,7 @@ namespace DropshippingGame.UI
         private float _hudAlpha = 1f;
         private int _lastMore = -1;
         private int _lastMinute = -1;
+        private int _lastStars = -1;
 
         public HudView(VisualElement layer, VisualElement toastLayer, VisualElement celebrateLayer)
         {
@@ -69,6 +70,7 @@ namespace DropshippingGame.UI
                 _lastMoney = int.MinValue;
                 _ticketSig = "";
                 _lastMinute = -1;
+                _lastStars = -1;
                 _boostSig = "";
                 _hintSig = "";
                 Refresh();
@@ -319,8 +321,13 @@ namespace DropshippingGame.UI
 
             bool business = sim.StoryStage == "business";
             _day.text = business ? UiFmt.DayShort(sim.Day) : "Kalles Imbiss";
-            _stars.Clear();
-            UIX.Stars(_stars, sim.Reputation, 12f);
+            int starCount = Mathf.RoundToInt(sim.Reputation);
+            if (starCount != _lastStars)
+            {
+                _lastStars = starCount;
+                _stars.Clear();
+                UIX.Stars(_stars, sim.Reputation, 12f);
+            }
             _rating.text = Fmt.Rating(sim.Reputation);
             _level.text = "LV " + sim.Level;
             float lp = sim.LevelProgress();
