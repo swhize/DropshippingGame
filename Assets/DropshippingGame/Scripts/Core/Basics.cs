@@ -165,6 +165,14 @@ namespace DropshippingGame.Core
 
         public static string Pct(float v) => (v >= 0 ? "+" : "−") + Math.Abs(v * 100f).ToString("0.0", Inv).Replace('.', ',') + " %";
 
+        /// <summary>Spieldauer in Minuten: "45 min" oder "1:05 h".</summary>
+        public static string Duration(float minutes)
+        {
+            int m = Math.Max(0, (int)Math.Ceiling(minutes - 0.001f));
+            if (m < 60) return m.ToString(Inv) + " min";
+            return (m / 60).ToString(Inv) + ":" + (m % 60).ToString("00", Inv) + " h";
+        }
+
         public static string Thousands(int v)
         {
             if (v >= 1000000) return Dec(v / 1000000f, 1) + " Mio.";

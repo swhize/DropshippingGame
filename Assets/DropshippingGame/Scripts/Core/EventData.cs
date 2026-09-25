@@ -8,6 +8,16 @@ namespace DropshippingGame.Core
         public string Product = "";
     }
 
+    /// <summary>v3.0: Ereignis setzt ein Produkt in eine Trend-Phase.</summary>
+    public sealed class HypeEffect
+    {
+        public TrendPhase Phase = TrendPhase.Rising;
+        /// <summary>Höhe des Hypes (0 = Standard).</summary>
+        public float Peak;
+        /// <summary>"" oder "random_listed" = Produkt aus dem Ereignis-Kontext, sonst eine Produkt-ID.</summary>
+        public string Product = "";
+    }
+
     /// <summary>Wirkungen eines Ereignisses oder einer Entscheidung. Nicht gesetzte Felder wirken nicht.</summary>
     public sealed class Effects
     {
@@ -30,6 +40,25 @@ namespace DropshippingGame.Core
         public float? TikTok;
         public string AssetId;
         public float AssetMult = 1f;
+
+        // ---- v3.0 ---------------------------------------------------------------------------------
+        /// <summary>Trend-Phase für ein Produkt setzen.</summary>
+        public HypeEffect Hype;
+        /// <summary>So viele Retouren aus zuletzt verkaufter Ware treffen bald ein.</summary>
+        public int? ReturnWave;
+        /// <summary>"offer" = Großauftrags-Angebot(e), "accept" = sofort annehmen (falls ein Platz frei ist).</summary>
+        public string Contract;
+        public float ContractBonus = 1f;
+        public int ContractCount = 1;
+        /// <summary>Eilauftrag: Frist des Kontext-Auftrags 1 Tag kürzer, Vergütung × Wert.</summary>
+        public float? ContractRush;
+        /// <summary>Zusätzliche Express-Chance für <see cref="ExpressBoostMinutes"/>.</summary>
+        public float? ExpressBoost;
+        public float ExpressBoostMinutes = 180f;
+        /// <summary>Zusätzliche Skillpunkte.</summary>
+        public int? SkillPoints;
+        /// <summary>Bonus-Wochenziel "Kalles Wette" ({n} Pakete bis Sonntag).</summary>
+        public bool BonusChallenge;
     }
 
     public sealed class Outcome
@@ -55,6 +84,10 @@ namespace DropshippingGame.Core
 
     public sealed class EventDef
     {
+        /// <summary>
+        /// Titel, Absender und Text dürfen Platzhalter enthalten, die beim Auslösen ersetzt werden:
+        /// {product} (Produkt aus dem Kontext), {tag} (Hashtag), {company} (Firma), {n} (Zahl), {brand}.
+        /// </summary>
         public string Id, Title, Sender, Icon, Text;
         public int MinLevel = 1, MinDay = 2, Cooldown = 3, Default = -1;
         public int? MinMoney, MaxMoney, Stage;
@@ -84,9 +117,13 @@ namespace DropshippingGame.Core
             new EventDef
             {
                 Id = "viral", Title = "Du gehst viral!", Sender = "TikTok", Icon = "fire",
-                Text = "Ein Video mit deinem Produkt hat über Nacht 2 Millionen Aufrufe. Die Nachfrage explodiert!",
+                Text = "Ein Video mit {product} hat über Nacht 2 Millionen Aufrufe. Die Nachfrage explodiert – und der Hype fängt gerade erst an!",
                 Needs = "listed", Cooldown = 4, Weight = 1f,
-                Effects = new Effects { Boost = new BoostEffect { Mult = 3f, Minutes = 120f, Name = "Viraler Hit", Product = "random_listed" }, Awareness = 0.1f },
+                Effects = new Effects
+                {
+                    Boost = new BoostEffect { Mult = 3f, Minutes = 120f, Name = "Viraler Hit", Product = "random_listed" }, Awareness = 0.1f,
+                    Hype = new HypeEffect { Phase = TrendPhase.Rising, Peak = 1.9f },
+                },
             },
             new EventDef
             {
@@ -271,6 +308,133 @@ namespace DropshippingGame.Core
                 Id = "to_the_moon", Title = "DROPCOIN to the moon", Sender = "Finanznews", Icon = "trend",
                 Text = "Ein Tech-Milliardär hat ein Hunde-Meme mit DROPCOIN gepostet. Der Kurs explodiert.",
                 MinLevel = 3, Cooldown = 6, Weight = 0.6f, Effects = new Effects { AssetId = "DROP", AssetMult = 2.2f },
+            },
+
+            // ================= v3.0: Ereignisse für Retouren, Trends, Großaufträge, Skills, Wochenziele =================
+            new EventDef
+            {
+                Id = "retourenwelle", Title = "Retourenwelle!", Sender = "Kundenservice-Postfach", Icon = "box",
+                Text = "Ein Influencer erklärt in einem viralen Video, wie man „einfach alles zurückschickt, was nicht perfekt ist“. Ein paar deiner Kundinnen und Kunden haben zugeschaut.",
+                Needs = "shipped15", MinLevel = 2, Cooldown = 6, Weight = 0.7f, Default = 1,
+                Choices = new[]
+                {
+                    new Choice { Label = "Kulanz-Gutscheine verschicken", Cost = 60, Outcomes = new[] { O(1f, "Die meisten behalten ihre Ware doch – und freuen sich über den Gutschein.", new Effects { ReturnWave = 1, Rep = 0.05f }) } },
+                    new Choice { Label = "Hinnehmen", Outcomes = new[] { O(1f, "Die Pakete sind schon auf dem Rückweg. Tja.", new Effects { ReturnWave = 3 }) } },
+                },
+            },
+            new EventDef
+            {
+                Id = "grosskunde", Title = "Großkunde fragt an", Sender = "{company}", Icon = "factory",
+                Text = "Wir haben von Ihrem Shop gehört! Wir brauchen dringend {product} in größerer Menge – und zahlen 30 % über dem üblichen Preis. Interesse?",
+                MinLevel = 3, Cooldown = 5, Weight = 0.9f, Default = 1,
+                Choices = new[]
+                {
+                    new Choice { Label = "Sofort zusagen", Outcomes = new[] { O(1f, "Handschlag per Mail. Ab zum Palettenplatz!", new Effects { Contract = "accept", ContractBonus = 1.3f }) } },
+                    new Choice { Label = "Erst mal ansehen", Outcomes = new[] { O(1f, "Das Angebot liegt in der App 'Aufträge' – gültig bis morgen Abend.", new Effects { Contract = "offer", ContractBonus = 1.3f }) } },
+                    new Choice { Label = "Absagen", Outcomes = new[] { O(1f, "„Schade. Dann fragen wir halt bei BilligBoy24.“") } },
+                },
+            },
+            new EventDef
+            {
+                Id = "trend_alarm", Title = "Trend-Alarm!", Sender = "Trendradar", Icon = "fire",
+                Text = "#{tag} trendet! Auf TikTok filmen sich gerade alle mit {product}. Das könnte richtig groß werden.",
+                Needs = "listed", MinLevel = 2, Cooldown = 4, Weight = 0.9f,
+                Effects = new Effects { Hype = new HypeEffect { Phase = TrendPhase.Rising, Peak = 1.9f } },
+            },
+            new EventDef
+            {
+                Id = "trend_crash", Title = "Verriss im Netz", Sender = "Tech-Blog „Gadget-Gurus“", Icon = "trend_down",
+                Text = "Ein bekannter Tech-YouTuber nennt {product} „Elektroschrott mit Ringlicht“. Die Kommentare eskalieren. Reagierst du?",
+                Needs = "listed", MinLevel = 3, Cooldown = 6, Weight = 0.6f, Default = 1,
+                Choices = new[]
+                {
+                    new Choice
+                    {
+                        Label = "Reaktionsvideo drehen", Outcomes = new[]
+                        {
+                            O(0.5f, "Dein Video ist lustiger als seins. Plötzlich ist {product} wieder cool!", new Effects { Awareness = 0.05f, Hype = new HypeEffect { Phase = TrendPhase.Rising, Peak = 1.7f } }),
+                            O(0.5f, "Niemand schaut es. Der Hype ist tot.", new Effects { Hype = new HypeEffect { Phase = TrendPhase.Dead } }),
+                        },
+                    },
+                    new Choice { Label = "Aussitzen", Outcomes = new[] { O(1f, "Du wartest ab. Die Nachfrage sackt erst mal ab.", new Effects { Hype = new HypeEffect { Phase = TrendPhase.Falling } }) } },
+                },
+            },
+            new EventDef
+            {
+                Id = "express_rush", Title = "Express-Fieber", Sender = "PaketBlitz", Icon = "bolt",
+                Text = "Bei BilligBoy24 streiken die Paketboten. Die Leute wollen es heute schnell – und zahlen gern dafür. Drei Stunden lang kommen deutlich mehr Express-Bestellungen!",
+                MinLevel = 2, Cooldown = 5, Weight = 0.7f,
+                Effects = new Effects { ExpressBoost = 0.3f, ExpressBoostMinutes = 180f, Boost = new BoostEffect { Mult = 1.2f, Minutes = 180f, Name = "Express-Fieber" } },
+            },
+            new EventDef
+            {
+                Id = "eilauftrag", Title = "Eilauftrag!", Sender = "{company}", Icon = "clock",
+                Text = "Planänderung: Wir brauchen die Lieferung ({product}) einen Tag früher. Dafür legen wir 30 % drauf. Schaffen Sie das?",
+                Needs = "contract_rushable", MinLevel = 3, Cooldown = 5, Weight = 0.8f, Default = 1,
+                Choices = new[]
+                {
+                    new Choice { Label = "Klar, machen wir!", Outcomes = new[] { O(1f, "Der Auftrag ist jetzt 30 % mehr wert – aber die Frist ist einen Tag kürzer.", new Effects { ContractRush = 1.3f }) } },
+                    new Choice { Label = "Nein, es bleibt beim Termin", Outcomes = new[] { O(1f, "„Verstehe. Dann wie besprochen.“ Ein bisschen enttäuscht klingt es schon.") } },
+                },
+            },
+            new EventDef
+            {
+                Id = "kuriose_retoure", Title = "Kuriose Retoure", Sender = "Retourenabteilung", Icon = "box",
+                Text = "In einem Rücksendepaket lag statt {product} ein benutzter Toaster. Dazu ein Zettel: „Passt schon.“ Was machst du damit?",
+                Needs = "returns", Cooldown = 10, Weight = 0.6f, Default = 0,
+                Choices = new[]
+                {
+                    new Choice { Label = "Bei eBay verkaufen", Outcomes = new[] { O(1f, "Ein Sammler zahlt 25 € für den „Vintage-Toaster“. Business ist Business.", new Effects { Money = 25 }) } },
+                    new Choice
+                    {
+                        Label = "Foto posten", Outcomes = new[]
+                        {
+                            O(0.6f, "„Kunde schickt Toaster zurück“ geht durch die Decke. Gratis-Werbung!", new Effects { Awareness = 0.06f, Boost = new BoostEffect { Mult = 1.3f, Minutes = 60f, Name = "Toaster-Meme" } }),
+                            O(0.4f, "Drei Likes. Einer davon von deiner Mama."),
+                        },
+                    },
+                    new Choice { Label = "Dem Kunden zurückschicken", Outcomes = new[] { O(1f, "Der Kunde ist so gerührt, dass er dir fünf Sterne gibt.", new Effects { Rep = 0.05f }) } },
+                },
+            },
+            new EventDef
+            {
+                Id = "seminar", Title = "Hustle-Seminar", Sender = GameData.CoachName, Icon = "mic",
+                Text = "Exklusives Wochenend-Seminar „Vom Pleitier zum Privatjet“ – nur 400 €, mit Zertifikat (selbst ausgedruckt). Bist du dabei?",
+                MinLevel = 3, MinMoney = 700, Cooldown = 12, Weight = 0.4f, Default = 1,
+                Choices = new[]
+                {
+                    new Choice
+                    {
+                        Label = "Anmelden", Cost = 400, Outcomes = new[]
+                        {
+                            O(0.75f, "Überraschend gut! Du lernst tatsächlich was: +1 Skillpunkt.", new Effects { SkillPoints = 1 }),
+                            O(0.25f, "Das Seminar war eine Werbeveranstaltung für ein weiteres Seminar. Immerhin gab es Kekse."),
+                        },
+                    },
+                    new Choice { Label = "Nein danke", Outcomes = new[] { O(1f, "Marvin: „Deine Konkurrenz sitzt jetzt im Seminar!“ Du sitzt lieber im Lager.") } },
+                },
+            },
+            new EventDef
+            {
+                Id = "kalles_wette", Title = "Kalles Wette", Sender = "Kalle", Icon = "phone",
+                Text = "Ey, Unternehmer. Ich wette, du schaffst diese Woche keine {n} Pakete mehr. Wenn doch: Döner geht auf mich. Und ich leg noch was drauf.",
+                Needs = "early_week", MinDay = 3, Cooldown = 7, Weight = 0.7f, Default = 1,
+                Choices = new[]
+                {
+                    new Choice { Label = "Die Wette gilt!", Outcomes = new[] { O(1f, "Kalle: „Abgemacht. Und wehe, du schummelst.“ (Neues Wochenziel!)", new Effects { BonusChallenge = true }) } },
+                    new Choice { Label = "Keine Zeit für Wetten", Outcomes = new[] { O(1f, "Kalle: „Pff. Feigling.“ *legt auf*") } },
+                },
+            },
+            new EventDef
+            {
+                Id = "messe", Title = "Einladung zur Messe", Sender = "Dropshipping-Expo Kleinkleckersdorf", Icon = "calendar",
+                Text = "Ein Stand auf der Dropshipping-Expo kostet 250 €. Dafür gibt es Kontakte zu Firmen, Kaffee aus Pappbechern und garantiert zwei Großanfragen.",
+                MinLevel = 4, MinMoney = 400, Cooldown = 8, Weight = 0.5f, Default = 1,
+                Choices = new[]
+                {
+                    new Choice { Label = "Hin da!", Cost = 250, Outcomes = new[] { O(1f, "Du verteilst 300 Visitenkarten und isst 14 Gratis-Kekse. Zwei Firmen melden sich!", new Effects { Contract = "offer", ContractCount = 2, ContractBonus = 1.1f }) } },
+                    new Choice { Label = "Keine Zeit", Outcomes = new[] { O(1f, "Du hörst später, dass es dort Gratis-Kugelschreiber gab. Schade.") } },
+                },
             },
         };
 

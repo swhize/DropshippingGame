@@ -56,10 +56,13 @@ namespace DropshippingGame.Core
         {
             var s = ReadSaveFile(slot);
             if (s == null) return null;
+            int day = J.I(s, "day", 1);
             return new SaveSummary
             {
-                Slot = slot, Day = J.I(s, "day", 1), Money = J.I(s, "money"), Brand = J.S(s, "brand_name", ""),
+                Slot = slot, Day = day, Money = J.I(s, "money"), Brand = J.S(s, "brand_name", ""),
                 Level = J.I(s, "level", 1), Story = J.S(s, "story_stage", "business"), SavedUnix = (long)J.F(s, "saved_unix"),
+                Version = J.I(s, "version", 1), Weekday = GameData.WeekdayOf(day), Rating = J.F(s, "reputation", 3f),
+                Stage = J.I(s, "location_stage"),
             };
         }
 
@@ -101,7 +104,7 @@ namespace DropshippingGame.Core
             var brand = new List<object>();
             foreach (var b in PackagingBrand) brand.Add(new Dictionary<string, object> { { "color", b.Color.ToJson() }, { "logo", b.Logo } });
 
-            return new Dictionary<string, object>
+            var state = new Dictionary<string, object>
             {
                 { "version", SaveVersion }, { "money", Money }, { "day", Day }, { "time_minutes", (double)TimeMinutes },
                 { "story_stage", StoryStage }, { "intro_step", IntroStep }, { "tutorial_step", TutorialStep },
@@ -127,6 +130,48 @@ namespace DropshippingGame.Core
                 { "market", Market.ToJson() }, { "events", Events.ToJson() },
                 { "saved_unix", DateTimeOffset.UtcNow.ToUnixTimeSeconds() },
             };
+            AddV4State(state);
+            return state;
+        }
+
+        /// <summary>v4 (v3.0-Update): Bestellzettel, Retouren, Trends, Großaufträge, Skills, Wochenziele.</summary>
+        private void AddV4State(Dictionary<string, object> state)
+        {
+            var launch = new Dictionary<string, object>();
+            foreach (var kv in LaunchOrders) launch[kv.Key] = (double)kv.Value;
+            var lastBuy = new Dictionary<string, object>();
+            foreach (var kv in LastPurchase)
+                if (kv.Value != null && kv.Value.Length >= 2) lastBuy[kv.Key] = new List<object> { kv.Value[0], kv.Value[1] };
+            var retPer = new Dictionary<string, object>();
+            foreach (var kv in ReturnsPerProduct) retPer[kv.Key] = kv.Value;
+            var offerTimes = new List<object>();
+            foreach (var t in ContractOfferTimes) offerTimes.Add((double)t);
+
+            state["explained"] = Flags(Explained);
+            state["orders_in_work"] = JList(OrdersInWork, o => o.ToJson());
+            state["next_order_id"] = NextOrderId;
+            state["launch_orders"] = launch;
+            state["express_boost_until"] = (double)ExpressBoostUntil;
+            state["express_boost_chance"] = (double)ExpressBoostChance;
+            state["last_purchase"] = lastBuy;
+            state["returns_incoming"] = JList(ReturnsIncoming, r => r.ToJson());
+            state["dock_returns"] = JList(DockReturns, r => r.ToJson());
+            state["total_returns"] = TotalReturns;
+            state["total_refunds"] = TotalRefunds;
+            state["total_returns_restocked"] = TotalReturnsRestocked;
+            state["total_returns_disposed"] = TotalReturnsDisposed;
+            state["returns_per_product"] = retPer;
+            state["trends"] = Trends.ToJson();
+            state["contracts"] = JList(Contracts, c => c.ToJson());
+            state["next_contract_id"] = NextContractId;
+            state["total_contracts_done"] = TotalContractsDone;
+            state["total_contracts_failed"] = TotalContractsFailed;
+            state["contract_offer_times"] = offerTimes;
+            state["skills"] = Flags(Skills);
+            state["bonus_skill_points"] = BonusSkillPoints;
+            state["challenges"] = JList(Challenges, c => c.ToJson());
+            state["challenge_week"] = ChallengeWeek;
+            state["total_challenges_done"] = TotalChallengesDone;
         }
 
         /// <summary>Speichert in den aktuellen Slot. Das Imbiss-Intro wird nicht gespeichert.</summary>
@@ -263,7 +308,75 @@ namespace DropshippingGame.Core
             Events.FromJson(J.O(s, "events"));
             DayOver = false;
             if (TimeMinutes >= GameData.DayEnd) TimeMinutes = GameData.DayEnd - 1f;
+            ReadV4State(s);
             RaiseEconomyChanged();
+        }
+
+        /// <summary>Liest die v4-Felder. Fehlen sie (Spielstand v3), gelten sinnvolle Standardwerte.</summary>
+        private void ReadV4State(Dictionary<string, object> s)
+        {
+            ReadFlags(s, "explained", Explained);
+            OrdersInWork.Clear();
+            foreach (var o in J.A(s, "orders_in_work"))
+            {
+                var ord = Order.FromJson(o);
+                if (ord.Stage == OrderStage.Queued) ord.Stage = OrderStage.Picked;
+                OrdersInWork.Add(ord);
+            }
+            NextOrderId = Math.Max(GameData.FirstOrderId, J.I(s, "next_order_id", GameData.FirstOrderId));
+            LaunchOrders.Clear();
+            foreach (var kv in J.O(s, "launch_orders"))
+                if (GameData.IsProduct(kv.Key)) LaunchOrders[kv.Key] = J.F(kv.Value);
+            ExpressBoostUntil = J.F(s, "express_boost_until", -1f);
+            ExpressBoostChance = J.F(s, "express_boost_chance");
+            LastPurchase.Clear();
+            foreach (var kv in J.O(s, "last_purchase"))
+                if (GameData.IsProduct(kv.Key) && kv.Value is List<object> l && l.Count >= 2)
+                    LastPurchase[kv.Key] = new[] { J.I(l[0]), J.I(l[1]) };
+
+            ReturnsIncoming.Clear();
+            foreach (var r in J.A(s, "returns_incoming")) ReturnsIncoming.Add(PendingReturn.FromJson(r));
+            DockReturns.Clear();
+            foreach (var r in J.A(s, "dock_returns"))
+            {
+                var item = ItemData.FromJson(r);
+                item.Kind = ItemKind.Return;
+                if (GameData.IsProduct(item.Product)) DockReturns.Add(item);
+            }
+            TotalReturns = J.I(s, "total_returns");
+            TotalRefunds = J.I(s, "total_refunds");
+            TotalReturnsRestocked = J.I(s, "total_returns_restocked");
+            TotalReturnsDisposed = J.I(s, "total_returns_disposed");
+            ReturnsPerProduct.Clear();
+            foreach (var kv in J.O(s, "returns_per_product"))
+                if (GameData.IsProduct(kv.Key)) ReturnsPerProduct[kv.Key] = J.I(kv.Value);
+
+            Trends.FromJson(J.O(s, "trends"));
+
+            Contracts.Clear();
+            foreach (var c in J.A(s, "contracts")) Contracts.Add(Contract.FromJson(c));
+            NextContractId = J.I(s, "next_contract_id", 1);
+            foreach (var c in Contracts) NextContractId = Math.Max(NextContractId, c.Id + 1);
+            TotalContractsDone = J.I(s, "total_contracts_done");
+            TotalContractsFailed = J.I(s, "total_contracts_failed");
+            ContractOfferTimes.Clear();
+            foreach (var t in J.A(s, "contract_offer_times")) ContractOfferTimes.Add(J.F(t));
+            ContractOfferTimes.Sort();
+
+            ReadFlags(s, "skills", Skills);
+            Skills.RemoveWhere(id => GameData.Skill(id) == null);
+            BonusSkillPoints = Math.Max(0, J.I(s, "bonus_skill_points"));
+
+            Challenges.Clear();
+            foreach (var c in J.A(s, "challenges")) Challenges.Add(WeeklyChallenge.FromJson(c));
+            ChallengeWeek = J.I(s, "challenge_week");
+            TotalChallengesDone = J.I(s, "total_challenges_done");
+
+            FixupLegacyOrders();
+            ReconcileOrdersInWork();
+            // Alte Spielstände (v3) bekommen sofort Wochenziele für die laufende Woche (anteilig).
+            int version = J.I(s, "version", 1);
+            if (StoryStage == "business" && (version < 4 || (ChallengeWeek > 0 && ChallengeWeek != Week))) StartWeek(false);
         }
 
         public void DeleteSave(int slot)

@@ -66,6 +66,8 @@ namespace DropshippingGame.Core
         public string Id, Title, Desc, Type;
         public float Target;
         public int Reward;
+        /// <summary>v3.0: Erfahrungspunkte als zusätzliche Belohnung.</summary>
+        public int Xp;
         public bool Final;
     }
 
@@ -90,8 +92,10 @@ namespace DropshippingGame.Core
     /// <summary>
     /// Alle festen Spieldaten an einem Ort: Katalog, Balancing, Freischaltungen und Texte.
     /// Reine Konstanten - der veränderliche Spielzustand liegt in <see cref="Sim"/>.
+    /// Die Inhalte der v3.0-Systeme (Bestellzettel, Retouren, Trends, Großaufträge, Skills,
+    /// Wochenziele) stehen in <c>GameData.Content.cs</c>.
     /// </summary>
-    public static class GameData
+    public static partial class GameData
     {
         // ---- Zeit -------------------------------------------------------------------------
         public const float DayStart = 480f;            // 08:00
@@ -196,13 +200,13 @@ namespace DropshippingGame.Core
 
         public static readonly Dictionary<int, string> LevelUnlocks = new Dictionary<int, string>
         {
-            { 2, "LED-Lichterkette · Premium-Hersteller · Facebook-Ads · TikTok · Großbestellung · Verkaufsstand" },
-            { 3, "Massagepistole · Trading-App · Shop-Server-Upgrade · größerer Kredit" },
+            { 2, "LED-Lichterkette · Express-Bestellungen · Premium-Hersteller · Facebook-Ads · TikTok · Großbestellung · Verkaufsstand" },
+            { 3, "Massagepistole · Großaufträge (B2B) · Skill-Stufe 2 · Trading-App · Shop-Server-Upgrade · größerer Kredit" },
             { 4, "Lagerhalle kaufbar · Bluetooth-Kopfhörer" },
-            { 5, "Ringlicht · Personal · Palettenbestellung · eigener Lieferwagen" },
+            { 5, "Ringlicht · Personal · Palettenbestellung · eigener Lieferwagen · Skill-Stufe 3 · 2 Großaufträge gleichzeitig" },
             { 6, "Katzen-Trinkbrunnen · Google-Ads · Förderband" },
-            { 7, "Haltungskorrektor · Influencer-Kampagnen · Großkredit" },
-            { 8, "Smartwatch · Hochregal-Erweiterung" },
+            { 7, "Haltungskorrektor · Influencer-Kampagnen · Großkredit · Skill-Stufe 4" },
+            { 8, "Smartwatch · Hochregal-Erweiterung · 3 Großaufträge gleichzeitig" },
             { 9, "Mini-Beamer" },
             { 10, "Kamera-Drohne · Legendenstatus" },
         };
@@ -251,18 +255,20 @@ namespace DropshippingGame.Core
 
         public static readonly GoalDef[] Goals =
         {
-            new GoalDef { Id = "first_sale", Title = "Der erste Verkauf", Desc = "Verschicke dein erstes Paket.", Type = "shipped", Target = 1, Reward = 50 },
-            new GoalDef { Id = "brand", Title = "Eine echte Marke", Desc = "Gib deinem Shop in der Branding-App einen eigenen Namen.", Type = "brand", Target = 1, Reward = 25 },
-            new GoalDef { Id = "ship10", Title = "Läuft bei dir", Desc = "Verschicke 10 Pakete.", Type = "shipped", Target = 10, Reward = 100 },
-            new GoalDef { Id = "rev1k", Title = "Vierstellig", Desc = "Erreiche 1.000 € Umsatz.", Type = "revenue", Target = 1000, Reward = 150 },
-            new GoalDef { Id = "stand10", Title = "Straßenhändler", Desc = "Verkaufe 10 Artikel am Verkaufsstand.", Type = "stand", Target = 10, Reward = 120 },
-            new GoalDef { Id = "rating4", Title = "Kundenliebling", Desc = "Erreiche eine Bewertung von 4,0 Sternen.", Type = "rating", Target = 4.0f, Reward = 200 },
-            new GoalDef { Id = "ship100", Title = "Paketprofi", Desc = "Verschicke 100 Pakete.", Type = "shipped", Target = 100, Reward = 300 },
-            new GoalDef { Id = "warehouse", Title = "Raus aus der Garage", Desc = "Kaufe die Lagerhalle (Ausbau-App).", Type = "stage", Target = 1, Reward = 500 },
-            new GoalDef { Id = "staff1", Title = "Chef sein", Desc = "Stelle deinen ersten Mitarbeiter ein.", Type = "staff", Target = 1, Reward = 200 },
-            new GoalDef { Id = "rev10k", Title = "Fünfstellig", Desc = "Erreiche 10.000 € Umsatz.", Type = "revenue", Target = 10000, Reward = 1000 },
+            new GoalDef { Id = "first_sale", Title = "Der erste Verkauf", Desc = "Verschicke dein erstes Paket.", Type = "shipped", Target = 1, Reward = 50, Xp = 30 },
+            new GoalDef { Id = "brand", Title = "Eine echte Marke", Desc = "Gib deinem Shop in der Branding-App einen eigenen Namen.", Type = "brand", Target = 1, Reward = 25, Xp = 15 },
+            new GoalDef { Id = "ship10", Title = "Läuft bei dir", Desc = "Verschicke 10 Pakete.", Type = "shipped", Target = 10, Reward = 100, Xp = 30 },
+            new GoalDef { Id = "rev1k", Title = "Vierstellig", Desc = "Erreiche 1.000 € Umsatz.", Type = "revenue", Target = 1000, Reward = 150, Xp = 40 },
+            new GoalDef { Id = "stand10", Title = "Straßenhändler", Desc = "Verkaufe 10 Artikel am Verkaufsstand.", Type = "stand", Target = 10, Reward = 120, Xp = 30 },
+            new GoalDef { Id = "rating4", Title = "Kundenliebling", Desc = "Erreiche eine Bewertung von 4,0 Sternen.", Type = "rating", Target = 4.0f, Reward = 200, Xp = 40 },
+            new GoalDef { Id = "first_contract", Title = "Business to Business", Desc = "Erfülle deinen ersten Großauftrag (App 'Aufträge', ab Level 3).", Type = "contracts", Target = 1, Reward = 250, Xp = 50 },
+            new GoalDef { Id = "ship100", Title = "Paketprofi", Desc = "Verschicke 100 Pakete.", Type = "shipped", Target = 100, Reward = 300, Xp = 60 },
+            new GoalDef { Id = "challenges3", Title = "Wochenheld", Desc = "Schaffe insgesamt 3 Wochenziele.", Type = "challenges", Target = 3, Reward = 300, Xp = 60 },
+            new GoalDef { Id = "warehouse", Title = "Raus aus der Garage", Desc = "Kaufe die Lagerhalle (Ausbau-App).", Type = "stage", Target = 1, Reward = 500, Xp = 80 },
+            new GoalDef { Id = "staff1", Title = "Chef sein", Desc = "Stelle deinen ersten Mitarbeiter ein.", Type = "staff", Target = 1, Reward = 200, Xp = 50 },
+            new GoalDef { Id = "rev10k", Title = "Fünfstellig", Desc = "Erreiche 10.000 € Umsatz.", Type = "revenue", Target = 10000, Reward = 1000, Xp = 120 },
             new GoalDef { Id = "level7", Title = "Volles Sortiment", Desc = "Erreiche Firmenlevel 7.", Type = "level", Target = 7, Reward = 1500 },
-            new GoalDef { Id = "staff4", Title = "Kleines Team", Desc = "Beschäftige 4 Mitarbeiter gleichzeitig.", Type = "staff", Target = 4, Reward = 1000 },
+            new GoalDef { Id = "staff4", Title = "Kleines Team", Desc = "Beschäftige 4 Mitarbeiter gleichzeitig.", Type = "staff", Target = 4, Reward = 1000, Xp = 100 },
             new GoalDef { Id = "rev100k", Title = "Imperium", Desc = "Erreiche 100.000 € Umsatz. Kalle wird staunen.", Type = "revenue", Target = 100000, Reward = 10000, Final = true },
         };
 
@@ -306,32 +312,80 @@ namespace DropshippingGame.Core
         // ---- Bewertungen ---------------------------------------------------------------------------
         public static readonly Dictionary<int, string[]> ReviewTexts = new Dictionary<int, string[]>
         {
-            { 5, new[] { "Top! Kam super schnell an.", "Genau wie beschrieben, gerne wieder.", "Meine Oma liebt es. 10/10.", "Die Verpackung allein ist schon ein Erlebnis.", "Schneller als der Pizzadienst!" } },
-            { 4, new[] { "Gutes Produkt, Versand okay.", "Macht, was es soll.", "Solide. Karton war etwas zerdrückt.", "Würde wieder kaufen." } },
-            { 3, new[] { "Naja. Hatte es mir größer vorgestellt.", "Ganz okay für den Preis.", "Hat gedauert, ist aber angekommen." } },
-            { 2, new[] { "Riecht irgendwie nach Plastik.", "Hat ewig gedauert.", "Anleitung nur auf Chinesisch." } },
-            { 1, new[] { "Nie angekommen. Nie wieder!", "Nach fünf Minuten kaputt.", "Ich will mein Geld zurück!!!", "Sieht nicht aus wie auf dem Foto." } },
+            { 5, new[]
+            {
+                "Top! Kam super schnell an.", "Genau wie beschrieben, gerne wieder.", "Meine Oma liebt es. 10/10.",
+                "Die Verpackung allein ist schon ein Erlebnis.", "Schneller als der Pizzadienst!", "Unboxing war besser als Weihnachten.",
+                "Hat meine Ehe gerettet. Danke!", "Der Karton ist so schön, meine Katze wohnt jetzt drin.",
+                "Hab's meinem Chef gezeigt. Jetzt will er auch eins.", "Fünf Sterne, weil es keine sechs gibt.",
+            } },
+            { 4, new[]
+            {
+                "Gutes Produkt, Versand okay.", "Macht, was es soll.", "Solide. Karton war etwas zerdrückt.", "Würde wieder kaufen.",
+                "Gut. Nicht weltbewegend, aber gut.", "Mein Hund mag den Karton sehr.", "Alles okay, nur der Paketbote hat geseufzt.",
+            } },
+            { 3, new[]
+            {
+                "Naja. Hatte es mir größer vorgestellt.", "Ganz okay für den Preis.", "Hat gedauert, ist aber angekommen.",
+                "Ist halt ein Produkt.", "Erfüllt seinen Zweck. Mehr nicht.", "Drei Sterne. Wie mein Hotel im letzten Urlaub.",
+            } },
+            { 2, new[]
+            {
+                "Riecht irgendwie nach Plastik.", "Hat ewig gedauert.", "Anleitung nur auf Chinesisch.",
+                "Der Karton war größer als der Inhalt.", "Hat zwei Tage gedauert. ZWEI!", "Mein Horoskop hatte mich gewarnt.",
+            } },
+            { 1, new[]
+            {
+                "Nie angekommen. Nie wieder!", "Nach fünf Minuten kaputt.", "Ich will mein Geld zurück!!!", "Sieht nicht aus wie auf dem Foto.",
+                "Mein Hamster hätte es besser verpackt.", "Retoure läuft. Tschüss.",
+            } },
+        };
+
+        /// <summary>v3.0: Bewertungstexte speziell für Express-Bestellungen (pünktlich / verspätet).</summary>
+        public static readonly string[] ReviewTextsExpressGood =
+        {
+            "Express war wirklich express. Respekt!", "Morgens bestellt, mittags da. Magie!", "Schneller als mein WLAN.",
+            "Das Geschenk kam rechtzeitig – ich bin gerettet!",
+        };
+
+        public static readonly string[] ReviewTextsExpressLate =
+        {
+            "Express bezahlt, Schnecke bekommen.", "Express? Eher Espresso – kalt und bitter.",
+            "Die Party war schon vorbei, als das Paket kam.", "Für Express-Aufpreis erwarte ich Express. Nicht Bummelzug.",
+        };
+
+        /// <summary>v3.0: Bewertungstexte für verspätete normale Bestellungen.</summary>
+        public static readonly string[] ReviewTextsLate =
+        {
+            "Hat ewig gedauert. Ich dachte schon, das ist ein Fake-Shop.", "Kam an. Irgendwann. Immerhin.",
+            "Ich bin in der Zwischenzeit zweimal umgezogen.",
         };
 
         public static readonly string[] ReviewNames =
         {
             "Sabine K.", "Dennis", "Oma Gerda", "xX_Gamer_Xx", "Jürgen aus Bottrop", "Laura M.",
             "Tobi", "Frau Schmidt", "Ben", "Anonym", "Kevin H.", "Mareike",
+            "Uschi (72)", "Mehmet Y.", "ShoppingQueen99", "Dr. Pfeiffer", "Rüdiger", "Lena aus Leipzig",
         };
 
         // ---- Tutorial --------------------------------------------------------------------------------
+        /// <summary>
+        /// Tutorial-Schritte. Platzhalter wie <c>{key:interact}</c> oder <c>{key:phone}</c> werden über
+        /// <see cref="FillKeys"/> durch die aktuelle Tastenbelegung ersetzt (siehe <see cref="KeyLabel"/>);
+        /// <see cref="Sim.CurrentObjective"/> liefert den Text bereits ersetzt.
+        /// </summary>
         public static readonly TutorialStep[] Tutorial =
         {
-            new TutorialStep { Title = "Willkommen in deiner Garage", Text = "Geh zum Laptop auf der Werkbank und öffne ihn." },
-            new TutorialStep { Title = "Ware einkaufen", Text = "Öffne im Laptop die App 'Einkauf' und bestelle 20 Handyhüllen." },
-            new TutorialStep { Title = "Lieferung annehmen", Text = "Der Lieferwagen kommt gleich. Nimm die Kiste an der Lieferpalette neben dem Tor." },
-            new TutorialStep { Title = "Einlagern", Text = "Bring die Kiste zum Regal 'Handyhülle' und räume sie ein." },
-            new TutorialStep { Title = "Online gehen", Text = "Öffne am Laptop den 'Webshop' und stell die Handyhülle online." },
-            new TutorialStep { Title = "Erste Bestellung", Text = "Warte auf deine erste Bestellung. Sie erscheint oben links." },
-            new TutorialStep { Title = "Kommissionieren", Text = "Nimm eine Handyhülle für die Bestellung aus dem Regal." },
-            new TutorialStep { Title = "Verpacken", Text = "Verpacke die Hülle am Packtisch in einen Karton." },
-            new TutorialStep { Title = "Etikettieren", Text = "Nimm das Paket und druck am Labeldrucker ein Versandlabel." },
-            new TutorialStep { Title = "Versenden", Text = "Bring das Paket zur gelben PaketBlitz-Box vor der Garage." },
+            new TutorialStep { Title = "Willkommen in deiner Garage", Text = "Geh zum Laptop auf der Werkbank und klapp ihn mit {key:interact} auf. Dort läuft HustleOS – dein ganzes Business." },
+            new TutorialStep { Title = "Ware einkaufen", Text = "Öffne im Laptop die App 'Einkauf' und bestell 20 Handyhüllen beim Standard-Großhändler." },
+            new TutorialStep { Title = "Lieferung annehmen", Text = "Der Lieferwagen ist unterwegs. Nimm die Kiste am Wareneingang neben dem Tor." },
+            new TutorialStep { Title = "Einlagern", Text = "Bring die Kiste zum Regal 'Handyhülle' und räum sie ein." },
+            new TutorialStep { Title = "Online gehen", Text = "Stell am Laptop im 'Webshop' die Handyhülle online." },
+            new TutorialStep { Title = "Erste Bestellung", Text = "Gleich kommt deine erste Bestellung – als Bestellzettel oben rechts, mit Countdown. Mit {key:phone} öffnest du dein Handy mit allen Bestellungen." },
+            new TutorialStep { Title = "Kommissionieren", Text = "Nimm am Regal eine Handyhülle für den Bestellzettel." },
+            new TutorialStep { Title = "Verpacken", Text = "Verpack die Hülle am Packtisch – sie kommt automatisch in den passenden Karton (S)." },
+            new TutorialStep { Title = "Etikettieren", Text = "Druck am Labeldrucker das Versandlabel mit der Adresse der Kundschaft." },
+            new TutorialStep { Title = "Versenden", Text = "Bring das Paket zur gelben PaketBlitz-Box vor der Garage – bevor der Countdown abläuft!" },
         };
 
         public static readonly string[] KalleIdle =
@@ -341,6 +395,9 @@ namespace DropshippingGame.Core
             "Willst du 'nen Döner? Geht aufs Haus. Ausnahmsweise.",
             "Mein Neffe macht auch Internet. Der verkauft Socken.",
             "Früher hattest du Fett an den Fingern. Heute Kartonstaub.",
+            "Retouren? Bei mir gibt's keine Retouren. Wer die Currywurst bestellt, isst die Currywurst.",
+            "Großaufträge, hm? Ich hab mal 40 Schnitzel für den Kegelclub gemacht. Nie wieder.",
+            "Was ist ein Hype? Ist das so was wie Senf?",
         };
 
         public static readonly string[] StandShouts =

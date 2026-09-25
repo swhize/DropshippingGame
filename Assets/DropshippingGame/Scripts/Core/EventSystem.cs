@@ -17,6 +17,16 @@ namespace DropshippingGame.Core
         public bool Read, Pending;
         public List<ChoiceInfo> Choices = new List<ChoiceInfo>();
 
+        // ---- v3.0: Kontext des Ereignisses (für Platzhalter und Wirkungen) --------------------------
+        /// <summary>Produkt, um das es geht ({product}).</summary>
+        public string CtxProduct = "";
+        /// <summary>Firma ({company}).</summary>
+        public string CtxCompany = "";
+        /// <summary>Betroffener Großauftrag (Eilauftrag) oder 0.</summary>
+        public int CtxContract;
+        /// <summary>Zahl für {n} (z. B. Pakete bei Kalles Wette).</summary>
+        public int CtxNumber;
+
         public Dictionary<string, object> ToJson()
         {
             var ch = new List<object>();
@@ -26,7 +36,8 @@ namespace DropshippingGame.Core
             {
                 { "id", Id }, { "event", EventId }, { "title", Title }, { "sender", Sender }, { "icon", Icon }, { "text", Text },
                 { "day", Day }, { "time", (double)Time }, { "read", Read }, { "pending", Pending }, { "result", Result },
-                { "chosen", Chosen }, { "choices", ch },
+                { "chosen", Chosen }, { "choices", ch }, { "ctx_product", CtxProduct ?? "" }, { "ctx_company", CtxCompany ?? "" },
+                { "ctx_contract", CtxContract }, { "ctx_number", CtxNumber },
             };
         }
 
@@ -38,6 +49,8 @@ namespace DropshippingGame.Core
                 Id = J.I(d, "id"), EventId = J.S(d, "event"), Title = J.S(d, "title"), Sender = J.S(d, "sender"),
                 Icon = J.S(d, "icon", "mail"), Text = J.S(d, "text"), Day = J.I(d, "day", 1), Time = J.F(d, "time"),
                 Read = J.B(d, "read"), Pending = J.B(d, "pending"), Result = J.S(d, "result"), Chosen = J.S(d, "chosen"),
+                CtxProduct = J.S(d, "ctx_product", ""), CtxCompany = J.S(d, "ctx_company", ""), CtxContract = J.I(d, "ctx_contract"),
+                CtxNumber = J.I(d, "ctx_number"),
             };
             foreach (var c in J.A(d, "choices"))
             {
@@ -139,8 +152,20 @@ namespace DropshippingGame.Core
                 case "deliveries": return s.TravelingDeliveries.Count > 0;
                 case "stock": return s.StockTotal() > 10;
                 case "listed": return ListedProducts().Count > 0;
+                case "shipped15": return s.TotalShipped >= 15;
+                case "returns": return s.TotalReturns >= 1;
+                case "contract_rushable": return RushableContract() != null;
+                case "early_week": return s.Weekday <= 3;
             }
             return true;
+        }
+
+        /// <summary>Laufender Großauftrag, dessen Frist sich noch um einen Tag verkürzen lässt.</summary>
+        public Contract RushableContract()
+        {
+            foreach (var c in _sim.ActiveContracts())
+                if (c.DeadlineDay - _sim.Day >= 1 && c.Remaining > 0) return c;
+            return null;
         }
 
         private int WeightedIndex(List<EventDef> pool)
@@ -172,9 +197,12 @@ namespace DropshippingGame.Core
             LastSeen[id] = _sim.Day;
             var mail = new Mail
             {
-                Id = NextId++, EventId = id, Title = ev.Title, Sender = ev.Sender, Icon = ev.Icon ?? "mail", Text = ev.Text,
-                Day = _sim.Day, Time = _sim.TimeMinutes, Pending = ev.HasChoices,
+                Id = NextId++, EventId = id, Icon = ev.Icon ?? "mail", Day = _sim.Day, Time = _sim.TimeMinutes, Pending = ev.HasChoices,
             };
+            BuildContext(ev, mail);
+            mail.Title = Fill(ev.Title, mail);
+            mail.Sender = Fill(ev.Sender, mail);
+            mail.Text = Fill(ev.Text, mail);
             if (ev.HasChoices)
             {
                 foreach (var c in ev.Choices)
@@ -182,7 +210,7 @@ namespace DropshippingGame.Core
             }
             else
             {
-                mail.Result = string.Join("\n", Apply(ev.Effects));
+                mail.Result = string.Join("\n", Apply(ev.Effects, mail));
             }
             Mails.Insert(0, mail);
             if (Mails.Count > 40) Mails.RemoveAt(Mails.Count - 1);
@@ -276,8 +304,8 @@ namespace DropshippingGame.Core
                     break;
                 }
             }
-            var lines = new List<string> { picked.Text };
-            lines.AddRange(Apply(picked.Effects));
+            var lines = new List<string> { Fill(picked.Text, m) };
+            lines.AddRange(Apply(picked.Effects, m));
             m.Pending = false;
             m.Read = true;
             m.Chosen = choice.Label;
@@ -293,7 +321,7 @@ namespace DropshippingGame.Core
             var m = Find(mailId);
             if (m == null || !m.Pending) return "";
             var lines = new List<string> { text };
-            lines.AddRange(Apply(effects));
+            lines.AddRange(Apply(effects, m));
             m.Pending = false;
             m.Read = true;
             m.Chosen = label;
@@ -348,7 +376,10 @@ namespace DropshippingGame.Core
         }
 
         // ---- Wirkungen ----------------------------------------------------------------------------
-        public List<string> Apply(Effects e)
+        public List<string> Apply(Effects e) => Apply(e, null);
+
+        /// <summary>Wendet Wirkungen an. ctx (Mail) liefert Produkt/Firma/Auftrag aus dem Ereignis-Kontext.</summary>
+        public List<string> Apply(Effects e, Mail ctx)
         {
             var s = _sim;
             var outLines = new List<string>();
@@ -380,8 +411,12 @@ namespace DropshippingGame.Core
                 string pid = e.Boost.Product ?? "";
                 if (pid == "random_listed")
                 {
-                    var lp = ListedProducts();
-                    pid = lp.Count > 0 ? lp[Rng.Index(lp.Count)] : "";
+                    pid = ctx != null && GameData.IsProduct(ctx.CtxProduct) && s.IsListed(ctx.CtxProduct) ? ctx.CtxProduct : "";
+                    if (pid == "")
+                    {
+                        var lp = ListedProducts();
+                        pid = lp.Count > 0 ? lp[Rng.Index(lp.Count)] : "";
+                    }
                 }
                 s.AddBoost("event", e.Boost.Name, e.Boost.Mult, e.Boost.Minutes, pid);
                 outLines.Add("×" + Fmt.Dec(e.Boost.Mult, 1) + " Nachfrage für " + (int)e.Boost.Minutes + " min" +
@@ -464,8 +499,141 @@ namespace DropshippingGame.Core
                 s.Market.Shock(e.AssetId, e.AssetMult);
                 outLines.Add(Market.Asset(e.AssetId).Name + " " + Fmt.Pct(e.AssetMult - 1f));
             }
+            ApplyV3(e, ctx, outLines);
             s.RaiseEconomyChanged();
             return outLines;
+        }
+
+        /// <summary>Wirkungen der v3.0-Systeme (Trends, Retouren, Großaufträge, Express, Skills, Wochenziele).</summary>
+        private void ApplyV3(Effects e, Mail ctx, List<string> outLines)
+        {
+            var s = _sim;
+            if (e.Hype != null)
+            {
+                string pid = e.Hype.Product ?? "";
+                if (pid == "" || pid == "random_listed") pid = ctx != null ? ctx.CtxProduct ?? "" : "";
+                if (!GameData.IsProduct(pid))
+                {
+                    var lp = ListedProducts();
+                    pid = lp.Count > 0 ? lp[Rng.Index(lp.Count)] : "";
+                }
+                if (pid != "")
+                {
+                    s.Trends.Trigger(pid, e.Hype.Phase, e.Hype.Peak);
+                    string name = GameData.Product(pid).Name;
+                    switch (e.Hype.Phase)
+                    {
+                        case TrendPhase.Rising: outLines.Add("Hype startet: " + name); break;
+                        case TrendPhase.Peak: outLines.Add("Hype auf dem Höhepunkt: " + name); break;
+                        case TrendPhase.Falling: outLines.Add("Hype flaut ab: " + name); break;
+                        case TrendPhase.Dead: outLines.Add("Hype tot: " + name); break;
+                        default: outLines.Add(name + " läuft wieder normal"); break;
+                    }
+                }
+            }
+            if (e.ReturnWave.HasValue && e.ReturnWave.Value > 0)
+            {
+                int n = s.TriggerReturnWave(e.ReturnWave.Value);
+                outLines.Add(n == 1 ? "1 Retoure im Anmarsch" : n + " Retouren im Anmarsch");
+            }
+            if (!string.IsNullOrEmpty(e.Contract))
+            {
+                string pid = ctx != null && GameData.IsProduct(ctx.CtxProduct) && s.ProductAvailable(ctx.CtxProduct) ? ctx.CtxProduct : "";
+                string company = ctx != null ? ctx.CtxCompany ?? "" : "";
+                for (int i = 0; i < Math.Max(1, e.ContractCount); i++)
+                {
+                    var c = s.GenerateContractOffer(e.ContractBonus, true, i == 0 ? pid : "", i == 0 ? company : "");
+                    if (c == null) continue;
+                    if (e.Contract == "accept" && s.CanAcceptContract(c, out _))
+                    {
+                        s.AcceptContract(c.Id);
+                        outLines.Add("Großauftrag läuft: " + c.Title + " (" + Fmt.Money(c.Payment) + ")");
+                    }
+                    else outLines.Add("Neues Angebot in 'Aufträge': " + c.Title + " (" + Fmt.Money(c.Payment) + ")");
+                }
+            }
+            if (e.ContractRush.HasValue)
+            {
+                var c = ctx != null ? s.FindContract(ctx.CtxContract) : null;
+                if (c == null || c.State != ContractState.Active) c = RushableContract();
+                if (c != null && s.RushContract(c, e.ContractRush.Value))
+                    outLines.Add(c.Company + ": jetzt " + Fmt.Money(c.Payment) + ", Frist " + s.ContractDeadlineText(c));
+            }
+            if (e.ExpressBoost.HasValue)
+            {
+                s.AddExpressBoost(e.ExpressBoost.Value, e.ExpressBoostMinutes);
+                outLines.Add("Mehr Express-Bestellungen für " + (int)e.ExpressBoostMinutes + " min");
+            }
+            if (e.SkillPoints.HasValue && e.SkillPoints.Value != 0)
+            {
+                s.AddSkillPoints(e.SkillPoints.Value);
+                outLines.Add("+" + e.SkillPoints.Value + " Skillpunkt" + (e.SkillPoints.Value == 1 ? "" : "e"));
+            }
+            if (e.BonusChallenge)
+            {
+                int n = ctx != null && ctx.CtxNumber > 0 ? ctx.CtxNumber : BonusShipTarget();
+                int reward = Math.Max(50, Mathx.RoundToInt((100 + 25 * s.Level) / 5f) * 5);
+                s.AddBonusChallenge("ship", n, reward, 40 + 10 * s.Level, "Kalle", "Kalles Wette",
+                    "Verschicke bis Sonntag noch " + n + " Pakete. Kalle zahlt " + Fmt.Money(reward) + " – und spendiert einen Döner.", "phone");
+                outLines.Add("Neues Wochenziel: " + n + " Pakete bis Sonntag");
+            }
+        }
+
+        // ---- Kontext & Platzhalter ------------------------------------------------------------------
+        /// <summary>Paketziel für Kalles Wette: gut die Hälfte dessen, was bis Sonntag realistisch ist.</summary>
+        public int BonusShipTarget()
+        {
+            var s = _sim;
+            int n = 0, sum = 0;
+            for (int i = s.History.Count - 1; i >= 0 && n < 5; i--, n++) sum += s.History[i].Shipped;
+            float perDay = n > 0 ? Math.Max(4f, sum / (float)n) : 3f + s.Level * 3f;
+            int target = Mathx.RoundToInt(perDay * (s.DaysLeftInWeek() + 1) * 0.55f / 5f) * 5;
+            return Math.Max(5, target);
+        }
+
+        private void BuildContext(EventDef ev, Mail mail)
+        {
+            var s = _sim;
+            if (ev.Needs == "contract_rushable")
+            {
+                var c = RushableContract();
+                if (c != null)
+                {
+                    mail.CtxContract = c.Id;
+                    mail.CtxProduct = c.Product;
+                    mail.CtxCompany = c.Company;
+                }
+            }
+            if (string.IsNullOrEmpty(mail.CtxProduct))
+            {
+                var lp = ListedProducts();
+                if (lp.Count > 0) mail.CtxProduct = lp[Rng.Index(lp.Count)];
+                else
+                {
+                    foreach (var p in GameData.Products)
+                    {
+                        if (!s.ProductAvailable(p.Id)) continue;
+                        mail.CtxProduct = p.Id;
+                        break;
+                    }
+                }
+            }
+            if (string.IsNullOrEmpty(mail.CtxCompany)) mail.CtxCompany = Rng.Pick(GameData.Companies);
+            mail.CtxNumber = BonusShipTarget();
+        }
+
+        /// <summary>Ersetzt {product}, {tag}, {company}, {n} und {brand} mit dem Kontext der Mail.</summary>
+        public string Fill(string text, Mail ctx)
+        {
+            if (string.IsNullOrEmpty(text) || text.IndexOf('{') < 0) return text ?? "";
+            string pid = ctx != null ? ctx.CtxProduct ?? "" : "";
+            bool hasProduct = GameData.IsProduct(pid);
+            return text
+                .Replace("{product}", hasProduct ? GameData.Product(pid).Name : "deine Ware")
+                .Replace("{tag}", hasProduct ? TrendSystem.HashTag(pid) : "DropshipChallenge")
+                .Replace("{company}", ctx != null && !string.IsNullOrEmpty(ctx.CtxCompany) ? ctx.CtxCompany : "Eine Firma")
+                .Replace("{n}", (ctx != null ? ctx.CtxNumber : 0).ToString())
+                .Replace("{brand}", _sim.BrandName ?? "");
         }
 
         public Dictionary<string, object> ToJson()
