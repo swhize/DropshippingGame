@@ -1,0 +1,6 @@
+# Godot-Cache und Importe
+.godot/
+*.import
+# Betriebssystem
+Thumbs.db
+.DS_Store
