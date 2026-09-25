@@ -1,10 +1,44 @@
 # Schlachtplan – Weg zum vollständigen Spiel
 
 > Entstanden aus der Sprachnachricht vom 23.09.2026 ("richtig großes, vollständiges
-> Spiel"). Am 25.09.2026 im großen Umbau (v1.0) fast komplett umgesetzt. Für Vision und
-> Ton siehe `GDD.md`, hier steht, was gebaut ist und was als Nächstes kommt.
+> Spiel"). Am 25.09.2026 im großen Umbau (v1.0) fast komplett umgesetzt und danach
+> komplett nach **Unity 6** portiert und erweitert (v2.0). Für Vision und Ton siehe
+> `GDD.md`, hier steht, was gebaut ist und was als Nächstes kommt.
 
-## Stand v1.0 (25.09.2026)
+## Stand v2.0 – Unity-Umbau (25.09.2026)
+
+Auftrag: "bau alles auf Unity um, sieht noch unprofessionell aus, inspirier dich an
+Unity-Studios, BIG REWORK, bau es weiter aus" + 3 HTML-Entwürfe fürs Laptop mit Darkmode.
+
+Vorbilder für Look & Bedienung: *Supermarket Simulator*, *TCG Card Shop Simulator*,
+*Schedule I*, *PowerWash Simulator* (klare Ego-Interaktion mit Fadenkreuz-Pille, Outline
+am anvisierten Objekt, ruhige HUD-Karten, ein "Betriebssystem" als zentrales Menü).
+
+- [x] **Engine-Wechsel:** Godot 4.7/GDScript → Unity 6 LTS, C#, URP, UI Toolkit, Input System
+- [x] **Spiellogik als reines C#** (`Scripts/Core`, ohne Unity-Abhängigkeit) + 38 NUnit-Tests
+  (laufen mit `dotnet test` und im Unity Test Runner), Balance-Test über 25 Tage
+- [x] **Automatische Projekteinrichtung** (`ProjectSetup.cs`): URP-Asset + Renderer mit SSAO,
+  Linear-Farbraum, Vorlage-Materialien für Builds, Spielszene, Build-Einstellungen
+- [x] **Grafik:** URP mit HDR, Bloom, ACES-Tonemapping, Vignette, SSAO, weiche Schatten,
+  Reflection Probe, prozedurale Texturen mit Normal Maps, abgerundete Kanten (Bevel-Meshes),
+  eigene Shader für Weltschrift und Hervorhebungs-Outline
+- [x] **Neues UI (UI Toolkit):** HUD-Karten, Fadenkreuz mit Aktions-Pille, Toasts, Banner,
+  Dialoge mit Schreibmaschinen-Effekt, Fenster, Pausemenü, Hauptmenü mit Kamerafahrt
+- [x] **HustleOS in zwei Designs** ("Frachtbrief" und "Hype", je hell/dunkel) – umschaltbar
+  in den Einstellungen; HTML-Entwürfe (3 Varianten) unter `docs/laptop-designs/`
+- [x] **Neue Apps:** Übersicht (Aufgabenliste, Ziel, Kennzahlen), Bank (Kredite, Tilgung, Zinsen)
+- [x] **Neue Mechaniken:** Verkaufsstand vor der Garage (Passanten kaufen direkt),
+  Pitch Day als Minispiel (3 Juroren, echte Kennzahlen), 10 Produkte statt 6
+- [x] **3 Spielstände** mit Vorschau, Überschreiben/Löschen, Auto-Save alle 90 s
+- [x] **Controller-Unterstützung** (Input System), Tastenhinweise wechseln automatisch
+- [x] Hilfe (F1), Screenshots (F12), Credits
+
+Annahmen (beim Review zu bestätigen):
+1. Im Spiel stecken die Entwürfe **A "Frachtbrief"** und **B "Hype"**; Entwurf **C
+   "Schreibtisch"** gibt es nur als HTML. Sobald ein Favorit feststeht, wird er Standard.
+2. Unity-Version: Unity 6 LTS (6000.x). Neuere 6.x-Versionen sollten ohne Änderungen laufen.
+
+## Stand v1.0 – Godot (25.09.2026, inzwischen nach Unity portiert)
 
 Getroffene Annahmen (vom Nutzer beim Review zu bestätigen oder zu korrigieren):
 
@@ -64,17 +98,17 @@ Getroffene Annahmen (vom Nutzer beim Review zu bestätigen oder zu korrigieren):
 - [x] Insolvenz unter −500 € mit "Letzten Spielstand laden", Endziel mit Abschluss-Fenster
 
 ## Nächste Ideen (nach Review)
-- Koop-Multiplayer (1–4 Spieler, ENet)
-- Echte Grafik-Assets statt Grundformen (z.B. CC0-Pakete oder gekaufte Modelle) –
+- Koop-Multiplayer (1–4 Spieler, z.B. Netcode for GameObjects)
+- Echte Grafik-Assets statt Grundformen (z.B. CC0-Pakete oder Asset Store) –
   braucht dein OK zum Herunterladen
-- Mehr Produkte, weitere Standorte, Straßenverkauf als eigene Mechanik
-- Pitch Day als Mini-Spiel statt Entscheidungsfenster
-- Controller-Unterstützung, englische Übersetzung, Steam-Anbindung
+- Weitere Standorte, Kunden, die in den Laden kommen, Lieferanten-Verhandlungen
+- Englische Übersetzung, Steam-Anbindung (Erfolge, Cloud-Saves)
 
 ## Werkzeuge
-- `tests/compile_all.gd` – kompiliert alle Skripte
-- `tests/run_tests.gd` – 121 Logik-Checks
-- `tests/SelfTest.gd` – 49 Integrations-Checks in der echten Spielszene
-  (`godot --headless --path . res://scenes/Main.tscn -- --selftest`)
-- `tests/balance_sim.gd` – simuliert 25 Spieltage mit menschlichem Tempo
-- `scripts/DebugHarness.gd` – Screenshots und Test-Szenarien per Kommandozeile
+- `Assets/DropshippingGame/Tests/EditMode/CoreTests.cs` – 37 Logik-Tests
+- `Assets/DropshippingGame/Tests/EditMode/BalanceTests.cs` – simuliert 25 Spieltage mit
+  menschlichem Tempo (Lagerhalle ca. Tag 12, keine Pleite)
+- In Unity: **Window → General → Test Runner → EditMode → Run All**
+- Ohne Unity: kleines `dotnet`-Testprojekt, das `Scripts/Core` und die Tests einbindet
+  (NUnit 3), `dotnet test`
+- Menü **Dropshipping** im Editor: Projekt einrichten, Spiel starten, Spielstände-Ordner

@@ -13,8 +13,8 @@ namespace DropshippingGame.UI
     {
         private readonly VisualElement _layer;
         private Label _money, _pop, _day, _clock, _rating, _level, _objTitle, _objText, _promptText, _promptTitle, _handsText, _hint, _banner, _bannerSub, _fps;
-        private Label _orders, _dock, _travel, _packed;
-        private VisualElement _stars, _xpBar, _objBar, _boosts, _toasts, _crosshair, _prompt, _promptKey, _hands, _handsSwatch, _orderDots, _left, _right, _statusRow;
+        private Label _orders, _dock, _travel, _packed, _promptKey;
+        private VisualElement _stars, _xpBar, _objBar, _boosts, _toasts, _crosshair, _prompt, _hands, _handsSwatch, _orderDots, _left, _right, _statusRow;
         private int _lastMoney;
         private string _lastPrompt = "";
         private float _fpsAcc;

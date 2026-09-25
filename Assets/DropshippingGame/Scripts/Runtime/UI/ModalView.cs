@@ -32,7 +32,8 @@ namespace DropshippingGame.UI
     {
         private readonly VisualElement _layer;
         private readonly string _key;
-        private VisualElement _card, _body, _buttons, _scroll;
+        private VisualElement _card, _body, _buttons;
+        private ScrollView _scroll;
         private Label _title, _sub;
         private bool _pause;
         private Action _onClose;
