@@ -84,7 +84,7 @@ namespace DropshippingGame.Core
                 Answers = new[]
                 {
                     ("Schnell und freundlich. Deshalb bleiben unsere Bewertungen gut.", "rating"),
-                    ("Wir verkaufen Premium-Ware. Da gibt es kaum Beschwerden.", "quality"),
+                    ("Unsere Retourenquote liegt bei nur {returnrate}. Wir prüfen jede Retoure.", "returns"),
                     ("Beschwerden? Hatten wir noch nie. Glaube ich.", "luck"),
                 },
             },
@@ -94,7 +94,7 @@ namespace DropshippingGame.Core
         {
             { "rating", "Bewertung" }, { "shipped", "verschickte Pakete" }, { "luck", "Glück" }, { "company", "Lager & Team" },
             { "level", "Firmenlevel" }, { "quality", "Warenqualität" }, { "price", "Preise" }, { "brand", "Marke & Bekanntheit" },
-            { "earned", "Umsatz" }, { "trend", "Wachstum" },
+            { "earned", "Umsatz" }, { "trend", "Wachstum" }, { "returns", "Retourenquote" },
         };
 
         private readonly Sim _sim;
@@ -130,7 +130,8 @@ namespace DropshippingGame.Core
         private string FillText(string s) => s
             .Replace("{shipped}", _sim.TotalShipped.ToString())
             .Replace("{earned}", Fmt.Money(_sim.TotalEarned))
-            .Replace("{brand}", _sim.BrandName);
+            .Replace("{brand}", _sim.BrandName)
+            .Replace("{returnrate}", Fmt.Dec(_sim.ReturnRateTotal() * 100f, 1) + " %");
 
         /// <summary>Wie gut die eigene Firma bei dieser Kennzahl dasteht (0..1).</summary>
         public float StatValue(string stat)
@@ -167,6 +168,7 @@ namespace DropshippingGame.Core
                     return listed == 0 ? 0f : (float)cheap / listed;
                 }
                 case "brand": return Mathx.Clamp01((s.BrandNamed ? 0.4f : 0f) + s.Awareness / 1.5f * 0.6f + (s.Reputation >= 4f ? 0.1f : 0f));
+                case "returns": return s.TotalShipped < 10 ? 0.35f : Mathx.Clamp01(1f - s.ReturnRateTotal() * 8f);
                 case "trend":
                 {
                     var h = s.History;
