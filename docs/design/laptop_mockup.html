@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laptop Seiten Comic</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;500;600;700&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#161616;--paper:#fffdf6}
+body{background:#3b3b3b;font:14px "Comic Neue",sans-serif;color:var(--ink);padding:18px 12px 40px}
+.laptop{max-width:1200px;margin:0 auto;border:4px solid var(--ink);border-radius:14px;background:#d9d4c7;box-shadow:8px 8px 0 #111;overflow:hidden}
+/* browser chrome */
+.chrome{background:#e9e4d6;border-bottom:3px solid var(--ink);padding:6px 8px 0}
+.tabs{display:flex;gap:4px;overflow-x:auto}
+.tab{border:3px solid var(--ink);border-bottom:0;border-radius:10px 10px 0 0;padding:4px 12px;background:#cfc9b8;cursor:pointer;white-space:nowrap;font-weight:700}
+.tab.on{background:var(--paper);position:relative;top:3px}
+.bar{display:flex;gap:8px;align-items:center;background:var(--paper);border-top:3px solid var(--ink);margin:0 -8px;padding:6px 8px}
+.bar .nb{width:26px;height:26px;border:2px solid var(--ink);border-radius:50%;text-align:center;line-height:22px;cursor:pointer;background:#fff;font-weight:700}
+.url{flex:1;border:2px solid var(--ink);border-radius:20px;padding:3px 12px;background:#fff;font-family:monospace}
+.page{height:640px;overflow-y:auto;background:var(--paper);position:relative}
+@media(max-width:800px){.page{height:560px}}
+.b3{border:3px solid var(--ink)}
+.sh{box-shadow:4px 4px 0 var(--ink)}
+.bang{font-family:Bangers,cursive;letter-spacing:1px}
+.dots{background-image:radial-gradient(rgba(0,0,0,.18) 1.2px,transparent 1.3px);background-size:7px 7px}
+button,.btn{font:700 14px "Comic Neue";border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:7px 14px;cursor:pointer;background:#fff;border-radius:8px}
+button:active,.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.stars{color:#ffb400;-webkit-text-stroke:1px var(--ink);letter-spacing:1px}
+.muted{color:#6b6558}
+.strike{text-decoration:line-through;color:#8a8373}
+a.l{cursor:pointer;text-decoration:underline}
+
+/* ===== AllesExpress ===== */
+.ae{--c:#e63312}
+.ae .hd{background:var(--c);border-bottom:3px solid var(--ink);padding:10px 16px;display:flex;gap:14px;align-items:center}
+.ae .logo{font:34px Bangers;color:#fff;-webkit-text-stroke:1.5px var(--ink);text-shadow:3px 3px 0 var(--ink);cursor:pointer;white-space:nowrap}
+.ae .search{flex:1;display:flex}
+.ae .search input{flex:1;border:3px solid var(--ink);border-right:0;border-radius:20px 0 0 20px;padding:7px 14px;font:inherit}
+.ae .search button{border-radius:0 20px 20px 0;box-shadow:none;background:#ffd23f}
+.ae .cats{display:flex;gap:16px;padding:8px 16px;border-bottom:3px solid var(--ink);background:#fff;font-weight:700;overflow-x:auto;white-space:nowrap}
+.ae .deal{margin:14px 16px;background:#ffd23f;padding:14px 18px;display:flex;align-items:center;gap:18px;border-radius:12px}
+.ae .deal .big{font:48px Bangers;color:var(--c);-webkit-text-stroke:2px var(--ink);text-shadow:3px 3px 0 var(--ink);line-height:1}
+.ae .timer span{display:inline-block;background:var(--ink);color:#fff;padding:2px 6px;border-radius:4px;font-weight:700;margin:0 2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;padding:0 16px 20px}
+.card{background:#fff;border:3px solid var(--ink);border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .08s}
+.card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.card .img{height:150px;border-bottom:3px solid var(--ink);display:flex;align-items:center;justify-content:center;position:relative}
+.card .badge{position:absolute;top:6px;left:6px;background:var(--c,#ff4b1f);color:#fff;font:16px Bangers;padding:1px 6px;border:2px solid var(--ink);border-radius:4px}
+.card .t{padding:6px 8px 0;font-size:13px;height:38px;overflow:hidden;line-height:1.3}
+.card .p{padding:2px 8px;font:24px Bangers;color:var(--c,#ff4b1f)}
+.card .m{padding:0 8px 8px;font-size:12px}
+/* product page */
+.pp{display:grid;grid-template-columns:360px 1fr 250px;gap:18px;padding:16px}
+@media(max-width:900px){.pp{grid-template-columns:1fr}}
+.gal .main{height:320px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.gal .th{display:flex;gap:8px;margin-top:8px}
+.gal .th div{width:60px;height:60px;border:3px solid var(--ink);border-radius:8px;cursor:pointer}
+.pp h1{font-size:19px;line-height:1.3}
+.price{display:flex;align-items:baseline;gap:10px;background:var(--pbg,#fff1ec);padding:10px;border-radius:10px;margin:10px 0}
+.price .now{font:40px Bangers;color:var(--c);-webkit-text-stroke:1px var(--ink)}
+.price .off{background:var(--c);color:#fff;padding:1px 6px;border:2px solid var(--ink);border-radius:4px;font-weight:700}
+.coupon{display:inline-block;border:2px dashed var(--c);color:var(--c);padding:3px 8px;font-weight:700;margin:2px 4px 2px 0}
+.vars{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.vars div{border:3px solid var(--ink);border-radius:8px;padding:4px 10px;cursor:pointer;background:#fff}
+.vars div.on{background:#ffd23f}
+.qty{display:flex;align-items:center;gap:6px}
+.qty span{border:3px solid var(--ink);padding:3px 12px;border-radius:6px;background:#fff;font-weight:700;min-width:50px;text-align:center}
+.side{background:#fff;padding:12px;border-radius:12px}
+.side .row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:2px dotted #ccc}
+.ptabs{display:flex;gap:6px;padding:0 16px;border-bottom:3px solid var(--ink)}
+.ptabs div{border:3px solid var(--ink);border-bottom:0;border-radius:8px 8px 0 0;padding:5px 14px;cursor:pointer;background:#eee;font-weight:700;position:relative;top:3px}
+.ptabs div.on{background:var(--paper)}
+.pbody{padding:16px;max-width:900px;line-height:1.55}
+.rev{border-bottom:2px dashed #cfc9b8;padding:10px 0;display:grid;grid-template-columns:48px 1fr;gap:10px}
+.av{width:44px;height:44px;border:3px solid var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center;font:20px Bangers}
+.rsum{display:flex;gap:24px;align-items:center;margin-bottom:10px}
+.rsum .n{font:54px Bangers}
+.hist div{display:flex;gap:6px;align-items:center;font-size:12px}
+.hist i{display:block;height:9px;border:2px solid var(--ink);background:#ffb400;border-radius:4px}
+
+/* ===== iWolke ===== */
+.iw{display:grid;grid-template-columns:190px 330px 1fr;height:100%;background:#f4f7fb}
+.iw .f{padding:14px 8px;border-right:3px solid var(--ink);background:#e7eef8}
+.iw .f h3{font:26px Bangers;color:#2f7cf6;-webkit-text-stroke:1px var(--ink);margin:0 6px 12px}
+.iw .f div{padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:700;display:flex;justify-content:space-between}
+.iw .f div.on{background:#2f7cf6;color:#fff;border:2px solid var(--ink)}
+.iw .ls{border-right:3px solid var(--ink);overflow-y:auto;background:#fff}
+.iw .ml{padding:9px 12px;border-bottom:2px solid #e3e3e3;cursor:pointer;position:relative}
+.iw .ml.u::before{content:"";position:absolute;left:3px;top:14px;width:8px;height:8px;border-radius:50%;background:#2f7cf6;border:1px solid var(--ink)}
+.iw .ml.on{background:#d9e8ff}
+.iw .ml .s{font-weight:700}
+.iw .ml .pv{font-size:12px;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iw .rd{padding:18px 22px;overflow-y:auto}
+.iw .rd h2{font-size:22px;margin-bottom:6px}
+.iw .rd .who{display:flex;gap:10px;align-items:center;border-bottom:2px solid #ddd;padding-bottom:10px;margin-bottom:14px}
+.bubble{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:14px;position:relative;line-height:1.55;box-shadow:4px 4px 0 var(--ink)}
+@media(max-width:900px){.iw{grid-template-columns:1fr}.iw .f,.iw .ls{display:none}}
+
+/* ===== PaketBlitz ===== */
+.pb{background:#ffcc00;min-height:100%}
+.pb .hd{background:#ffcc00;border-bottom:3px solid var(--ink);padding:10px 16px;display:flex;align-items:center;gap:16px}
+.pb .logo{font:38px Bangers;color:#d40511;font-style:italic;-webkit-text-stroke:1.5px var(--ink);text-shadow:3px 3px 0 var(--ink);transform:skew(-8deg)}
+.pb .nav{display:flex;gap:16px;font-weight:700}
+.pb .box{background:#fff;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);border-radius:12px;margin:16px;padding:16px}
+.pb .track{display:flex;gap:8px;margin-top:8px}
+.pb .track input{flex:1;border:3px solid var(--ink);border-radius:8px;padding:8px;font:inherit}
+.pb .red{background:#d40511;color:#fff}
+.steps{display:flex;justify-content:space-between;margin:18px 0 6px;position:relative}
+.steps::before{content:"";position:absolute;left:4%;right:4%;top:17px;height:6px;background:#ddd;border:2px solid var(--ink);border-radius:4px}
+.steps .st{z-index:1;text-align:center;width:20%;font-size:12px;font-weight:700}
+.steps .st i{display:block;margin:0 auto 4px;width:38px;height:38px;border:3px solid var(--ink);border-radius:50%;background:#fff;font:18px/32px Bangers;font-style:normal}
+.steps .st.ok i{background:#ffcc00}
+.steps .st.now i{background:#d40511;color:#fff}
+.pbrow{display:grid;grid-template-columns:70px 1fr 110px 110px;gap:10px;align-items:center;padding:8px 0;border-bottom:2px dashed #ccc}
+.label{width:280px;background:#fff;border:3px solid var(--ink);font:12px Arial}
+.label .top{display:flex;border-bottom:3px solid var(--ink)}
+.label .top b{font:44px Bangers;border-right:3px solid var(--ink);padding:0 12px;color:#d40511}
+.label .bc{height:56px;margin:8px;background:repeating-linear-gradient(90deg,#000 0 2px,#fff 2px 4px,#000 4px 7px,#fff 7px 8px,#000 8px 9px,#fff 9px 12px,#000 12px 15px,#fff 15px 16px)}
+
+/* ===== TradingViech ===== */
+.tv{background:#131722;color:#d1d4dc;display:grid;grid-template-columns:1fr 260px;grid-template-rows:auto 1fr;height:100%}
+.tv .top{grid-column:1/-1;display:flex;gap:14px;align-items:center;padding:8px 12px;border-bottom:3px solid #000;background:#1e222d}
+.tv .logo{font:28px Bangers;color:#fff;-webkit-text-stroke:1px #000;text-shadow:2px 2px 0 #2962ff}
+.tv .sym{border:2px solid #fff;border-radius:6px;padding:2px 10px;font-weight:700}
+.tv .tf span{padding:2px 7px;cursor:pointer;border-radius:4px}
+.tv .tf span.on{background:#2962ff;color:#fff}
+.tv .chart{position:relative;border-right:3px solid #000}
+.tv .wl{background:#1e222d;overflow-y:auto}
+.tv .wl div{display:grid;grid-template-columns:1fr 70px 60px;padding:7px 10px;border-bottom:1px solid #2a2e39;cursor:pointer;font-size:13px}
+.tv .wl div.on{background:#2a2e39}
+.up{color:#26a69a}.dn{color:#ef5350}
+.tv .order{padding:12px;border-top:3px solid #000}
+.tv .order button{width:48%;color:#fff;border-color:#000;box-shadow:3px 3px 0 #000}
+.tv .quip{position:absolute;right:16px;top:14px;background:#fff;color:#111;border:3px solid #000;border-radius:14px;padding:8px 12px;max-width:230px;box-shadow:4px 4px 0 #000;font-weight:700}
+.tv .quip::after{content:"";position:absolute;left:24px;bottom:-14px;border:7px solid transparent;border-top-color:#000}
+@media(max-width:900px){.tv{grid-template-columns:1fr}.tv .wl{display:none}}
+
+/* ===== Shopifly ===== */
+.sf{background:#f1f5ee;min-height:100%}
+.sf .hd{background:#fff;border-bottom:3px solid var(--ink);padding:10px 16px;display:flex;align-items:center;gap:16px}
+.sf .logo{font:30px Bangers;color:#5c9e31;-webkit-text-stroke:1px var(--ink)}
+.sf .brand{margin:14px 16px;padding:22px;border-radius:14px;background:#1f3a5f;color:#fff}
+.sf .brand h2{font:44px Bangers;-webkit-text-stroke:1.5px var(--ink);text-shadow:3px 3px 0 var(--ink)}
+.sf .grid .card{--c:#1f3a5f}
+
+/* ===== VERSPIELT: AllesExpress + Mein Shop ===== */
+.ae,.sf{font-family:Fredoka,"Comic Neue",sans-serif;--soft:0 6px 0 rgba(0,0,0,.07),0 10px 24px rgba(0,0,0,.08)}
+.ae{background:#fff7f2;min-height:100%}
+.sf{background:#f3f7ff}
+.ae .b3,.sf .b3,.ae .card,.sf .card,.ae button,.sf button,.ae .vars div,.sf .vars div,.ae .qty span,.sf .qty span,.ae .gal .th div,.sf .gal .th div,.ae .ptabs div,.sf .ptabs div,.ae .av,.sf .av,.ae .card .img,.sf .card .img{border:0!important}
+.ae .sh,.sf .sh,.ae .card,.sf .card{box-shadow:var(--soft)!important}
+.ae .dots,.sf .dots{background-image:radial-gradient(rgba(255,255,255,.55) 3px,transparent 3.5px);background-size:22px 22px}
+.ae button,.sf button{border-radius:999px;box-shadow:0 4px 0 rgba(0,0,0,.15)!important;font-family:Fredoka;font-weight:600;padding:9px 18px;transition:transform .12s}
+.ae button:hover,.sf button:hover{transform:translateY(-2px) rotate(-1deg)}
+.ae button:active,.sf button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.15)!important}
+/* Kopf AllesExpress */
+.ae .hd{background:linear-gradient(90deg,#ff5a36,#ff8a1f);border:0;border-radius:0 0 26px 26px;padding:14px 20px}
+.ae .logo{font:700 30px Fredoka;-webkit-text-stroke:0;text-shadow:none;letter-spacing:-1px}
+.ae .logo::after{content:"✦";font-size:18px;vertical-align:top;margin-left:2px;color:#ffe45c}
+.ae .search input{border:0;border-radius:999px 0 0 999px;padding:10px 18px;font-family:Fredoka}
+.ae .search button{border-radius:0 999px 999px 0;box-shadow:none!important;background:#ffe45c}
+.ae .cats{display:none!important;background:transparent;border:0;gap:8px;padding:12px 20px 4px}
+.ae .cats span{background:#fff;border-radius:999px;padding:5px 14px;box-shadow:var(--soft);font-weight:500}
+.ae .cats span:nth-child(2){background:#ff5a36;color:#fff}
+.ae .deal{background:linear-gradient(120deg,#ffe45c,#ffb36b);border-radius:24px;margin:14px 20px;transform:rotate(-.6deg)}
+.ae .deal .big{font:700 44px Fredoka;-webkit-text-stroke:0;text-shadow:3px 3px 0 #fff;color:#e63312}
+.ae .timer span{border-radius:10px;background:#e63312}
+/* Karten */
+.ae .grid,.sf .grid{gap:18px;padding:6px 20px 24px}
+.ae .card,.sf .card{border-radius:22px;transition:transform .15s}
+.ae .card:hover,.sf .card:hover{transform:translateY(-4px) rotate(-.8deg)}
+.ae .card:nth-child(even):hover,.sf .card:nth-child(even):hover{transform:translateY(-4px) rotate(.8deg)}
+.ae .card .img,.sf .card .img{margin:8px;border-radius:16px;height:140px}
+.ae .card .badge{border:0;border-radius:999px;font:600 13px Fredoka;padding:3px 9px;transform:rotate(-8deg);background:#e63312}
+.ae .card .p,.sf .card .p{font:700 22px Fredoka}
+.ae .card .p{color:#e63312}
+/* Produktseite */
+.ae .gal .main,.sf .gal .main{border-radius:28px}
+.ae .gal .th div,.sf .gal .th div{border-radius:14px;box-shadow:var(--soft)}
+.ae .price,.sf .price{border-radius:20px}
+.ae .price .now,.sf .price .now{font:700 38px Fredoka;-webkit-text-stroke:0}
+.ae .price .now{color:#e63312}
+.ae .price .off,.sf .price .off{border:0;border-radius:999px;padding:2px 10px;transform:rotate(-4deg);display:inline-block}
+.ae .price .off{background:#e63312}
+.ae .coupon,.sf .coupon{border-radius:10px;background:#fff}
+.ae .vars div,.sf .vars div{border-radius:999px;box-shadow:var(--soft);padding:6px 16px}
+.ae .vars div.on{background:#ff5a36;color:#fff}
+.sf .vars div.on{background:#4c6fff;color:#fff}
+.ae .qty span,.sf .qty span{border-radius:999px;box-shadow:inset 0 2px 4px rgba(0,0,0,.08)}
+.ae .side,.sf .side{border-radius:24px}
+.ae .ptabs,.sf .ptabs{border:0;gap:8px;padding:6px 20px}
+.ae .ptabs div,.sf .ptabs div{border-radius:999px;top:0;background:#fff;box-shadow:var(--soft)}
+.ae .ptabs div.on{background:#ff5a36;color:#fff}
+.sf .ptabs div.on{background:#4c6fff;color:#fff}
+.ae .stars,.sf .stars{-webkit-text-stroke:0}
+.ae .hist i,.sf .hist i{border:0;border-radius:999px;height:10px}
+.ae .rev,.sf .rev{border-bottom:2px dotted #f0d9cc;background:#fff;border-radius:18px;padding:12px;margin-bottom:10px;border-bottom:0;box-shadow:var(--soft)}
+.ae .rsum .n,.sf .rsum .n{font:700 52px Fredoka}
+/* Kopf Mein Shop */
+.sf .hd{border:0;border-radius:0 0 26px 26px;box-shadow:var(--soft)}
+.sf .logo{font:700 26px Fredoka;-webkit-text-stroke:0;color:#4c6fff}
+.sf .logo::before{content:"";display:inline-block;width:14px;height:14px;border-radius:50% 50% 50% 0;background:#ffb020;margin-right:6px;transform:rotate(-20deg)}
+.sf .brand{background:linear-gradient(120deg,#4c6fff,#9b6bff);border-radius:28px;margin:16px 20px;position:relative;overflow:hidden}
+.sf .brand h2{font:700 40px Fredoka;-webkit-text-stroke:0;text-shadow:none;letter-spacing:-1px}
+.sf .brand::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:#ffb020;opacity:.85}
+.sf .grid .card{--c:#4c6fff}
+.sf .card .p{color:#4c6fff}
+
+/* ===== Runde 2 verspielt ===== */
+.ae svg [stroke="#161616"],.sf svg [stroke="#161616"]{stroke:rgba(40,20,60,.55)}
+.ae svg [fill="#161616"],.sf svg [fill="#161616"]{fill:rgba(40,20,60,.6)}
+.ae svg,.sf svg{filter:drop-shadow(0 10px 6px rgba(60,30,90,.18))}
+.ae .card .img,.sf .card .img,.ae .gal .main,.sf .gal .main{background-image:radial-gradient(circle at 30% 25%,rgba(255,255,255,.9),rgba(255,255,255,0) 55%)!important;background-size:auto!important}
+.ae{background:#fff7f2 radial-gradient(circle at 10% 0,#ffe1d3 0,transparent 30%) no-repeat}
+.ae .hd{position:relative}
+.mascot{width:46px;height:40px;background:#ffe45c;border-radius:50% 50% 45% 45%;position:relative;flex:none;animation:bob 2.4s ease-in-out infinite}
+.mascot::before,.mascot::after{content:"";position:absolute;top:13px;width:7px;height:9px;background:#3a2140;border-radius:50%}
+.mascot::before{left:13px}.mascot::after{right:13px}
+.mascot i{position:absolute;left:17px;top:25px;width:12px;height:6px;border-radius:0 0 12px 12px;background:#e63312}
+@keyframes bob{50%{transform:translateY(-4px) rotate(4deg)}}
+.circ{display:flex;gap:18px;padding:16px 20px 6px;overflow-x:auto}
+.circ div{text-align:center;font-size:13px;font-weight:500;cursor:pointer;flex:none;width:74px}
+.circ span{display:flex;width:64px;height:64px;margin:0 auto 5px;border-radius:50%;align-items:center;justify-content:center;font:700 22px Fredoka;color:#fff;transition:transform .15s}
+.circ div:hover span{transform:scale(1.1) rotate(-6deg)}
+.tickets{display:flex;gap:12px;padding:6px 20px 12px;overflow-x:auto}
+.tk{flex:none;display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:8px 14px 8px 10px;box-shadow:var(--soft);position:relative}
+.tk b{font:700 22px Fredoka;color:#e63312}
+.tk::before,.tk::after{content:"";position:absolute;left:62px;width:14px;height:14px;border-radius:50%;background:#fff7f2}
+.tk::before{top:-7px}.tk::after{bottom:-7px}
+.tk .sep{border-left:2px dashed #ffd0c0;height:34px}
+.tk .get{background:#e63312;color:#fff;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
+.h2{display:flex;align-items:center;gap:10px;padding:10px 20px 4px;font:700 22px Fredoka}
+.h2 .pill{font:500 13px Fredoka;background:#3a2140;color:#fff;border-radius:999px;padding:3px 10px}
+.flash{display:flex;gap:14px;padding:6px 20px 12px;overflow-x:auto}
+.fl{flex:none;width:150px;background:#fff;border-radius:20px;padding:8px;box-shadow:var(--soft);cursor:pointer;transition:transform .15s}
+.fl:hover{transform:translateY(-4px) rotate(1deg)}
+.fl .im{height:110px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.fl b{display:block;font:700 19px Fredoka;color:#e63312;margin-top:6px}
+.prog{height:14px;border-radius:999px;background:#ffe1d3;overflow:hidden;position:relative;margin-top:4px}
+.prog i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#ff8a1f,#e63312)}
+.prog span{position:absolute;left:8px;top:-1px;font-size:10px;font-weight:600;color:#fff}
+.hot{position:absolute;right:-6px;top:-8px;background:#ffe45c;color:#e63312;font:700 12px Fredoka;border-radius:999px;padding:3px 8px;transform:rotate(12deg);box-shadow:0 3px 0 rgba(0,0,0,.1)}
+.card{position:relative}
+.watch{display:inline-flex;align-items:center;gap:6px;background:#fff0f4;color:#d6336c;border-radius:999px;padding:4px 12px;font-weight:600;font-size:13px;margin-top:6px}
+.watch::before{content:"";width:8px;height:8px;border-radius:50%;background:#d6336c;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+/* Mein Shop */
+.ann{background:#3a2140;color:#fff;font:500 13px Fredoka;white-space:nowrap;overflow:hidden;padding:6px 0}
+.ann span{display:inline-block;padding-left:20px;animation:run 22s linear infinite}
+.sf .brand h2{font-size:46px}
+.sf .brand .cta{display:inline-block;margin-top:12px;background:#ffb020;color:#3a2140;border-radius:999px;padding:9px 20px;font-weight:700;transform:rotate(-2deg)}
+.sf .brand::before{content:"";position:absolute;right:120px;bottom:-30px;width:90px;height:90px;border-radius:40% 60% 55% 45%;background:#ff7ab6;opacity:.9}
+.sf .card .new{position:absolute;left:14px;top:14px;background:#ff7ab6;color:#fff;font:700 12px Fredoka;border-radius:999px;padding:3px 10px;transform:rotate(-6deg);z-index:1}
+.wave{height:22px;margin:0 20px;background:radial-gradient(circle at 11px -4px,transparent 12px,#4c6fff 13px) 0 0/22px 22px repeat-x;opacity:.15}
+
+/* ===== Revoluut (neobank) ===== */
+.rv{background:#f2f3f7;min-height:100%;font:14px "Inter","Helvetica Neue",Arial,sans-serif;color:#111;display:grid;grid-template-columns:210px 1fr 320px}
+.rv .nv{background:#fff;padding:18px 12px;border-right:1px solid #e6e7ee}
+.rv .lg{font:800 24px "Helvetica Neue",Arial;letter-spacing:-1.2px;margin:0 8px 20px}
+.rv .lg sup{font-size:10px;background:#111;color:#fff;border-radius:6px;padding:1px 5px;margin-left:3px;letter-spacing:0;vertical-align:6px}
+.rv .nv div{padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:600;color:#555}
+.rv .nv div.on{background:#eef0ff;color:#3d2cff}
+.rv .mid{padding:20px 22px;overflow-y:auto}
+.rv .bal{text-align:center;padding:10px 0 18px}
+.rv .bal small{color:#777;font-weight:600}
+.rv .bal .v{font:800 46px "Helvetica Neue",Arial;letter-spacing:-2px}
+.rv .bal .v span{font-size:26px;color:#999}
+.rv .pills{display:flex;justify-content:center;gap:18px;margin-bottom:20px}
+.rv .pills div{text-align:center;font-size:12px;font-weight:600;cursor:pointer}
+.rv .pills i{display:flex;width:48px;height:48px;border-radius:50%;background:#fff;align-items:center;justify-content:center;font:normal 20px Arial;margin:0 auto 5px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.rv .box{background:#fff;border-radius:20px;padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.rv .box h4{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px}
+.rv .box h4 a{color:#3d2cff;font-weight:600;font-size:13px;cursor:pointer}
+.rv .tx{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;padding:8px 0}
+.rv .tx .ic{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff}
+.rv .tx small{color:#888;display:block}
+.rv .tx .am{font-weight:700;text-align:right}
+.rv .tx .am.p{color:#0a9d58}
+.rv .rt{padding:20px 18px;border-left:1px solid #e6e7ee;background:#fff;overflow-y:auto}
+.rv .card{border:0;cursor:default;height:180px;border-radius:18px;padding:18px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,#1b1b1f,#4a4a55 45%,#1b1b1f 60%,#6b6b78);box-shadow:0 14px 30px rgba(0,0,0,.25);transition:transform .3s}
+.rv .card:hover{transform:rotate(-2deg) translateY(-4px)}
+.rv .card::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.25) 45%,transparent 60%);animation:shine 4s infinite}
+@keyframes shine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.rv .card .chip{width:38px;height:28px;border-radius:6px;background:linear-gradient(135deg,#e8cf8a,#a88a3c);margin:18px 0 22px}
+.rv .card .no{font:600 16px monospace;letter-spacing:2px}
+.rv .card .tier{position:absolute;right:18px;top:16px;font-weight:800;font-size:12px;letter-spacing:1px}
+.rv .up{background:linear-gradient(135deg,#3d2cff,#b12cff);color:#fff;border-radius:18px;padding:14px;margin:16px 0}
+.rv .up b{font-size:16px}
+.rv .up small{display:block;opacity:.85;margin:4px 0 10px}
+.rv .btn2{background:#fff;color:#3d2cff;border:0;border-radius:999px;padding:7px 14px;font-weight:700;cursor:pointer;box-shadow:none}
+.rv .btn3{background:#3d2cff;color:#fff;border:0;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;box-shadow:none}
+.rv .donut{display:flex;gap:14px;align-items:center}
+.rv .lgd div{font-size:12px;display:flex;gap:6px;align-items:center;margin:3px 0}
+.rv .lgd i{width:10px;height:10px;border-radius:50%}
+.rv .vault{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.rv .bar2{height:8px;border-radius:999px;background:#eceef5;overflow:hidden;margin-top:4px;width:150px}
+.rv .bar2 i{display:block;height:100%;background:#3d2cff;border-radius:999px}
+.rv input[type=range]{width:100%;accent-color:#3d2cff}
+.rv .kv{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f0f4}
+.rv .toast{background:#111;color:#fff;border-radius:14px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:flex;gap:10px;align-items:center}
+.rv .toast b{color:#ffcf3d}
+@media(max-width:900px){.rv{grid-template-columns:1fr}.rv .nv,.rv .rt{display:none}}
+
+/* ===== TikTak (Creator-Studio) ===== */
+.tt{background:#0b0b0f;color:#fff;min-height:100%;font:14px "Helvetica Neue",Arial,sans-serif;display:grid;grid-template-columns:220px 1fr 300px}
+.tt .glitch{font:900 28px "Arial Black",Arial;position:relative;letter-spacing:-1px;text-shadow:-2px -1px 0 #25f4ee,2px 1px 0 #fe2c55}
+.tt .nav{padding:16px 12px;border-right:1px solid #222}
+.tt .nav div{padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:600;color:#bbb}
+.tt .nav div.on{background:#1f1f25;color:#fff}
+.tt .nav .post{background:#fe2c55;color:#fff;text-align:center;margin-top:18px}
+.tt .feed{display:flex;align-items:center;justify-content:center;gap:16px;padding:14px}
+.tt .vid{width:300px;height:540px;max-height:100%;border-radius:14px;position:relative;overflow:hidden;flex:none}
+.tt .vid .bg{position:absolute;inset:0;animation:hue 6s linear infinite}
+@keyframes hue{to{filter:hue-rotate(360deg)}}
+.tt .vid .obj{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);animation:zoom 2.2s ease-in-out infinite}
+@keyframes zoom{50%{transform:translate(-50%,-50%) scale(1.12) rotate(-4deg)}}
+.tt .cap{position:absolute;left:12px;right:60px;bottom:14px;font-size:13px;line-height:1.35;text-shadow:0 1px 3px #000}
+.tt .cap b{display:block;font-size:15px}
+.tt .overlay{position:absolute;top:18%;left:0;right:0;text-align:center;font:900 22px "Arial Black";text-shadow:0 2px 0 #000;padding:0 10px}
+.tt .overlay span{background:#fff;color:#000;padding:2px 8px;line-height:1.6;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.tt .acts{display:flex;flex-direction:column;gap:16px;align-items:center}
+.tt .acts div{text-align:center;font-size:12px;font-weight:700;cursor:pointer}
+.tt .acts i{display:flex;width:46px;height:46px;border-radius:50%;background:#26262c;align-items:center;justify-content:center;font:normal 20px Arial;margin-bottom:3px}
+.tt .acts .liked i{background:#fe2c55}
+.tt .prog{position:absolute;bottom:0;left:0;height:3px;background:#fff;animation:pr 8s linear infinite}
+@keyframes pr{from{width:0}to{width:100%}}
+.tt .tsd{border-left:1px solid #222;padding:14px;overflow-y:auto}
+.tt .stat{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.tt .stat div{background:#17171c;border-radius:10px;padding:10px}
+.tt .stat b{display:block;font-size:20px}
+.tt .stat small{color:#888}
+.tt .up{color:#25f4ee}
+.tt .cm{display:grid;grid-template-columns:32px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid #1d1d22;font-size:13px}
+.tt .cm .a{width:32px;height:32px;border-radius:50%}
+.tt .cm small{color:#888}
+.tt .ideas div{background:#17171c;border-radius:10px;padding:8px 10px;margin-bottom:8px;cursor:pointer;border:1px solid transparent}
+.tt .ideas div:hover{border-color:#fe2c55}
+.tt .ideas small{color:#888;display:block}
+@media(max-width:900px){.tt{grid-template-columns:1fr}.tt .nav{display:none}}
+
+.note{max-width:1200px;margin:16px auto 0;color:#ddd;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="laptop">
+  <div class="chrome">
+    <div class="tabs" id="tabs"></div>
+    <div class="bar"><div class="nb" id="back">‹</div><div class="nb" id="home">⌂</div><div class="url" id="url"></div></div>
+  </div>
+  <div class="page" id="page"></div>
+</div>
+<p class="note">Oben die Tabs sind die Apps. Alles anklickbar: Produkte öffnen, Varianten wählen, Bewertungen lesen, Mails öffnen, Sendungen ansehen, Kurse wechseln. Alle Namen, Logos und Texte sind erfunden – man erkennt das Vorbild am Aufbau, nicht am Markenzeichen.</p>
+
+<script>
+/* ---------- Daten ---------- */
+const P=[
+ {id:"case",name:"Handyhülle Marmor",t:"2026 NEU Luxus Marmor Handyhülle Stoßfest Silikon für iPhone Samsung Xiaomi Alle Modelle Frau Mann Geschenk Top",ek:0.89,old:12.99,sold:"12.000+",r:4.3,n:3412,col:"#b9d7ff",v:["Marmor weiß","Marmor schwarz","Marmor „Gold“"],moq:10,ship:"15–40 Tage",store:"Shenzhen Happy Case Store",pos:"94,1 %",sell:14.90,
+  desc:"Hochwertige Premium-Marmor-Optik aus echtem Kunststoff. Schützt Ihr Telefon vor Sturz aus bis zu 2 cm Höhe. Passt auf fast alle Modelle (bitte Größe vorher messen). Farbe kann abweichen durch Bildschirm, Licht und Laune.",
+  rv:[["Mehmet","5","Passt perfekt auf Samsung. Ist aber iPhone Hülle. Trotzdem 5 Sterne weil schnell."],["Sabine T.","3","Marmor sieht aus wie Marmor auf Foto von Marmor. Okay für Preis."],["kevin2009","1","Kam nach 61 Tagen. Handy inzwischen verloren."],["Anonymous","5","good good very good seller recommend"]]},
+ {id:"led",name:"LED-Streifen 5 m",t:"LED Streifen 5m 10m 20m RGB Bluetooth App Musik Sync Gaming Zimmer TikTok Licht Deko Wasserdicht (nicht wasserdicht)",ek:2.40,old:39.99,sold:"48.000+",r:4.1,n:9120,col:"#ffd6f2",v:["5 m","10 m","20 m (Klebt nicht)"],moq:20,ship:"12–30 Tage",store:"Guangzhou Bright Future Co.",pos:"91,7 %",sell:19.90,
+  desc:"Verwandelt jedes Zimmer in ein Gaming-Paradies oder eine Zahnarztpraxis. 16 Millionen Farben (davon 7 unterschiedlich). Steuerung per App „LEDlight Pro Max“ (braucht Standort, Kontakte und Kamera).",
+  rv:[["Jonas","5","Mein Zimmer sieht jetzt aus wie ein Aquarium. Freundin weg. 5 Sterne."],["Petra W.","2","Kleber hält genau eine Nacht. Morgens alles auf dem Boden."],["Leon","4","Musik Sync funktioniert, aber nur bei Schlager."]]},
+ {id:"beamer",name:"Mini-Beamer HD",t:"Mini Beamer 4K Full HD 1080P Tragbar Heimkino Projektor WLAN Handy 9500 Lumen (ca.)",ek:18.50,old:199.00,sold:"3.100+",r:3.8,n:1204,col:"#d8f5c8",v:["Weiß","Schwarz"],moq:5,ship:"20–45 Tage",store:"Mega Vision Official Store",pos:"89,3 %",sell:39.90,
+  desc:"Echtes 4K* Kinoerlebnis zu Hause. *Unterstützt 4K-Dateien, zeigt sie in 480p. Helligkeit: sehr hell bei komplett dunklem Raum mit geschlossenen Augen.",
+  rv:[["Frank","4","Für den Preis okay. Film nur im Keller schaubar."],["Laura","1","9500 Lumen? Meine Kerze ist heller."],["Dieter S.","5","Enkel hat eingestellt, läuft."]]},
+ {id:"brush",name:"Bambus-Zahnbürste 4er",t:"4 Stück Bambus Zahnbürste Nachhaltig Öko Vegan Holz Plastikfrei Umwelt Natur Grün Klima",ek:0.35,old:9.99,sold:"20.000+",r:4.5,n:2210,col:"#f1e3c2",v:["4er","12er","48er Familie"],moq:50,ship:"15–35 Tage",store:"Eco Green World Trading",pos:"95,4 %",sell:3.90,
+  desc:"100 % natürlicher Bambus, per Luftfracht einzeln verpackt in umweltfreundlicher Plastikfolie. Borsten aus Nylon (natürliches Nylon).",
+  rv:[["Greta","5","Endlich nachhaltig! Kam in 3 Schichten Plastik, aber egal."],["Ben","4","Putzt. Riecht nach Holz."]]},
+ {id:"cat",name:"Katzen-Trinkbrunnen",t:"Katzen Trinkbrunnen 2,5L Leise Automatisch Filter LED Hund Haustier Wasserspender Smart",ek:6.20,old:49.99,sold:"7.800+",r:3.9,n:1880,col:"#c8f0ee",v:["Weiß","Blau","Rosa"],moq:5,ship:"15–30 Tage",store:"PetLove Global Store",pos:"92,0 %",sell:29.90,
+  desc:"Fließendes Wasser regt Ihre Katze zum Trinken an. Wissenschaftlich getestet an einer Katze. Flüsterleise (38 dB, entspricht einem kleinen Rasenmäher im Nebenzimmer).",
+  rv:[["Dr. Lehmann","1","Katze trinkt weiterhin aus der Toilette."],["Mia","5","Meine Katze liebt es. Spielt damit. Trinkt nicht."],["Tobi","3","Leise ist relativ."]]},
+ {id:"posture",name:"Haltungskorrektur",t:"Haltungskorrektur Rücken Geradehalter Schulter Gurt Büro Homeoffice Unsichtbar Unter Kleidung",ek:1.90,old:29.99,sold:"15.000+",r:4.0,n:4020,col:"#ffe0c8",v:["S","M","L","XL (wie M)"],moq:10,ship:"12–25 Tage",store:"Healthy Body Store",pos:"90,8 %",sell:24.90,
+  desc:"Richtet Ihre Haltung in nur 3 Tagen auf, oder Ihre Laune ab. Unsichtbar unter der Kleidung, außer man sieht es.",
+  rv:[["Kevin P.","4","Sitze gerader. Atme weniger."],["Nina","2","Größe L ist Kinder-L."]]},
+ {id:"ice",name:"Eiswürfelform Totenkopf",t:"Eiswürfelform Silikon Totenkopf Schädel Halloween Whisky Cocktail Party Eis Form Groß",ek:0.60,old:8.99,sold:"9.400+",r:4.6,n:980,col:"#e3e3ff",v:["1 Stück","3 Stück"],moq:20,ship:"15–30 Tage",store:"Party King Store",pos:"96,2 %",sell:7.90,
+  desc:"Macht aus jedem Getränk ein Statement. Schädel schmilzt dramatisch. Lebensmittelecht laut Aufkleber.",
+  rv:[["Lena S.","5","Gäste waren beeindruckt, bis er zu einem Klumpen wurde."],["Andi","5","Top für Whisky, schlecht für Apfelschorle-Stimmung."]]},
+ {id:"ring",name:"Ringlicht 26 cm",t:"Ringlicht 26cm mit Stativ Handyhalter Selfie TikTok Influencer Make Up Video LED Dimmbar",ek:3.80,old:59.99,sold:"31.000+",r:4.2,n:6100,col:"#fff3b0",v:["26 cm","33 cm","46 cm"],moq:10,ship:"15–35 Tage",store:"Star Creator Official",pos:"93,5 %",sell:22.90,
+  desc:"Werde in 24 Stunden Influencer. Ergebnis nicht garantiert. Stativ bis 1,60 m (wackelt ab 1,20 m).",
+  rv:[["Chantal","5","Sehe aus wie ein Engel, Zimmer sieht aus wie Verhörraum."],["Marco","3","Stativ kippt, Ring hält."]]}
+];
+const ICON={
+ case:'<rect x="32" y="12" width="56" height="96" rx="12" fill="#fff" stroke="#161616" stroke-width="5"/><path d="M40 30 C55 40 50 60 70 70 S80 95 85 100" stroke="#8a8a9a" stroke-width="4" fill="none"/><circle cx="46" cy="24" r="5" fill="#161616"/>',
+ led:'<path d="M10 70 C30 30 50 110 70 60 S100 30 112 60" stroke="#161616" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M10 70 C30 30 50 110 70 60 S100 30 112 60" stroke="#fff" stroke-width="5" fill="none" stroke-dasharray="2 9" stroke-linecap="round"/>',
+ beamer:'<rect x="14" y="40" width="92" height="50" rx="10" fill="#fff" stroke="#161616" stroke-width="5"/><circle cx="42" cy="65" r="15" fill="#6aa9ff" stroke="#161616" stroke-width="5"/><path d="M62 30 L80 12 M74 34 L100 22" stroke="#161616" stroke-width="4"/><rect x="72" y="56" width="24" height="6" fill="#161616"/>',
+ brush:'<rect x="54" y="30" width="12" height="84" rx="6" fill="#d9b27a" stroke="#161616" stroke-width="5" transform="rotate(20 60 70)"/><rect x="62" y="8" width="16" height="28" fill="#fff" stroke="#161616" stroke-width="5" transform="rotate(20 60 70)"/>',
+ cat:'<ellipse cx="60" cy="88" rx="46" ry="16" fill="#fff" stroke="#161616" stroke-width="5"/><path d="M28 84 C28 50 92 50 92 84" fill="#fff" stroke="#161616" stroke-width="5"/><path d="M60 50 C60 30 72 26 74 44" stroke="#3aa0ff" stroke-width="6" fill="none"/>',
+ posture:'<path d="M30 20 L60 60 L90 20 M60 60 L60 108 M30 108 L90 108" stroke="#161616" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M30 20 L60 60 L90 20" stroke="#ff9a5c" stroke-width="6" fill="none" stroke-linecap="round"/>',
+ ice:'<path d="M30 40 C30 12 90 12 90 40 L90 70 L78 70 L78 90 L42 90 L42 70 L30 70Z" fill="#fff" stroke="#161616" stroke-width="5"/><circle cx="47" cy="45" r="9" fill="#161616"/><circle cx="73" cy="45" r="9" fill="#161616"/><path d="M54 64 L60 56 L66 64" fill="#161616"/>',
+ ring:'<circle cx="60" cy="50" r="34" fill="none" stroke="#161616" stroke-width="16"/><circle cx="60" cy="50" r="34" fill="none" stroke="#fff" stroke-width="7"/><path d="M60 84 L60 114 M40 114 L80 114" stroke="#161616" stroke-width="6"/>'
+};
+const img=(p,s=100)=>`<svg viewBox="0 0 120 120" width="${s}" height="${s}">${ICON[p.id]}</svg>`;
+const eur=v=>v.toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
+const stars=r=>{const f=Math.round(r);return '<span class="stars">'+"★".repeat(f)+'<span style="color:#ddd">'+"★".repeat(5-f)+"</span></span>"};
+
+/* ---------- Apps ---------- */
+const APPS=[
+ {k:"ae",n:"AllesExpress",u:"allesexpress.cn"},
+ {k:"sf",n:"Mein Shop",u:"nordlicht-goods.shopifly.de"},
+ {k:"iw",n:"iWolke Mail",u:"iwolke.de/mail"},
+ {k:"pb",n:"PaketBlitz",u:"paketblitz.de/geschaeftskunden"},
+ {k:"tv",n:"TradingViech",u:"tradingviech.com/chart"},
+ {k:"bk",n:"Revoluut",u:"app.revoluut.com/business/home"},
+ {k:"tt",n:"TikTak",u:"tiktak.com/creator-studio"}
+];
+let app="ae",view={k:"home"},hist=[];
+const $=id=>document.getElementById(id);
+function go(a,v,push=true){if(push)hist.push([app,view]);app=a;view=v||{k:"home"};render();$("page").scrollTop=0}
+$("back").onclick=()=>{const h=hist.pop();if(h){app=h[0];view=h[1];render()}};
+$("home").onclick=()=>go(app,{k:"home"});
+
+function render(){
+ $("tabs").innerHTML=APPS.map(a=>`<div class="tab ${a.k==app?"on":""}" data-k="${a.k}">${a.n}</div>`).join("");
+ document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>go(t.dataset.k));
+ const A=APPS.find(a=>a.k==app);
+ $("url").textContent="https://"+A.u+(view.k=="prod"?"/item/"+(1004000000+P.indexOf(view.p)*7919)+".html":"");
+ $("page").innerHTML=({ae:AE,sf:SF,iw:IW,pb:PB,tv:TV,bk:BK,tt:TT})[app]();
+ bind();
+}
+
+/* AllesExpress */
+function AE(){
+ const hd=`<div class="ae"><div class="hd"><div class="mascot"><i></i></div><div class="logo" data-go="home">AllesExpress</div><div class="search"><input value="led streifen günstig 1000m"><button>Suchen</button></div><button style="background:#fff">Wagen (0)</button></div>
+ <div class="cats"><span>Alle Kategorien ▾</span><span>Super Deals</span><span>Handy & Zubehör</span><span>Haus & Deko</span><span>Haustier</span><span>Gesundheit</span><span>Influencer-Bedarf</span><span>Sachen</span></div>`;
+ if(view.k=="prod")return hd+prodPage(view.p,"ae")+"</div>";
+ const circ=[["Super Deals","#e63312","%"],["Handy","#4c6fff","H"],["Deko","#ff7ab6","D"],["Haustier","#20b3a8","P"],["Gesund","#7ac142","G"],["Influencer","#9b6bff","I"],["Party","#ffb020","!"],["Sachen","#3a2140","?"]];
+ const flash=[P[1],P[7],P[0],P[3],P[6],P[4]];
+ return hd+`<div class="circ">${circ.map(c=>`<div><span style="background:${c[1]}">${c[2]}</span>${c[0]}</div>`).join("")}</div>
+ <div class="tickets">${[["1 €","ab 10 €"],["3 €","ab 29 €"],["−15 %","Neukunde"],["Gratis","Versand"]].map(t=>`<div class="tk"><b>${t[0]}</b><div class="sep"></div><div><div style="font-size:12px">${t[1]}</div><span class="get">Holen</span></div></div>`).join("")}</div>
+ <div class="deal b3 sh dots"><div class="big">SUPER DEALS −97 %</div><div><b>Nur heute!</b> (Seit 2019 jeden Tag nur heute)<div class="timer" style="margin-top:6px">Endet in <span>02</span>:<span>14</span>:<span>59</span></div></div></div>
+ <div class="h2">Blitzangebote <span class="pill">endet in 00:41:07</span></div>
+ <div class="flash">${flash.map((p,i)=>{const pc=[91,73,64,52,38,17][i];return `<div class="fl" data-prod="${p.id}"><div class="im" style="background-color:${p.col}">${img(p,80)}</div><b>${eur(p.ek)}</b><div class="prog"><i style="width:${pc}%"></i><span>${pc}% weg</span></div></div>`}).join("")}</div>
+ <div class="h2">Mehr für dich</div>
+ <div class="grid">${P.map(cardAE).join("")}</div></div>`;
+}
+function cardAE(p){const off=Math.round((1-p.ek/p.old)*100);
+ return `<div class="card" data-prod="${p.id}">${p.sold.startsWith("4")||p.sold.startsWith("3")?'<div class="hot">HOT</div>':""}<div class="img dots" style="background-color:${p.col}"><div class="badge">−${off}%</div>${img(p,110)}</div>
+ <div class="t">${p.t}</div><div class="p">${eur(p.ek)}</div><div class="m"><span class="strike">${eur(p.old)}</span> · ${p.sold} verkauft<br>${stars(p.r)} ${p.r.toString().replace(".",",")}</div></div>`}
+
+function prodPage(p,site){
+ const ae=site=="ae", price=ae?p.ek:p.sell, old=ae?p.old:Math.round(p.sell*1.6)+0.99;
+ const off=Math.round((1-price/old)*100);
+ const hist=[62,21,8,4,5].map((w,i)=>`<div>${5-i}★ <i style="width:${w*1.2}px"></i> ${w}%</div>`).join("");
+ const rv=(ae?p.rv:p.rv.slice(0,2)).map(r=>`<div class="rev"><div class="av" style="background:${p.col}">${r[0][0]}</div><div><b>${r[0]}</b> ${stars(+r[1])} <span class="muted">· ${ae?"Farbe: "+p.v[0]+" · aus DE":"Verifizierter Kauf"}</span><div>${r[2]}</div><div class="muted" style="font-size:12px;margin-top:3px">Hilfreich (${(r[2].length*7)%97})</div></div></div>`).join("");
+ const tab=view.tab||"desc";
+ return `<div class="pp">
+  <div class="gal"><div class="main b3 sh dots" style="background-color:${p.col}">${img(p,230)}</div>
+   <div class="th">${[p.col,"#fff","#eee",p.col].map(c=>`<div class="dots" style="background-color:${c}"></div>`).join("")}</div></div>
+  <div>
+   <h1>${ae?p.t:p.name+" – Nordlicht Edition"}</h1>
+   <div style="margin-top:6px">${stars(p.r)} <b>${p.r.toString().replace(".",",")}</b> · <a class="l" data-tab="rev">${p.n.toLocaleString("de-DE")} Bewertungen</a> · ${ae?p.sold+" verkauft":"Bestseller in Kram"}</div>
+   ${ae?`<div class="watch">${(p.n%89)+11} Leute schauen gerade</div>`:""}<div class="price"><span class="now">${eur(price)}</span><span class="strike">${eur(old)}</span><span class="off">−${off}%</span></div>
+   ${ae?`<span class="coupon">0,50 € Rabatt ab 50 Stk.</span><span class="coupon">Neukunde −1 €</span>`:`<span class="coupon" style="border-color:#4c6fff;color:#4c6fff">Gratis Versand ab 30 €</span>`}
+   <p style="margin:12px 0 4px"><b>${ae?"Farbe":"Variante"}:</b></p>
+   <div class="vars">${p.v.map((v,i)=>`<div class="${i==(view.vi||0)?"on":""}" data-vi="${i}">${v}</div>`).join("")}</div>
+   <div class="qty"><b>Menge:</b><button>−</button><span>${ae?p.moq:1}</span><button>+</button><span class="muted" style="border:0;background:none">${ae?"Mindestmenge "+p.moq+" Stk.":"Nur noch 3 auf Lager (es sind 200)"}</span></div>
+   <div style="display:flex;gap:10px;margin-top:16px"><button style="background:${ae?"#ff5a36":"#4c6fff"};color:#fff">${ae?"Jetzt kaufen (ins Lager)":"In den Warenkorb"}</button><button style="background:#ffd23f">${ae?"In den Wagen":"Sofort kaufen"}</button></div>
+  </div>
+  <div class="side b3 sh">
+   ${ae?`<b>${p.store}</b><div class="muted">${p.pos} positive Bewertungen · seit 2014</div><br>
+   <div class="row"><span>Versand</span><b>Gratis</b></div><div class="row"><span>Lieferung</span><b>${p.ship}</b></div><div class="row"><span>Rückgabe</span><b>theoretisch</b></div><div class="row"><span>Dein Verkaufspreis</span><b>${eur(p.sell)}</b></div><div class="row"><span>Marge pro Stück</span><b style="color:#1a8a3a">${eur(p.sell-p.ek)}</b></div>
+   <br><button style="width:100%">Händler kontaktieren</button>`
+   :`<b>Nordlicht Goods</b><div class="muted">Deine Marke · Level 4</div><br><div class="row"><span>Lager</span><b>37 Stk.</b></div><div class="row"><span>Verkauft (7 Tage)</span><b>52</b></div><div class="row"><span>Einkauf</span><b>${eur(p.ek)}</b></div><div class="row"><span>Gewinn/Stk.</span><b style="color:#1a8a3a">${eur(p.sell-p.ek)}</b></div><br><button style="width:100%">Preis ändern</button>`}
+  </div></div>
+  <div class="ptabs"><div class="${tab=="desc"?"on":""}" data-tab="desc">Beschreibung</div><div class="${tab=="rev"?"on":""}" data-tab="rev">Bewertungen (${p.n.toLocaleString("de-DE")})</div><div class="${tab=="spec"?"on":""}" data-tab="spec">Details</div></div>
+  <div class="pbody">${tab=="desc"?`<p>${p.desc}</p><br><p class="muted">Hinweis: Bilder dienen nur zur Illustration. Tatsächliches Produkt kann Produkt ähneln.</p>`
+   :tab=="spec"?`<table style="border-collapse:collapse">${[["Marke","NONE"],["Herkunft","Festland"],["Material","Ja"],["Gewicht","ca. leicht"],["Zertifikat","CE (China Export)"]].map(r=>`<tr><td style="padding:4px 20px 4px 0" class="muted">${r[0]}</td><td><b>${r[1]}</b></td></tr>`).join("")}</table>`
+   :`<div class="rsum"><div class="n">${p.r.toString().replace(".",",")}</div><div>${stars(p.r)}<br><span class="muted">${p.n.toLocaleString("de-DE")} Bewertungen</span></div><div class="hist">${hist}</div></div>${rv}`}</div>`;
+}
+
+/* Mein Shop (Shopifly) */
+function SF(){
+ const own=P.slice(0,6);
+ const hd=`<div class="sf"><div class="ann"><span>Gratis Versand ab 30 € · 4,3 Sterne von 3.412 Kunden · Neu: Ringlicht in Rosa · Gratis Versand ab 30 € · </span></div><div class="hd"><div class="logo">shopifly</div><b>Nordlicht Goods</b><span class="muted" style="margin-left:auto">Vorschau deines Shops · Kunden sehen das so</span></div>`;
+ if(view.k=="prod")return hd+`<div style="--c:#4c6fff;--pbg:#eaefff">${prodPage(view.p,"sf")}</div></div>`;
+ return hd+`<div class="brand b3 sh dots"><h2>NORDLICHT GOODS</h2><div>Dinge, die du nicht brauchst. Schnell geliefert.</div><span class="cta">Jetzt stöbern</span></div><div class="wave"></div><div class="h2" style="font-family:Fredoka">Beliebt gerade</div>
+ <div class="grid">${own.map(p=>`<div class="card" data-prod="${p.id}">${p.id=="led"||p.id=="cat"?'<div class="new">NEU</div>':""}<div class="img dots" style="background-color:${p.col}">${img(p,110)}</div><div class="t"><b>${p.name}</b><br><span class="muted">Nordlicht Edition</span></div><div class="p">${eur(p.sell)}</div><div class="m">${stars(p.r)} (${Math.round(p.n/40)})</div></div>`).join("")}</div></div>`;
+}
+
+/* iWolke */
+const MAILS=[
+ {f:"FitGmbH Einkauf",s:"Anfrage: 40× Mini-Beamer",t:"13:40",u:1,b:"Sehr geehrte Damen und Herren,<br><br>wir möchten für unsere Filialen <b>40 Mini-Beamer</b> zu je 39,90 € bestellen. Lieferung per Spedition bis heute 17:00.<br><br>Bei Verspätung behalten wir uns eine Vertragsstrafe von 10 % vor.<br><br>Mit freundlichen Grüßen<br>i. A. B. Wagner",a:["Annehmen","Ablehnen"]},
+ {f:"Shop-System",s:"Neue Bestellung #1031 – EXPRESS",t:"14:28",u:1,b:"Mandy K. hat bestellt:<br><b>1× Handyhülle Marmor</b> – 14,90 €<br><br>Versand EXPRESS bis 16:00.",a:["Zur Bestellung"]},
+ {f:"Dr. Lehmann",s:"AW: Retoure Katzenbrunnen",t:"11:47",u:1,b:"Guten Tag,<br><br>die Katze trinkt weiterhin lieber aus der Toilette. Ich bitte um Erstattung und eine Erklärung.<br><br>Dr. med. vet. H. Lehmann",a:["Erstatten","Gutschein anbieten"]},
+ {f:"Mega Vision Official",s:"Dear friend!!! New product 2026",t:"08:12",u:1,b:"Dear my friend,<br><br>hot sale new beamer 12000 lumen (very bright), MOQ 50 pcs, price very good for you my friend. Reply for catalog!!!<br><br>Best regard<br>Lily",a:["Katalog ansehen"]},
+ {f:"Revoluut Business",s:"Ihre Kreditrate ist fällig",t:"09:00",u:0,b:"Die Rate von 150,00 € wird am Tag 14 abgebucht. Aktueller Restbetrag: 1.500,00 €.",a:["Zum Konto"]},
+ {f:"Kalle",s:"Samstag?",t:"gestern",u:0,b:"Kommst du Samstag noch rein? Mehmet ist krank. Und die Fritteuse macht wieder das Geräusch.",a:["Antworten"]}
+];
+function IW(){const i=view.m||0,m=MAILS[i];
+ return `<div class="iw"><div class="f"><h3>iWolke</h3>${["Posteingang|4","Bestellungen|7","Lieferanten|","Retouren|2","Bank|","Gesendet|","Werbung|38"].map((x,j)=>{const[a,b]=x.split("|");return `<div class="${j?"":"on"}">${a}<span>${b}</span></div>`}).join("")}</div>
+ <div class="ls">${MAILS.map((x,j)=>`<div class="ml ${x.u?"u":""} ${j==i?"on":""}" data-m="${j}"><div style="display:flex;justify-content:space-between"><b>${x.f}</b><span class="muted">${x.t}</span></div><div class="s">${x.s}</div><div class="pv">${x.b.replace(/<[^>]+>/g," ")}</div></div>`).join("")}</div>
+ <div class="rd"><h2>${m.s}</h2><div class="who"><div class="av" style="background:#d9e8ff">${m.f[0]}</div><div><b>${m.f}</b><br><span class="muted">an: info@nordlicht-goods.de · ${m.t}</span></div></div>
+ <div class="bubble">${m.b}</div><div style="display:flex;gap:10px;margin-top:16px">${m.a.map((a,j)=>`<button style="${j?"":"background:#2f7cf6;color:#fff"}">${a}</button>`).join("")}</div></div></div>`}
+
+/* PaketBlitz */
+function PB(){
+ const rows=[["1031","Handyhülle Marmor","EXPRESS","offen"],["1030","LED-Streifen 5 m","Standard","Label bereit"],["1029","Bambus-Zahnbürste","Standard","offen"],["1027","Haltungskorrektur","Standard","unterwegs"]];
+ return `<div class="pb"><div class="hd"><div class="logo">PaketBlitz</div><div class="nav"><span>Senden</span><span>Verfolgen</span><span>Abholung</span><span>Geschäftskunden</span></div><span style="margin-left:auto;font-weight:700">Kundennr. 4401-0012</span></div>
+ <div class="box"><b style="font-size:18px">Sendung verfolgen</b><div class="track"><input value="PB 4401 0012 1027 DE"><button class="red">Suchen</button></div>
+  <div class="steps"><div class="st ok"><i>1</i>Label erstellt</div><div class="st ok"><i>2</i>Abgeholt</div><div class="st now"><i>3</i>Im Paketzentrum Hamm</div><div class="st"><i>4</i>In Zustellung</div><div class="st"><i>5</i>Beim Nachbarn</div></div>
+  <p class="muted" style="text-align:center">Voraussichtlich morgen zwischen 8:00 und 21:00 Uhr (eher 20:58)</p></div>
+ <div class="box" style="display:grid;grid-template-columns:1fr auto;gap:20px">
+  <div><b style="font-size:18px">Heute versenden</b> <span class="muted">· Abholung 17:00 · noch 2 Std. 28 Min.</span>
+   ${rows.map(r=>`<div class="pbrow"><b>#${r[0]}</b><span>${r[1]}</span><span style="${r[2]=="EXPRESS"?"color:#d40511;font-weight:700":""}">${r[2]}</span><button ${r[3]=="offen"?'class="red"':""}>${r[3]=="offen"?"Label drucken":r[3]}</button></div>`).join("")}</div>
+  <div class="label"><div class="top"><b>S</b><div style="padding:6px">PaketBlitz Standard<br>0,4 kg<br>Nordlicht Goods</div></div><div style="padding:8px;border-bottom:3px solid #000">AN:<br><b style="font-size:15px">Torben W.</b><br>Zechenstraße 12<br>44575 Castrop-Rauxel</div><div class="bc"></div><div style="text-align:center;font-family:monospace;padding-bottom:6px">PB 4401 0012 1030 DE</div></div>
+ </div></div>`}
+
+/* TradingViech */
+const SYM=[["HYPE","Hype Holdings",1],["KRAM","Kram AG",2],["BTX","Bitkäse",3],["ETF","Welt-Sparplan",4],["IMBS","Kalles Imbiss e.K.",5],["MOON","ToTheMoon Inc.",6]];
+function rnd(s){return()=>(s=(s*16807)%2147483647)/2147483647}
+function candles(seed){const r=rnd(seed*999+7);let v=50+seed*10,out=[];for(let i=0;i<60;i++){const o=v;v=Math.max(5,v+(r()-.48)*6);const h=Math.max(o,v)+r()*3,l=Math.min(o,v)-r()*3;out.push([o,h,l,v])}return out}
+function TV(){const si=view.s||0,s=SYM[si],c=candles(s[2]),last=c[c.length-1][3],first=c[0][0],ch=(last/first-1)*100;
+ const W=800,H=420,mx=Math.max(...c.map(x=>x[1])),mn=Math.min(...c.map(x=>x[2])),y=v=>H-20-(v-mn)/(mx-mn)*(H-40),bw=W/c.length;
+ const svg=c.map((k,i)=>{const up=k[3]>=k[0],col=up?"#26a69a":"#ef5350",x=i*bw+bw/2;return `<line x1="${x}" x2="${x}" y1="${y(k[1])}" y2="${y(k[2])}" stroke="${col}" stroke-width="2"/><rect x="${x-bw*.35}" y="${y(Math.max(k[0],k[3]))}" width="${bw*.7}" height="${Math.max(2,Math.abs(y(k[0])-y(k[3])))}" fill="${col}" stroke="#000" stroke-width="1.5"/>`}).join("");
+ const quips=["Das ist garantiert der Boden.","Linie geht hoch = gut. Glaube ich.","Onkel Ralf sagt: jetzt kaufen.","Nicht Finanzberatung. Eher Finanzraten.","Der Kurs fühlt sich heute nach Tee an.","Buy high, sell low. Oder umgekehrt?"];
+ return `<div class="tv"><div class="top"><span class="logo">TradingViech</span><span class="sym">${s[0]}</span><span>${s[1]}</span><span class="tf">${["1T","1W","1M","1J","ALLES"].map((t,i)=>`<span class="${i==1?"on":""}">${t}</span>`).join("")}</span><b style="margin-left:auto" class="${ch>=0?"up":"dn"}">${last.toFixed(2).replace(".",",")} € (${ch>=0?"+":""}${ch.toFixed(1).replace(".",",")} %)</b></div>
+ <div class="chart"><svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none" style="display:block"><g stroke="#2a2e39">${[1,2,3,4,5,6].map(i=>`<line x1="0" x2="${W}" y1="${i*H/7}" y2="${i*H/7}"/>`).join("")}</g>${svg}</svg><div class="quip">${quips[si]}</div></div>
+ <div class="wl"><div style="color:#888;cursor:default">Beobachtungsliste<span></span><span></span></div>${SYM.map((x,i)=>{const cc=candles(x[2]),l=cc[59][3],d=(l/cc[0][0]-1)*100;return `<div class="${i==si?"on":""}" data-s="${i}"><b>${x[0]}</b><span>${l.toFixed(2).replace(".",",")}</span><span class="${d>=0?"up":"dn"}">${d>=0?"+":""}${d.toFixed(1).replace(".",",")}%</span></div>`}).join("")}
+ <div class="order" style="display:block"><div style="margin-bottom:8px">Depot: <b>820,00 €</b></div><button style="background:#26a69a">Kaufen</button> <button style="background:#ef5350">Verkaufen</button></div></div></div>`}
+
+
+/* Revoluut */
+function BK(){const m=view.bm||0,amt=view.kr||5000,rate=amt*1.089/24;
+ const tx=[["PaketBlitz","Shipping · Today 14:02","−$48.60","#ffcc00","P"],["Shopifly payout","Income · Today 09:00","+$612.40","#4c6fff","S"],["AllesExpress","Stock · Yesterday","−$240.00","#ff5a36","A"],["TikTak Ads","Marketing · Yesterday","−$120.00","#fe2c55","T"],["Kalle's Diner","Last paycheck · Day 10","+$312.00","#7ac142","K"],["Refund – Dr. Lehmann","Returns · Day 10","−$29.90","#20b3a8","R"],["Mom","Garage rent · Day 9","−$150.00","#9b6bff","M"]];
+ const txh=tx.map(t=>`<div class="tx"><div class="ic" style="background:${t[3]}">${t[4]}</div><div><b>${t[0]}</b><small>${t[1]}</small></div><div class="am ${t[2][0]=="+"?"p":""}">${t[2]}</div></div>`).join("");
+ const pages=[
+ `<div class="toast"><b>Tip</b> You spent 38% more on ads than last week. Bold strategy.</div>
+  <div class="bal"><small>Business · USD</small><div class="v">$3,480<span>.00</span></div></div>
+  <div class="pills">${[["+","Add money"],["→","Send"],["⇄","Exchange"],["⋯","More"]].map(x=>`<div><i>${x[0]}</i>${x[1]}</div>`).join("")}</div>
+  <div class="box"><h4>Transactions <a>See all</a></h4>${txh}</div>`,
+ `<div class="box"><h4>Spending this week</h4><div class="donut"><svg width="120" height="120" viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#eceef5" stroke-width="6"/>${[[42,"#ff5a36",0],[21,"#fe2c55",42],[14,"#ffcc00",63],[13,"#9b6bff",77],[10,"#20b3a8",90]].map(d=>`<circle cx="21" cy="21" r="15.9" fill="none" stroke="${d[1]}" stroke-width="6" stroke-dasharray="${d[0]} ${100-d[0]}" stroke-dashoffset="${25-d[2]}"/>`).join("")}</svg>
+  <div class="lgd"><div><i style="background:#ff5a36"></i>Stock 42%</div><div><i style="background:#fe2c55"></i>Ads 21%</div><div><i style="background:#ffcc00"></i>Shipping 14%</div><div><i style="background:#9b6bff"></i>Rent 13%</div><div><i style="background:#20b3a8"></i>Returns 10%</div></div></div>
+  <p style="color:#777;margin-top:10px">Insight: Returns cost you more than coffee. You don't drink coffee.</p></div>`,
+ `<div class="box"><h4>Business loan</h4><div class="bal" style="padding:4px 0 10px"><small>You want</small><div class="v" style="font-size:38px">$${amt.toLocaleString("en-US")}</div></div>
+  <input type="range" min="1000" max="20000" step="500" value="${amt}" id="kr">
+  <div class="kv"><span>Term</span><b>24 days</b></div><div class="kv"><span>APR</span><b>8.9%</b></div><div class="kv"><span>Daily payment</span><b>$${rate.toFixed(2)}</b></div><div class="kv"><span>Credit score</span><b>"Garage" (C−)</b></div><br>
+  <button class="btn3">Get it in 3 seconds</button><p style="color:#888;font-size:12px;margin-top:8px">Loan money can't go into index funds. Our algorithm is watching. Our algorithm is Gary.</p></div>`,
+ `<div class="box"><h4>Vaults</h4>${[["Warehouse fund",3480,25000,"#3d2cff"],["New van",600,8000,"#ff5a36"],["Taxes (don't touch)",0,1200,"#20b3a8"]].map(v=>`<div class="vault"><div><b>${v[0]}</b><div class="bar2"><i style="width:${Math.max(3,v[1]/v[2]*100)}%;background:${v[3]}"></i></div></div><div style="text-align:right"><b>$${v[1].toLocaleString("en-US")}</b><br><small style="color:#888">of $${v[2].toLocaleString("en-US")}</small></div></div>`).join("")}</div>
+  <div class="box"><h4>Invest</h4><div class="kv"><span>World ETF</span><b>$820.00 <span style="color:#0a9d58">+0.8%</span></b></div><div class="kv"><span>Bitcheese</span><b style="color:#888">Buy now? (no)</b></div><br><button class="btn3">Open TradingViech</button></div>`];
+ return `<div class="rv"><div class="nv"><div class="lg">Revoluut<sup>BIZ</sup></div>${["Home","Analytics","Loans","Vaults & Invest"].map((x,i)=>`<div class="${i==m?"on":""}" data-bm="${i}">${x}</div>`).join("")}</div>
+ <div class="mid">${pages[m]}</div>
+ <div class="rt"><div class="card"><div class="tier">METAL</div><b>Revoluut</b><div class="chip"></div><div class="no">•••• 1030</div><small>NORDLICHT GOODS</small></div>
+  <div class="up"><b>Upgrade to Ultra Metal Pro Max</b><small>Only $49.99/month. Includes airport lounge access (you don't fly) and a heavier card.</small><button class="btn2">Upgrade</button></div>
+  <div class="box" style="background:#f7f8fb"><h4>Upcoming</h4><div class="kv"><span>Loan payment</span><b>$150.00</b></div><div class="kv"><span>Due</span><b>Day 14</b></div><div class="kv"><span>Card freeze</span><b>Off</b></div></div>
+ </div></div>`}
+
+/* TikTak */
+const VIDS=[
+ {p:"led",o:"POV: dein Zimmer nachdem du 2,40 € ausgegeben hast",c:"LED Streifen die dein Leben verändern (nicht wirklich) #roomtour #gaming #nordlicht",v:"48,2K",l:"6.120",k:"212",bg:"linear-gradient(160deg,#6a00ff,#ff2fb3,#ffb300)"},
+ {p:"cat",o:"Meine Katze sieht den Brunnen zum ersten Mal",c:"Sie hat 0 Sekunden getrunken. 10/10 #katze #fail",v:"211K",l:"31.400",k:"1.908",bg:"linear-gradient(160deg,#00c2a8,#0a5cff)"},
+ {p:"case",o:"Unboxing: Handyhülle für 0,89 €",c:"Hält sie einen Sturz aus? Teil 2 in Bio #unboxing #tiktakmademebuyit",v:"9.340",l:"702",k:"48",bg:"linear-gradient(160deg,#ff6a3d,#ffcf3d)"}];
+const CMTS=[["mandy_k84","wo gibt's das?? link???","#ff7ab6"],["kevin2009","meins kam nach 61 tagen lol","#25f4ee"],["gisela_1947","Wie kann man hier bestellen? Mit Überweisung?","#ffb020"],["dropship_guru_99","bro das gibts auf allesexpress für 0,89","#9b6bff"],["torben.w","gekauft. danke tiktak","#7ac142"]];
+function TT(){const i=view.v||0,v=VIDS[i],p=P.find(x=>x.id==v.p),liked=view.lk;
+ return `<div class="tt"><div class="nav"><div class="glitch" style="margin:0 8px 18px">TikTak</div>${["Für dich","Meine Videos","Analysen","Kommentare","Werbung (Ads)"].map((x,j)=>`<div class="${j==1?"on":""}">${x}</div>`).join("")}<div class="post">+ Video posten (2/3 heute)</div></div>
+ <div class="feed"><div class="vid"><div class="bg" style="background:${v.bg}"></div><div class="obj">${img(p,170)}</div><div class="overlay"><span>${v.o}</span></div>
+  <div class="cap"><b>@nordlicht.goods</b>${v.c}<br><span style="opacity:.8">♫ Originalton – nordlicht.goods</span></div><div class="prog"></div></div>
+  <div class="acts"><div class="${liked?"liked":""}" data-like="1"><i>♥</i>${liked?"+1 ":""}${v.l}</div><div><i>…</i>${v.k}</div><div><i>↗</i>Teilen</div><div data-next="1"><i>↓</i>Nächstes</div></div></div>
+ <div class="tsd"><div class="stat"><div><small>Aufrufe</small><b>${v.v}</b></div><div><small>Follower</small><b>2.841</b><small class="up">+312 heute</small></div><div><small>Shop-Klicks</small><b>${(parseInt(v.k.replace('.',''))*3)}</b></div><div><small>Verkäufe</small><b class="up">+${Math.round(parseInt(v.k.replace('.',''))/9)}</b></div></div>
+  <b>Kommentare</b>${CMTS.map(c=>`<div class="cm"><div class="a" style="background:${c[2]}"></div><div><b>${c[0]}</b><br>${c[1]}<br><small>vor ${(c[1].length%9)+1} Std. · Antworten</small></div></div>`).join("")}
+  <br><b>Trend-Ideen für heute</b><div class="ideas" style="margin-top:8px"><div>„Things TikTak made me buy“<small>LED-Streifen · Hype 2,1×</small></div><div>Katzen reagieren auf Dinge<small>Katzen-Trinkbrunnen · viral</small></div><div>„Wie ich mit 19 meine Firma…“<small>Riskant: 30 % Shitstorm-Chance</small></div></div></div></div>`}
+
+function bind(){
+ document.querySelectorAll("[data-prod]").forEach(e=>e.onclick=()=>go(app,{k:"prod",p:P.find(p=>p.id==e.dataset.prod)}));
+ document.querySelectorAll("[data-go]").forEach(e=>e.onclick=()=>go(app,{k:"home"}));
+ document.querySelectorAll("[data-tab]").forEach(e=>e.onclick=()=>{view.tab=e.dataset.tab;render()});
+ document.querySelectorAll("[data-vi]").forEach(e=>e.onclick=()=>{view.vi=+e.dataset.vi;render()});
+ document.querySelectorAll("[data-m]").forEach(e=>e.onclick=()=>{view.m=+e.dataset.m;render()});
+ document.querySelectorAll("[data-bm]").forEach(e=>e.onclick=()=>{view.bm=+e.dataset.bm;render()});
+ const kr=document.getElementById("kr");if(kr)kr.oninput=()=>{view.kr=+kr.value;render()};
+ document.querySelectorAll("[data-like]").forEach(e=>e.onclick=()=>{view.lk=!view.lk;render()});
+ document.querySelectorAll("[data-next]").forEach(e=>e.onclick=()=>{view.v=((view.v||0)+1)%VIDS.length;view.lk=false;render()});
+ document.querySelectorAll("[data-s]").forEach(e=>e.onclick=()=>{view.s=+e.dataset.s;render()});
+}
+render();
+</script>
+</body>
+</html>
