@@ -229,7 +229,7 @@ namespace DropshippingGame.UI
                     float y = area.y + area.height * (1f - (last - lo) / (hi - lo));
                     AddLabel(F(last), area.xMax + 8f, y - 8f, s.Color);
                 }
-                if (!string.IsNullOrEmpty(s.Label)) AddLabel("● " + s.Label, area.x + 8f + si * 130f, area.yMax + 4f, s.Color);
+                if (!string.IsNullOrEmpty(s.Label)) AddLabel(s.Label, area.x + 22f + si * 140f, area.yMax + 4f, s.Color);
                 si++;
             }
         }
@@ -244,6 +244,7 @@ namespace DropshippingGame.UI
             if (width > 0) l.style.width = width;
             l.style.color = c;
             l.pickingMode = PickingMode.Ignore;
+            Fonts.Auto(l);
             Add(l);
             _labels.Add(l);
         }
@@ -285,6 +286,9 @@ namespace DropshippingGame.UI
                     m.Polyline(pts, 2.4f, s.Color);
                     m.Circle(pts[pts.Count - 1], 4.5f, s.Color, 16);
                 }
+                for (int si = 0; si < Data.Count; si++)
+                    if (!string.IsNullOrEmpty(Data[si].Label))
+                        m.Circle(new Vector2(area.x + 14f + si * 140f, area.yMax + 11f), 4f, Data[si].Color, 12);
             }
             m.Flush(ctx);
         }
@@ -376,13 +380,15 @@ namespace DropshippingGame.UI
 
         public TikTokPhone()
         {
-            AddToClassList("phone");
-            var screen = UIX.Col(this, 10f, "phone-screen");
+            AddToClassList("tiktok-phone");
+            var screen = UIX.Col(this, 10f, "tiktok-screen");
             var top = UIX.Row(screen, 8f);
             UIX.Icon(top, "music", 18f, Color.white);
             UIX.Colored(top, "TikTok", Color.white, "h3");
             UIX.Spacer(top);
-            _rec = UIX.Colored(top, "● REC", new Color(1f, 0.3f, 0.35f), "small");
+            _rec = UIX.Row(top, 4f);
+            UIX.Dot(_rec, new Color(1f, 0.3f, 0.35f), 8f);
+            UIX.Colored(_rec, "REC", new Color(1f, 0.3f, 0.35f), "small", "bold");
             UIX.Show(_rec, false);
             UIX.Colored(screen, Ideas[UnityEngine.Random.Range(0, Ideas.Length)], new Color(1f, 1f, 1f, 0.9f), "h3").style.marginTop = 16;
             UIX.Spacer(screen);
@@ -481,6 +487,148 @@ namespace DropshippingGame.UI
             }
             _rec.style.opacity = 0.5f + 0.5f * Mathf.Sin(_t * 8f);
             UpdateZone();
+        }
+    }
+
+    /// <summary>Per Code erzeugte Hintergrund-Texturen (Glühen, Verläufe). Werden zwischengespeichert.</summary>
+    public static class UiTex
+    {
+        private static Texture2D _radial, _shadeLeft, _shadeRight;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            _radial = null;
+            _shadeLeft = null;
+            _shadeRight = null;
+        }
+
+        /// <summary>Weißer, weicher Kreis (Alpha fällt nach außen ab) – per Tönung einfärben.</summary>
+        public static Texture2D Radial()
+        {
+            if (_radial != null) return _radial;
+            const int n = 128;
+            _radial = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, name = "ui_radial" };
+            var px = new Color32[n * n];
+            for (int y = 0; y < n; y++)
+            {
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = (x + 0.5f) / n * 2f - 1f, dy = (y + 0.5f) / n * 2f - 1f;
+                    float d = Mathf.Sqrt(dx * dx + dy * dy);
+                    float a = Mathf.Clamp01(1f - d);
+                    a = a * a * (3f - 2f * a);
+                    px[y * n + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(a * 255f));
+                }
+            }
+            _radial.SetPixels32(px);
+            _radial.Apply(false, true);
+            return _radial;
+        }
+
+        /// <summary>Dunkler Verlauf für die Menü-Kulisse (links deckend → rechts transparent, oder umgekehrt).</summary>
+        public static Texture2D Shade(bool fromLeft)
+        {
+            if (fromLeft && _shadeLeft != null) return _shadeLeft;
+            if (!fromLeft && _shadeRight != null) return _shadeRight;
+            const int w = 256;
+            var tex = new Texture2D(w, 1, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, name = fromLeft ? "ui_shade_l" : "ui_shade_r" };
+            for (int x = 0; x < w; x++)
+            {
+                float t = x / (float)(w - 1);
+                if (!fromLeft) t = 1f - t;
+                float a = Mathf.Lerp(fromLeft ? 0.95f : 0.8f, 0f, Mathf.SmoothStep(0f, 1f, t));
+                tex.SetPixel(x, 0, new Color(0.02f, 0.03f, 0.05f, a));
+            }
+            tex.Apply(false, true);
+            if (fromLeft) _shadeLeft = tex;
+            else _shadeRight = tex;
+            return tex;
+        }
+    }
+
+    /// <summary>Kleiner Verlauf ohne Achsen (Übersicht, Handy): Fläche + Linie + Endpunkt.</summary>
+    public sealed class Sparkline : VisualElement
+    {
+        private readonly List<float> _values = new List<float>();
+        private Color _color;
+
+        public Sparkline(IList<float> values, Color color)
+        {
+            AddToClassList("spark");
+            pickingMode = PickingMode.Ignore;
+            _color = color;
+            if (values != null) _values.AddRange(values);
+            generateVisualContent += Draw;
+        }
+
+        public void Set(IList<float> values, Color color)
+        {
+            _values.Clear();
+            if (values != null) _values.AddRange(values);
+            _color = color;
+            MarkDirtyRepaint();
+        }
+
+        private void Draw(MeshGenerationContext ctx)
+        {
+            var r = contentRect;
+            if (_values.Count < 2 || r.width < 8f || r.height < 8f) return;
+            float lo = float.MaxValue, hi = float.MinValue;
+            foreach (var v in _values)
+            {
+                lo = Mathf.Min(lo, v);
+                hi = Mathf.Max(hi, v);
+            }
+            lo = Mathf.Min(lo, 0f);
+            if (hi - lo < 0.001f) hi = lo + 1f;
+            var m = new UIDraw.MeshBuilder();
+            var pts = new List<Vector2>();
+            for (int i = 0; i < _values.Count; i++)
+            {
+                float x = 4f + (r.width - 8f) * i / (_values.Count - 1);
+                float y = 6f + (r.height - 12f) * (1f - (_values[i] - lo) / (hi - lo));
+                pts.Add(new Vector2(x, y));
+            }
+            var fill = new Color(_color.r, _color.g, _color.b, 0.16f);
+            for (int i = 0; i + 1 < pts.Count; i++)
+                m.Quad(pts[i], pts[i + 1], new Vector2(pts[i + 1].x, r.height), new Vector2(pts[i].x, r.height), fill);
+            m.Polyline(pts, 3f, _color);
+            m.Circle(pts[pts.Count - 1], 5f, _color, 16);
+            m.Flush(ctx);
+        }
+    }
+
+    /// <summary>Gezackte Abrisskante des Kassenbons (oben oder unten).</summary>
+    public sealed class ReceiptEdge : VisualElement
+    {
+        private readonly bool _top;
+        private readonly Color _color;
+
+        public ReceiptEdge(bool top, Color color)
+        {
+            _top = top;
+            _color = color;
+            AddToClassList("receipt-edge");
+            pickingMode = PickingMode.Ignore;
+            generateVisualContent += Draw;
+        }
+
+        private void Draw(MeshGenerationContext ctx)
+        {
+            var r = contentRect;
+            if (r.width < 4f || r.height < 2f) return;
+            var m = new UIDraw.MeshBuilder();
+            const float tooth = 12f;
+            int n = Mathf.Max(1, Mathf.CeilToInt(r.width / tooth));
+            float w = r.width / n;
+            for (int i = 0; i < n; i++)
+            {
+                float x0 = i * w, x1 = x0 + w, xm = x0 + w / 2f;
+                if (_top) m.Tri(new Vector2(x0, r.height), new Vector2(xm, 0f), new Vector2(x1, r.height), _color);
+                else m.Tri(new Vector2(x0, 0f), new Vector2(x1, 0f), new Vector2(xm, r.height), _color);
+            }
+            m.Flush(ctx);
         }
     }
 }

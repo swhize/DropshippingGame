@@ -11,7 +11,8 @@ namespace DropshippingGame
     /// Herzstück der Unity-Schicht. Startet automatisch (auch in einer leeren Szene), erzeugt
     /// Simulation, Audio und Oberfläche, zeigt das Hauptmenü mit der Welt als Kulisse und steuert
     /// die Spielsitzung: Story mit Kalle, Tagesabschluss, Ereignisse, Pitch-Minispiel, Pause,
-    /// Eingabesperren und Speichern.
+    /// Handy (Tab / Y), Eingabesperren und Speichern. Den vollen Laptop öffnet die Schreibtisch-
+    /// Station (Sim.OpenPc), nicht mehr die Tab-Taste.
     /// </summary>
     public sealed class GameRoot : MonoBehaviour
     {
@@ -25,8 +26,16 @@ namespace DropshippingGame
         private float _menuT, _lightAcc, _autosaveAcc;
         private bool _inMenu = true;
 
-        /// <summary>true, solange Menü, Laptop, Fenster oder Dialog die Steuerung übernehmen.</summary>
-        public bool InputLocked => _inMenu || _locks.Count > 0;
+        /// <summary>Frame, in dem die letzte Sperre gelöst wurde (dieser Frame bleibt noch gesperrt).</summary>
+        private int _unlockFrame = -1;
+
+        /// <summary>
+        /// true, solange Menü, Handy, Laptop, Fenster oder Dialog die Steuerung übernehmen – und noch
+        /// im Frame, in dem das letzte Fenster geschlossen wurde. Sonst würde derselbe Tastendruck
+        /// (B = Zurück/Ablegen, A = Bestätigen/Springen, E = Weiter/Benutzen) auch im Spiel wirken.
+        /// </summary>
+        public bool InputLocked => UiLocked || Time.frameCount <= _unlockFrame;
+        private bool UiLocked => _inMenu || _locks.Count > 0;
         public bool Paused => _pauses.Count > 0;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -111,10 +120,14 @@ namespace DropshippingGame
             s.Toast += (text, kind) => _ui.Hud.AddToast(text, kind);
             s.PcToggled += OnPcToggled;
             s.DayEnded += ShowSummary;
-            s.DayStarted += day => _ui.Hud.ShowBanner("Tag " + day, DayTagline());
+            s.DayStarted += day => _ui.Hud.ShowBanner("Tag " + day, DayTagline(), UiFmt.Weekday(day).ToUpperInvariant());
             s.LevelUp += level => _ui.Hud.ShowLevelUp(level);
-            s.GoalCompleted += g => _ui.Hud.ShowBanner("Ziel erreicht", g.Title + " · +" + Fmt.Money(g.Reward));
-            s.StoryChanged += _ => _ui.Hud.Refresh();
+            s.GoalCompleted += g => _ui.Hud.ShowBanner("Ziel erreicht", g.Title + " · +" + Fmt.Money(g.Reward), "MEILENSTEIN");
+            s.StoryChanged += _ =>
+            {
+                _ui.Hud.Refresh();
+                _ui.Phone.MarkDirty();
+            };
             s.ObjectiveChanged += () => _ui.Hud.Refresh();
             s.LocationChanged += OnLocationChanged;
             s.DeliveryIncoming += _ =>
@@ -154,6 +167,7 @@ namespace DropshippingGame
                     _ui.Laptop.UpdateBadges();
                     _ui.Laptop.MarkDirty();
                 }
+                _ui.Phone.MarkDirty();
                 _ui.Hud.Refresh();
             };
             s.Events.MinigameRequested += OnMinigame;
@@ -169,6 +183,7 @@ namespace DropshippingGame
                 _ui.Laptop.MarkDirty();
                 _ui.Laptop.UpdateBadges();
             }
+            if (_ui.Phone.IsOpen) _ui.Phone.MarkDirty();
         }
 
         private string DayTagline()
@@ -176,8 +191,9 @@ namespace DropshippingGame
             string[] lines =
             {
                 "Neuer Tag, neue Pakete.", "Kaffee an, Laptop auf.", "Die Kunden warten schon.", "Heute wird ein guter Tag.",
-                "Dein Imperium wächst.",
+                "Dein Imperium wächst.", "Zettel checken: " + GameInput.KeyLabel("phone") + " fürs Handy.",
             };
+            if (_sim.Day % 7 == 1) return "Neue Woche, neues Glück.";
             return lines[_sim.Day % lines.Length];
         }
 
@@ -186,11 +202,16 @@ namespace DropshippingGame
         // =====================================================================================
         public void Lock(string key, bool on)
         {
+            bool wasLocked = _locks.Count > 0;
             if (on) _locks.Add(key);
             else _locks.Remove(key);
             // Zurück im Spiel: Fokus von UI-Buttons lösen, sonst lösen Leertaste/Enter
             // (Springen) versteckte Buttons erneut aus.
-            if (!on && _locks.Count == 0) BlurUi();
+            if (!on && wasLocked && _locks.Count == 0)
+            {
+                BlurUi();
+                _unlockFrame = Time.frameCount;
+            }
             ApplyCursor();
         }
 
@@ -218,7 +239,7 @@ namespace DropshippingGame
 
         private void ApplyCursor()
         {
-            bool free = InputLocked;
+            bool free = UiLocked;
             Cursor.lockState = free ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = free;
         }
@@ -233,6 +254,7 @@ namespace DropshippingGame
         // =====================================================================================
         private void EnterMenu()
         {
+            _ui.Phone.Close(true);
             DestroyGame();
             _inMenu = true;
             _sim.InGame = false;
@@ -312,6 +334,8 @@ namespace DropshippingGame
             _ui.Menu.Close();
             _ui.Modal.Close();
             _ui.BigModal.Close();
+            _ui.Phone.Close(true);
+            _ui.Laptop.ResetBoot();
             DestroyGame();
             _inMenu = false;
             ClearLocks();
@@ -335,8 +359,23 @@ namespace DropshippingGame
             if (_sim.StoryStage == "diner")
                 _sim.Notify("Kalles Imbiss, 17:30 Uhr. Deine Schicht beginnt.", "info");
             else if (fromSave)
-                _sim.Notify("Willkommen zurück bei " + _sim.BrandName + ". Tag " + _sim.Day + ".", "info");
-            else _ui.Hud.ShowBanner("Tag 1", "Deine Garage. Dein Business.");
+                _sim.Notify("Willkommen zurück bei " + _sim.BrandName + ". " + UiFmt.DayLong(_sim.Day) + ".", "info");
+            else
+            {
+                _ui.Hud.ShowBanner("Tag 1", "Deine Garage. Dein Business.", UiFmt.Weekday(1).ToUpperInvariant());
+                PhoneTipLater();
+            }
+        }
+
+        /// <summary>Einmaliger Hinweis auf das Handy (ein paar Sekunden nach dem Start).</summary>
+        private void PhoneTipLater()
+        {
+            var sim = _sim;
+            Anim.Delay(7f, () =>
+            {
+                if (_inMenu || sim != _sim || sim.StoryStage != "business") return;
+                sim.Notify("Tipp: " + GameInput.KeyLabel("phone") + " öffnet dein Handy – Bestellungen, Nachrichten, Nachbestellen.", "info");
+            }, true);
         }
 
         private void PlacePlayer(bool useSaved)
@@ -375,6 +414,7 @@ namespace DropshippingGame
         {
             if (CanAutosave()) _sim.SaveGame(true);
             _ui.Pause.Close();
+            _ui.Phone.Close(true);
             _sim.ClosePc();
             _ui.Fader.FadeOut(() =>
             {
@@ -404,6 +444,7 @@ namespace DropshippingGame
             if (_inMenu)
             {
                 UpdateMenuCamera(udt);
+                if (!_ui.Fader.Busy && GameInput.CancelDown && _ui.Menu.IsOpen) _ui.Menu.Back();
                 return;
             }
             if (_player == null || _world == null) return;
@@ -430,8 +471,13 @@ namespace DropshippingGame
         private void HandleInput()
         {
             if (_ui.Fader.Busy) return;
+            // Alle Tasten genau einmal pro Frame abfragen (wasPressedThisFrame).
             bool pause = GameInput.PauseDown;
             bool cancel = GameInput.CancelDown;
+            bool phoneKey = GameInput.PhoneDown;
+            bool prevTab = GameInput.PrevTabDown;
+            bool nextTab = GameInput.NextTabDown;
+            int number = GameInput.NumberDown;
 
             if (GameInput.ScreenshotDown) TakeScreenshot();
 
@@ -447,16 +493,44 @@ namespace DropshippingGame
                     if (pause) _ui.Root.panel?.focusController?.focusedElement?.Blur();
                     return;
                 }
-                if (cancel || GameInput.LaptopDown) _sim.ClosePc();
+                if (_ui.BigModal.IsOpen || _ui.Modal.IsOpen)
+                {
+                    // Fenster über dem Laptop (z. B. Ereignis): erst das Fenster bedienen.
+                    HandleModalCancel(cancel);
+                    return;
+                }
+                if (cancel || phoneKey)
+                {
+                    _sim.ClosePc();
+                    return;
+                }
+                if (prevTab) _ui.Laptop.CycleApp(-1);
+                else if (nextTab) _ui.Laptop.CycleApp(1);
                 return;
             }
             if (_ui.BigModal.IsOpen || _ui.Modal.IsOpen)
             {
-                var m = _ui.BigModal.IsOpen ? _ui.BigModal : _ui.Modal;
-                if (cancel && (m.Current == "help" || m.Current == "credits" || m.Current == "confirm" || m.Current == "event_result")) m.Close();
+                HandleModalCancel(cancel);
                 return;
             }
             if (_ui.Dialogue.Active) return;
+            if (_ui.Phone.IsOpen)
+            {
+                if (phoneKey)
+                {
+                    _ui.Phone.Close();
+                    return;
+                }
+                if (cancel)
+                {
+                    if (!_ui.Phone.Back()) _ui.Phone.Close();
+                    return;
+                }
+                if (prevTab) _ui.Phone.CycleApp(-1);
+                else if (nextTab) _ui.Phone.CycleApp(1);
+                else if (number > 0) _ui.Phone.SelectApp(number - 1);
+                return;
+            }
             if (pause)
             {
                 _ui.Pause.Open();
@@ -467,10 +541,23 @@ namespace DropshippingGame
                 ShowHelp();
                 return;
             }
-            if (GameInput.LaptopDown)
+            if (phoneKey) _ui.Phone.Open();
+        }
+
+        /// <summary>Esc/B in Fenstern: Hilfe, Credits, Bestätigungen und Ergebnisse schließen; Ereignis = „Später“.</summary>
+        private void HandleModalCancel(bool cancel)
+        {
+            if (!cancel) return;
+            var m = _ui.BigModal.IsOpen ? _ui.BigModal : _ui.Modal;
+            switch (m.Current)
             {
-                if (_sim.StoryStage == "business") _sim.OpenPc();
-                else _sim.Notify("Dein Handy hat gerade keinen Empfang. Kalle guckt.", "info");
+                case "help":
+                case "credits":
+                case "confirm":
+                case "event_result":
+                case "event":
+                    m.Close();
+                    break;
             }
         }
 
@@ -488,6 +575,7 @@ namespace DropshippingGame
             if (open)
             {
                 if (_player != null && _player.Focus != null) _player.Focus.SetHighlighted(false);
+                _ui.Phone.Close(true);
                 Lock("pc", true);
                 _ui.Laptop.Open();
                 PostFX.SetDimmed(1f);
@@ -577,7 +665,9 @@ namespace DropshippingGame
             _world.Atmos.RenderReflections();
             Game.Audio.PlayMusic("work");
             _sim.Notify("Tag 1. Deine Garage. Dein Business. Los geht's!", "good");
+            _ui.Hud.ShowBanner("Tag 1", "Deine Garage. Dein Business.", UiFmt.Weekday(1).ToUpperInvariant());
             _sim.SaveGame(true);
+            PhoneTipLater();
         }
 
         // =====================================================================================
@@ -590,54 +680,25 @@ namespace DropshippingGame
             {
                 new ModalButton("Ja, Tag beenden", () => _sim.EndDayNow(), "accent", "moon"),
                 new ModalButton("Weiterarbeiten", null, "ghost"),
-            }, true, "confirm");
-            _ui.Modal.Text(body, "Offene Bestellungen bleiben bis morgen liegen. Miete, Löhne und Zinsen werden abgerechnet.", "muted");
+            }, true, "confirm", null, "moon");
+            _ui.Modal.Text(body, "Offene Bestellungen bleiben bis morgen liegen. Miete, Löhne und Zinsen (" + Fmt.Money(_sim.FixedCostsPerDay()) +
+                                 ") werden abgerechnet.", "muted");
         }
 
         private void ShowSummary(DaySummary s)
         {
             if (_sim.PcOpen) _sim.ClosePc();
+            _ui.Phone.Close(true);
             _ui.Modal.Close();
             Game.Sound("notify");
-            var body = _ui.BigModal.Open("Feierabend – Tag " + s.Day, "Zeit für die Abrechnung.", 560, new[]
-            {
-                new ModalButton("Nächster Tag", NextDay, "accent", "arrow_right"),
-            }, true, "summary");
-            var m = _ui.BigModal;
-            var top = UIX.Row(body, 10f);
-            UIX.Stat(top, "PAKETE", s.Shipped.ToString());
-            UIX.Stat(top, "VERLOREN", s.Lost.ToString(), s.Lost > 0 ? Theme.Bad : (Color?)null);
-            UIX.Stat(top, "ERFAHRUNG", "+" + s.XpGained + " XP", Theme.Accent);
-            UIX.Separator(body);
-            m.KV(body, "Umsatz", Fmt.Money(s.Revenue), Theme.Good);
-            if (s.Stand > 0) m.KV(body, "  davon Verkaufsstand", Fmt.Money(s.Stand), Theme.Good);
-            if (s.IncomeOther != 0) m.KV(body, "Sonstige Einnahmen", Fmt.Money(s.IncomeOther), Theme.Good);
-            void Cost(string label, int v)
-            {
-                if (v != 0) m.KV(body, label, Fmt.Money(-v), Theme.Bad);
-            }
-            Cost("Wareneinkauf", s.Purchases);
-            Cost("Verpackung", s.Packaging);
-            Cost("Marketing", s.Marketing);
-            Cost("Sonstiges", s.Other);
-            Cost("Miete", s.Rent);
-            Cost("Löhne", s.Wages);
-            Cost("Strom Förderband", s.Upkeep);
-            Cost("Kreditzinsen", s.Interest);
-            UIX.Separator(body);
-            m.KV(body, "Tagesergebnis (Cashflow)", Fmt.SignedMoney(s.Profit), s.Profit >= 0 ? Theme.Good : Theme.Bad);
-            if (s.Trading != 0) m.KV(body, "Trading (Käufe/Verkäufe)", Fmt.SignedMoney(s.Trading));
-            m.KV(body, "Kontostand danach", Fmt.Money(s.MoneyAfter), s.MoneyAfter < 0 ? Theme.Bad : (Color?)null);
-            if (s.Debt > 0) m.KV(body, "Offener Kredit", Fmt.Money(s.Debt), Theme.Bad);
-            float dr = s.RepEnd - s.RepStart;
-            m.KV(body, "Bewertung", Fmt.Rating(s.RepEnd) + " ★  (" + (dr >= 0 ? "+" : "−") + Fmt.Dec(Mathf.Abs(dr), 2) + ")", Theme.Accent);
-            if (s.Bankrupt)
-                UIX.Chip(body, "Dein Konto fällt unter " + Fmt.Money(GameData.BankruptLimit) + " – das ist die Insolvenz!", "warning", Theme.Bad);
-            else if (s.MoneyAfter < 0)
-                UIX.Chip(body, "Du bist im Minus. Ab " + Fmt.Money(GameData.BankruptLimit) + " ist Schluss – verkauf mehr, spar Kosten oder nimm einen Kredit.", "warning", Theme.Accent);
+            SummaryView.Show(_ui.BigModal, _sim, s, NextDay);
         }
 
-        private void NextDay() => _ui.Fader.Transition("Tag " + (_sim.Day + 1), DoNextDay, 0.9f);
+        private void NextDay()
+        {
+            int next = _sim.Day + 1;
+            _ui.Fader.Transition("Tag " + next, DoNextDay, 0.9f, UiFmt.Weekday(next).ToUpperInvariant());
+        }
 
         private void DoNextDay()
         {
@@ -657,7 +718,7 @@ namespace DropshippingGame
             {
                 new ModalButton("Letzten Spielstand laden", () => _ui.Fader.FadeOut(() => LoadGame(_sim.Slot)), "accent", "save"),
                 new ModalButton("Hauptmenü", ToMenu, "ghost", "home"),
-            }, true, "gameover");
+            }, true, "gameover", null, "trend_down");
             _ui.BigModal.Text(body, "Du hast " + _sim.Day + " Tage durchgehalten, " + _sim.TotalShipped + " Pakete verschickt und " +
                                     Fmt.Money(_sim.TotalEarned) + " umgesetzt. Nicht schlecht – aber das Geld ist weg.");
             if (!_sim.HasSave(_sim.Slot)) _ui.BigModal.Text(body, "Hinweis: Für diesen Spielstand gibt es noch keine Speicherung.", "muted");
@@ -670,7 +731,7 @@ namespace DropshippingGame
             {
                 new ModalButton("Weiterspielen", null, "accent", "play"),
                 new ModalButton("Credits", ShowCredits, "ghost", "heart"),
-            }, true, "ending");
+            }, true, "ending", null, "trophy");
             _ui.BigModal.Text(body, "Vor " + _sim.Day + " Tagen hast du noch Teller bei Kalle getragen. Heute gehört dir eine Marke mit " +
                                     Fmt.Rating(_sim.Reputation) + " Sternen, " + Fmt.Thousands(_sim.TotalShipped) + " verschickten Paketen und einem Team, das für dich arbeitet.");
             _ui.BigModal.Text(body, "Das Spiel ist hier nicht zu Ende – bau dein Imperium weiter aus, so lange du willst.", "muted");
@@ -678,41 +739,21 @@ namespace DropshippingGame
 
         private void ShowCredits()
         {
-            var body = _ui.Modal.Open("Credits", "Dropshipping Simulator – Vom Imbiss zum Imperium", 540, new[]
+            var body = _ui.Modal.Open("Credits & Quellen", "Dropshipping Simulator – Vom Imbiss zum Imperium", 720, new[]
             {
-                new ModalButton("Schließen", null, "accent"),
-            }, true, "credits");
-            _ui.Modal.Text(body, "Idee & Game Design: du\nCode, 3D-Welt, Shader, Texturen, Sounds & Musik: Claude\nEngine: Unity 6 (URP, UI Toolkit)\n\n" +
-                                 "Kein einziges Asset wurde importiert – jedes Modell, jede Textur, jedes Symbol und jeder Ton entsteht beim Start aus Code.");
+                new ModalButton("Schließen", null, "accent", "check"),
+            }, true, "credits", null, "heart");
+            CreditsView.Build(body);
         }
 
         private void ShowHelp()
         {
             _ui.Pause.Close();
-            string k(string a) => "<color=#FFBD42><b>" + GameInput.KeyLabel(a) + "</b></color>";
-            var body = _ui.Modal.Open("Steuerung & Spielablauf", null, 700, new[]
+            var body = _ui.Modal.Open("Steuerung & Hilfe", "Tastatur, Maus und Controller – und wie dein Business läuft.", 820, new[]
             {
                 new ModalButton("Verstanden", null, "accent", "check"),
-            }, true, "help");
-            _ui.Modal.Text(body, "<b>Steuerung</b>", "h3");
-            _ui.Modal.Text(body,
-                "WASD / linker Stick laufen · Shift sprinten · Strg ducken · Leertaste springen\n" +
-                "Maus / rechter Stick umsehen · " + k("interact") + " benutzen · " + k("drop") + " ablegen\n" +
-                k("laptop") + " Laptop · " + k("pause") + " Pause · " + k("help") + " diese Hilfe · F12 Screenshot\n" +
-                "Controller wird automatisch erkannt (Xbox/PlayStation).");
-            _ui.Modal.Text(body, "<b>Der Kreislauf</b>", "h3");
-            _ui.Modal.Text(body,
-                "1. Im Laptop unter <b>Einkauf</b> Ware bestellen\n" +
-                "2. Kiste am <b>Wareneingang</b> holen und ins passende <b>Regal</b> räumen\n" +
-                "3. Produkt im <b>Webshop</b> online stellen – Bestellungen erscheinen oben links\n" +
-                "4. Artikel aus dem Regal nehmen und am <b>Packtisch</b> verpacken\n" +
-                "5. Am <b>Labeldrucker</b> ein Versandlabel drucken\n" +
-                "6. Paket zur <b>Versand-Box</b> bringen – Geld kassieren");
-            _ui.Modal.Text(body, "<b>Wachsen</b>", "h3");
-            _ui.Modal.Text(body,
-                "Gute Preise, schnelle Lieferung und Qualität bringen gute Bewertungen und mehr Kunden. Marketing erhöht die Reichweite, " +
-                "der Verkaufsstand bringt Laufkundschaft, die Bank hilft über Engpässe. Mit Erfahrung steigt dein Firmenlevel und schaltet " +
-                "Produkte, Lagerhalle, Personal und mehr frei. Um 20 Uhr ist Feierabend – dann werden Miete, Löhne und Zinsen fällig.", "muted");
+            }, true, "help", null, "help");
+            HelpView.Build(body);
         }
 
         // =====================================================================================
@@ -722,17 +763,13 @@ namespace DropshippingGame
         {
             if (mail == null || !mail.Pending) return;
             if (_ui.Modal.IsOpen || _ui.BigModal.IsOpen || _ui.Dialogue.Active || _ui.Pause.IsOpen || _inMenu) return;
-            var buttons = new List<ModalButton>();
-            for (int i = 0; i < mail.Choices.Count; i++)
+            // Handy offen: nicht dazwischenfunken – die Entscheidung steht dort unter „Nachrichten“.
+            if (_ui.Phone.IsOpen)
             {
-                var c = mail.Choices[i];
-                int ci = i;
-                string txt = c.Label + (c.Cost > 0 ? "  ·  " + Fmt.Money(c.Cost) : "");
-                buttons.Add(new ModalButton(txt, () => Decide(mail.Id, ci), i == 0 ? "accent" : "", string.IsNullOrEmpty(c.Minigame) ? null : "gamepad"));
+                _ui.Phone.MarkDirty();
+                return;
             }
-            buttons.Add(new ModalButton("Später (Postfach)", null, "ghost"));
-            var body = _ui.Modal.Open(mail.Title, "Von: " + mail.Sender, 660, buttons, true, "event");
-            _ui.Modal.Text(body, mail.Text);
+            EventView.Show(_ui.Modal, _sim, mail, ci => Decide(mail.Id, ci));
         }
 
         private void Decide(int mailId, int choice)
@@ -745,14 +782,14 @@ namespace DropshippingGame
                 if (mail != null && mail.Pending && !_ui.Modal.IsOpen && !_ui.BigModal.IsOpen) ShowEventChoice(mail);
                 return;
             }
-            var body = _ui.Modal.Open("Ergebnis", mail != null ? mail.Title : null, 540, new[] { new ModalButton("OK", null, "accent") }, true, "event_result");
-            _ui.Modal.Text(body, res);
+            EventView.ShowResult(_ui.Modal, mail, res);
         }
 
         private void OnMinigame(Mail mail, string kind)
         {
             if (kind != "pitch") return;
             if (_sim.PcOpen) _sim.ClosePc();
+            _ui.Phone.Close(true);
             _ui.Modal.Close();
             PitchView.Run(_ui.BigModal, _sim, mail, null);
         }
