@@ -22,6 +22,9 @@ namespace DropshippingGame
         private float _lastProbeHour = -100f;
         private float _lastEnvHour = -100f;
         private float _hours = 12f;
+        // Zielrotation der Sonne; SetTimeOfDay läuft nur alle 0,2 s, gedreht wird weich in LateUpdate.
+        private Quaternion _sunTarget = Quaternion.identity;
+        private bool _sunInit;
 
         public float Hours => _hours;
 
@@ -34,7 +37,7 @@ namespace DropshippingGame
             Sun.shadows = LightShadows.Soft;
             Sun.shadowStrength = 0.82f;
             Sun.shadowBias = 0.04f;
-            Sun.shadowNormalBias = 0.3f;
+            Sun.shadowNormalBias = 0.45f;
             RenderSettings.sun = Sun;
 
             var skyShader = Shader.Find("Skybox/Procedural");
@@ -42,8 +45,9 @@ namespace DropshippingGame
             {
                 _sky = new Material(skyShader);
                 _sky.SetFloat("_SunDisk", 2f);
-                _sky.SetFloat("_SunSize", 0.035f);
-                _sky.SetFloat("_SunSizeConvergence", 6f);
+                // Kleine, klar begrenzte Sonnenscheibe ohne riesigen Halo (der zusammen mit Bloom "strahlte").
+                _sky.SetFloat("_SunSize", 0.02f);
+                _sky.SetFloat("_SunSizeConvergence", 10f);
                 RenderSettings.skybox = _sky;
             }
             RenderSettings.ambientMode = AmbientMode.Trilight;
@@ -94,7 +98,13 @@ namespace DropshippingGame
                 // Nachts wird die Sonne zum kühlen, hohen Mondlicht (weiche Schatten, blaue Stimmung).
                 var sunRot = Quaternion.Euler(elevation, azimuth + 180f, 0f);
                 var moonRot = Quaternion.Euler(38f, 150f, 0f);
-                Sun.transform.rotation = Quaternion.Slerp(sunRot, moonRot, Mathf.SmoothStep(0f, 1f, night));
+                _sunTarget = Quaternion.Slerp(sunRot, moonRot, Mathf.SmoothStep(0f, 1f, night));
+                // Große Sprünge (Laden, Schlafen, Zeitsprung) sofort übernehmen, sonst weich nachführen.
+                if (!_sunInit || Quaternion.Angle(Sun.transform.rotation, _sunTarget) > 12f)
+                {
+                    Sun.transform.rotation = _sunTarget;
+                    _sunInit = true;
+                }
                 float warm = 1f - Mathf.Clamp01((elevation - 6f) / 30f);
                 Color sunCol = Color.Lerp(new Color(1f, 0.96f, 0.9f), new Color(1f, 0.58f, 0.32f), warm);
                 Sun.color = Color.Lerp(sunCol, new Color(0.55f, 0.66f, 1f), night);
@@ -139,6 +149,16 @@ namespace DropshippingGame
                 DynamicGI.UpdateEnvironment();
             }
             if (Mathf.Abs(hours - _lastProbeHour) > 1f) RenderReflections();
+        }
+
+        private void LateUpdate()
+        {
+            if (Sun == null || !_sunInit) return;
+            float dt = Time.deltaTime;
+            if (dt <= 0f) return;
+            // Exponentielles Nachführen: glättet die 0,2-s-Stufen zu einer gleichmäßigen Drehung pro Frame.
+            float k = 1f - Mathf.Exp(-5f * dt);
+            Sun.transform.rotation = Quaternion.Slerp(Sun.transform.rotation, _sunTarget, k);
         }
 
         /// <summary>Wählt das passende HDRI (Tag / Abendrot / Nacht) als Reflexions-Cubemap.</summary>

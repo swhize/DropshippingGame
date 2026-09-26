@@ -41,8 +41,10 @@ namespace DropshippingGame
 
             _bloom = profile.Add<Bloom>(true);
             _bloom.intensity.Override(0.6f);
-            _bloom.threshold.Override(1.05f);
-            _bloom.scatter.Override(0.68f);
+            _bloom.threshold.Override(1.2f);
+            _bloom.scatter.Override(0.55f);
+            // Begrenzt extrem helle HDR-Pixel (Sonnenscheibe, Spiegelungen), damit sie nicht grell ausstrahlen.
+            _bloom.clamp.Override(12f);
 
             _color = profile.Add<ColorAdjustments>(true);
             _color.postExposure.Override(0.35f);
@@ -85,6 +87,8 @@ namespace DropshippingGame
             if (asset != null)
             {
                 asset.shadowDistance = q == 0 ? 30f : (q == 1 ? 55f : 85f);
+                // Mehr Kaskaden = höhere Schattenauflösung nahe der Kamera, weniger Flimmern bei drehender Sonne.
+                asset.shadowCascadeCount = q == 0 ? 1 : (q == 1 ? 2 : 4);
                 asset.msaaSampleCount = q == 2 ? 4 : (q == 1 ? 2 : 1);
                 asset.renderScale = q == 0 ? 0.8f : 1f;
             }
