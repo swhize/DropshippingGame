@@ -86,6 +86,7 @@ namespace DropshippingGame
             _staff = Props.Node(transform, "Staff").transform;
             _belt = Props.Node(transform, "Belt").transform;
             Pedestrians_();
+            if (!menuMode) gameObject.AddComponent<StreetFestival>().Setup();
             // Statische Geometrie zusammenfassen: deutlich weniger Draw Calls.
             // Nur lesbare (prozedurale) Meshes: importierte Modelle sind nicht lesbar und würden Fehler werfen.
             var batch = new List<GameObject>();
@@ -1003,7 +1004,7 @@ namespace DropshippingGame
             if (_trafficAcc <= 0f)
             {
                 _trafficAcc = Random.Range(5f, 11f);
-                SpawnCar();
+                if (!StreetFestival.BlocksTraffic) SpawnCar();
             }
             _bagCheck -= Time.deltaTime;
             if (_bagCheck <= 0f)

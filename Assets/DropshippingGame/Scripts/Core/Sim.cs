@@ -156,6 +156,7 @@ namespace DropshippingGame.Core
         public Sim(int? seed = null)
         {
             Rng = new Rng(seed);
+            _festRng = new Rng(seed.HasValue ? seed.Value + 7919 : (int?)null);
             Market = new Market(this);
             Events = new EventSystem(this);
             Trends = new TrendSystem(this);
@@ -305,6 +306,7 @@ namespace DropshippingGame.Core
             Challenges.Clear();
             ChallengeWeek = 0;
             TotalChallengesDone = 0;
+            FestivalReset();
             ResetDaily();
             Market.Reset();
             Events.Reset();
@@ -403,6 +405,7 @@ namespace DropshippingGame.Core
             UpdateExpiry();
             UpdateReturns();
             UpdateContractOffers();
+            FestivalUpdate();
             if (TimeMinutes >= GameData.DayEnd)
             {
                 TimeMinutes = GameData.DayEnd;
@@ -453,6 +456,7 @@ namespace DropshippingGame.Core
         {
             if (DayOver) return;
             DayOver = true;
+            FestivalEndDay();
             Events.ResolvePendingChoices();
             ContractsEndDay();
             var d = Daily;
@@ -513,6 +517,7 @@ namespace DropshippingGame.Core
             Trends.NewDay();
             Events.NewDay();
             ContractsNewDay();
+            FestivalNewDay();
             if (Weekday == 0 || ChallengeWeek != Week) StartWeek();
             CheckGoals();
             CheckChallenges();

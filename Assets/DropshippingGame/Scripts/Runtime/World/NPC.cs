@@ -63,6 +63,31 @@ namespace DropshippingGame
 
         public bool IsWalking => _walk > 0.5f;
 
+        /// <summary>
+        /// Gezielt zu einem Punkt laufen und dort stehen bleiben (für gesteuerte Figuren wie Festbesucher).
+        /// Ersetzt die Wegpunkte; die Figur wartet am Ziel, bis sie ein neues bekommt.
+        /// </summary>
+        public void GoTo(Vector3 localTarget)
+        {
+            Waypoints.Clear();
+            Waypoints.Add(localTarget);
+            Waypoints.Add(localTarget);
+            PingPong = false;
+            PauseAtPoints = 1e6f;
+            _idx = 0;
+            _dir = 1;
+            _wait = 0f;
+            _faceTarget = null;
+        }
+
+        /// <summary>Steht die Figur (nahezu) am Punkt?</summary>
+        public bool IsAt(Vector3 localTarget, float tolerance = 0.15f)
+        {
+            Vector3 d = transform.localPosition - localTarget;
+            d.y = 0f;
+            return d.sqrMagnitude <= tolerance * tolerance;
+        }
+
         private void Update()
         {
             float dt = Time.deltaTime;

@@ -175,6 +175,17 @@ namespace DropshippingGame
             {
                 if (_world != null) _world.SpawnFloatText(WorldBuilder.StandPos + new Vector3(0, 1.6f, 0), "+" + Fmt.Money(price), Theme.Good);
             };
+            var lastFestPhase = FestivalPhase.None;
+            s.FestivalChanged += phase =>
+            {
+                if (phase == lastFestPhase) return;
+                lastFestPhase = phase;
+                if (phase == FestivalPhase.Prep)
+                    _ui.Hud.ShowBanner(_sim.FestivalName, "Aufbau bis " + Fmt.Clock(_sim.FestivalLiveStart) + ": Festkisten packen & zum Marktstand bringen", "MINI-EVENT");
+                else if (phase == FestivalPhase.Live)
+                    _ui.Hud.ShowBanner(_sim.FestivalName + " läuft!", "Die Besucher kommen · bis " + Fmt.Clock(_sim.FestivalLiveEnd), "MINI-EVENT");
+            };
+            s.FestivalEnded += f => _ui.Hud.ShowBanner(f.Name + " vorbei", f.Sold + " verkauft · " + Fmt.Money(f.Revenue) + " · " + f.Visitors + " Besucher", "BILANZ");
             s.DialogueRequested += OnDialogue;
             s.EndDayRequested += ConfirmEndDay;
             s.GameOver += ShowGameOver;

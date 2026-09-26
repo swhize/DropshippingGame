@@ -148,6 +148,7 @@ namespace DropshippingGame.Core
             foreach (var t in ContractOfferTimes) offerTimes.Add((double)t);
 
             state["explained"] = Flags(Explained);
+            state["festival"] = FestivalToJson();
             state["orders_in_work"] = JList(OrdersInWork, o => o.ToJson());
             state["next_order_id"] = NextOrderId;
             state["launch_orders"] = launch;
@@ -320,6 +321,7 @@ namespace DropshippingGame.Core
         private void ReadV4State(Dictionary<string, object> s)
         {
             ReadFlags(s, "explained", Explained);
+            FestivalFromJson(J.O(s, "festival"));
             OrdersInWork.Clear();
             foreach (var o in J.A(s, "orders_in_work"))
             {
