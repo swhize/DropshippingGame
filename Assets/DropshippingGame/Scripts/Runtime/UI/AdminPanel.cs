@@ -270,6 +270,16 @@ namespace DropshippingGame.UI
         private void BuildEvents()
         {
             var sim = S;
+            _body.Add(Section("Mini-Event: Straßenfest"));
+            _body.Add(Info("Status: " + sim.FestivalStatusText() + (sim.FestivalActive ? " · Stand: " + sim.FestivalTotal() + " Artikel · " + sim.FestivalStats.Sold + " verkauft" : "")));
+            var fr = Row();
+            fr.style.flexWrap = Wrap.Wrap;
+            fr.Add(Btn("Straßenfest jetzt (mit Aufbau)", () => Do(() => sim.AdminStartFestival(false)), Accent));
+            fr.Add(Btn("Straßenfest sofort live", () => Do(() => sim.AdminStartFestival(true))));
+            fr.Add(Btn("Einladung für morgen", () => Do(() => sim.AdminAnnounceFestival())));
+            fr.Add(Btn("Fest beenden", () => Do(sim.AdminEndFestival)));
+            _body.Add(fr);
+            _body.Add(Section("Zufallsereignisse"));
             _body.Add(Info("Klick löst das Ereignis sofort aus (Mail kommt aufs Handy/Laptop)."));
             foreach (var ev in EventData.All)
             {

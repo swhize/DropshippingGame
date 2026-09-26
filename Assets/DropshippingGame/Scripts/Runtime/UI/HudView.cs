@@ -35,6 +35,9 @@ namespace DropshippingGame.UI
         private VisualElement _crosshair, _ring, _prompt, _hands, _handsSwatch, _handsDrop, _hints, _banner;
         private Label _promptTitle, _promptText, _promptKey, _handsEyebrow, _handsText, _handsSub, _bannerEyebrow, _bannerText, _bannerSub, _fps;
         private VisualElement _toasts;
+        private VisualElement _fest;
+        private Label _festEyebrow, _festTitle, _festText;
+        private string _festSig = "";
 
         private readonly List<TicketUi> _ticketUis = new List<TicketUi>();
         private readonly List<Order> _shownOrders = new List<Order>();
@@ -118,6 +121,13 @@ namespace DropshippingGame.UI
             _objBar = UIX.Bar(foot, 0f, Theme.Accent, 5f);
             _objPct = UIX.Text(foot, "", "obj-pct");
             _objReward = UIX.Text(foot, "", "obj-reward");
+
+            // Mini-Event (Straßenfest): Phase + Countdown, nur sichtbar wenn geplant/aktiv.
+            _fest = UIX.Col(_left, 0f, "hud-card", "obj-card");
+            _festEyebrow = UIX.Text(_fest, "MINI-EVENT", "obj-eyebrow");
+            _festTitle = UIX.Text(_fest, "", "obj-title");
+            _festText = UIX.Text(_fest, "", "obj-text");
+            UIX.Show(_fest, false);
 
             _boosts = UIX.Col(_left, 0f, "boost-list");
 
@@ -243,6 +253,7 @@ namespace DropshippingGame.UI
             {
                 _slowAcc = 0f;
                 RefreshBoosts(sim);
+                RefreshFestival(sim);
                 RefreshHints(sim, locked);
             }
 
@@ -258,6 +269,44 @@ namespace DropshippingGame.UI
                 }
             }
             else if (_fps.text != "") _fps.text = "";
+        }
+
+        /// <summary>Karte für das Straßenfest: Phase, Countdown, Stand-Bestand und Verkäufe.</summary>
+        private void RefreshFestival(Sim sim)
+        {
+            if (_fest == null) return;
+            bool show = sim.StoryStage == "business" && sim.Festival != FestivalPhase.None && sim.FestivalDay <= sim.Day + 1;
+            string eyebrow = "", title = "", text = "";
+            if (show)
+            {
+                switch (sim.Festival)
+                {
+                    case FestivalPhase.Announced:
+                        eyebrow = "MINI-EVENT · ANGEKÜNDIGT";
+                        title = sim.FestivalName + (sim.FestivalDay == sim.Day ? " heute" : " morgen");
+                        text = sim.FestivalDay == sim.Day
+                            ? "Aufbau ab " + Fmt.Clock(sim.FestivalPrepStart) + " (in " + sim.FestivalCountdown() + ")"
+                            : "Aufbau ab " + Fmt.Clock(sim.FestivalPrepStart) + " · Lager auffüllen!";
+                        break;
+                    case FestivalPhase.Prep:
+                        eyebrow = "AUFBAU · START IN " + sim.FestivalCountdown().ToUpperInvariant();
+                        title = sim.FestivalName + ": Stand bestücken";
+                        text = "Stand: " + sim.FestivalTotal() + "/" + GameData.FestivalCapacity + " · Festkisten am Packtisch packen";
+                        break;
+                    case FestivalPhase.Live:
+                        eyebrow = "LÄUFT · NOCH " + sim.FestivalCountdown().ToUpperInvariant();
+                        title = sim.FestivalName;
+                        text = sim.FestivalStats.Sold + " verkauft · " + Fmt.Money(sim.FestivalStats.Revenue) + " · Stand: " + sim.FestivalTotal();
+                        break;
+                }
+            }
+            string sig = show + eyebrow + title + text;
+            if (sig == _festSig) return;
+            _festSig = sig;
+            UIX.Show(_fest, show);
+            _festEyebrow.text = UiFmt.Safe(eyebrow);
+            _festTitle.text = UiFmt.Safe(title);
+            _festText.text = UiFmt.Safe(text);
         }
 
         private void RefreshBoosts(Sim sim)

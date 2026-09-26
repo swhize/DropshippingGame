@@ -712,3 +712,22 @@ Die Stufe-4-Skills (Prozess-Flow, Stammkundschaft, Trendsetter) verändern das S
 Nicht umgesetzt aus 5.1 (größerer Balance-Umbau, eigener Schritt): neue Einkaufspreise,
 Billig-Streuung, Express-Einkauf 15 %, Dauerauftrag, Preis-Prognose. Balance danach: Lagerhalle an
 Tag 11 (Seeds 11–12), 110 Tests grün.
+
+## 14. Mini-Event Straßenfest/Flohmarkt (`Sim.Festival.cs`)
+
+Ablauf: Einladung per Mail (ab Level 2, ~14 %/Tag, mind. 4 Tage Abstand) → am Festtag
+**Aufbau** 10:00–12:30 (`FestivalPhase.Prep`) → **Fest** 12:30–16:00 (`Live`) → Bilanz (Mail,
+`FestivalEnded`), Restware zurück ins Lager. Tagesende beendet ein laufendes Fest.
+
+| API | Zweck |
+|---|---|
+| `FestivalPhase Festival`, `int FestivalDay`, `string FestivalName` | Zustand |
+| `ItemData FestivalPackCrate(pid)` / `string FestivalNextPackProduct(after)` | Packtisch: bis 10 Stück aus dem Lager in eine Kiste |
+| `int FestivalAddCrate(ItemData crate)` | Kiste (Fest- oder Lieferkiste) am Marktstand auslegen (max. 120) |
+| `FestivalVisit FestivalVisitor()` | Ein Besucher entscheidet: `NoInterest`, `TooExpensive`, `HaggleFailed`, `Bought`, `HaggledBought` (Preis vs. Marktpreis, Hype, Bewertung) |
+| `FestivalStats`, `LastFestival`, `FestivalCountdown()`, `FestivalStatusText()` | HUD/Bilanz |
+| `AdminStartFestival(skipPrep)`, `AdminAnnounceFestival()`, `AdminEndFestival()` | Admin-Panel (Tab „Ereignisse“) |
+| `event FestivalChanged / FestivalSale / FestivalEnded` | Welt/HUD |
+
+Welt: `Runtime/World/StreetFestival.cs` (Banner, Marktstand mit Markise, Packtisch vor der Tür,
+Besucher; Autos pausieren über `StreetFestival.BlocksTraffic`). Gespeichert unter `"festival"`.
