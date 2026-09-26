@@ -1130,12 +1130,39 @@ Label {
     right: 4px;
     top: 4px;
     background-color: #C8372D;
+    border-radius: 4px;
+    padding: 1px 4px;
+    align-items: center;
+}
+
+.ticket-express-text {
     color: #FFFFFF;
     font-size: 8.5px;
     letter-spacing: 0.8px;
     -unity-font-style: bold;
-    border-radius: 4px;
-    padding: 0 4px;
+}
+
+.ticket.express {
+    border-color: #C8372D;
+}
+
+.ticket-top {
+    align-items: center;
+}
+
+.ticket-number {
+    font-size: 9.5px;
+    color: #8A8275;
+    -unity-font-style: bold;
+    letter-spacing: 0.4px;
+}
+
+.ticket-customer {
+    font-size: 10px;
+    color: #6B645A;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .ticket-more {
@@ -3707,4 +3734,59 @@ Label {
 
 .os-theme.fb .os-logo-mark .icon {
     -unity-background-image-tint-color: var(--accent-ink);
+}
+
+/* ===== v3.0 Phase B: Zettel, Auftraege, Skills, Trends, Engpass ===== */
+.phone-ticket.express {
+    border-color: var(--bad);
+    border-left-width: 4px;
+}
+
+.phone-express {
+    background-color: var(--bad);
+    color: #FFFFFF;
+    font-size: 9px;
+    letter-spacing: 0.8px;
+    -unity-font-style: bold;
+    border-radius: 4px;
+    padding: 0 4px;
+}
+
+.phone-note {
+    font-size: 12px;
+    color: var(--muted);
+    -unity-font-style: italic;
+}
+
+.phone-advisor {
+    border-color: var(--accent);
+    border-width: 1.5px;
+}
+
+.phone-offer {
+    border-color: var(--accent);
+}
+
+.challenge-bonus {
+    border-left-width: 4px;
+    border-left-color: var(--accent);
+}
+
+.skill-node {
+    border-left-width: 4px;
+    border-left-color: var(--rule);
+}
+
+.skill-learned {
+    border-color: var(--good);
+}
+
+.trend-chart {
+    height: 92px;
+    border-radius: 10px;
+    background-color: var(--accent-soft);
+}
+
+.todo-top .todo-text {
+    -unity-font-style: bold;
 }

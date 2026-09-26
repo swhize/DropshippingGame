@@ -8,12 +8,10 @@ namespace DropshippingGame.UI
     /// <summary>Formatierungen, die nur die Oberfläche braucht (Wochentage, Dauer ...).</summary>
     public static class UiFmt
     {
-        public static readonly string[] Weekdays = { "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag" };
+        /// <summary>Tag 1 ist ein Montag (Core: GameData.WeekdayName).</summary>
+        public static string Weekday(int day) => GameData.WeekdayName(day);
 
-        /// <summary>Tag 1 ist ein Montag (wird in der UI berechnet, bis der Core eigene Wochentage hat).</summary>
-        public static string Weekday(int day) => Weekdays[((day - 1) % 7 + 7) % 7];
-
-        public static string WeekdayShort(int day) => Weekday(day).Substring(0, 2);
+        public static string WeekdayShort(int day) => GameData.WeekdayShort(day);
 
         /// <summary>"Mi · Tag 3"</summary>
         public static string DayShort(int day) => WeekdayShort(day) + " · Tag " + day;
@@ -74,6 +72,10 @@ namespace DropshippingGame.UI
         public bool Express;
         public string Customer;
         public string Note;
+        public string Number, City;
+        public OrderStage Stage;
+        /// <summary>0 frisch … 1 fällig … 3 überfällig (Core).</summary>
+        public float Urgency;
     }
 
     /// <summary>
@@ -108,27 +110,52 @@ namespace DropshippingGame.UI
             {
                 Product = GameData.Product(o != null ? o.Product : ""),
                 Price = o != null ? o.Price : 0,
-                Customer = "",
-                Note = "",
+                Customer = o?.Customer ?? "",
+                Note = o?.Note ?? "",
+                Express = o != null && o.Express,
+                Number = o != null ? o.Number : "",
+                City = o?.City ?? "",
+                Stage = o != null ? o.Stage : OrderStage.Queued,
             };
-            v.Age = s != null && o != null ? Mathf.Max(0f, s.BClock() - o.Created) : 0f;
-            v.Fill = Mathf.Clamp01(1f - v.Age / DueMinutes);
-            if (v.Age < BonusMinutes)
+            if (s == null || o == null)
             {
                 v.Tone = "fresh";
-                v.TimeText = UiFmt.DurationShort(DueMinutes - v.Age);
+                v.TimeText = "";
+                v.Fill = 1f;
+                return v;
             }
-            else if (v.Age < DueMinutes)
-            {
-                v.Tone = "ok";
-                v.TimeText = UiFmt.DurationShort(DueMinutes - v.Age);
-            }
-            else
-            {
-                v.Tone = "late";
-                v.TimeText = "+" + UiFmt.DurationShort(v.Age - DueMinutes);
-            }
+            v.Age = Mathf.Max(0f, s.BClock() - o.Created);
+            float urg = s.OrderUrgency(o);
+            v.Urgency = urg;
+            float window = Mathf.Max(1f, o.DueWindow);
+            v.Fill = Mathf.Clamp01(s.OrderTimeLeft(o) / window);
+            v.Tone = s.OrderOverdue(o) ? "late" : (urg < 0.6f ? "fresh" : "ok");
+            v.TimeText = s.OrderTimeLeftText(o);
             return v;
+        }
+
+        public static string StageText(OrderStage st)
+        {
+            switch (st)
+            {
+                case OrderStage.Picked: return "entnommen";
+                case OrderStage.Packed: return "verpackt";
+                case OrderStage.Labeled: return "etikettiert";
+                case OrderStage.Conveyor: return "auf dem Band";
+                default: return "wartet";
+            }
+        }
+
+        public static string StageIcon(OrderStage st)
+        {
+            switch (st)
+            {
+                case OrderStage.Picked: return "check";
+                case OrderStage.Packed: return "package";
+                case OrderStage.Labeled: return "tag";
+                case OrderStage.Conveyor: return "truck";
+                default: return "clock";
+            }
         }
 
         public static Color ToneColor(string tone)
@@ -142,61 +169,6 @@ namespace DropshippingGame.UI
         }
     }
 
-    /// <summary>
-    /// Merkt sich pro Produkt den zuletzt genutzten Lieferanten und die Bestellgröße
-    /// (für „Nachbestellen“ im Handy). Nur für diese Sitzung – bewusst ohne Spielstand-Änderung.
-    /// </summary>
-    public static class ReorderMemory
-    {
-        private static readonly Dictionary<string, int> Supplier = new Dictionary<string, int>();
-        private static readonly Dictionary<string, int> Bulk = new Dictionary<string, int>();
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics()
-        {
-            Supplier.Clear();
-            Bulk.Clear();
-        }
-
-        public static void Remember(string product, int supplier, int bulk)
-        {
-            if (string.IsNullOrEmpty(product)) return;
-            Supplier[product] = supplier;
-            Bulk[product] = bulk;
-        }
-
-        /// <summary>Bestellgröße als Nächstes wechseln (nur verfügbare).</summary>
-        public static void CycleBulk(Sim s, string product)
-        {
-            if (s == null) return;
-            int cur = GetBulk(s, product);
-            for (int i = 1; i <= GameData.BulkOptions.Length; i++)
-            {
-                int n = (cur + i) % GameData.BulkOptions.Length;
-                if (!s.BulkAvailable(n)) continue;
-                Bulk[product] = n;
-                return;
-            }
-        }
-
-        public static int GetSupplier(Sim s, string product)
-        {
-            if (s == null) return 0;
-            if (Supplier.TryGetValue(product, out int v) && v >= 0 && v < GameData.Suppliers.Length && s.SupplierAvailable(v)) return v;
-            if (s.SupplierAvailable(1)) return 1;
-            for (int i = 0; i < GameData.Suppliers.Length; i++)
-                if (s.SupplierAvailable(i)) return i;
-            return 0;
-        }
-
-        public static int GetBulk(Sim s, string product)
-        {
-            if (s == null) return 0;
-            if (Bulk.TryGetValue(product, out int v) && v >= 0 && v < GameData.BulkOptions.Length && s.BulkAvailable(v)) return v;
-            return 0;
-        }
-    }
-
     /// <summary>Tipps für Ladebildschirme und Übergänge.</summary>
     public static class Tips
     {
@@ -204,7 +176,14 @@ namespace DropshippingGame.UI
         {
             "Knapp unter dem Marktpreis verkaufst du viel – und behältst eine gute Marge.",
             "Mit {phone} öffnest du dein Handy: Bestellungen, Nachrichten und Nachbestellen.",
-            "Pakete, die in unter 90 Minuten rausgehen, bringen einen Sterne-Bonus.",
+            "Pakete, die weit vor der Frist rausgehen, bringen einen Sterne-Bonus. Express-Zettel zählen doppelt.",
+            "Retouren kommen später zurück: am Retourenplatz als B-Ware einlagern oder entsorgen.",
+            "Großaufträge ab Level 3: ganze Kisten direkt auf die Palette stellen – ohne Auspacken.",
+            "Trendradar im Laptop: Kauf ein, bevor der Hype seinen Peak erreicht.",
+            "Jeder Level-Aufstieg bringt einen Skillpunkt – Laptop » Firma » Skills.",
+            "Einmal pro Woche darfst du ein Wochenziel tauschen.",
+            "Premium-Ware gibt's nur einmal pro Produkt und Tag.",
+            "Unsicher, was bremst? Handy » Status zeigt den größten Engpass.",
             "Premium-Ware kostet mehr, sorgt aber für bessere Bewertungen.",
             "Ungefaltete Kartons kosten nur die Hälfte – falte sie am Falttisch.",
             "Um 20 Uhr ist Feierabend. Dann werden Miete, Löhne und Zinsen fällig.",
@@ -212,7 +191,7 @@ namespace DropshippingGame.UI
             "Der Verkaufsstand bringt Laufkundschaft. Ganz ohne Karton und Versand.",
             "Werbung und TikToks steigern die Nachfrage für eine Weile.",
             "Ist die Warteschlange voll, gehen Bestellungen verloren.",
-            "Im Laptop unter Firma » Ziele siehst du, was als Nächstes kommt.",
+            "Im Laptop unter Firma » Ziele stehen Meilensteine und Wochenziele.",
             "Den vollen Laptop „HustleOS“ gibt es nur am Schreibtisch.",
             "Offene Entscheidungen verfallen um 20 Uhr – dann gilt die vorsichtigste Antwort.",
             "Kalle hat immer einen Spruch parat. Ob er stimmt, ist eine andere Frage.",
@@ -233,14 +212,17 @@ namespace DropshippingGame.UI
 
         public static readonly string[][] Items =
         {
-            new[] { "phone", "Dein Handy", "Mit Tab: Bestellzettel, Nachrichten mit Entscheidungen, Schnell-Nachbestellen und Status." },
-            new[] { "screen", "HustleOS neu gedacht", "Weniger, dafür stärkere Apps mit Reitern. Neues Standard-Design „Hype“ – nur noch am Schreibtisch." },
-            new[] { "paper", "Bestellzettel & Express", "Jede Bestellung mit Kundschaft, Frist und Countdown. Express-Aufträge ab Level 2." },
-            new[] { "trend", "Trends & Hype", "Produkte werden heiß – und wieder kalt. Der Trendradar hilft beim Timing." },
-            new[] { "factory", "Großaufträge (B2B)", "Firmen bestellen palettenweise. Pünktlich liefern bringt Geld und Ruf." },
-            new[] { "box", "Retouren", "Manche Pakete kommen zurück: als B-Ware einlagern oder entsorgen." },
-            new[] { "sparkle", "Hustle-Skills & Wochenziele", "Skillbaum mit drei Ästen, jeden Montag neue Wochenziele." },
-            new[] { "home", "Neue Welt", "Echte 3D-Modelle, Materialien, Sounds und Musik aus freien Quellen." },
+            new[] { "phone", "Dein Handy ({phone})", "Bestellzettel mit Kundschaft und Frist, Nachrichten mit Entscheidungen und Großauftrags-Angeboten, Schnell-Nachbestellen, Wochenziele und Status." },
+            new[] { "paper", "Bestellzettel & Express", "Jede Bestellung hat Nummer, Kundschaft, Notiz und Countdown – oben rechts im HUD. Express ab Level 2: schneller, teurer, strenger bewertet." },
+            new[] { "return", "Retouren", "Manche Pakete kommen zurück (Grund steht drauf). Am Retourenplatz als B-Ware einlagern oder entsorgen. Billig-Ware und zu große Kartons erhöhen die Quote." },
+            new[] { "fire", "Trends & Hype", "Produkte werden heiß – und wieder kalt. Trendradar mit Verlauf und Prognose-Band in „Markt & Trends“." },
+            new[] { "pallet", "Großaufträge (B2B)", "Ab Level 3 bestellen Firmen palettenweise. Annehmen, am Palettenplatz liefern, Frist halten – sonst Vertragsstrafe." },
+            new[] { "sparkle", "Hustle-Skills", "Ein Skillpunkt pro Level: Logistik, Vertrieb, Marketing – je 4 Stufen. Umschulung jederzeit gegen Gebühr." },
+            new[] { "flag", "Wochenziele", "Jeden Montag drei neue Ziele mit Geld und XP. Eines pro Woche darfst du tauschen." },
+            new[] { "bulb", "Engpass-Assistent", "„Warum läuft's nicht?“ – Übersicht und Handy nennen, was gerade am meisten bremst, samt Lösung." },
+            new[] { "receipt", "Kassenbon & Wochentage", "Tagesabrechnung als Bon mit Retouren, Strafen und Aufträgen. Tag 1 ist Montag; samstags wird mehr bestellt." },
+            new[] { "screen", "HustleOS neu", "Weniger, dafür stärkere Apps mit Reitern, Design „Hype“, Controller-Steuerung, UI-Skalierung." },
+            new[] { "coin", "Balance", "Premium-Lieferant 1× pro Produkt und Tag, Tageskampagnen, max. 3 TikToks pro Tag, fairere Trading-Kurse." },
         };
     }
 }

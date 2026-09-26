@@ -392,14 +392,16 @@ namespace DropshippingGame.UI
             UIX.Show(_miniPacked, sim.PackedCount() > 0);
 
             // Sichtbare Bestellungen (Reihenfolge = Warteschlange, älteste zuerst) – nur bei Änderung neu bauen
+            var all = sim.Tickets();
             var visible = new List<Order>();
-            for (int i = 0; i < sim.OrderQueue.Count && visible.Count < MaxTickets; i++) visible.Add(sim.OrderQueue[i]);
-            int moreCount = Math.Max(0, sim.OrderQueue.Count - MaxTickets);
-            bool same = _ticketSig == "orders" && moreCount == _lastMore && visible.Count == _shownOrders.Count;
-            for (int i = 0; same && i < visible.Count; i++)
-                if (!ReferenceEquals(visible[i], _shownOrders[i])) same = false;
-            if (same) return;
-            _ticketSig = "orders";
+            for (int i = 0; i < all.Count && visible.Count < MaxTickets; i++) visible.Add(all[i]);
+            int moreCount = Math.Max(0, all.Count - MaxTickets);
+            var sb = new System.Text.StringBuilder("orders|");
+            sb.Append(moreCount).Append('|');
+            foreach (var o in visible) sb.Append(o.Id).Append(':').Append((int)o.Stage).Append(o.Express ? "x" : "").Append(',');
+            string sig = sb.ToString();
+            if (sig == _ticketSig) return;
+            _ticketSig = sig;
             _lastMore = moreCount;
 
             var before = new HashSet<Order>(_shownOrders);
@@ -422,7 +424,7 @@ namespace DropshippingGame.UI
                 _shownOrders.Add(o);
                 if (!before.Contains(o)) UIX.FadeSlideIn(ui.Root, -10f, 0.18f);
             }
-            int more = sim.OrderQueue.Count - visible.Count;
+            int more = all.Count - visible.Count;
             if (more > 0)
             {
                 var m = UIX.Div(_ticketsRow, "ticket-more");
@@ -439,14 +441,24 @@ namespace DropshippingGame.UI
             var band = UIX.Div(t, "ticket-band");
             band.style.backgroundColor = v.Product.Color.ToColor();
             UIX.Icon(band, v.Product.Icon, 18f, Theme.OnColor(v.Product.Color.ToColor()));
-            if (v.Express) UIX.Text(t, "EXPRESS", "ticket-express");
+            if (v.Express)
+            {
+                t.AddToClassList("express");
+                var ex = UIX.Row(t, 2f, "ticket-express");
+                UIX.Icon(ex, "bolt", 10f, Color.white);
+                UIX.Text(ex, "EXPRESS", "ticket-express-text");
+            }
             var body = UIX.Col(t, 0f, "ticket-body");
+            var nr = UIX.Row(body, 4f, "ticket-top");
+            UIX.Text(nr, v.Number, "ticket-number");
+            UIX.Spacer(nr);
+            if (v.Stage != OrderStage.Queued) UIX.Icon(nr, OrderInfo.StageIcon(v.Stage), 11f, Theme.Teal);
             UIX.Text(body, v.Product.Short, "ticket-name");
-            UIX.Num(body, Fmt.Money(v.Price), true, "ticket-price");
+            UIX.Ellipsis(UIX.Text(body, v.Customer, "ticket-customer"));
             var bar = UIX.Bar(body, v.Fill, OrderInfo.ToneColor(v.Tone), 4f);
             bar.AddToClassList("ticket-bar");
             var time = UIX.Num(body, v.TimeText, false, "ticket-time");
-            t.tooltip = v.Product.Name;
+            t.tooltip = v.Number + " · " + v.Product.Name + " · " + v.Customer + " · " + Fmt.Money(v.Price) + (v.Stage != OrderStage.Queued ? " · " + OrderInfo.StageText(v.Stage) : "");
             return new TicketUi { Order = o, Root = t, Bar = bar, Time = time };
         }
 
@@ -531,7 +543,7 @@ namespace DropshippingGame.UI
             _objEyebrow.text = eyebrow;
             _objTitle.text = title;
             // Die Bestellzettel stehen jetzt oben rechts (Core-Text sagt noch „oben links“).
-            _objText.text = (obj.Text ?? "").Replace("oben links", "oben rechts");
+            _objText.text = obj.Text ?? "";
             bool hasBar = obj.Progress >= 0f;
             UIX.Show(_objBar, hasBar);
             UIX.Show(_objPct, hasBar);
@@ -575,19 +587,33 @@ namespace DropshippingGame.UI
                     icon = "box";
                     break;
                 case ItemKind.Item:
-                    _handsText.text = pname;
-                    sub = "Für eine Bestellung (" + Fmt.Money(data.Price) + ") · zum Packtisch";
+                    _handsText.text = (data.Express ? "Express · " : "") + pname;
+                    if (data.ContractId > 0)
+                    {
+                        var c = Game.Sim?.FindContract(data.ContractId);
+                        sub = "Für Großauftrag" + (c != null ? " · " + c.Company : "") + " · zum Palettenplatz";
+                    }
+                    else if (data.OrderId > 0)
+                        sub = "für #" + data.OrderId + (string.IsNullOrEmpty(data.Customer) ? "" : " · " + data.Customer) + " · zum Packtisch";
+                    else sub = "Für eine Bestellung (" + Fmt.Money(data.Price) + ") · zum Packtisch";
                     icon = pd != null ? pd.Icon : "tag";
                     break;
                 case ItemKind.Package:
-                    _handsText.text = "Paket · " + pname;
-                    sub = "Noch ohne Label · zum Labeldrucker";
+                    _handsText.text = (data.Express ? "Express-Paket · " : "Paket · ") + pname;
+                    sub = (data.OrderId > 0 ? "#" + data.OrderId + (string.IsNullOrEmpty(data.Customer) ? "" : " · " + data.Customer) + " · " : "") + "zum Labeldrucker";
                     icon = "package";
                     break;
                 case ItemKind.Labeled:
-                    _handsText.text = "Versandfertig · " + pname;
-                    sub = "Ab in die Versand-Box";
+                    _handsText.text = (data.Express ? "Express · versandfertig · " : "Versandfertig · ") + pname;
+                    sub = (string.IsNullOrEmpty(data.Customer) ? "" : "An: " + data.Customer + (string.IsNullOrEmpty(data.City) ? "" : ", " + data.City) + " · ") + "ab in die Versand-Box";
                     icon = "truck";
+                    break;
+                case ItemKind.Return:
+                    _handsEyebrow.text = "RETOURE";
+                    _handsText.text = "Retoure: " + pname;
+                    sub = (string.IsNullOrEmpty(data.Note) ? "" : "„" + data.Note + "“ · ") + "zum Retourenplatz";
+                    bg = new Color(0.78f, 0.22f, 0.18f);
+                    icon = "return";
                     break;
                 case ItemKind.Plate:
                     _handsText.text = "Teller für Tisch " + data.Table;
@@ -663,6 +689,7 @@ namespace DropshippingGame.UI
                     if (s != "") UIX.Chip(chips, s, "sparkle", Theme.Accent, "cele-chip");
                 }
             }
+            UIX.Chip(card, "+1 Skillpunkt · Laptop » Firma » Skills", "sparkle", Theme.Accent, "cele-chip").style.marginTop = 10;
             foreach (var el in _celeLayer.Query<VisualElement>().ToList()) el.pickingMode = PickingMode.Ignore;
             wrap.style.opacity = 0f;
             Anim.Run(4.2f, t =>

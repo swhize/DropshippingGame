@@ -116,11 +116,44 @@ namespace DropshippingGame
         private void HookSim()
         {
             var s = _sim;
+            GameData.KeyLabel = GameInput.KeyLabel;
             s.EconomyChanged += OnEconomyChanged;
             s.Toast += (text, kind) => _ui.Hud.AddToast(text, kind);
             s.PcToggled += OnPcToggled;
             s.DayEnded += ShowSummary;
-            s.DayStarted += day => _ui.Hud.ShowBanner("Tag " + day, DayTagline(), UiFmt.Weekday(day).ToUpperInvariant());
+            s.DayStarted += day =>
+            {
+                // Montags zeigt WeekStarted das Banner (Woche + Tag).
+                if (day > 1 && GameData.WeekdayOf(day) == 0) return;
+                _ui.Hud.ShowBanner("Tag " + day, DayTagline(), UiFmt.Weekday(day).ToUpperInvariant());
+            };
+            s.WeekStarted += week =>
+            {
+                if (_sim.Day <= 1) return;
+                _ui.Hud.ShowBanner("Woche " + week, _sim.Challenges.Count + " neue Wochenziele · Handy › Woche", ("Montag · Tag " + _sim.Day).ToUpperInvariant());
+                RefreshPanels();
+            };
+            s.OrdersChanged += () =>
+            {
+                _ui.Hud.Refresh();
+                if (_ui.Phone.IsOpen) _ui.Phone.MarkDirty();
+            };
+            s.OrderExpired += _ => Game.Sound("error", 0.05f, -8f);
+            s.ReturnArrived += _ => RefreshPanels();
+            s.ReturnsChanged += RefreshPanels;
+            s.ContractsChanged += RefreshPanels;
+            s.ContractCompleted += c => _ui.Hud.ShowBanner("Großauftrag erfüllt", c.Company + " · +" + Fmt.Money(c.PaidOut), "B2B");
+            s.ContractFailed += c => _ui.Hud.ShowBanner("Großauftrag verpasst", c.Company + " · Strafe " + Fmt.Money(c.Penalty), "B2B");
+            s.SkillLearned += sk => _ui.Hud.ShowBanner("Skill gelernt", sk.Name, "HUSTLE-SKILL");
+            s.SkillsChanged += RefreshPanels;
+            s.ChallengeCompleted += c => _ui.Hud.ShowBanner("Wochenziel geschafft", c.Title + " · +" + Fmt.Money(c.Reward), "WOCHE " + _sim.Week);
+            s.ChallengesChanged += RefreshPanels;
+            s.TrendChanged += (pid, phase) =>
+            {
+                if (phase == TrendPhase.Rising || phase == TrendPhase.Peak) LaptopView.TrendBadge = "!";
+                RefreshPanels();
+            };
+            s.TrendsUpdated += RefreshPanels;
             s.LevelUp += level => _ui.Hud.ShowLevelUp(level);
             s.GoalCompleted += g => _ui.Hud.ShowBanner("Ziel erreicht", g.Title + " · +" + Fmt.Money(g.Reward), "MEILENSTEIN");
             s.StoryChanged += _ =>
@@ -173,6 +206,16 @@ namespace DropshippingGame
             s.Events.MinigameRequested += OnMinigame;
             s.Market.TradingChanged += () => _ui.Laptop.OnTradingTick();
             s.CollectWorldState = CollectWorldState;
+        }
+
+        private void RefreshPanels()
+        {
+            if (_ui.Laptop.IsOpen)
+            {
+                _ui.Laptop.MarkDirty();
+                _ui.Laptop.UpdateBadges();
+            }
+            if (_ui.Phone.IsOpen) _ui.Phone.MarkDirty();
         }
 
         private void OnEconomyChanged()

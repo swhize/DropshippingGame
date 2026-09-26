@@ -482,7 +482,7 @@ namespace DropshippingGame.UI
                 UIX.Icon(ic, item[0], 17f);
                 var col = UIX.Col(r, 0f);
                 col.style.flexShrink = 1;
-                UIX.Text(col, item[1], "wn-item-title");
+                UIX.Text(col, item[1].Replace("{phone}", GameInput.KeyboardLabel("phone")), "wn-item-title");
                 UIX.Text(col, item[2], "wn-item-text");
             }
             foreach (var el in _whatsNew.Query<Label>().ToList()) el.pickingMode = PickingMode.Ignore;

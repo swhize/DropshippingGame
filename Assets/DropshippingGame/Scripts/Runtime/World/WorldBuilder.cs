@@ -622,6 +622,15 @@ namespace DropshippingGame
         private static Def D(StationType t, Vector3 pos, float rot, int stage = 0, int product = 0, int table = 0) =>
             new Def { Type = t, Pos = pos, Rot = rot, Opts = new StationOpts { Stage = stage, ProductIndex = product, TableId = table } };
 
+        private static Def Sign(string text, Vector3 pos, float rot, Color color, int stage) =>
+            new Def { Type = StationType.Sign, Pos = pos, Rot = rot, Opts = new StationOpts { Stage = stage, Text = text, Color = color } };
+
+        private static readonly Color SignYellow = new Color(0.95f, 0.78f, 0.1f);
+        private static readonly Color SignBlue = new Color(0.16f, 0.32f, 0.62f);
+        private static readonly Color SignGreen = new Color(0.2f, 0.62f, 0.35f);
+        private static readonly Color SignRed = new Color(0.86f, 0.16f, 0.14f);
+        private static readonly Color SignB2B = new Color(0.18f, 0.35f, 0.7f);
+
         private List<Def> StationDefs()
         {
             var sim = Game.Sim;
@@ -642,6 +651,16 @@ namespace DropshippingGame
                 defs.Add(D(StationType.Dock, new Vector3(-20.4f, 0, -9f), 90f));
                 defs.Add(D(StationType.Ship, new Vector3(-11.2f, 0, -5.4f), -90f));
                 defs.Add(D(StationType.EndDay, new Vector3(-12.4f, 0, -15.8f), 0f));
+                // v3.0: Retouren (Fach neben dem Wareneingang, Prüftisch + Container am Tor), B2B-Palettenplatz
+                // im Hof zwischen Imbiss und Garage, Bestell-Monitor an der Rückwand, Zonenschilder.
+                defs.Add(D(StationType.ReturnTray, new Vector3(-20.4f, 0, -10.6f), 90f));
+                defs.Add(D(StationType.ReturnDesk, new Vector3(-12.1f, 0, -7.75f), 180f));
+                defs.Add(D(StationType.ReturnBin, new Vector3(-11.05f, 0, -7.78f), 180f));
+                defs.Add(D(StationType.Pallet, new Vector3(-25f, 0, -12.6f), 90f));
+                defs.Add(D(StationType.Monitor, new Vector3(-17.3f, 2.3f, -16.8f), 0f));
+                defs.Add(Sign("LAGER", new Vector3(-10.22f, 2.75f, -11.9f), -90f, SignBlue, 0));
+                defs.Add(Sign("PACKEN", new Vector3(-15.2f, 2.8f, -13.3f), 0f, SignGreen, 0));
+                defs.Add(Sign("RETOUREN", new Vector3(-11.6f, 2.5f, -7.22f), 180f, SignRed, 0));
             }
             else
             {
@@ -663,6 +682,18 @@ namespace DropshippingGame
                 defs.Add(D(StationType.Dock, new Vector3(26.5f, 0, -10.2f), 0f, 1));
                 defs.Add(D(StationType.Ship, new Vector3(6f, 0, -13.2f), 90f, 1));
                 if (sim.HasUpgrade("conveyor")) defs.Add(D(StationType.Conveyor, new Vector3(22.5f, 0, -15.5f), -90f));
+                // v3.0: Retourenecke rechts vorne am Tor, B2B-Palettenplatz links hinten, Monitor über dem Packtisch.
+                defs.Add(D(StationType.ReturnTray, new Vector3(29.2f, 0, -9.8f), 0f));
+                defs.Add(D(StationType.ReturnDesk, new Vector3(31f, 0, -7.85f), 180f));
+                defs.Add(D(StationType.ReturnBin, new Vector3(32.4f, 0, -7.8f), 180f));
+                defs.Add(D(StationType.Pallet, new Vector3(1.4f, 0, -22f), 90f));
+                defs.Add(D(StationType.Monitor, new Vector3(13f, 3.2f, -21.2f), 0f, 1));
+                defs.Add(Sign("WARENEINGANG", new Vector3(26.5f, 4.6f, -10.2f), 0f, SignYellow, 1));
+                defs.Add(Sign("LAGER", new Vector3(17.8f, 5.2f, -27.1f), 0f, SignBlue, 1));
+                defs.Add(Sign("PACKEN", new Vector3(13f, 5.3f, -20.2f), 0f, SignGreen, 1));
+                defs.Add(Sign("VERSAND", new Vector3(6f, 3.7f, -13.2f), 90f, SignGreen, 1));
+                defs.Add(Sign("RETOUREN", new Vector3(30.6f, 3.8f, -9f), 0f, SignRed, 1));
+                defs.Add(Sign("B2B", new Vector3(1.4f, 4.2f, -22f), 90f, SignB2B, 1));
             }
             if (sim.HasUpgrade("stand")) defs.Add(D(StationType.Stand, StandPos, 0f));
             return defs;

@@ -74,6 +74,20 @@ namespace DropshippingGame.UI
         {
             _layer = layer;
             _layer.pickingMode = PickingMode.Ignore;
+            if (!ExtraApps.Exists(a => a != null && a.Title == "Wochenziele"))
+            {
+                ExtraApps.Insert(0, new PhoneApp
+                {
+                    Title = "Wochenziele", TabLabel = "Woche", Icon = "flag",
+                    Build = (view, content) =>
+                    {
+                        var sim = Game.Sim;
+                        if (sim == null) return;
+                        UIX.Text(content, WeeklyUi.Summary(sim), "phone-sub");
+                        WeeklyUi.Build(content, sim, true, () => view.MarkDirty());
+                    },
+                });
+            }
             Build();
             UIX.Show(_layer, false);
             Settings.Changed += () =>
@@ -305,7 +319,8 @@ namespace DropshippingGame.UI
                 {
                     var v = OrderInfo.Get(sim, l.Order);
                     UIX.SetBar(l.Bar, v.Fill, OrderInfo.ToneColor(v.Tone));
-                    l.Time.text = v.Tone == "late" ? "überfällig " + v.TimeText : "noch " + v.TimeText;
+                    if (l.Time.text != v.TimeText) l.Time.text = v.TimeText;
+                    l.Time.EnableInClassList("bad-text", v.Tone == "late");
                 }
             }
             _badgeT += dt;
@@ -320,7 +335,7 @@ namespace DropshippingGame.UI
         {
             bool business = sim.StoryStage == "business";
             int pending = business ? sim.PendingCount() : 0;
-            int unread = business ? sim.Events.UnreadCount() : 0;
+            int unread = business ? sim.Events.UnreadCount() + (sim.ContractsUnlocked ? sim.ContractOffers().Count : 0) : 0;
             int urgentReorder = 0;
             if (business)
                 foreach (var p in GameData.Products)
@@ -462,7 +477,8 @@ namespace DropshippingGame.UI
                 var full = Hint("warning", "Warteschlange voll – neue Bestellungen gehen verloren!");
                 full.style.marginBottom = 8;
             }
-            if (sim.OrderQueue.Count == 0)
+            var tickets = sim.Tickets();
+            if (tickets.Count == 0)
             {
                 bool anyListed = false;
                 foreach (var p in GameData.Products)
@@ -472,25 +488,45 @@ namespace DropshippingGame.UI
                 return;
             }
             int n = 0;
-            foreach (var o in sim.OrderQueue)
+            foreach (var o in tickets)
             {
                 if (++n > 40) break;
                 var v = OrderInfo.Get(sim, o);
-                var item = UIX.Row(_content, 10f, "phone-item");
+                var card = UIX.Col(_content, 4f, "phone-item", "phone-ticket");
+                card.style.alignItems = Align.Stretch;
+                if (v.Express) card.AddToClassList("express");
+                var item = UIX.Row(card, 10f);
                 UIX.Round(UIX.Swatch(item, v.Product.Color.ToColor(), 38f, v.Product.Icon), 12f);
                 var mid = UIX.Col(item, 1f);
                 mid.style.flexGrow = 1;
                 mid.style.flexShrink = 1;
-                UIX.Ellipsis(UIX.Text(mid, v.Product.Name, "phone-item-title"));
-                int stock = sim.StockQty(o.Product);
-                var sub = UIX.Text(mid, stock > 0 ? "Im Regal: " + stock : "Nicht auf Lager!", "phone-item-sub");
-                if (stock <= 0) sub.AddToClassList("bad-text");
-                var bar = UIX.Bar(mid, v.Fill, OrderInfo.ToneColor(v.Tone), 4f);
-                bar.style.marginTop = 5;
+                var tr = UIX.Row(mid, 5f);
+                if (v.Express) UIX.Text(tr, "EXPRESS", "phone-express");
+                UIX.Ellipsis(UIX.Text(tr, v.Number + " · " + v.Product.Name, "phone-item-title")).style.flexShrink = 1;
+                string who = v.Customer + (string.IsNullOrEmpty(v.City) ? "" : ", " + v.City);
+                UIX.Ellipsis(UIX.Text(mid, who, "phone-item-sub"));
                 var right = UIX.Col(item, 2f);
                 right.style.alignItems = Align.FlexEnd;
                 UIX.Num(right, Fmt.Money(v.Price), true, "phone-order-price");
-                var time = UIX.Num(right, v.Tone == "late" ? "überfällig " + v.TimeText : "noch " + v.TimeText, false, "phone-order-time");
+                var time = UIX.Num(right, v.TimeText, false, "phone-order-time");
+                if (!string.IsNullOrEmpty(v.Note))
+                {
+                    var note = UIX.Text(card, "„" + v.Note + "“", "phone-note");
+                    note.style.whiteSpace = WhiteSpace.Normal;
+                }
+                var bar = UIX.Bar(card, v.Fill, OrderInfo.ToneColor(v.Tone), 4f);
+                var foot = UIX.Row(card, 6f);
+                UIX.Icon(foot, OrderInfo.StageIcon(v.Stage), 12f);
+                string stage = OrderInfo.StageText(v.Stage);
+                if (v.Stage == OrderStage.Queued)
+                {
+                    int stock = sim.StockQty(o.Product);
+                    stage = stock > 0 ? "wartet · im Regal: " + stock : "wartet · nicht auf Lager!";
+                }
+                var st = UIX.Text(foot, stage, "phone-item-sub");
+                if (v.Stage == OrderStage.Queued && sim.StockQty(o.Product) <= 0) st.AddToClassList("bad-text");
+                UIX.Spacer(foot);
+                UIX.Text(foot, "fällig " + sim.BClockText(o.DueAt), "phone-item-sub");
                 _live.Add(new LiveOrder { Order = o, Bar = bar, Time = time });
             }
             if (sim.PackedCount() > 0)
@@ -509,6 +545,7 @@ namespace DropshippingGame.UI
             _mailId = -1;
             int pending = ev.PendingCount(), unread = ev.UnreadCount();
             Head("Nachrichten", pending > 0 ? (pending == 1 ? "1 Entscheidung offen" : pending + " Entscheidungen offen") : (unread > 0 ? unread + " ungelesen" : "Alles gelesen"));
+            BuildContractOffers(sim);
             if (ev.Mails.Count == 0)
             {
                 UIX.Empty(_content, "chat", "Keine Nachrichten", "Hier landen Angebote, Ereignisse und Post von Mama.");
@@ -549,6 +586,47 @@ namespace DropshippingGame.UI
             if (pending > 0) Hint("clock", "Offene Entscheidungen verfallen um 20 Uhr – dann gilt die vorsichtigste Antwort.");
         }
 
+        private void BuildContractOffers(Sim sim)
+        {
+            if (!sim.ContractsUnlocked) return;
+            var offers = sim.ContractOffers();
+            if (offers.Count == 0) return;
+            UIX.Text(_content, "GROSSAUFTRÄGE", "phone-section").style.marginTop = 0;
+            foreach (var c in offers)
+            {
+                var p = GameData.Product(c.Product);
+                var card = UIX.Col(_content, 6f, "phone-item", "phone-offer");
+                card.style.alignItems = Align.Stretch;
+                var top = UIX.Row(card, 10f);
+                UIX.Round(UIX.Swatch(top, p.Color.ToColor(), 36f, "pallet"), 12f);
+                var mid = UIX.Col(top, 1f);
+                mid.style.flexGrow = 1;
+                mid.style.flexShrink = 1;
+                UIX.Ellipsis(UIX.Text(mid, c.Title, "phone-item-title"));
+                UIX.Ellipsis(UIX.Text(mid, c.Company, "phone-item-sub"));
+                UIX.Num(top, Fmt.Money(c.Payment), true, "phone-order-price");
+                var d = UIX.Text(card, c.QualityText + " · " + c.Days + " Tage Frist · Strafe " + Fmt.Money(c.Penalty) + " · Lager " + sim.StockQty(c.Product), "phone-item-sub");
+                d.style.whiteSpace = WhiteSpace.Normal;
+                bool ok = sim.CanAcceptContract(c, out string reason);
+                if (!ok && !string.IsNullOrEmpty(reason)) UIX.Text(card, reason, "phone-item-sub", "bad-text").style.whiteSpace = WhiteSpace.Normal;
+                var br = UIX.Row(card, 6f);
+                int id = c.Id;
+                var no = UIX.Button(br, "Ablehnen", () =>
+                {
+                    Game.Sim?.DeclineContract(id);
+                    MarkDirty();
+                }, "ghost");
+                no.style.flexGrow = 1;
+                var yes = UIX.Button(br, "Annehmen", () =>
+                {
+                    Game.Sim?.AcceptContract(id);
+                    MarkDirty();
+                }, "accent", !ok);
+                yes.style.flexGrow = 1;
+            }
+            UIX.Text(_content, "NACHRICHTEN", "phone-section");
+        }
+
         private void BuildMessage(Sim sim, Mail mail)
         {
             Head(null, null, true);
@@ -586,7 +664,7 @@ namespace DropshippingGame.UI
 
         private void BuildReorder(Sim sim)
         {
-            Head("Nachbestellen", "Letzter Lieferant, letzte Menge – ein Tipp genügt.");
+            Head("Nachbestellen", "Gleiche Menge, gleicher Lieferant wie beim letzten Einkauf.");
             if (sim.ExpressDelivery)
             {
                 var ex = UIX.Row(_content, 0f, "phone-summary");
@@ -600,10 +678,12 @@ namespace DropshippingGame.UI
                 int stock = sim.StockQty(p.Id), travel = sim.TravelingCountFor(p.Id), dock = sim.DockCountFor(p.Id), open = sim.PendingCountFor(p.Id);
                 if (!sim.IsListed(p.Id) && stock == 0 && travel == 0 && dock == 0 && open == 0) continue;
                 shown++;
-                int sup = ReorderMemory.GetSupplier(sim, p.Id);
-                int bulk = ReorderMemory.GetBulk(sim, p.Id);
-                int cost = sim.BulkCost(pi, bulk, sup);
+                int[] plan = sim.QuickReorderPlan(p.Id);
+                int bulk = plan != null && plan.Length > 0 ? Mathf.Clamp(plan[0], 0, GameData.BulkOptions.Length - 1) : 0;
+                int sup = plan != null && plan.Length > 1 ? Mathf.Clamp(plan[1], 0, GameData.Suppliers.Length - 1) : 0;
+                int cost = sim.QuickReorderCost(p.Id);
                 var bo = GameData.BulkOptions[bulk];
+                bool premiumBlocked = sup == GameData.Suppliers.Length - 1 && !sim.PremiumQuotaLeft(p.Id);
 
                 var item = UIX.Col(_content, 8f, "phone-item");
                 item.style.alignItems = Align.Stretch;
@@ -612,33 +692,30 @@ namespace DropshippingGame.UI
                 var mid = UIX.Col(top, 1f);
                 mid.style.flexGrow = 1;
                 mid.style.flexShrink = 1;
-                UIX.Ellipsis(UIX.Text(mid, p.Name, "phone-item-title"));
-                string info = "Lager " + stock + (travel > 0 ? " · " + travel + " unterwegs" : "") + (dock > 0 ? " · " + dock + " am Eingang" : "") + (open > 0 ? " · " + open + " offen" : "");
+                var nameRow = UIX.Row(mid, 5f);
+                UIX.Ellipsis(UIX.Text(nameRow, p.Name, "phone-item-title")).style.flexShrink = 1;
+                var ph = sim.Trends.Phase(p.Id);
+                if (ph == TrendPhase.Rising || ph == TrendPhase.Peak) UIX.Icon(nameRow, "fire", 13f, Theme.LaptopAccent);
+                int need = sim.ContractUnitsNeeded(p.Id);
+                string info = "Lager " + stock + (travel > 0 ? " · " + travel + " unterwegs" : "") + (dock > 0 ? " · " + dock + " am Eingang" : "") + (open > 0 ? " · " + open + " offen" : "") + (need > 0 ? " · " + need + " für Aufträge" : "");
                 var sub = UIX.Text(mid, info, "phone-item-sub");
+                sub.style.whiteSpace = WhiteSpace.Normal;
                 if (stock == 0 && travel == 0 && dock == 0) sub.AddToClassList("bad-text");
 
-                var actions = UIX.Row(item, 0f);
-                var size = UIX.PressRow(actions, 4f, () =>
-                {
-                    ReorderMemory.CycleBulk(Game.Sim, p.Id);
-                    Rebuild();
-                }, "reorder-size");
-                UIX.Text(size, bo.Quantity + " Stk", "reorder-size-text");
-                UIX.Icon(size, "chevron_down", 11f);
-                UIX.PassThrough(size);
-                UIX.Ellipsis(UIX.Text(actions, GameData.Suppliers[sup].Name, "phone-item-sub")).style.flexGrow = 1;
-                int prodIndex = pi;
-                int supIdx = sup, bulkIdx = bulk;
+                var actions = UIX.Row(item, 6f);
+                UIX.Ellipsis(UIX.Text(actions, bo.Quantity + " Stk · " + GameData.Suppliers[sup].Name + (premiumBlocked ? " (heute schon bestellt)" : ""), "phone-item-sub")).style.flexGrow = 1;
+                string pid = p.Id;
                 var buy = UIX.PressRow(actions, 0f, () =>
                 {
-                    var s = Game.Sim;
-                    if (s == null) return;
-                    if (s.BuyBulk(prodIndex, bulkIdx, supIdx)) ReorderMemory.Remember(GameData.Products[prodIndex].Id, supIdx, bulkIdx);
+                    var s2 = Game.Sim;
+                    if (s2 == null) return;
+                    s2.QuickReorder(pid);
+                    MarkDirty();
                 }, "reorder-main");
                 UIX.Icon(buy, "cart", 13f);
                 UIX.Num(buy, Fmt.Money(cost), true, "reorder-main-text");
                 UIX.PassThrough(buy);
-                buy.SetEnabled(sim.Money >= cost);
+                buy.SetEnabled(sim.Money >= cost && !premiumBlocked);
             }
             if (shown == 0)
             {
@@ -651,6 +728,29 @@ namespace DropshippingGame.UI
         private void BuildStatus(Sim sim)
         {
             Head("Status", UiFmt.DayLong(sim.Day) + " · " + Fmt.Clock(sim.TimeMinutes) + " Uhr");
+            var hints = Advisor.Evaluate(sim);
+            var adv = UIX.Col(_content, 4f, "phone-item", "phone-advisor");
+            adv.style.alignItems = Align.Stretch;
+            UIX.Text(adv, "WARUM LÄUFT'S NICHT?", "status-tile-key");
+            if (hints.Count == 0) UIX.Text(adv, "Kein Engpass in Sicht. Weiter so!", "phone-item-title");
+            for (int i = 0; i < hints.Count && i < 3; i++)
+            {
+                var h = hints[i];
+                var r = UIX.Row(adv, 8f);
+                UIX.Icon(r, h.Icon, 15f, Advisor.SeverityColor(h.Severity));
+                var t = UIX.Text(r, h.Text, i == 0 ? "phone-item-title" : "phone-item-sub");
+                t.style.whiteSpace = WhiteSpace.Normal;
+                t.style.flexShrink = 1;
+                t.style.flexGrow = 1;
+                if (h.Phone >= 0 && h.Phone != 3)
+                {
+                    int app = h.Phone;
+                    var b = UIX.Button(r, "Zeigen", () => SelectApp(app), "ghost");
+                    b.AddToClassList("btn-sm");
+                }
+            }
+            if (hints.Count > 0 && hints[0].Phone < 0 && hints[0].Laptop != null)
+                UIX.Text(adv, "Lösung am Laptop (Schreibtisch).", "phone-item-sub");
             var hero = UIX.Col(_content, 2f, "status-hero");
             UIX.Text(hero, "KONTOSTAND", "status-tile-key");
             var money = UIX.Num(hero, Fmt.Money(sim.Money), true, "status-money");
@@ -679,6 +779,12 @@ namespace DropshippingGame.UI
             Tile(grid, "FIXKOSTEN 20 UHR", "−" + Fmt.Money(sim.FixedCostsPerDay()), null, "Miete, Löhne, Zinsen", true);
             Tile(grid, "BESTELLUNGEN", sim.PendingCount() + " / " + sim.QueueCapacity(), null, sim.Daily.Lost > 0 ? sim.Daily.Lost + " heute verloren" : "keine verloren");
             Tile(grid, "LAGER", Fmt.Thousands(sim.StockTotal()) + " / " + Fmt.Thousands(sim.Capacity()), null, GameData.StageNames[Mathf.Clamp(sim.LocationStage, 0, GameData.StageNames.Length - 1)]);
+            Tile(grid, "WOCHENZIELE", sim.ChallengesDoneThisWeek() + " / " + sim.Challenges.Count, null, sim.DaysLeftInWeek() == 0 ? "Woche endet heute" : "noch " + sim.DaysLeftInWeek() + " Tage");
+            Tile(grid, "SKILLPUNKTE", sim.SkillPointsAvailable() + " frei", null, sim.Skills.Count + " gelernt");
+            if (sim.ReturnsAtDock > 0 || sim.TotalReturns > 0)
+                Tile(grid, "RETOUREN", sim.ReturnsAtDock + " am Eingang", null, sim.ReturnsIncoming.Count + " unterwegs · Quote " + UiFmt.Percent(sim.ReturnRateTotal()), sim.ReturnsAtDock > 0);
+            if (sim.ContractsUnlocked)
+                Tile(grid, "GROSSAUFTRÄGE", sim.ActiveContractCount() + " / " + sim.MaxActiveContracts(), null, sim.ContractOffers().Count + " Angebot(e)");
 
             if (sim.Boosts.Count > 0)
             {

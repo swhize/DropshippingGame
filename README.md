@@ -35,23 +35,35 @@ Tipp: Im Game-Fenster oben rechts **„Maximize On Play“** einschalten, dann l
 | Aktion | Tastatur & Maus | Controller |
 |---|---|---|
 | Laufen / Umsehen | WASD / Maus | linker / rechter Stick |
-| Sprinten / Ducken / Springen | Shift / Strg / Leertaste | linker Stick drücken / rechter Stick drücken / A |
-| Benutzen | E | X |
+| Sprinten / Ducken / Springen | Shift / Strg (C) / Leertaste | linker Stick drücken / rechter Stick drücken / A |
+| Benutzen (auch Laptop am Schreibtisch) | E | X |
 | Ablegen | G | B |
-| Laptop | Tab | Y |
+| **Handy** (Bestellzettel, Nachrichten, Nachbestellen, Wochenziele, Status) | Tab | Y |
+| Handy-App bzw. Laptop-Reiter direkt wählen | 1–4 | – |
+| App bzw. Reiter wechseln (Handy & Laptop) | Maus | LB / RB |
+| Zurück / Schließen | Esc | B |
 | Pause | Esc | Start |
 | Hilfe | F1 | Select |
 | Screenshot | F12 | – |
+
+Die Bestellzettel stehen **oben rechts** im HUD. Den vollen HustleOS-Laptop gibt es nur am Schreibtisch
+(hingehen, E / X). Menüs lassen sich komplett mit dem Controller bedienen; die UI-Größe stellst du unter
+**Pause → Einstellungen** ein.
 
 ## Was drin ist
 
 - **Story:** Schicht in Kalles Imbiss (Teller an die richtigen Tische), Kündigung, eigene Garage
 - **Kreislauf:** Einkauf → Kiste annehmen → Regal → Webshop → Bestellung → Kommissionieren →
   Verpacken → Label drucken → Versand
-- **HustleOS-Laptop mit 14 Apps:** Übersicht (Aufgabenliste), Postfach, Einkauf, Verpackung, Webshop,
-  Marketing (inkl. TikTok-Minispiel), Branding, Marktanalyse, Trading, **Bank (Kredite)**, Analytics,
-  Personal, Ausbau, Ziele & Lifestyle
-- **Zwei Laptop-Designs, jeweils hell oder dunkel:** „Frachtbrief“ und „Hype“ – umschaltbar unter
+- **Handy (Tab / Y):** Bestellzettel mit Kundschaft, Frist und Express, Nachrichten mit Entscheidungen und
+  Großauftrags-Angeboten, Schnell-Nachbestellen, Wochenziele, Status mit Engpass-Assistent
+- **HustleOS-Laptop mit Apps und Reitern:** Übersicht („Warum läuft's nicht?“), Postfach, Einkauf (Ware,
+  Verpackung), Retouren, Shop (Webshop, Marketing inkl. TikTok, Branding), Markt & Trends (Marktanalyse,
+  Trendradar), Aufträge (Angebote, Laufend, Verlauf), Finanzen (Bank, Analytics, Trading), Firma (Team,
+  Skills, Ausbau, Ziele & Wochenziele, Lifestyle)
+- **v3.0:** Bestellzettel & Express, Retouren, Trends/Hype, Großaufträge (B2B), Hustle-Skills, Wochenziele,
+  Kassenbon mit Wochentagen
+- **Zwei Laptop-Designs, jeweils hell oder dunkel:** „Hype“ (Standard) und „Frachtbrief“ – umschaltbar unter
   **Pause → Einstellungen**. Die HTML-Entwürfe zum Vergleichen liegen in `docs/laptop-designs/`.
 - **10 Produkte**, 3 Lieferanten, 4 Bestellgrößen, Kartons S/M/L (auch ungefaltet)
 - **Verkaufsstand** vor der Garage: Passanten kaufen direkt
