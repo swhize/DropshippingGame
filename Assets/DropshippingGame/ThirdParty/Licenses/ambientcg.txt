@@ -1,0 +1,10 @@
+ambientCG (Grass005, Concrete031, Bricks064, Bricks085, Plaster001, WoodFloor040, Tiles012, Tiles107, CorrugatedSteel007A, CorrugatedSteel009)
+Autor: ambientCG (Lennart Demes)
+Quelle: https://ambientcg.com
+Lizenz: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/)
+Dateien: Textures/Surfaces/<übrige>
+Änderungen: Roughness -> RGBA-Smoothness, flache AO weggelassen
+
+Creative Commons Zero v1.0 Universal (CC0 1.0) Public Domain Dedication
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
