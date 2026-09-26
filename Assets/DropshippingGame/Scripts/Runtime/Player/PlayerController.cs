@@ -35,6 +35,8 @@ namespace DropshippingGame
         public readonly List<ItemData> Stack = new List<ItemData>();
         private ObjectiveMarker _marker;
         public IInteractable Focus;
+        /// <summary>Verschiebe-Modus für Möbel (Taste B).</summary>
+        public readonly FurnitureMover Mover = new FurnitureMover();
         public string PromptText = "";
 
         private CharacterController _cc;
@@ -87,6 +89,7 @@ namespace DropshippingGame
         private void OnDestroy()
         {
             Settings.Changed -= ApplySettings;
+            if (Mover.Active) Mover.Cancel();
             if (_marker != null) Destroy(_marker.gameObject);
             if (Focus != null && !(Focus is Object fo && fo == null)) Focus.SetHighlighted(false);
         }
@@ -370,11 +373,30 @@ namespace DropshippingGame
             _sway = Vector2.Lerp(_sway, Vector2.zero, Mathf.Min(1f, dt * 8f));
             _handAnchor.localPosition = new Vector3(-_sway.x * 0.6f, -_sway.y * 0.6f + bobY * 0.5f, 0);
 
+            if (Mover.Active)
+            {
+                ClearFocus();
+                if (!locked) Mover.Tick(this);
+                PromptText = Mover.Prompt;
+                return;
+            }
             UpdateFocus(locked);
             if (locked) return;
+            if (GameInput.BuildDown && Mover.TryBegin(this))
+            {
+                ClearFocus();
+                PromptText = Mover.Prompt;
+                return;
+            }
             if (GameInput.InteractDown && Focus != null) Focus.Interact(this);
             if (GameInput.DropDown) DropHeldItem();
             if (transform.position.y < -20f && Game.World != null) Teleport(Game.World.SpawnPoint(), Game.World.SpawnYaw());
+        }
+
+        private void ClearFocus()
+        {
+            if (Focus != null && !(Focus is Object o && o == null)) Focus.SetHighlighted(false);
+            Focus = null;
         }
 
         private void UpdateFocus(bool locked)
@@ -390,6 +412,11 @@ namespace DropshippingGame
             }
             if (Focus is Object uo && uo == null) Focus = null;
             PromptText = Focus != null ? Focus.Prompt(this) : "";
+            if (!locked)
+            {
+                string hint = FurnitureMover.HintFor(Cam);
+                if (!string.IsNullOrEmpty(hint)) PromptText = string.IsNullOrEmpty(PromptText) ? hint : PromptText + "  ·  " + hint;
+            }
         }
 
         /// <summary>Stößt Kisten und Pakete an, wenn man hineinläuft.</summary>

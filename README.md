@@ -38,6 +38,7 @@ Tipp: Im Game-Fenster oben rechts **„Maximize On Play“** einschalten, dann l
 | Sprinten / Ducken / Springen | Shift / Strg (C) / Leertaste | linker Stick drücken / rechter Stick drücken / A |
 | Benutzen (auch Laptop am Schreibtisch) | E | X |
 | Ablegen | G | B |
+| **Möbel verschieben** (anvisieren) · drehen · abstellen · abbrechen | B · R / Mausrad · Linksklick / E · Esc | Steuerkreuz ↓ · LB / RB · X / A · B |
 | **Handy** (Bestellzettel, Nachrichten, Nachbestellen, Wochenziele, Status) | Tab | Y |
 | Handy-App bzw. Laptop-Reiter direkt wählen | 1–4 | – |
 | App bzw. Reiter wechseln (Handy & Laptop) | Maus | LB / RB |

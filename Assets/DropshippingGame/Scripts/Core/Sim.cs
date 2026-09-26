@@ -212,6 +212,7 @@ namespace DropshippingGame.Core
             Day = 1;
             TimeMinutes = GameData.DayStart;
             DayOver = false;
+            Furniture.Clear();
             StoryStage = "business";
             IntroStep = 0;
             IntroServed.Clear();
