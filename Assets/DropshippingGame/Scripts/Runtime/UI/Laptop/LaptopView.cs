@@ -7,16 +7,17 @@ using UnityEngine.UIElements;
 namespace DropshippingGame.UI
 {
     /// <summary>
-    /// "HustleOS" – der Laptop am Schreibtisch. Standard-Design „Hype“ (dunkel), alternativ
-    /// „Frachtbrief“, jeweils hell oder dunkel. Kopfzeile mit Marke, Tag, Bewertung und Konto,
-    /// Navigation mit den Apps, darunter die App mit ihren Reitern. Kurze Boot-Animation beim
-    /// ersten Öffnen, weiche Übergänge beim App-Wechsel.
+    /// "HustleOS" – der Laptop am Schreibtisch, als Web-Browser im Comic-Look: oben Reiter (jede
+    /// App ein Tab), darunter Zurück/Start, Adressleiste und die wichtigsten Kennzahlen (Tag,
+    /// Bewertung, Konto). Die Webseiten (AllesExpress, Mein Shop, iWolke Mail, PaketBlitz,
+    /// TikTak, TradingViech, Revoluut) sind <see cref="WebApp"/>s mit eigenem Design
+    /// (Resources/UI/Web.uss); die übrigen HustleOS-Seiten (Übersicht, Markt, Aufträge, Retouren,
+    /// Firma) behalten ihr bisheriges Design „Hype“/„Frachtbrief“ samt Unter-Reitern.
     ///
-    /// Erweiterungspunkte (Phase B):
-    /// - <see cref="Register"/> fügt eine App hinzu, <see cref="RegisterTab"/> einen Reiter.
-    /// - Die Platzhalter „Aufträge“, „Retouren“, „Trends“ und „Skills“ sind schon angelegt
-    ///   (Visible = <see cref="ShowUpcoming"/>); Phase B ersetzt Make/Visible.
-    /// - <see cref="Aliases"/>: alte App-IDs ("brand", "bank" …) zeigen auf App/Reiter.
+    /// Erweiterungspunkte:
+    /// - <see cref="Register"/> fügt eine App (einen Browser-Tab) hinzu, <see cref="RegisterTab"/> einen Unter-Reiter.
+    /// - <see cref="Aliases"/>: alte App-IDs ("brand", "bank", "buy/ware" …) zeigen auf App/Reiter bzw. App/Route.
+    /// - Web-Apps merken ihre Route (<see cref="GetRoute"/>); "app/route" öffnet direkt eine Unterseite.
     /// </summary>
     public sealed class LaptopView
     {
@@ -40,9 +41,14 @@ namespace DropshippingGame.UI
             public Func<string> Locked;
             public Func<bool> Visible;
             public Func<string> Badge;
+            /// <summary>Kürzel und Farbe des Favicons im Browser-Tab.</summary>
+            public string Fav = "";
+            public Color FavColor = new Color(0.4f, 0.4f, 0.45f);
+            /// <summary>Adresse für HustleOS-Seiten (Web-Apps liefern ihre eigene).</summary>
+            public string Url = "";
         }
 
-        /// <summary>true = Platzhalter für Phase-B-Apps sichtbar („bald verfügbar“).</summary>
+        /// <summary>true = Platzhalter/Apps auch dann zeigen, wenn sie noch nichts zu tun haben.</summary>
         public static bool ShowUpcoming;
 
         public static readonly List<AppDef> Apps = CreateApps();
@@ -50,63 +56,74 @@ namespace DropshippingGame.UI
         /// <summary>Markierung für „Markt & Trends“ nach einem Phasenwechsel (GameRoot setzt sie, Öffnen des Trendradars löscht sie).</summary>
         public static string TrendBadge = "";
 
-        /// <summary>Alte/kurze IDs → "app" oder "app/reiter".</summary>
+        /// <summary>Alte/kurze IDs → "app", "app/reiter" oder "app/route".</summary>
         public static readonly Dictionary<string, string> Aliases = new Dictionary<string, string>
         {
-            { "pack", "buy/pack" }, { "packaging", "buy/pack" }, { "ware", "buy/ware" },
-            { "webshop", "shop/webshop" }, { "marketing", "shop/marketing" }, { "brand", "shop/brand" }, { "branding", "shop/brand" },
+            { "buy", "allesexpress" }, { "buy/ware", "allesexpress" }, { "ware", "allesexpress" }, { "einkauf", "allesexpress" },
+            { "buy/pack", "allesexpress/pack" }, { "pack", "allesexpress/pack" }, { "packaging", "allesexpress/pack" },
+            { "webshop", "shop" }, { "shop/webshop", "shop" },
+            { "marketing", "tiktak" }, { "shop/marketing", "tiktak" }, { "tiktok", "tiktak" }, { "ads", "tiktak/ads" },
+            { "brand", "company/brand" }, { "branding", "company/brand" }, { "shop/brand", "company/brand" },
             { "trends", "market/trends" }, { "analysis", "market/analysis" },
-            { "bank", "finance/bank" }, { "stats", "finance/stats" }, { "analytics", "finance/stats" }, { "trading", "finance/trading" },
+            { "finance", "bank" }, { "finance/bank", "bank" }, { "stats", "bank/analytics" }, { "analytics", "bank/analytics" },
+            { "finance/stats", "bank/analytics" }, { "finance/trading", "trading" },
             { "staff", "company/team" }, { "team", "company/team" }, { "build", "company/build" }, { "goals", "company/goals" },
             { "lifestyle", "company/lifestyle" }, { "skills", "company/skills" }, { "weekly", "company/goals" }, { "challenges", "company/goals" },
             { "contracts", "orders/offers" }, { "b2b", "orders/offers" }, { "retouren", "returns" },
+            { "shipping", "paket" }, { "versand", "paket" },
         };
 
         private static List<AppDef> CreateApps()
         {
             return new List<AppDef>
             {
-                new AppDef { Id = "home", Title = "Übersicht", Icon = "home", Group = "BETRIEB", Make = () => new AppHome() },
                 new AppDef
                 {
-                    Id = "mail", Title = "Postfach", Icon = "mail", Group = "BETRIEB", Make = () => new AppMail(),
+                    Id = "home", Title = "Übersicht", Icon = "home", Group = "BETRIEB", Make = () => new AppHome(),
+                    Fav = "H", FavColor = new Color(1f, 0.48f, 0.27f), Url = "hustle.os/start",
+                },
+                new AppDef
+                {
+                    Id = "allesexpress", Title = "AllesExpress", Icon = "cart", Group = "BETRIEB", Make = () => new WebAllesExpress(),
+                    Fav = "A", FavColor = new Color(1f, 0.35f, 0.21f),
+                },
+                new AppDef
+                {
+                    Id = "shop", Title = "Mein Shop", Icon = "store", Group = "VERKAUF", Make = () => new WebShop(),
+                    Fav = "S", FavColor = new Color(0.3f, 0.44f, 1f),
+                },
+                new AppDef
+                {
+                    Id = "mail", Title = "iWolke Mail", Icon = "mail", Group = "BETRIEB", Make = () => new WebMail(),
+                    Fav = "@", FavColor = new Color(0.18f, 0.49f, 0.96f),
                     Badge = () => Game.Sim != null && Game.Sim.Events.UnreadCount() > 0 ? Game.Sim.Events.UnreadCount().ToString() : "",
                 },
                 new AppDef
                 {
-                    Id = "buy", Title = "Einkauf", Icon = "cart", Group = "BETRIEB",
-                    Tabs = new List<TabDef>
-                    {
-                        new TabDef { Id = "ware", Title = "Ware", Icon = "boxes", Make = () => new AppBuy() },
-                        new TabDef { Id = "pack", Title = "Verpackung", Icon = "package", Make = () => new AppPackaging() },
-                    },
+                    Id = "paket", Title = "PaketBlitz", Icon = "truck", Group = "BETRIEB", Make = () => new WebPaket(),
+                    Fav = "P", FavColor = new Color(0.83f, 0.02f, 0.07f),
+                    Badge = () => Game.Sim != null && Game.Sim.PendingCount() > 0 ? Game.Sim.PendingCount().ToString() : "",
                 },
                 new AppDef
                 {
-                    Id = "returns", Title = "Retouren", Icon = "return", Group = "BETRIEB",
-                    Visible = () => ShowUpcoming || (Game.Sim != null && (Game.Sim.TotalReturns > 0 || Game.Sim.ReturnsIncoming.Count > 0 || Game.Sim.ReturnsAtDock > 0)),
-                    Badge = () => Game.Sim != null && Game.Sim.ReturnsAtDock > 0 ? Game.Sim.ReturnsAtDock.ToString() : "",
-                    Make = () => new AppReturns(),
-                },
-                new AppDef
-                {
-                    Id = "shop", Title = "Shop", Icon = "store", Group = "VERKAUF",
+                    Id = "tiktak", Title = "TikTak", Icon = "music", Group = "VERKAUF", Make = () => new WebTikTak(),
+                    Fav = "T", FavColor = new Color(0.1f, 0.1f, 0.12f),
                     Badge = () => Game.Sim != null && Game.Sim.TikTokAvailable() ? "!" : "",
-                    Tabs = new List<TabDef>
-                    {
-                        new TabDef { Id = "webshop", Title = "Webshop", Icon = "globe", Make = () => new AppShop() },
-                        new TabDef
-                        {
-                            Id = "marketing", Title = "Marketing", Icon = "mega", Make = () => new AppMarketing(),
-                            Badge = () => Game.Sim != null && Game.Sim.TikTokAvailable() ? "!" : "",
-                        },
-                        new TabDef { Id = "brand", Title = "Branding", Icon = "tag", Make = () => new AppBranding() },
-                    },
                 },
                 new AppDef
                 {
-                    Id = "market", Title = "Markt & Trends", Icon = "trend", Group = "VERKAUF",
-                    Badge = () => TrendBadge,
+                    Id = "trading", Title = "TradingViech", Icon = "trend", Group = "FINANZEN", Make = () => new WebTrading(),
+                    Fav = "V", FavColor = new Color(0.16f, 0.38f, 1f), Locked = () => LockedReason("trading"),
+                },
+                new AppDef
+                {
+                    Id = "bank", Title = "Revoluut", Icon = "bank", Group = "FINANZEN", Make = () => new WebBank(),
+                    Fav = "R", FavColor = new Color(0.24f, 0.17f, 1f),
+                },
+                new AppDef
+                {
+                    Id = "market", Title = "Markt & Trends", Icon = "trend", Group = "VERKAUF", Fav = "M", FavColor = new Color(0.24f, 0.84f, 0.69f),
+                    Url = "hustle.os/markt", Badge = () => TrendBadge,
                     Tabs = new List<TabDef>
                     {
                         new TabDef { Id = "analysis", Title = "Marktanalyse", Icon = "store", Make = () => new AppMarket() },
@@ -119,7 +136,8 @@ namespace DropshippingGame.UI
                 },
                 new AppDef
                 {
-                    Id = "orders", Title = "Aufträge", Icon = "pallet", Group = "VERKAUF",
+                    Id = "orders", Title = "Aufträge", Icon = "pallet", Group = "VERKAUF", Fav = "B", FavColor = new Color(0.55f, 0.4f, 0.9f),
+                    Url = "hustle.os/grossauftraege",
                     Visible = () => ShowUpcoming || (Game.Sim != null && Game.Sim.ContractsUnlocked),
                     Badge = () => Game.Sim != null && Game.Sim.ContractOffers().Count > 0 ? Game.Sim.ContractOffers().Count.ToString() : "",
                     Tabs = new List<TabDef>
@@ -135,17 +153,16 @@ namespace DropshippingGame.UI
                 },
                 new AppDef
                 {
-                    Id = "finance", Title = "Finanzen", Icon = "bank", Group = "FINANZEN",
-                    Tabs = new List<TabDef>
-                    {
-                        new TabDef { Id = "bank", Title = "Bank", Icon = "bank", Make = () => new AppBank() },
-                        new TabDef { Id = "stats", Title = "Analytics", Icon = "bars", Make = () => new AppAnalytics() },
-                        new TabDef { Id = "trading", Title = "Trading", Icon = "trend", Make = () => new AppTrading(), Locked = () => LockedReason("trading") },
-                    },
+                    Id = "returns", Title = "Retouren", Icon = "return", Group = "BETRIEB", Fav = "R", FavColor = new Color(0.13f, 0.7f, 0.66f),
+                    Url = "hustle.os/retouren",
+                    Visible = () => ShowUpcoming || (Game.Sim != null && (Game.Sim.TotalReturns > 0 || Game.Sim.ReturnsIncoming.Count > 0 || Game.Sim.ReturnsAtDock > 0)),
+                    Badge = () => Game.Sim != null && Game.Sim.ReturnsAtDock > 0 ? Game.Sim.ReturnsAtDock.ToString() : "",
+                    Make = () => new AppReturns(),
                 },
                 new AppDef
                 {
-                    Id = "company", Title = "Firma", Icon = "building", Group = "FIRMA",
+                    Id = "company", Title = "Firma", Icon = "building", Group = "FIRMA", Fav = "F", FavColor = new Color(0.23f, 0.13f, 0.25f),
+                    Url = "hustle.os/firma",
                     Badge = () => Game.Sim != null && Game.Sim.SkillPointsAvailable() > 0 ? Game.Sim.SkillPointsAvailable().ToString() : "",
                     Tabs = new List<TabDef>
                     {
@@ -157,6 +174,9 @@ namespace DropshippingGame.UI
                         },
                         new TabDef { Id = "build", Title = "Ausbau", Icon = "building", Make = () => new AppBuild() },
                         new TabDef { Id = "goals", Title = "Ziele", Icon = "trophy", Make = () => new AppGoals() },
+                        new TabDef { Id = "brand", Title = "Branding", Icon = "tag", Make = () => new AppBranding() },
+                        new TabDef { Id = "pack", Title = "Verpackung", Icon = "package", Make = () => new AppPackaging() },
+                        new TabDef { Id = "stats", Title = "Statistik", Icon = "bars", Make = () => new AppAnalytics() },
                         new TabDef { Id = "lifestyle", Title = "Lifestyle", Icon = "crown", Make = () => new AppLifestyle() },
                     },
                 },
@@ -213,6 +233,20 @@ namespace DropshippingGame.UI
             return "";
         }
 
+        // ---- Routen der Web-Apps (bleiben über das Schließen hinweg erhalten) --------------------
+        private static readonly Dictionary<string, string> Routes = new Dictionary<string, string>();
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => Routes.Clear();
+
+        public static string GetRoute(string appId) => appId != null && Routes.TryGetValue(appId, out string r) ? r ?? "" : "";
+
+        public static void SetRoute(string appId, string route)
+        {
+            if (string.IsNullOrEmpty(appId)) return;
+            Routes[appId] = route ?? "";
+        }
+
         private static bool Call(Func<bool> f, bool fallback)
         {
             if (f == null) return fallback;
@@ -263,19 +297,26 @@ namespace DropshippingGame.UI
         // =====================================================================================
         // Instanz
         // =====================================================================================
+        private struct HistEntry
+        {
+            public string App, Tab, Route;
+        }
+
         private readonly VisualElement _layer;
-        private VisualElement _laptop, _frame, _screen, _top, _body, _navHost, _pageHost, _appRoot, _boot, _foot;
-        private ScrollView _content, _nav;
-        private Label _brand, _day, _rating, _money;
-        private VisualElement _moneyChip;
+        private VisualElement _laptop, _frame, _screen, _chrome, _bar, _pageHost, _appRoot, _boot, _foot;
+        private ScrollView _content, _tabs;
+        private Label _url, _day, _rating, _money;
+        private VisualElement _moneyChip, _lock;
         private readonly Dictionary<string, VisualElement> _navItems = new Dictionary<string, VisualElement>();
         private readonly Dictionary<string, Label> _navBadges = new Dictionary<string, Label>();
         private readonly Dictionary<string, string> _lastTab = new Dictionary<string, string>();
+        private readonly List<HistEntry> _history = new List<HistEntry>();
+        private Button _backBtn;
         private LaptopApp _app;
         private string _current = "home", _currentTab = "";
         private bool _dirty;
         private float _dirtyT, _topT;
-        private string _themeSig = "", _badgeSig = "", _footSig = "";
+        private string _themeSig = "", _badgeSig = "", _footSig = "", _visibleSig = "";
         private bool _booted;
         private float _pressedAt = -10f;
 
@@ -284,7 +325,7 @@ namespace DropshippingGame.UI
         public string CurrentTab => _currentTab;
         /// <summary>Bildschirm des Laptops.</summary>
         public VisualElement Screen => _screen;
-        /// <summary>Bereich für die Controller-Fokus-Steuerung (App-Seite ohne Kopfzeile/Navigation).</summary>
+        /// <summary>Bereich für die Controller-Fokus-Steuerung (Seite ohne Browser-Leisten).</summary>
         public VisualElement FocusRoot => _pageHost;
         public bool Booting => _boot != null && UIX.IsShown(_boot);
 
@@ -305,102 +346,118 @@ namespace DropshippingGame.UI
             _current = "home";
             _currentTab = "";
             _lastTab.Clear();
+            _history.Clear();
+            Routes.Clear();
         }
 
         private void Build()
         {
             _layer.Clear();
             _laptop = UIX.Div(_layer, "layer", "laptop", "os-theme");
+            try
+            {
+                var sheet = Resources.Load<StyleSheet>("UI/Web");
+                if (sheet != null) _laptop.styleSheets.Add(sheet);
+                else Debug.LogWarning("Resources/UI/Web.uss nicht gefunden – Browser-Seiten ohne Design.");
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
             _laptop.RegisterCallback<PointerDownEvent>(e =>
             {
                 if (e.target == _laptop) Game.Sim?.ClosePc();
             });
-            _frame = UIX.Col(_laptop, 0f, "os-frame");
+            _frame = UIX.Col(_laptop, 0f, "os-frame", "br-frame");
             // Während eine Maustaste gedrückt ist, nicht neu bauen (sonst geht der Klick verloren).
             _frame.RegisterCallback<PointerDownEvent>(_ => _pressedAt = Time.unscaledTime, TrickleDown.TrickleDown);
             _frame.RegisterCallback<PointerUpEvent>(_ => _pressedAt = -10f, TrickleDown.TrickleDown);
-            _screen = UIX.Col(_frame, 0f, "os-screen");
-            var glow = UIX.Div(_screen, "os-glow");
-            glow.style.position = Position.Absolute;
-            glow.style.backgroundImage = new StyleBackground(UiTex.Radial());
-            glow.pickingMode = PickingMode.Ignore;
-            _top = UIX.Div(_screen, "os-top");
-            _body = UIX.Div(_screen, "os-body");
-            _navHost = UIX.Div(_body, "os-nav");
-            _pageHost = UIX.Col(_body, 0f);
+            _screen = UIX.Col(_frame, 0f, "os-screen", "br-screen");
+            _chrome = UIX.Col(_screen, 0f, "br-chrome");
+            _pageHost = UIX.Col(_screen, 0f, "br-page");
             _pageHost.style.flexGrow = 1;
             _pageHost.style.flexShrink = 1;
-            _content = UIX.Scroll(_pageHost, "os-content");
+            _content = UIX.Scroll(_pageHost, "os-content", "br-content");
             _foot = UIX.Row(_screen, 0f, "os-foot");
             _foot.style.position = Position.Absolute;
             _foot.pickingMode = PickingMode.Ignore;
             UIX.Show(_foot, false);
         }
 
-        private void BuildTop()
+        /// <summary>Reiterleiste und Adressleiste (Browser-Chrome) aufbauen.</summary>
+        private void BuildChrome()
         {
-            _top.Clear();
-            bool hype = Settings.LaptopDesign != "frachtbrief";
-            var logo = UIX.Div(_top, "os-logo");
-            var mark = UIX.Div(logo, "os-logo-mark");
-            UIX.Icon(mark, hype ? "sparkle" : "package", hype ? 16f : 18f);
-            UIX.Text(logo, hype ? "HustleOS" : "HUSTLEOS", "os-brand-text");
-            if (hype) UIX.Spacer(_top);
-            _brand = Chip("MARKE", null, "brand");
-            _day = Chip("TAG", "calendar", "day");
-            _rating = Chip("BEWERTUNG", "star", "rating");
-            _money = Chip("KONTO", "wallet", "money");
-            _moneyChip = _money.parent;
-            var close = UIX.Button(_top, "", () => Game.Sim?.ClosePc(), "", false, "close");
-            close.AddToClassList("os-close");
-            close.tooltip = "Schließen (Esc)";
-        }
-
-        private Label Chip(string key, string icon, string cls)
-        {
-            var c = UIX.Div(_top, "os-chip", cls);
-            c.pickingMode = PickingMode.Ignore;
-            if (!string.IsNullOrEmpty(icon)) UIX.Icon(c, icon, 13f);
-            UIX.Text(c, key, "os-chip-key");
-            var v = UIX.Text(c, "", "os-chip-text");
-            if (cls == "day" || cls == "money" || cls == "rating") Fonts.AddClass(v, "num-b");
-            return v;
-        }
-
-        private void BuildNav()
-        {
-            _navHost.Clear();
+            _chrome.Clear();
             _navItems.Clear();
             _navBadges.Clear();
-            bool hype = Settings.LaptopDesign != "frachtbrief";
-            _nav = new ScrollView(hype ? ScrollViewMode.Horizontal : ScrollViewMode.Vertical);
-            _nav.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
-            _nav.verticalScrollerVisibility = hype ? ScrollerVisibility.Hidden : ScrollerVisibility.Auto;
-            _nav.style.flexGrow = 1;
-            _navHost.Add(_nav);
-            var inner = UIX.Div(_nav.contentContainer, "os-nav-inner");
-            string group = "";
-            foreach (var a in VisibleApps())
+            var tabRow = UIX.Row(_chrome, 0f, "br-tabrow");
+            _tabs = new ScrollView(ScrollViewMode.Horizontal);
+            _tabs.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
+            _tabs.verticalScrollerVisibility = ScrollerVisibility.Hidden;
+            _tabs.AddToClassList("br-tabs");
+            _tabs.style.flexGrow = 1;
+            _tabs.style.flexShrink = 1;
+            tabRow.Add(_tabs);
+            var inner = UIX.Row(_tabs.contentContainer, 0f, "br-tabs-inner");
+            var visible = VisibleApps();
+            var sig = new System.Text.StringBuilder();
+            foreach (var a in visible)
             {
-                if (!hype && a.Group != group)
-                {
-                    group = a.Group;
-                    UIX.Text(inner, group, "os-group");
-                }
+                sig.Append(a.Id).Append('|');
                 string id = a.Id;
-                var nav = UIX.PressRow(inner, 0f, () => OpenApp(id), "os-nav-item");
-                nav.focusable = false; // Controller: LB/RB wechselt die App
-                UIX.Icon(nav, a.Icon, 16f);
-                UIX.Text(nav, a.Title, "nav-label");
-                var badge = UIX.Badge(nav, "");
+                var tab = UIX.PressRow(inner, 6f, () => OpenApp(id), "br-tab");
+                tab.focusable = false; // Controller: LB/RB wechselt die App
+                var fav = UIX.Div(tab, "br-fav");
+                fav.style.backgroundColor = a.FavColor;
+                W.Text(fav, string.IsNullOrEmpty(a.Fav) ? a.Title.Substring(0, 1) : a.Fav, WebSkin.Comic, WebFonts.Comic, "br-fav-text");
+                W.Text(tab, a.Title, WebSkin.Comic, WebFonts.Bold, "br-tab-label");
+                var badge = W.Text(tab, "", WebSkin.Comic, WebFonts.Bold, "br-badge");
                 UIX.Show(badge, false);
-                UIX.PassThrough(nav);
-                _navItems[a.Id] = nav;
+                UIX.PassThrough(tab);
+                _navItems[a.Id] = tab;
                 _navBadges[a.Id] = badge;
             }
+            _visibleSig = sig.ToString();
+            var close = UIX.Pressable(tabRow, () => Game.Sim?.ClosePc(), "br-close");
+            UIX.Icon(close, "close", 14f, null, "br-icon");
+            UIX.PassThrough(close);
+            close.tooltip = "Schließen (Esc)";
+
+            _bar = UIX.Row(_chrome, 8f, "br-bar");
+            _backBtn = UIX.Pressable(_bar, Back, "br-nb");
+            UIX.Icon(_backBtn, "chevron_left", 14f, null, "br-icon");
+            UIX.PassThrough(_backBtn);
+            _backBtn.tooltip = "Zurück";
+            var homeBtn = UIX.Pressable(_bar, GoHome, "br-nb");
+            UIX.Icon(homeBtn, "home", 14f, null, "br-icon");
+            UIX.PassThrough(homeBtn);
+            homeBtn.tooltip = "Startseite der App";
+            var reload = UIX.Pressable(_bar, () => Rebuild(), "br-nb");
+            UIX.Icon(reload, "refresh", 14f, null, "br-icon");
+            reload.tooltip = "Neu laden";
+            UIX.PassThrough(reload);
+            var urlBox = UIX.Row(_bar, 6f, "br-url");
+            urlBox.style.flexGrow = 1;
+            urlBox.style.flexShrink = 1;
+            _lock = UIX.Div(urlBox, "br-lock");
+            _url = W.Text(urlBox, "", WebSkin.Neo, WebFonts.Body, "br-url-text");
+            _url.style.flexShrink = 1;
+            _day = BarChip("br-chip-day");
+            _rating = BarChip("br-chip-rating");
+            _money = BarChip("br-chip-money");
+            _moneyChip = _money.parent;
         }
 
-        /// <summary>Design-Klassen setzen; bei geändertem Layout Navigation und Kopfzeile neu bauen.</summary>
+        private Label BarChip(string cls)
+        {
+            var c = UIX.Row(_bar, 4f, "br-chip", cls);
+            c.pickingMode = PickingMode.Ignore;
+            var l = W.Text(c, "", WebSkin.Comic, WebFonts.Bold, "br-chip-text");
+            Fonts.AddClass(l, "num-b");
+            return l;
+        }
+
+        /// <summary>Design-Klassen setzen; bei geändertem Design die Leisten neu bauen.</summary>
         private void ApplyTheme(bool force)
         {
             string sig = Settings.LaptopDesign + Settings.LaptopDark;
@@ -411,25 +468,35 @@ namespace DropshippingGame.UI
             _laptop.EnableInClassList("hype", hype);
             _laptop.EnableInClassList("dark", Settings.LaptopDark);
             _laptop.EnableInClassList("light", !Settings.LaptopDark);
-            BuildTop();
-            BuildNav();
+            BuildChrome();
             _badgeSig = "";
             UpdateBadges();
             UpdateTop();
-            if (_app != null) OpenApp(_current, _currentTab, true);
+            if (_app != null) OpenApp(_current, _currentTab, true, true);
         }
 
         public void UpdateBadges()
         {
             var sim = Game.Sim;
             if (sim == null || _navItems.Count == 0) return;
+            var visible = VisibleApps();
+            var vs = new System.Text.StringBuilder();
+            foreach (var a in visible) vs.Append(a.Id).Append('|');
+            if (vs.ToString() != _visibleSig)
+            {
+                // neue App sichtbar geworden (z. B. Retouren) → Reiterleiste neu
+                BuildChrome();
+                _badgeSig = "";
+                UpdateTop();
+                UpdateUrl();
+            }
             var sb = new System.Text.StringBuilder();
-            foreach (var a in VisibleApps()) sb.Append(Call(a.Badge)).Append('|');
+            foreach (var a in visible) sb.Append(Call(a.Badge)).Append('|');
             sb.Append(_current);
             string sig = sb.ToString();
             if (sig == _badgeSig) return;
             _badgeSig = sig;
-            foreach (var a in VisibleApps())
+            foreach (var a in visible)
             {
                 if (!_navItems.TryGetValue(a.Id, out var nav)) continue;
                 nav.EnableInClassList("active", a.Id == _current);
@@ -437,8 +504,7 @@ namespace DropshippingGame.UI
                 var badge = _navBadges[a.Id];
                 badge.text = b;
                 UIX.Show(badge, b != "");
-                bool locked = Call(a.Locked) != "";
-                nav.EnableInClassList("locked", locked);
+                nav.EnableInClassList("locked", Call(a.Locked) != "");
             }
         }
 
@@ -446,11 +512,28 @@ namespace DropshippingGame.UI
         {
             var sim = Game.Sim;
             if (sim == null || _money == null) return;
-            _brand.text = sim.BrandName;
             _day.text = UiFmt.DayShort(sim.Day) + " · " + Fmt.Clock(sim.TimeMinutes);
-            _rating.text = Fmt.Rating(sim.Reputation);
+            _rating.text = "★ " + Fmt.Rating(sim.Reputation);
             _money.text = Fmt.Money(sim.Money);
             _moneyChip?.EnableInClassList("neg", sim.Money < 0);
+            _backBtn?.SetEnabled(_history.Count > 0);
+        }
+
+        private void UpdateUrl()
+        {
+            if (_url == null) return;
+            string url;
+            bool secure = true;
+            if (_app is WebApp w) url = "https://" + (w.Url ?? "");
+            else
+            {
+                var def = Apps.Find(a => a.Id == _current);
+                url = "hustleos://" + (def != null && !string.IsNullOrEmpty(def.Url) ? def.Url.Replace("hustle.os/", "") : _current) +
+                      (string.IsNullOrEmpty(_currentTab) ? "" : "/" + _currentTab);
+                secure = false;
+            }
+            _url.text = url;
+            _lock?.EnableInClassList("off", !secure);
         }
 
         // =====================================================================================
@@ -473,7 +556,7 @@ namespace DropshippingGame.UI
                 else if (sim.Events.PendingCount() > 0) app = "mail";
                 else tab = _currentTab;
             }
-            OpenApp(app, tab, true);
+            OpenApp(app, tab, true, true);
             UIX.PopIn(_frame, 0.16f);
             Game.Sound("whoosh", 0.05f, -6f);
             if (!_booted) Boot();
@@ -509,7 +592,7 @@ namespace DropshippingGame.UI
             var bar = UIX.Bar(_boot, 0f, null, 6f, 280f);
             bar.AddToClassList("boot-bar");
             var log = UIX.Text(_boot, "Starte …", "boot-log");
-            string[] steps = { "Lade Bestellungen …", "Synchronisiere Lager …", "Verbinde mit PaketBlitz …", "Motivation wird geladen …" };
+            string[] steps = { "Lade Bestellungen …", "Öffne 7 Tabs gleichzeitig …", "Verbinde mit PaketBlitz …", "Motivation wird geladen …" };
             var boot = _boot;
             boot.RegisterCallback<PointerDownEvent>(_ => FinishBoot(boot));
             Anim.Run(0.85f, t =>
@@ -528,25 +611,43 @@ namespace DropshippingGame.UI
                 boot.RemoveFromHierarchy();
                 if (_boot == boot) _boot = null;
             }, Ease.OutCubic, true);
-            if (_appRoot != null) UIX.FadeSlideIn(_appRoot.parent, 10f, 0.2f);
+            if (_appRoot != null && _appRoot.parent != null) UIX.FadeSlideIn(_appRoot.parent, 10f, 0.2f);
         }
 
-        /// <summary>App (und Reiter) öffnen. id darf "app", "app/reiter" oder ein alter Alias sein.</summary>
-        public void OpenApp(string id, string tab = null, bool silent = false)
+        /// <summary>
+        /// App (und Reiter bzw. Route) öffnen. id darf "app", "app/reiter", "app/route" oder ein
+        /// alter Alias sein. Bei Apps ohne Reiter wird der Teil nach dem Schrägstrich zur Route.
+        /// </summary>
+        public void OpenApp(string id, string tab = null, bool silent = false) => OpenApp(id, tab, silent, false);
+
+        private void OpenApp(string id, string tab, bool silent, bool noHistory)
         {
             if (_content == null) return;
             if (string.IsNullOrEmpty(id)) id = "home";
             if (Aliases.TryGetValue(id, out string alias)) id = alias;
+            string route = null;
             int slash = id.IndexOf('/');
             if (slash > 0)
             {
                 tab = id.Substring(slash + 1);
                 id = id.Substring(0, slash);
+                if (Aliases.TryGetValue(id, out string a2) && a2.IndexOf('/') < 0) id = a2;
             }
             var apps = VisibleApps();
+            if (apps.Count == 0) return;
             var def = apps.Find(a => a.Id == id) ?? apps[0];
-            bool appChanged = def.Id != _current;
             var tabs = VisibleTabs(def);
+            if (tabs.Count == 0 && def.Id == id && !string.IsNullOrEmpty(tab)) route = tab;
+
+            // Verlauf für den Zurück-Knopf
+            if (!noHistory && _app != null)
+            {
+                bool same = def.Id == _current && (tabs.Count == 0 ? route == null || route == GetRoute(def.Id) : (tab ?? "") == _currentTab);
+                if (!same) PushHistory();
+            }
+            if (route != null) SetRoute(def.Id, route);
+
+            bool appChanged = def.Id != _current;
             TabDef tabDef = null;
             if (tabs.Count > 0)
             {
@@ -570,18 +671,6 @@ namespace DropshippingGame.UI
             }
             _content.Clear();
 
-            var page = UIX.Col(_content.contentContainer, 0f, "app-page");
-            var head = UIX.Div(page, "app-head");
-            UIX.Text(head, def.Title, "app-title");
-            if (tabs.Count > 1)
-            {
-                var items = new List<UIX.TabItem>();
-                foreach (var t in tabs)
-                    items.Add(new UIX.TabItem { Id = t.Id, Title = t.Title, Icon = t.Icon, Badge = Call(t.Badge), Locked = Call(t.Locked) != "" });
-                string appId = def.Id;
-                UIX.Tabs(head, items, _currentTab, t => OpenApp(appId, t));
-            }
-
             string title = tabDef != null && tabs.Count > 1 ? tabDef.Title : def.Title;
             string reason = tabDef != null ? Call(tabDef.Locked) : Call(def.Locked);
             LaptopApp app;
@@ -598,18 +687,90 @@ namespace DropshippingGame.UI
             if (app == null) app = new AppSoon(title, def.Icon, "Diese App ist noch nicht fertig.");
             _app = app;
             _app.View = this;
-            string lead = _app.Lead;
-            if (!string.IsNullOrEmpty(lead)) UIX.Text(page, lead, "app-lead");
-            else head.style.marginBottom = 14;
-            _appRoot = UIX.Col(page, 14f);
+
+            VisualElement page;
+            if (_app is WebApp web)
+            {
+                page = UIX.Col(_content.contentContainer, 0f, "web-page", web.SkinClass);
+                WebFonts.Set(page, web.Skin, WebFonts.Body);
+                _appRoot = page;
+                _content.AddToClassList("web");
+            }
+            else
+            {
+                _content.RemoveFromClassList("web");
+                page = UIX.Col(_content.contentContainer, 0f, "app-page");
+                var head = UIX.Div(page, "app-head");
+                UIX.Text(head, def.Title, "app-title");
+                if (tabs.Count > 1)
+                {
+                    var items = new List<UIX.TabItem>();
+                    foreach (var t in tabs)
+                        items.Add(new UIX.TabItem { Id = t.Id, Title = t.Title, Icon = t.Icon, Badge = Call(t.Badge), Locked = Call(t.Locked) != "" });
+                    string appId = def.Id;
+                    UIX.Tabs(head, items, _currentTab, t => OpenApp(appId, t));
+                }
+                string lead = _app.Lead;
+                if (!string.IsNullOrEmpty(lead)) UIX.Text(page, lead, "app-lead");
+                else head.style.marginBottom = 14;
+                _appRoot = UIX.Col(page, 14f);
+            }
             _app.Root = _appRoot;
             SafeBuild();
             _content.scrollOffset = Vector2.zero;
             _badgeSig = "";
             UpdateBadges();
             UpdateTop();
+            UpdateUrl();
             if ((appChanged || tabChanged) && !silent) UIX.FadeSlideIn(page, 8f, 0.16f);
-            if (GameInput.UsingGamepad) _content.schedule.Execute(() => UIX.FocusFirst(_appRoot.parent));
+            if (GameInput.UsingGamepad) _content.schedule.Execute(() => UIX.FocusFirst(_pageHost));
+        }
+
+        private void PushHistory()
+        {
+            _history.Add(new HistEntry { App = _current, Tab = _currentTab, Route = GetRoute(_current) });
+            if (_history.Count > 40) _history.RemoveAt(0);
+        }
+
+        /// <summary>Unterseite einer Web-App öffnen (mit Verlauf).</summary>
+        public void Navigate(string appId, string route)
+        {
+            if (string.IsNullOrEmpty(appId)) return;
+            if (appId != _current || _app == null)
+            {
+                SetRoute(appId, route);
+                OpenApp(appId, null, false, false);
+                return;
+            }
+            if ((route ?? "") == GetRoute(appId))
+            {
+                Rebuild(true);
+                return;
+            }
+            PushHistory();
+            SetRoute(appId, route);
+            Game.Sound("click", 0.05f, -6f);
+            Rebuild(true);
+        }
+
+        /// <summary>Zurück-Knopf: vorige Seite/App.</summary>
+        public void Back()
+        {
+            if (_history.Count == 0) return;
+            var h = _history[_history.Count - 1];
+            _history.RemoveAt(_history.Count - 1);
+            SetRoute(h.App, h.Route);
+            OpenApp(h.App, string.IsNullOrEmpty(h.Tab) ? null : h.Tab, false, true);
+        }
+
+        private void GoHome()
+        {
+            if (_app is WebApp)
+            {
+                Navigate(_current, "");
+                return;
+            }
+            OpenApp("home");
         }
 
         private void SafeBuild()
@@ -622,16 +783,18 @@ namespace DropshippingGame.UI
             {
                 Debug.LogException(e);
                 _app.Root.Clear();
-                UIX.Empty(_app.Root, "warning", "Diese App hatte einen Fehler.", "Einfach eine andere App öffnen und zurückkommen. (" + e.GetType().Name + ")");
+                UIX.Empty(_app.Root, "warning", "Diese Seite hatte einen Fehler.", "Einfach eine andere App öffnen und zurückkommen. (" + e.GetType().Name + ")");
             }
         }
 
         /// <summary>App neu aufbauen (Scrollposition und Controller-Fokus bleiben erhalten).</summary>
-        public void Rebuild()
+        public void Rebuild() => Rebuild(false);
+
+        public void Rebuild(bool resetScroll)
         {
             if (_app == null || _appRoot == null) return;
-            var offset = _content.scrollOffset;
-            int focus = GameInput.UsingGamepad ? UIX.FocusIndex(_pageHost) : -1;
+            var offset = resetScroll ? Vector2.zero : _content.scrollOffset;
+            int focus = GameInput.UsingGamepad && !resetScroll ? UIX.FocusIndex(_pageHost) : -1;
             try
             {
                 _app.Closed();
@@ -642,18 +805,23 @@ namespace DropshippingGame.UI
             }
             _appRoot.Clear();
             SafeBuild();
+            _content.scrollOffset = offset;
             _content.schedule.Execute(() =>
             {
                 _content.scrollOffset = offset;
                 if (focus >= 0) UIX.RestoreFocus(_pageHost, focus);
+                else if (resetScroll && GameInput.UsingGamepad) UIX.FocusFirst(_pageHost);
             });
             UpdateBadges();
+            UpdateUrl();
+            UpdateTop();
         }
 
         /// <summary>LB/RB: vorige/nächste App (bei Apps mit Reitern erst durch die Reiter).</summary>
         public void CycleApp(int dir)
         {
             var apps = VisibleApps();
+            if (apps.Count == 0) return;
             int idx = apps.FindIndex(a => a.Id == _current);
             if (idx < 0) idx = 0;
             var tabs = VisibleTabs(apps[idx]);
@@ -723,23 +891,22 @@ namespace DropshippingGame.UI
             _foot.Clear();
             UIX.Show(_foot, pad);
             if (!pad) return;
-            UIX.KeyHint(_foot, "LB/RB", "App & Reiter");
+            UIX.KeyHint(_foot, "LB/RB", "Tab & Reiter");
             UIX.KeyHint(_foot, "A", "Auswählen");
             UIX.KeyHint(_foot, "B", "Schließen");
         }
 
         public void OnTradingTick()
         {
-            if (IsOpen && _app is AppTrading t)
+            if (!IsOpen) return;
+            try
             {
-                try
-                {
-                    t.LiveUpdate();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogException(e);
-                }
+                if (_app is ILiveApp live) live.LiveUpdate();
+                else if (_app is AppTrading t) t.LiveUpdate();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
             }
         }
     }

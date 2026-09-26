@@ -387,10 +387,10 @@ namespace DropshippingGame.Core
         public static readonly TutorialStep[] Tutorial =
         {
             new TutorialStep { Title = "Willkommen in deiner Garage", Text = "Geh zum Laptop auf der Werkbank und klapp ihn mit {key:interact} auf. Dort läuft HustleOS – dein ganzes Business." },
-            new TutorialStep { Title = "Ware einkaufen", Text = "Öffne im Laptop die App 'Einkauf' und bestell 20 Handyhüllen beim Standard-Großhändler." },
+            new TutorialStep { Title = "Ware einkaufen", Text = "Öffne im Laptop den Tab 'AllesExpress', klick die Handyhülle an und bestell 20 Stück beim Standard-Großhändler." },
             new TutorialStep { Title = "Lieferung annehmen", Text = "Der Lieferwagen ist unterwegs. Nimm die Kiste am Wareneingang neben dem Tor." },
             new TutorialStep { Title = "Einlagern", Text = "Bring die Kiste zum Regal 'Handyhülle' und räum sie ein." },
-            new TutorialStep { Title = "Online gehen", Text = "Stell am Laptop im 'Webshop' die Handyhülle online." },
+            new TutorialStep { Title = "Online gehen", Text = "Stell am Laptop im Tab 'Mein Shop' die Handyhülle online." },
             new TutorialStep { Title = "Erste Bestellung", Text = "Gleich kommt deine erste Bestellung – als Bestellzettel oben rechts, mit Countdown. Mit {key:phone} öffnest du dein Handy mit allen Bestellungen." },
             new TutorialStep { Title = "Kommissionieren", Text = "Nimm am Regal eine Handyhülle für den Bestellzettel." },
             new TutorialStep { Title = "Verpacken", Text = "Verpack die Hülle am Packtisch – sie kommt automatisch in den passenden Karton (S)." },

@@ -116,7 +116,7 @@ namespace DropshippingGame.UI
             UIX.Text(lh, "SO LÄUFT DEIN BUSINESS", "eyebrow");
             string[] steps =
             {
-                "Am Laptop (Schreibtisch) unter <b>Einkauf</b> Ware bestellen – später geht Nachbestellen auch per Handy.",
+                "Am Laptop (Schreibtisch) bei <b>AllesExpress</b> Ware bestellen – später geht Nachbestellen auch per Handy.",
                 "Die Kiste am <b>Wareneingang</b> holen und ins passende <b>Regal</b> räumen.",
                 "Im Laptop unter <b>Shop</b> das Produkt online stellen und den Preis festlegen.",
                 "Bestellungen erscheinen <b>oben rechts als Zettel</b>. Je schneller verschickt, desto besser die Bewertung.",
@@ -136,7 +136,7 @@ namespace DropshippingGame.UI
             UIX.Icon(gh, "rocket", 16f, Theme.Accent);
             UIX.Text(gh, "HANDY, LAPTOP & WACHSTUM", "eyebrow");
             UIX.Text(grow, "Mit dem <b>Handy</b> (" + GameInput.KeyboardLabel("phone") + " / " + GameInput.PadLabel("phone") + ") siehst du Bestellzettel, beantwortest Nachrichten, bestellst mit einem Tipp nach und prüfst deinen Kontostand – die Welt läuft dabei weiter. " +
-                                "Den vollen Laptop <b>HustleOS</b> gibt es am Schreibtisch: Einkauf, Shop, Marketing, Finanzen, Firma.", "help-step-text");
+                                "Den vollen Laptop <b>HustleOS</b> gibt es am Schreibtisch: AllesExpress, Mein Shop, TikTak, Revoluut, Firma.", "help-step-text");
             UIX.Text(grow, "Gute Preise, schneller Versand und Qualität bringen gute Bewertungen und mehr Kundschaft. Mit Erfahrung steigt dein Firmenlevel und schaltet Produkte, " +
                            "Lagerhalle, Personal und mehr frei. Um 20 Uhr ist Feierabend – dann werden Miete, Löhne und Zinsen fällig.", "help-step-text");
         }
