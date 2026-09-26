@@ -149,8 +149,8 @@ namespace DropshippingGame
         public static bool CancelDown => Key(KeyId.Escape) || PadDown(PadButton.East) || PadDown(PadButton.Start);
         public static bool HelpDown => Key(KeyId.F1) || PadDown(PadButton.Select);
         public static bool ScreenshotDown => Key(KeyId.F12);
-        /// <summary>F10: Admin-Panel (Testmodus).</summary>
-        public static bool AdminDown => Key(KeyId.F10);
+        /// <summary>F10, F9 oder ^ (links neben der 1): Admin-Panel (Testmodus).</summary>
+        public static bool AdminDown => Key(KeyId.F10) || Key(KeyId.F9) || Key(KeyId.Backquote);
         /// <summary>Vorherige App / vorheriger Reiter (LB).</summary>
         public static bool PrevTabDown => PadDown(PadButton.LeftShoulder);
         /// <summary>Nächste App / nächster Reiter (RB).</summary>
@@ -257,7 +257,7 @@ namespace DropshippingGame
         // ---- Intern -----------------------------------------------------------------------------------
         private enum KeyId
         {
-            E, G, Space, Shift, Ctrl, C, Tab, Escape, F1, F10, F12, Enter, D1, D2, D3, D4,
+            E, G, Space, Shift, Ctrl, C, Tab, Escape, F1, F9, F10, Backquote, F12, Enter, D1, D2, D3, D4,
         }
 
         private enum PadButton
@@ -282,7 +282,9 @@ namespace DropshippingGame
                 case KeyId.Tab: down = kb.tabKey.wasPressedThisFrame; break;
                 case KeyId.Escape: down = kb.escapeKey.wasPressedThisFrame; break;
                 case KeyId.F1: down = kb.f1Key.wasPressedThisFrame; break;
+                case KeyId.F9: down = kb.f9Key.wasPressedThisFrame; break;
                 case KeyId.F10: down = kb.f10Key.wasPressedThisFrame; break;
+                case KeyId.Backquote: down = kb.backquoteKey.wasPressedThisFrame; break;
                 case KeyId.F12: down = kb.f12Key.wasPressedThisFrame; break;
                 case KeyId.Enter: down = kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame; break;
                 case KeyId.D1: down = kb.digit1Key.wasPressedThisFrame; break;
@@ -342,7 +344,9 @@ namespace DropshippingGame
                 case KeyId.Tab: return KeyCode.Tab;
                 case KeyId.Escape: return KeyCode.Escape;
                 case KeyId.F1: return KeyCode.F1;
+                case KeyId.F9: return KeyCode.F9;
                 case KeyId.F10: return KeyCode.F10;
+                case KeyId.Backquote: return KeyCode.BackQuote;
                 case KeyId.F12: return KeyCode.F12;
                 case KeyId.Enter: return KeyCode.Return;
                 case KeyId.D1: return KeyCode.Alpha1;

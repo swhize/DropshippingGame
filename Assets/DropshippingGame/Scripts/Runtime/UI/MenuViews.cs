@@ -338,6 +338,11 @@ namespace DropshippingGame.UI
             UIX.Button(menu, "Weiterspielen", Close, "accent", false, "play").AddToClassList("btn-big");
             UIX.Button(menu, "Spiel speichern", Save, "", false, "save");
             UIX.Button(menu, "Einstellungen", ShowSettings, "", false, "gear");
+            UIX.Button(menu, "Admin-Panel (Test)", () =>
+            {
+                Close();
+                Game.UI?.Admin?.Open();
+            }, "", false, "bolt");
             UIX.Button(menu, "Steuerung & Hilfe", ShowHelp, "", false, "help");
             UIX.Button(menu, "Zum Hauptmenü", () => OnMainMenu?.Invoke(), "", false, "home");
             UIX.Button(menu, "Spiel beenden", () => OnQuit?.Invoke(), "danger", false, "exit");
