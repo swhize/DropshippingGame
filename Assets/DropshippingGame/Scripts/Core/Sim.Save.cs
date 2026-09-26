@@ -176,6 +176,7 @@ namespace DropshippingGame.Core
             state["challenges"] = JList(Challenges, c => c.ToJson());
             state["challenge_week"] = ChallengeWeek;
             state["total_challenges_done"] = TotalChallengesDone;
+            state["furniture"] = FurnitureToJson();
         }
 
         /// <summary>Speichert in den aktuellen Slot. Das Imbiss-Intro wird nicht gespeichert.</summary>
@@ -379,6 +380,8 @@ namespace DropshippingGame.Core
             foreach (var c in J.A(s, "challenges")) Challenges.Add(WeeklyChallenge.FromJson(c));
             ChallengeWeek = J.I(s, "challenge_week");
             TotalChallengesDone = J.I(s, "total_challenges_done");
+
+            ReadFurniture(s);
 
             FixupLegacyOrders();
             ReconcileOrdersInWork();

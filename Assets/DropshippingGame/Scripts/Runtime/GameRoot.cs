@@ -612,6 +612,12 @@ namespace DropshippingGame
                 else if (number > 0) _ui.Phone.SelectApp(number - 1);
                 return;
             }
+            // Verschiebe-Modus: Esc/B/Start bricht ab (statt Pause), Handy bleibt zu.
+            if (_player.Mover.Active)
+            {
+                if (cancel || pause || phoneKey) _player.Mover.Cancel();
+                return;
+            }
             if (pause)
             {
                 _ui.Pause.Open();

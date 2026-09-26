@@ -11,10 +11,10 @@ namespace DropshippingGame
     ///
     /// Belegung Tastatur: WASD laufen · Maus umsehen · E interagieren · G ablegen · Leertaste springen
     /// · Shift sprinten · Strg/C ducken · Tab Handy · Esc Pause/Zurück · F1 Hilfe · F12 Screenshot
-    /// · 1–4 Handy-App wählen
+    /// · 1–4 Handy-App wählen · B Möbel verschieben (R / Mausrad drehen, Linksklick/E abstellen)
     /// Controller: linker Stick laufen · rechter Stick umsehen · X/Quadrat interagieren · B/Kreis ablegen
     /// bzw. zurück · A/Kreuz springen · L3 sprinten · R3 ducken · Y/Dreieck Handy · LB/RB App wechseln
-    /// · Start Pause · Select Hilfe
+    /// · Start Pause · Select Hilfe · Steuerkreuz unten Möbel verschieben (LB/RB drehen, X/A abstellen)
     /// Den vollen Laptop „HustleOS“ gibt es nur am Schreibtisch (Station benutzen).
     /// </summary>
     public static class GameInput
@@ -156,6 +156,33 @@ namespace DropshippingGame
         /// <summary>Nächste App / nächster Reiter (RB).</summary>
         public static bool NextTabDown => PadDown(PadButton.RightShoulder);
 
+        /// <summary>Verschiebe-Modus starten/abbrechen (B / Steuerkreuz unten).</summary>
+        public static bool BuildDown => Key(KeyId.B) || PadDown(PadButton.DpadDown);
+        /// <summary>Abstellen im Verschiebe-Modus: E, Linksklick, Enter oder X/A am Controller.</summary>
+        public static bool BuildConfirmDown =>
+            Key(KeyId.E) || Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.West) || PadDown(PadButton.South);
+
+        /// <summary>Drehung im Verschiebe-Modus in Grad für diesen Frame: R = 90°, Mausrad / LB / RB = 15°.</summary>
+        public static float BuildRotateDegrees
+        {
+            get
+            {
+                float d = 0f;
+                if (Key(KeyId.R)) d += 90f;
+                if (PadDown(PadButton.RightShoulder)) d += 15f;
+                if (PadDown(PadButton.LeftShoulder)) d -= 15f;
+                float wheel = 0f;
+#if ENABLE_INPUT_SYSTEM
+                if (Mouse.current != null) wheel = Mouse.current.scroll.ReadValue().y;
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                wheel = Input.mouseScrollDelta.y;
+#endif
+                if (wheel > 0.01f) d += 15f;
+                else if (wheel < -0.01f) d -= 15f;
+                return d;
+            }
+        }
+
         /// <summary>Zifferntaste 1–4 gedrückt (für die Handy-Apps), sonst 0.</summary>
         public static int NumberDown
         {
@@ -207,6 +234,9 @@ namespace DropshippingGame
                 case "tabs": return "1–4";
                 case "screenshot": return "F12";
                 case "confirm": return "Enter";
+                case "build": return "B";
+                case "rotate": return "R / Mausrad";
+                case "place": return "Linksklick / E";
             }
             return action;
         }
@@ -228,6 +258,9 @@ namespace DropshippingGame
                 case "tabs": return "LB/RB";
                 case "screenshot": return "–";
                 case "confirm": return "A";
+                case "build": return "Steuerkreuz ↓";
+                case "rotate": return "LB / RB";
+                case "place": return "X / A";
             }
             return action;
         }
@@ -242,6 +275,9 @@ namespace DropshippingGame
             new[] { "Springen", "Leertaste", "A" },
             new[] { "Benutzen / Aufheben", "E", "X" },
             new[] { "Ablegen", "G", "B" },
+            new[] { "Möbel verschieben (anvisieren)", "B", "Steuerkreuz ↓" },
+            new[] { "Möbel drehen", "R / Mausrad", "LB / RB" },
+            new[] { "Möbel abstellen / abbrechen", "Linksklick / E · Esc", "X / A · B" },
             new[] { "Handy öffnen / schließen", "Tab", "Y" },
             new[] { "Handy-App wechseln", "1 2 3 4", "LB / RB" },
             new[] { "Laptop (am Schreibtisch)", "E", "X" },
@@ -257,12 +293,12 @@ namespace DropshippingGame
         // ---- Intern -----------------------------------------------------------------------------------
         private enum KeyId
         {
-            E, G, Space, Shift, Ctrl, C, Tab, Escape, F1, F9, F10, Backquote, F12, Enter, D1, D2, D3, D4,
+            E, G, Space, Shift, Ctrl, C, Tab, Escape, F1, F9, F10, Backquote, F12, Enter, D1, D2, D3, D4, B, R,
         }
 
         private enum PadButton
         {
-            South, East, West, North, Start, Select, LeftStick, RightStick, LeftShoulder, RightShoulder,
+            South, East, West, North, Start, Select, LeftStick, RightStick, LeftShoulder, RightShoulder, DpadDown,
         }
 
         private static bool Key(KeyId k)
@@ -291,6 +327,8 @@ namespace DropshippingGame
                 case KeyId.D2: down = kb.digit2Key.wasPressedThisFrame; break;
                 case KeyId.D3: down = kb.digit3Key.wasPressedThisFrame; break;
                 case KeyId.D4: down = kb.digit4Key.wasPressedThisFrame; break;
+                case KeyId.B: down = kb.bKey.wasPressedThisFrame; break;
+                case KeyId.R: down = kb.rKey.wasPressedThisFrame; break;
                 default: down = false; break;
             }
             if (down) UsingGamepad = false;
@@ -353,6 +391,8 @@ namespace DropshippingGame
                 case KeyId.D2: return KeyCode.Alpha2;
                 case KeyId.D3: return KeyCode.Alpha3;
                 case KeyId.D4: return KeyCode.Alpha4;
+                case KeyId.B: return KeyCode.B;
+                case KeyId.R: return KeyCode.R;
             }
             return KeyCode.None;
         }
@@ -386,6 +426,7 @@ namespace DropshippingGame
                 case PadButton.RightStick: down = pad.rightStickButton.wasPressedThisFrame; break;
                 case PadButton.LeftShoulder: down = pad.leftShoulder.wasPressedThisFrame; break;
                 case PadButton.RightShoulder: down = pad.rightShoulder.wasPressedThisFrame; break;
+                case PadButton.DpadDown: down = pad.dpad.down.wasPressedThisFrame; break;
                 default: down = false; break;
             }
             if (down) UsingGamepad = true;

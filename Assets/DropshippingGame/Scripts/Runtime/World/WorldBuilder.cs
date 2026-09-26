@@ -711,15 +711,86 @@ namespace DropshippingGame
             return defs;
         }
 
+        // =====================================================================================
+        // Verschiebbare Möbel (Taste B)
+        // =====================================================================================
+        /// <summary>Innenraum je Ausbaustufe (0 = Garage, 1 = Lagerhalle) für den Verschiebe-Modus.</summary>
+        public static FloorRect RoomFor(int stage)
+        {
+            var r = stage >= 1 ? WarehouseRect : GarageRect;
+            return new FloorRect(r.xMin, r.yMin, r.xMax, r.yMax);
+        }
+
+        private static readonly FloorRect[] GarageKeepOut =
+        {
+            new FloorRect(-19.7f, -8.8f, -12.3f, -6.5f), // Tor
+        };
+
+        private static readonly FloorRect[] WarehouseKeepOut =
+        {
+            new FloorRect(13.8f, -9.4f, 20.2f, -6.5f), // Rolltor
+            new FloorRect(4.3f, -10.6f, 5.7f, -7f), // Durchgang ins Büro
+        };
+
+        /// <summary>Bereiche, die frei bleiben müssen (Türen, Durchgänge).</summary>
+        public static IList<FloorRect> KeepOutsFor(int stage) => stage >= 1 ? WarehouseKeepOut : GarageKeepOut;
+
+        /// <summary>Stationen, die verschoben werden dürfen. Wareneingang, Versand, Förderband, Monitor,
+        /// Schilder, Matratze/Stempeluhr und der Verkaufsstand bleiben fest (Lieferwagen, Wände, Band).</summary>
+        private static bool IsMovableStation(StationType t, int locationStage)
+        {
+            switch (t)
+            {
+                case StationType.Pc:
+                case StationType.Label:
+                case StationType.Regal:
+                case StationType.Pack:
+                case StationType.Fold:
+                case StationType.ReturnTray:
+                case StationType.ReturnDesk:
+                case StationType.ReturnBin:
+                    return true;
+                case StationType.Pallet:
+                    return locationStage >= 1; // in der Garage steht der Palettenplatz draußen im Hof
+            }
+            return false;
+        }
+
+        public static string StationKey(int stage, StationType t, int productIndex) => "st:" + stage + ":" + t + ":" + productIndex;
+        public static string DecorKey(string id, int stage) => "deco:" + id + ":" + stage;
+
+        private static readonly Dictionary<string, (string label, bool flat)> MovableDecor = new Dictionary<string, (string, bool)>
+        {
+            { "pflanze", ("Pflanze", false) }, { "stehlampe", ("Stehlampe", false) }, { "teppich", ("Teppich", true) },
+            { "billy", ("Bücherregal", false) }, { "kaffee", ("Kaffeemaschine", false) }, { "sofa", ("Sofa", false) },
+            { "sneaker", ("Sneaker-Vitrine", false) }, { "gamingstuhl", ("Gaming-Stuhl", false) },
+        };
+
+        /// <summary>Gespeicherten Platz übernehmen (Höhe bleibt wie im Standard-Layout).</summary>
+        private static void ApplyPlacement(Transform t, string key)
+        {
+            var p = Game.Sim?.GetFurniture(key);
+            if (p == null || t == null) return;
+            t.localPosition = new Vector3(p.X, t.localPosition.y, p.Z);
+            t.localRotation = Quaternion.Euler(0f, p.RotY, 0f);
+        }
+
         public void RebuildStations()
         {
             for (int i = _stations.childCount - 1; i >= 0; i--) Destroy(_stations.GetChild(i).gameObject);
             _stand = null;
+            int stage = Game.Sim != null ? Game.Sim.LocationStage : 0;
             foreach (var d in StationDefs())
             {
                 var go = Props.Node(_stations, d.Type.ToString(), d.Pos, d.Rot);
                 var st = go.AddComponent<Station>();
                 st.Setup(d.Type, d.Opts);
+                if (!MenuMode && IsMovableStation(d.Type, stage) && st.Kit != null)
+                {
+                    string key = StationKey(stage, d.Type, d.Type == StationType.Regal ? d.Opts.ProductIndex : 0);
+                    ApplyPlacement(go.transform, key);
+                    go.AddComponent<Movable>().Setup(key, st.Title, stage, false, st.Kit.Size, st.Kit.Center);
+                }
                 if (d.Type == StationType.NpcTalk && st.Npc != null && Game.Player != null) st.Npc.LookAtTarget = Game.Player.transform;
                 if (d.Type == StationType.Stand) _stand = st;
             }
@@ -828,6 +899,13 @@ namespace DropshippingGame
                     if (node == null) continue;
                     node.transform.localPosition = slot.pos;
                     node.transform.localRotation = Quaternion.Euler(0, slot.rot, 0);
+                    // Bodenmöbel lassen sich verschieben (Wandbilder, Neon, Whiteboard und Autos bleiben fest).
+                    if (!MenuMode && slot.stage >= 0 && Mathf.Abs(slot.pos.y) < 0.01f && MovableDecor.TryGetValue(id, out var md))
+                    {
+                        string key = DecorKey(id, slot.stage);
+                        ApplyPlacement(node.transform, key);
+                        node.AddComponent<Movable>().Setup(key, md.label, slot.stage, md.flat, null, null, true);
+                    }
                 }
             }
         }
