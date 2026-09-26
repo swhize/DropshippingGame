@@ -190,22 +190,95 @@ namespace DropshippingGame
             SetSurface(m, smoothness, set.Metallic);
         }
 
+        // ---- PBR-Oberflächen aus Resources/Textures/Surfaces (AssetLib), prozedural als Fallback --------
+        /// <summary>Echte PBR-Oberflächen verwenden, wenn vorhanden (sonst prozedurale Texturen).</summary>
+        public static bool UsePbr = true;
+
+        /// <summary>
+        /// PBR-Material einer Oberfläche (asphalt, sidewalk, grass, concrete_floor, brick_wall ...) mit optionaler
+        /// Tönung (wird mit der Textur multipliziert). tile &lt;= 0 = Kachelgröße aus dem Manifest. null, wenn es fehlt.
+        /// </summary>
+        public static Material Pbr(string id, Color? tint = null, float tile = -1f)
+        {
+            if (!UsePbr || string.IsNullOrEmpty(id)) return null;
+            Color c = tint ?? Color.white;
+            string key = "pbr:" + id + ":" + ColorUtility.ToHtmlStringRGB(c) + ":" + Mathf.RoundToInt(tile * 100f);
+            if (Cache.TryGetValue(key, out var m) && m != null) return m;
+            Material baseMat = null;
+            try
+            {
+                baseMat = AssetLib.Surface(id, tile);
+            }
+            catch (System.Exception)
+            {
+                baseMat = null;
+            }
+            if (baseMat == null) return null;
+            if (tint.HasValue)
+            {
+                m = new Material(baseMat) { name = baseMat.name + "_tint" };
+                if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
+                if (m.HasProperty("_Color")) m.SetColor("_Color", c);
+            }
+            else m = baseMat;
+            Cache[key] = m;
+            return m;
+        }
+
+        /// <summary>Normalisierte Tönung aus einer Wunschfarbe: Farbton bleibt, Helligkeit relativ zu ref.</summary>
+        private static Color TintFrom(Color c, float reference, float saturation = 1f)
+        {
+            float max = Mathf.Max(0.001f, Mathf.Max(c.r, Mathf.Max(c.g, c.b)));
+            Color hue = new Color(c.r / max, c.g / max, c.b / max);
+            hue = Color.Lerp(Color.white, hue, saturation);
+            float k = Mathf.Clamp(max / reference, 0.45f, 1f);
+            return new Color(hue.r * k, hue.g * k, hue.b * k, 1f);
+        }
+
         // ---- Oberflächen wie im Godot-Original ----------------------------------------------------------
         public static Material Concrete(Color a, Color b, float scale = 0.35f, float tile = 0f, float stain = 0.25f) =>
+            Pbr("concrete_floor", TintFrom(a, 0.6f, 0.6f)) ??
             Tex(new TexSpec { Kind = "concrete", A = a, B = b, Scale = scale, Tile = tile, Stain = stain });
 
         public static Material Concrete() => Concrete(new Color(0.56f, 0.56f, 0.54f), new Color(0.44f, 0.44f, 0.43f));
-        public static Material Asphalt() => Tex(new TexSpec { Kind = "asphalt", A = new Color(0.17f, 0.17f, 0.18f) });
+        public static Material Asphalt() => Pbr("asphalt") ?? Tex(new TexSpec { Kind = "asphalt", A = new Color(0.17f, 0.17f, 0.18f) });
 
-        public static Material Brick(Color brick, Color mortar, Vector2 size = default) =>
-            Tex(new TexSpec { Kind = "brick", A = brick, B = mortar, Size = size.x > 0 ? size : new Vector2(0.5f, 0.2f) });
+        /// <summary>Gehweg-Platten (PBR), Fallback: Beton mit Fugen.</summary>
+        public static Material Sidewalk(Color a, Color b) =>
+            Pbr("sidewalk", TintFrom(a, 0.66f, 0.5f)) ?? Tex(new TexSpec { Kind = "concrete", A = a, B = b, Scale = 0.5f, Tile = 1f, Stain = 0.1f });
+
+        /// <summary>Kräftige Farben = Ziegel, graue = Kalksandstein/Block.</summary>
+        public static Material Brick(Color brick, Color mortar, Vector2 size = default)
+        {
+            Color.RGBToHSV(brick, out _, out float sat, out _);
+            var pbr = sat > 0.25f ? Pbr("brick_wall", TintFrom(brick, 0.64f, 0.25f)) : Pbr("block_wall", TintFrom(brick, 0.62f, 0.5f));
+            return pbr ?? Tex(new TexSpec { Kind = "brick", A = brick, B = mortar, Size = size.x > 0 ? size : new Vector2(0.5f, 0.2f) });
+        }
 
         public static Material Planks(Color wood, float plankW = 0.2f) => Tex(new TexSpec { Kind = "planks", A = wood, PlankW = plankW });
         public static Material Tiles(float tileSize = 0.5f) =>
-            Tex(new TexSpec { Kind = "tiles", A = new Color(0.92f, 0.92f, 0.9f), B = new Color(0.13f, 0.13f, 0.15f), Scale = tileSize });
+            Pbr("tile_floor") ?? Tex(new TexSpec { Kind = "tiles", A = new Color(0.92f, 0.92f, 0.9f), B = new Color(0.13f, 0.13f, 0.15f), Scale = tileSize });
 
-        public static Material Grass() => Tex(new TexSpec { Kind = "grass", A = new Color(0.27f, 0.48f, 0.2f), B = new Color(0.42f, 0.6f, 0.27f) });
-        public static Material MetalSheet(Color baseColor, float ribs = 22f) => Tex(new TexSpec { Kind = "metal_sheet", A = baseColor, Ribs = ribs });
+        public static Material Grass() => Pbr("grass") ?? Tex(new TexSpec { Kind = "grass", A = new Color(0.27f, 0.48f, 0.2f), B = new Color(0.42f, 0.6f, 0.27f) });
+
+        /// <summary>Wellblech; die Wunschfarbe tönt die PBR-Textur.</summary>
+        public static Material MetalSheet(Color baseColor, float ribs = 22f) =>
+            Pbr("metal_sheet", TintFrom(baseColor, 0.55f, 0.8f)) ?? Tex(new TexSpec { Kind = "metal_sheet", A = baseColor, Ribs = ribs });
+
+        /// <summary>Rolltor-Lamellen.</summary>
+        public static Material Shutter(Color baseColor) =>
+            Pbr("shutter", TintFrom(baseColor, 0.72f, 0.4f)) ?? Tex(new TexSpec { Kind = "metal_sheet", A = baseColor, Ribs = 30f });
+
+        /// <summary>Flachdach-Belag.</summary>
+        public static Material RoofMat(Color baseColor) =>
+            Pbr("roof", TintFrom(baseColor, 0.5f, 0.3f)) ?? MetalSheet(baseColor);
+
+        /// <summary>Holzboden (PBR), Fallback: Dielen.</summary>
+        public static Material WoodFloor(Color wood) => Pbr("wood_floor") ?? Planks(wood, 0.2f);
+
+        /// <summary>Verputzte Innenwand.</summary>
+        public static Material Plaster(Color c) => Pbr("plaster_wall", TintFrom(c, 0.85f, 0.6f)) ?? Std(c, 0.85f);
+
         public static Material Cardboard() => Tex(new TexSpec { Kind = "cardboard", A = new Color(0.68f, 0.51f, 0.33f) });
         public static Material Wood() => Planks(new Color(0.6f, 0.42f, 0.26f), 0.12f);
         public static Material Metal() => Std(new Color(0.6f, 0.62f, 0.65f), 0.35f, 0.8f);

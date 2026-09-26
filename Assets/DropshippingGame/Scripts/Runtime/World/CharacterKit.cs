@@ -11,6 +11,10 @@ namespace DropshippingGame
         public Color Pants = CharacterKit.PantsColors[0];
         public bool LongHair, Apron, Vest, Mustache, Cap, Sitting, ChefHat;
         public Color CapColor = new Color(0.85f, 0.2f, 0.2f);
+        /// <summary>Modell-ID (character.*) oder null = automatisch aus dem Aussehen; "" = immer prozedural.</summary>
+        public string ModelId;
+        /// <summary>Zufallswert für die Modellwahl (stabil pro Figur).</summary>
+        public int Seed;
     }
 
     /// <summary>Gelenke einer Figur für die Animation.</summary>
@@ -44,7 +48,48 @@ namespace DropshippingGame
                 Shirt = Shirts[rng.Next(Shirts.Length)],
                 Pants = PantsColors[rng.Next(PantsColors.Length)],
                 LongHair = rng.NextDouble() < 0.4,
+                Seed = rng.Next(0, 100000),
             };
+        }
+
+        private static readonly string[] Passersby =
+        {
+            "character.female_a", "character.female_b", "character.female_c", "character.female_d", "character.female_e",
+            "character.male_a", "character.male_c", "character.male_d", "character.male_f",
+        };
+
+        /// <summary>
+        /// Passendes animiertes Modell (Kenney Mini Characters) für ein Aussehen: Kochmütze = Kalle,
+        /// Warnweste = Lagerpersonal, sonst Passant/Kundin nach Seed. null = prozedural bauen.
+        /// </summary>
+        public static string ModelFor(Look o)
+        {
+            if (o == null) return null;
+            if (o.ModelId != null) return o.ModelId.Length == 0 ? null : o.ModelId;
+            if (o.ChefHat || o.Apron) return "character.cook";
+            if (o.Vest) return (o.Seed & 1) == 0 ? "character.worker_1" : "character.worker_2";
+            int seed = o.Seed != 0 ? o.Seed : Mathf.Abs(Mathf.RoundToInt(o.Shirt.r * 997f + o.Hair.g * 577f + o.Skin.b * 331f + o.Pants.r * 173f));
+            return Passersby[seed % Passersby.Length];
+        }
+
+        /// <summary>
+        /// Baut das animierte Modell einer Figur (Front +Z, Füße auf 0). null, wenn es fehlt oder
+        /// (bei sitzenden Figuren) keinen Sitz-Clip hat - dann bleibt die prozedurale Figur.
+        /// </summary>
+        public static GameObject BuildModel(Transform parent, Look o)
+        {
+            string id = ModelFor(o);
+            if (id == null || !Props.UseAssets || !AssetLib.HasModel(id)) return null;
+            var go = AssetLib.Model(id, parent, Vector3.zero, 0f, -1f, false, true);
+            if (go == null) return null;
+            bool ok = o.Sitting ? AssetLib.PlayAnim(go, "sit", 0f) : AssetLib.PlayAnim(go, "idle", 0f);
+            if (o.Sitting && !ok)
+            {
+                Object.Destroy(go);
+                return null;
+            }
+            if (o.Sitting) go.transform.localPosition = new Vector3(0f, 0.05f, -0.1f);
+            return go;
         }
 
         public static CharacterRig Build(Transform parent, Look o)

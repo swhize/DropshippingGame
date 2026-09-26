@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -10,6 +11,155 @@ namespace DropshippingGame
     /// </summary>
     public static class Props
     {
+        // ---- Modelle aus AssetLib (mit prozeduralem Fallback) ------------------------------------------
+        /// <summary>Echte Modelle verwenden, wenn vorhanden.</summary>
+        public static bool UseAssets = true;
+
+        /// <summary>
+        /// Baut ein Modell unter einem neuen Knoten (Knoten-Ursprung = Bodenmitte). modelRotY dreht nur das Modell
+        /// im Knoten (z. B. 90, damit ein +Z-Modell nach +X zeigt). null, wenn das Modell fehlt.
+        /// </summary>
+        public static GameObject Asset(Transform parent, string name, string id, float fit = -1f, float modelRotY = 0f, bool shadows = true)
+        {
+            if (!UseAssets || string.IsNullOrEmpty(id)) return null;
+            GameObject node = null;
+            try
+            {
+                if (!AssetLib.HasModel(id)) return null;
+                node = Node(parent, name);
+                var m = AssetLib.Model(id, node.transform, Vector3.zero, modelRotY, fit, false, shadows);
+                if (m == null)
+                {
+                    Object.Destroy(node);
+                    return null;
+                }
+                return node;
+            }
+            catch (System.Exception)
+            {
+                if (node != null) Object.Destroy(node);
+                return null;
+            }
+        }
+
+        /// <summary>Wie <see cref="Asset"/>, aber direkt an Position/Drehung.</summary>
+        public static GameObject AssetAt(Transform parent, string id, Vector3 pos, float rotY = 0f, float fit = -1f, bool shadows = true)
+        {
+            var n = Asset(parent, id, id, fit, 0f, shadows);
+            if (n == null) return null;
+            n.transform.localPosition = pos;
+            n.transform.localRotation = Quaternion.Euler(0f, rotY, 0f);
+            return n;
+        }
+
+        /// <summary>Grenzen aller Renderer eines Objekts im lokalen Raum von root (grob, über Weltgrenzen).</summary>
+        public static Bounds LocalBounds(GameObject root)
+        {
+            var b = new Bounds(Vector3.zero, Vector3.zero);
+            if (root == null) return b;
+            bool any = false;
+            var inv = root.transform.worldToLocalMatrix;
+            foreach (var r in root.GetComponentsInChildren<Renderer>(true))
+            {
+                var wb = r.bounds;
+                for (int i = 0; i < 8; i++)
+                {
+                    var c = wb.center + Vector3.Scale(wb.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                    var lp = inv.MultiplyPoint3x4(c);
+                    if (!any)
+                    {
+                        b = new Bounds(lp, Vector3.zero);
+                        any = true;
+                    }
+                    else b.Encapsulate(lp);
+                }
+            }
+            return b;
+        }
+
+        private static readonly Dictionary<string, Material> RecolorCache = new Dictionary<string, Material>();
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => RecolorCache.Clear();
+
+        /// <summary>
+        /// Färbt die blauen Flächen einer Paletten-Textur (Kenney-Fahrzeuge) in eine Wunschfarbe um; Reifen,
+        /// Scheiben und Lichter bleiben. Die Textur wird per GPU kopiert (muss nicht lesbar sein) und gecacht.
+        /// </summary>
+        public static bool RecolorBody(GameObject root, Color target, float hueMin = 0.52f, float hueMax = 0.75f)
+        {
+            if (root == null) return false;
+            bool any = false;
+            try
+            {
+                foreach (var r in root.GetComponentsInChildren<Renderer>(true))
+                {
+                    var mats = r.sharedMaterials;
+                    for (int i = 0; i < mats.Length; i++)
+                    {
+                        var m = mats[i];
+                        if (m == null) continue;
+                        var nm = RecolorMaterial(m, target, hueMin, hueMax);
+                        if (nm == null) continue;
+                        mats[i] = nm;
+                        any = true;
+                    }
+                    r.sharedMaterials = mats;
+                }
+            }
+            catch (System.Exception)
+            {
+                return any;
+            }
+            return any;
+        }
+
+        private static Material RecolorMaterial(Material m, Color target, float hueMin, float hueMax)
+        {
+            string prop = m.HasProperty("_BaseMap") ? "_BaseMap" : (m.HasProperty("_MainTex") ? "_MainTex" : null);
+            if (prop == null) return null;
+            var src = m.GetTexture(prop);
+            if (src == null) return null;
+            string key = m.GetInstanceID() + ":" + ColorUtility.ToHtmlStringRGB(target);
+            if (RecolorCache.TryGetValue(key, out var cached) && cached != null) return cached;
+            int w = Mathf.Clamp(src.width, 1, 1024), h = Mathf.Clamp(src.height, 1, 1024);
+            var rt = RenderTexture.GetTemporary(w, h, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var prev = RenderTexture.active;
+            Texture2D tex;
+            try
+            {
+                Graphics.Blit(src, rt);
+                RenderTexture.active = rt;
+                tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
+                tex.ReadPixels(new Rect(0, 0, w, h), 0, 0);
+            }
+            finally
+            {
+                RenderTexture.active = prev;
+                RenderTexture.ReleaseTemporary(rt);
+            }
+            Color.RGBToHSV(target, out float th, out float ts, out float tv);
+            var px = tex.GetPixels32();
+            for (int i = 0; i < px.Length; i++)
+            {
+                Color c = px[i];
+                Color.RGBToHSV(c, out float hh, out float ss, out float vv);
+                if (ss < 0.3f || hh < hueMin || hh > hueMax) continue;
+                Color n = Color.HSVToRGB(th, ts, Mathf.Clamp01(tv * Mathf.Lerp(0.75f, 1.15f, vv)));
+                n.a = c.a;
+                px[i] = n;
+            }
+            tex.SetPixels32(px);
+            tex.filterMode = src.filterMode;
+            tex.wrapMode = src.wrapMode;
+            tex.Apply(false, true);
+            var nm = new Material(m) { name = m.name + "_recolor" };
+            nm.SetTexture(prop, tex);
+            if (prop == "_BaseMap" && nm.HasProperty("_MainTex")) nm.SetTexture("_MainTex", tex);
+            RecolorCache[key] = nm;
+            return nm;
+        }
+
         // ---- Grundformen -------------------------------------------------------------------------
         public static GameObject Node(Transform parent, string name, Vector3 pos = default, float rotY = 0f)
         {
@@ -142,6 +292,8 @@ namespace DropshippingGame
 
         public static GameObject Pallet(Transform parent)
         {
+            var a = Asset(parent, "Pallet", "logistics.pallet", 1.2f);
+            if (a != null) return a;
             var n = Node(parent, "Pallet");
             var t = n.transform;
             var w = Mats.Planks(new Color(0.72f, 0.56f, 0.36f), 0.14f);
@@ -163,6 +315,8 @@ namespace DropshippingGame
 
         public static GameObject Plant(Transform parent, float scale = 1f)
         {
+            var a = Asset(parent, "Plant", "nature.bush", 0.95f * scale);
+            if (a != null) return a;
             var n = Node(parent, "Plant");
             var t = n.transform;
             Cyl(t, 0.16f * scale, 0.12f * scale, 0.3f * scale, Mats.Std(new Color(0.85f, 0.82f, 0.78f), 0.6f), new Vector3(0, 0.15f * scale, 0));
@@ -175,6 +329,9 @@ namespace DropshippingGame
 
         public static GameObject Tree(Transform parent, float scale = 1f, int variant = 0)
         {
+            string[] trees = { "nature.tree_a", "nature.tree_b", "nature.tree_c", "nature.tree_d", "nature.tree_e" };
+            var a = Asset(parent, "Tree", trees[Mathf.Abs(variant) % trees.Length], 4.6f * scale);
+            if (a != null) return a;
             var n = Node(parent, "Tree");
             var t = n.transform;
             Cyl(t, 0.12f * scale, 0.18f * scale, 2.2f * scale, Mats.Std(new Color(0.36f, 0.25f, 0.16f), 0.9f), new Vector3(0, 1.1f * scale, 0), default, 7);
@@ -196,6 +353,9 @@ namespace DropshippingGame
 
         public static GameObject Bush(Transform parent, float scale = 1f)
         {
+            string[] bushes = { "nature.bush_c", "nature.bush_a", "nature.bush_c" };
+            var a = Asset(parent, "Bush", bushes[Mathf.Abs(Mathf.RoundToInt(scale * 97f)) % bushes.Length], 1.5f * scale);
+            if (a != null) return a;
             var n = Node(parent, "Bush");
             var t = n.transform;
             var leaf = Mats.Foliage(new Color(0.26f, 0.5f, 0.24f));
@@ -207,6 +367,15 @@ namespace DropshippingGame
         /// <summary>Straßenlaterne (Licht zeigt nach +Z). light = das Lampenlicht (nachts an).</summary>
         public static GameObject LampPost(Transform parent, out Light light)
         {
+            var a = Asset(parent, "LampPost", "street.streetlight_old_single", 4.2f);
+            if (a != null)
+            {
+                // Laterne mit Lampenkopf oben mittig: Leuchtkörper + Licht dort.
+                Sphere(a.transform, 0.13f, Mats.Lamp(new Color(1f, 0.85f, 0.6f)), new Vector3(0, 3.78f, 0), 8, 5).GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
+                light = PointLight(a.transform, new Vector3(0, 3.55f, 0), new Color(1f, 0.82f, 0.6f), 0f, 12f);
+                light.enabled = false;
+                return a;
+            }
             var n = Node(parent, "LampPost");
             var t = n.transform;
             var pole = Mats.Std(new Color(0.16f, 0.17f, 0.19f), 0.4f, 0.6f);
@@ -221,6 +390,8 @@ namespace DropshippingGame
 
         public static GameObject Bench(Transform parent)
         {
+            var a = Asset(parent, "Bench", "street.bench", 1.8f);
+            if (a != null) return a;
             var n = Node(parent, "Bench");
             var t = n.transform;
             var w = Mats.Planks(new Color(0.55f, 0.36f, 0.22f), 0.1f);
@@ -274,8 +445,27 @@ namespace DropshippingGame
             Cyl(w.transform, radius * 0.55f, radius * 0.55f, width + 0.01f, Mats.Metal(), Vector3.zero, default, 10);
         }
 
-        /// <summary>Auto (Front zeigt in +X).</summary>
-        public static GameObject Car(Transform parent, Color color, bool sporty = false)
+        private static readonly string[] TrafficIds = { "vehicle.traffic_1", "vehicle.traffic_2", "vehicle.traffic_3", "vehicle.traffic_4", "vehicle.traffic_5" };
+
+        /// <summary>Auto (Front zeigt in +X). modelId: bestimmtes Modell, sonst Verkehrsauto passend zur Farbe.</summary>
+        public static GameObject Car(Transform parent, Color color, bool sporty = false, string modelId = null)
+        {
+            if (modelId == null)
+            {
+                if (sporty) modelId = "vehicle.sportscar";
+                else
+                {
+                    int h = Mathf.Abs(Mathf.RoundToInt(color.r * 71f + color.g * 131f + color.b * 197f));
+                    modelId = TrafficIds[h % TrafficIds.Length];
+                }
+            }
+            // Modelle zeigen nach +Z, die prozeduralen Autos nach +X -> Modell um 90° drehen.
+            var a = Asset(parent, "Car", modelId, -1f, 90f);
+            if (a != null) return a;
+            return CarProcedural(parent, color, sporty);
+        }
+
+        private static GameObject CarProcedural(Transform parent, Color color, bool sporty)
         {
             var n = Node(parent, "Car");
             var t = n.transform;
@@ -305,8 +495,26 @@ namespace DropshippingGame
             return n;
         }
 
-        /// <summary>Lieferwagen (Front zeigt in +X).</summary>
-        public static GameObject Van(Transform parent, Color color, string text)
+        /// <summary>Lieferwagen (Front zeigt in +X) in Wunschfarbe mit Schriftzug auf beiden Seiten.</summary>
+        public static GameObject Van(Transform parent, Color color, string text, Color? textColor = null)
+        {
+            var a = Asset(parent, "Van", "vehicle.van", 4.9f, 90f);
+            if (a != null)
+            {
+                RecolorBody(a, color);
+                var b = LocalBounds(a);
+                if (b.size.sqrMagnitude < 0.01f) b = new Bounds(new Vector3(0, 1.2f, 0), new Vector3(4.9f, 2.4f, 2.6f));
+                foreach (float side in new[] { 1f, -1f })
+                {
+                    var holder = Node(a.transform, "Side", new Vector3(b.center.x - b.size.x * 0.12f, b.min.y + b.size.y * 0.58f, side * (b.extents.z + 0.03f)), side > 0 ? 0f : 180f);
+                    Label3D.Create(holder.transform, text, 130f, textColor ?? Color.white, Vector3.zero, false);
+                }
+                return a;
+            }
+            return VanProcedural(parent, color, text);
+        }
+
+        private static GameObject VanProcedural(Transform parent, Color color, string text)
         {
             var n = Node(parent, "Van");
             var t = n.transform;
@@ -343,6 +551,8 @@ namespace DropshippingGame
 
         public static GameObject Rug(Transform parent, Color color, Vector2 size = default)
         {
+            var a = Asset(parent, "Rug", "decor.rug", size == default ? 2.4f : Mathf.Max(size.x, size.y), 0f, false);
+            if (a != null) return a;
             if (size == default) size = new Vector2(2.4f, 1.6f);
             var n = Node(parent, "Rug");
             var t = n.transform;
@@ -353,6 +563,12 @@ namespace DropshippingGame
 
         public static GameObject FloorLamp(Transform parent)
         {
+            var a = Asset(parent, "FloorLamp", "decor.floor_lamp", 1.75f);
+            if (a != null)
+            {
+                PointLight(a.transform, new Vector3(0, 1.45f, 0), new Color(1f, 0.85f, 0.65f), 1.6f, 4f);
+                return a;
+            }
             var n = Node(parent, "FloorLamp");
             var t = n.transform;
             Cyl(t, 0.18f, 0.2f, 0.04f, Mats.DarkMetal(), new Vector3(0, 0.02f, 0));
@@ -364,6 +580,8 @@ namespace DropshippingGame
 
         public static GameObject Billy(Transform parent)
         {
+            var a = Asset(parent, "Billy", "decor.shelf", 1.4f);
+            if (a != null) return a;
             var n = Node(parent, "Billy");
             var t = n.transform;
             var w = Mats.Std(new Color(0.93f, 0.92f, 0.88f), 0.7f);
@@ -402,6 +620,8 @@ namespace DropshippingGame
 
         public static GameObject Sofa(Transform parent, Color color)
         {
+            var a = Asset(parent, "Sofa", "decor.sofa", 2.1f);
+            if (a != null) return a;
             var n = Node(parent, "Sofa");
             var t = n.transform;
             var m = Mats.Std(color, 0.55f);
@@ -428,6 +648,8 @@ namespace DropshippingGame
 
         public static GameObject GamingChair(Transform parent)
         {
+            var a = Asset(parent, "GamingChair", "decor.gaming_chair", 1.25f);
+            if (a != null) return a;
             var n = Node(parent, "GamingChair");
             var t = n.transform;
             var black = Mats.Std(new Color(0.08f, 0.08f, 0.09f), 0.5f);
@@ -479,6 +701,39 @@ namespace DropshippingGame
             Label3D.Create(t, text, fontSize, fg, new Vector3(0, 0, 0.035f), false);
             var back = Node(t, "Back", new Vector3(0, 0, -0.035f), 180f);
             Label3D.Create(back.transform, text, fontSize, fg, Vector3.zero, false);
+            return n;
+        }
+
+        public static GameObject Dumpster(Transform parent)
+        {
+            var a = Asset(parent, "Dumpster", "street.dumpster", 2.4f);
+            if (a != null) return a;
+            var d = TrashBin(parent, new Color(0.2f, 0.3f, 0.5f));
+            d.transform.localScale = new Vector3(2.2f, 1.5f, 1.6f);
+            return d;
+        }
+
+        /// <summary>Plakatwand auf zwei Pfosten (Vorderseite +Z) - zeigt die eigene Marke.</summary>
+        public static GameObject Billboard(Transform parent, Vector2 size, Color frame, out Label3D title, out Label3D sub, out Renderer panel,
+            List<Light> lights)
+        {
+            var n = Node(parent, "Billboard");
+            var t = n.transform;
+            var pole = Mats.Std(new Color(0.2f, 0.21f, 0.23f), 0.5f, 0.6f);
+            const float h0 = 2.2f;
+            foreach (float sx in new[] { -size.x * 0.3f, size.x * 0.3f })
+                Box(t, new Vector3(0.18f, h0 + size.y * 0.5f, 0.18f), pole, new Vector3(sx, (h0 + size.y * 0.5f) / 2f, -0.12f));
+            Box(t, new Vector3(size.x + 0.3f, size.y + 0.3f, 0.16f), Mats.Std(frame, 0.5f), new Vector3(0, h0 + size.y / 2f, -0.06f), default, 0.03f);
+            panel = Box(t, new Vector3(size.x, size.y, 0.04f), Mats.Std(Color.white, 0.6f), new Vector3(0, h0 + size.y / 2f, 0.04f), default, 0f).GetComponent<Renderer>();
+            title = Label3D.Create(t, "", 300f, Color.white, new Vector3(0, h0 + size.y * 0.62f, 0.08f), false, 0f, false, 1.4f);
+            sub = Label3D.Create(t, "", 110f, Color.white, new Vector3(0, h0 + size.y * 0.25f, 0.08f), false, 0f, false, 1.2f);
+            foreach (float sx in new[] { -size.x * 0.33f, 0f, size.x * 0.33f })
+            {
+                Box(t, new Vector3(0.3f, 0.12f, 0.2f), pole, new Vector3(sx, h0 + size.y + 0.25f, 0.25f), new Vector3(30, 0, 0), 0f, false);
+                var l = PointLight(t, new Vector3(sx, h0 + size.y + 0.1f, 0.9f), new Color(1f, 0.92f, 0.8f), 0f, 5f);
+                l.enabled = false;
+                if (lights != null) lights.Add(l);
+            }
             return n;
         }
 

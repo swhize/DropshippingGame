@@ -59,6 +59,9 @@ namespace DropshippingGame
         private float _trafficAcc;
         private System.Random _rng;
         private Station _stand;
+        private Label3D _boardTitle, _boardSub;
+        private Renderer _boardPanel;
+        private float _bagCheck;
 
         public IEnumerable<NPC> Pedestrians => _pedestrians;
 
@@ -84,7 +87,11 @@ namespace DropshippingGame
             _belt = Props.Node(transform, "Belt").transform;
             Pedestrians_();
             // Statische Geometrie zusammenfassen: deutlich weniger Draw Calls.
-            StaticBatchingUtility.Combine(_static.gameObject);
+            // Nur lesbare (prozedurale) Meshes: importierte Modelle sind nicht lesbar und würden Fehler werfen.
+            var batch = new List<GameObject>();
+            foreach (var mf in _static.GetComponentsInChildren<MeshFilter>(true))
+                if (mf != null && mf.sharedMesh != null && mf.sharedMesh.isReadable) batch.Add(mf.gameObject);
+            if (batch.Count > 0) StaticBatchingUtility.Combine(batch.ToArray(), _static.gameObject);
             RebuildStations();
             RefreshWorld(false);
             Atmos.SetTimeOfDay(12f);
@@ -101,7 +108,7 @@ namespace DropshippingGame
             Props.Collider(transform, new Vector3(400, 1, 400), new Vector3(0, -0.5f, 0));
             Props.Box(S, new Vector3(400, 0.02f, 400), Mats.Grass(), new Vector3(0, -0.012f, 0), default, 0f);
             Props.Box(S, new Vector3(400, 0.02f, 8), Mats.Asphalt(), new Vector3(0, 0.004f, 0), default, 0f);
-            var walk = Mats.Concrete(new Color(0.66f, 0.65f, 0.63f), new Color(0.56f, 0.55f, 0.53f), 0.5f, 1f, 0.1f);
+            var walk = Mats.Sidewalk(new Color(0.66f, 0.65f, 0.63f), new Color(0.56f, 0.55f, 0.53f));
             Props.Box(S, new Vector3(400, 0.03f, 3f), walk, new Vector3(0, 0.012f, -5.5f), default, 0f);
             Props.Box(S, new Vector3(400, 0.03f, 3f), walk, new Vector3(0, 0.012f, 5.5f), default, 0f);
             var curb = Mats.Std(new Color(0.7f, 0.7f, 0.68f), 0.8f);
@@ -131,6 +138,28 @@ namespace DropshippingGame
                 lp.transform.localPosition = new Vector3(x, 0, -6.85f);
                 Atmos.StreetLights.Add(light);
             }
+            StreetDressing();
+        }
+
+        private static readonly Vector3 BoardPos = new Vector3(20f, 0f, 8.4f);
+
+        /// <summary>Freizuhaltende Kreise im Park (x, z, Radius): Plakatwand, Kübel, Sonnenschirm.</summary>
+        private static readonly Vector3[] ParkReserved = { new Vector3(20f, 8.4f, 4.5f), new Vector3(-30f, 10.4f, 2.4f), new Vector3(24f, 10.4f, 2.4f), new Vector3(-8f, 20f, 2.6f) };
+
+        /// <summary>Hydranten, Mülleimer, Verkehrsschilder und die Plakatwand mit der eigenen Marke.</summary>
+        private void StreetDressing()
+        {
+            foreach (var x in new[] { -46.5f, -9f, 40f }) Props.AssetAt(S, "street.firehydrant", new Vector3(x, 0, 6.9f), 180f, 0.8f);
+            Props.AssetAt(S, "street.firehydrant", new Vector3(-27.5f, 0, -6.9f), 0f, 0.8f);
+            foreach (var x in new[] { -52f, -2f, 22f }) Props.AssetAt(S, "street.trafficlight_a", new Vector3(x, 0, 6.95f), 180f, 3.4f);
+            Props.AssetAt(S, "street.construction_cone", new Vector3(46.2f, 0, -3.4f), 20f, 0.6f);
+            Props.AssetAt(S, "street.construction_cone", new Vector3(46.9f, 0, -2.6f), -10f, 0.6f);
+            // Plakatwand am Parkrand, Blick zur Straße (Marke sichtbar in der Welt, GAME_IDEAS #8)
+            var board = Props.Billboard(transform, new Vector2(7f, 3.2f), new Color(0.15f, 0.15f, 0.17f), out _boardTitle, out _boardSub, out _boardPanel, null);
+            board.transform.localPosition = new Vector3(BoardPos.x, 0, BoardPos.z);
+            board.transform.localRotation = Quaternion.Euler(0, 180, 0);
+            foreach (var l in board.GetComponentsInChildren<Light>(true)) Atmos.NightLights.Add((l, 3.2f));
+            foreach (float px in new[] { -2.1f, 2.1f }) Props.Collider(transform, new Vector3(0.3f, 3.8f, 0.3f), new Vector3(BoardPos.x + px, 1.9f, BoardPos.z + 0.12f));
         }
 
         // =====================================================================================
@@ -228,7 +257,7 @@ namespace DropshippingGame
             Wall(new Vector3(x0, 0, z0 + 0.15f), new Vector3(x1, 0, z0 + 0.15f), h, 0.3f, brick);
             Wall(new Vector3(x0 + 0.15f, 0, z0), new Vector3(x0 + 0.15f, 0, z1), h, 0.3f, brick);
             Wall(new Vector3(x1 - 0.15f, 0, z0), new Vector3(x1 - 0.15f, 0, z1), h, 0.3f, brick);
-            Roof(r, h, Mats.MetalSheet(new Color(0.35f, 0.37f, 0.4f)));
+            Roof(r, h, Mats.RoofMat(new Color(0.35f, 0.37f, 0.4f)));
             Floor(r, Mats.Tiles(0.45f));
             foreach (float wx in new[] { -40.5f, -31f }) Window(new Vector3(wx, 1.8f, z1 - 0.15f), new Vector2(4.2f, 1.5f), Vector3.forward);
             // Markise + Neonschild
@@ -255,11 +284,30 @@ namespace DropshippingGame
             }
             Props.Box(S, new Vector3(6f, 0.6f, 1f), steel, new Vector3(-39f, 3.2f, -18.4f));
             Props.Solid(S, new Vector3(1f, 2.1f, 0.8f), Mats.Std(new Color(0.9f, 0.9f, 0.92f), 0.3f, 0.3f), new Vector3(-43.3f, 1.05f, -17.6f));
+            DinerDressing();
             var menu = Props.SignBoard(transform, "KALLES KARTE", new Color(0.1f, 0.1f, 0.1f), new Color(1f, 0.85f, 0.3f), new Vector2(3.4f, 0.5f));
             menu.transform.localPosition = new Vector3(-38, 2.6f, z0 + 0.32f);
             Label3D.Create(transform, "Döner ....... 5,50\nCurrywurst .. 4,00\nPommes ...... 3,00\nSchnitzel ... 8,90", 48f, new Color(0.95f, 0.95f, 0.9f), new Vector3(-38, 1.95f, z0 + 0.33f), false);
             foreach (float lx in new[] { -41f, -36f, -31f }) CeilingLamp(new Vector3(lx, h - 0.1f, -12f), 1.2f, new Color(1f, 0.85f, 0.65f), 1.4f, 8f);
             CeilingLamp(new Vector3(-38.5f, h - 0.1f, -17.2f), 2f, new Color(1f, 0.95f, 0.85f), 1.1f, 6f);
+        }
+
+        /// <summary>Töpfe, Pfannen, Teller und Soßen in der Küche und auf der Theke.</summary>
+        private void DinerDressing()
+        {
+            const float counterTop = 0.95f;
+            Props.AssetAt(S, "diner.pot_a", new Vector3(-42.4f, counterTop, -18.45f), 10f, 0.42f);
+            Props.AssetAt(S, "diner.pan_a", new Vector3(-40.6f, counterTop + 0.05f, -18.4f), 80f, 0.45f);
+            Props.AssetAt(S, "diner.cuttingboard", new Vector3(-36f, counterTop, -18.35f), 0f, 0.5f);
+            Props.AssetAt(S, "diner.dishrack_plates", new Vector3(-35f, counterTop, -18.45f), 0f, 0.42f);
+            Props.AssetAt(S, "diner.jar_a_large", new Vector3(-34.2f, counterTop, -18.55f), 0f, 0.28f);
+            Props.AssetAt(S, "food.pizza_box", new Vector3(-33.9f, counterTop, -18.1f), 12f, 0.34f);
+            const float theke = 1.06f;
+            Props.AssetAt(S, "food.bottle_ketchup", new Vector3(-42.6f, theke, -15.1f), 0f, 0.2f);
+            Props.AssetAt(S, "food.bottle_musterd", new Vector3(-42.4f, theke, -15.1f), 0f, 0.2f);
+            Props.AssetAt(S, "diner.menu", new Vector3(-40.2f, theke, -14.95f), 180f, 0.28f);
+            Props.AssetAt(S, "food.cup_coffee", new Vector3(-37f, theke, -15f), 30f, 0.1f);
+            Props.AssetAt(S, "food.soda", new Vector3(-41.7f, theke, -15f), 0f, 0.16f);
         }
 
         // =====================================================================================
@@ -275,11 +323,11 @@ namespace DropshippingGame
             Wall(new Vector3(x0, 0, z0 + 0.15f), new Vector3(x1, 0, z0 + 0.15f), h, 0.3f, block);
             Wall(new Vector3(x0 + 0.15f, 0, z0), new Vector3(x0 + 0.15f, 0, z1), h, 0.3f, block);
             Wall(new Vector3(x1 - 0.15f, 0, z0), new Vector3(x1 - 0.15f, 0, z1), h, 0.3f, block);
-            Roof(r, h, Mats.MetalSheet(new Color(0.42f, 0.44f, 0.47f)));
+            Roof(r, h, Mats.RoofMat(new Color(0.42f, 0.44f, 0.47f)));
             Floor(r, Mats.Concrete(new Color(0.56f, 0.56f, 0.54f), new Color(0.44f, 0.44f, 0.43f), 0.5f, 0f, 0.5f));
             // aufgerolltes Tor
             Props.Cyl(S, 0.25f, 0.25f, 7.2f, Mats.Std(new Color(0.55f, 0.57f, 0.6f), 0.5f, 0.6f), new Vector3(-16, 3.25f, z1 - 0.45f), new Vector3(0, 0, 90));
-            Props.Box(S, new Vector3(7.2f, 0.35f, 0.05f), Mats.MetalSheet(new Color(0.7f, 0.72f, 0.75f), 40f), new Vector3(-16, 2.85f, z1 - 0.2f), default, 0f);
+            Props.Box(S, new Vector3(7.2f, 0.35f, 0.05f), Mats.Shutter(new Color(0.7f, 0.72f, 0.75f)), new Vector3(-16, 2.85f, z1 - 0.2f), default, 0f);
             Window(new Vector3(x0 + 0.15f, 1.9f, -13f), new Vector2(1.6f, 1f), Vector3.left);
             foreach (float lx in new[] { -18f, -13.8f }) CeilingLamp(new Vector3(lx, h - 0.08f, -12f), 1.4f, new Color(0.92f, 0.96f, 1f), 1.5f, 8f);
             var brand = Label3D.Create(transform, "GARAGE", 170f, Color.white, new Vector3(-16, 3.3f, z1 + 0.03f), false);
@@ -293,7 +341,10 @@ namespace DropshippingGame
             spot.range = 6f;
             spot.spotAngle = 70f;
             spot.color = new Color(1f, 0.9f, 0.75f);
+            // Palette unter der Matratze (bleibt flach und prozedural, damit die Matratze nicht darin versinkt)
+            Props.UseAssets = false;
             var pal = Props.Pallet(S);
+            Props.UseAssets = true;
             pal.transform.localPosition = new Vector3(-12.3f, 0, -16.2f);
         }
 
@@ -316,7 +367,7 @@ namespace DropshippingGame
             WallBand(new Vector3(x0, 0, z0 + 0.15f), new Vector3(x1, 0, z0 + 0.15f), 1.2f, h, 0.3f, sheet, null);
             WallBand(new Vector3(x0 + 0.15f, 0, z0), new Vector3(x0 + 0.15f, 0, z1), 1.2f, h, 0.3f, sheet, null);
             WallBand(new Vector3(x1 - 0.15f, 0, z0), new Vector3(x1 - 0.15f, 0, z1), 1.2f, h, 0.3f, sheet, null);
-            Roof(r, h, Mats.MetalSheet(new Color(0.4f, 0.42f, 0.45f)));
+            Roof(r, h, Mats.RoofMat(new Color(0.4f, 0.42f, 0.45f)));
             Floor(r, Mats.Concrete(new Color(0.6f, 0.6f, 0.58f), new Color(0.52f, 0.52f, 0.5f), 0.3f, 0f, 0.2f));
             foreach (float wx in new[] { 6f, 27f }) Window(new Vector3(wx, 5.4f, z1 - 0.15f), new Vector2(10f, 1f), Vector3.forward);
             foreach (float wz in new[] { -24f, -14f })
@@ -333,7 +384,7 @@ namespace DropshippingGame
                 CeilingLamp(new Vector3(lx, h - 0.2f, lz), 2.4f, new Color(0.95f, 0.97f, 1f), 1.7f, 15f);
             // Tor (Rolltor)
             _gate = Props.Node(transform, "Gate", new Vector3(17f, 2.3f, z1 - 0.15f)).transform;
-            Props.Box(_gate, new Vector3(6f, 4.6f, 0.12f), Mats.MetalSheet(new Color(0.72f, 0.74f, 0.76f), 30f), Vector3.zero, default, 0f);
+            Props.Box(_gate, new Vector3(6f, 4.6f, 0.12f), Mats.Shutter(new Color(0.72f, 0.74f, 0.76f)), Vector3.zero, default, 0f);
             var gc = _gate.gameObject.AddComponent<BoxCollider>();
             gc.size = new Vector3(6f, 4.6f, 0.4f);
             _gateCol = gc;
@@ -360,8 +411,38 @@ namespace DropshippingGame
                 ch.transform.localPosition = new Vector3(29.8f, 0, cz);
                 ch.transform.localRotation = Quaternion.Euler(0, cz < -21f ? 0f : 180f, 0);
             }
-            for (int i = 0; i < 3; i++) Props.Pallet(S).transform.localPosition = new Vector3(31.5f, 0, -28.5f + i * 1.3f);
+            float palY = 0f;
+            for (int i = 0; i < 3; i++)
+            {
+                var pl = Props.Pallet(S);
+                pl.transform.localPosition = new Vector3(31.5f, palY, -28.5f);
+                float ph = Props.LocalBounds(pl).size.y;
+                palY += ph > 0.05f && ph < 0.6f ? ph : 0.15f;
+            }
+            if (Props.AssetAt(S, "logistics.pallet_small_decorated_b", new Vector3(31.5f, 0, -27.1f), 90f) != null)
+                Props.Collider(transform, new Vector3(1.2f, 1.8f, 1.2f), new Vector3(31.5f, 0.9f, -27.1f));
+            if (Props.AssetAt(S, "logistics.pallet_small_decorated_a", new Vector3(31.5f, 0, -25.8f), 0f) != null)
+                Props.Collider(transform, new Vector3(1.2f, 0.9f, 1.2f), new Vector3(31.5f, 0.45f, -25.8f));
+            WarehouseDressing();
             Props.Cyl(S, 0.1f, 0.1f, 0.5f, Mats.Std(new Color(0.85f, 0.1f, 0.1f), 0.4f), new Vector3(-1.72f, 1f, -20f));
+        }
+
+        /// <summary>Spinde, Werkbank, Kartons und Warnleuchten an freien Wänden der Halle.</summary>
+        private void WarehouseDressing()
+        {
+            // Spinde an der Ostwand neben der Pausenecke (Front nach Westen)
+            for (int i = 0; i < 3; i++)
+                Props.AssetAt(S, i == 1 ? "logistics.locker_decorated" : "logistics.locker", new Vector3(33.35f, 0, -24.9f + i * 0.62f), -90f, 1.8f);
+            Props.Collider(transform, new Vector3(0.66f, 1.8f, 1.9f), new Vector3(33.35f, 0.9f, -24.28f));
+            // Werkbank an der Westwand im Lagerbereich (Front nach Osten)
+            if (Props.AssetAt(S, "logistics.workbench_decorated", new Vector3(-1.2f, 0, -23.5f), 90f, 1.8f) != null)
+                Props.Collider(transform, new Vector3(0.9f, 1f, 1.8f), new Vector3(-1.2f, 0.5f, -23.5f));
+            // Kartons in der Ecke
+            Props.AssetAt(S, "logistics.box_large", new Vector3(-1.1f, 0, -29.9f), 6f);
+            Props.AssetAt(S, "logistics.box_wide", new Vector3(-1.2f, 0.55f, -29.9f), -8f);
+            Props.AssetAt(S, "logistics.box_small", new Vector3(0.1f, 0, -30.2f), 20f);
+            Props.AssetAt(S, "logistics.warning_orange", new Vector3(20.6f, 0, -6.9f), 0f, 1.1f);
+            Props.AssetAt(S, "logistics.warning_orange", new Vector3(13.4f, 0, -6.9f), 0f, 1.1f);
         }
 
         // =====================================================================================
@@ -369,7 +450,7 @@ namespace DropshippingGame
         // =====================================================================================
         private void Park()
         {
-            var path = Mats.Concrete(new Color(0.72f, 0.68f, 0.6f), new Color(0.62f, 0.58f, 0.52f), 0.4f, 0.8f, 0.1f);
+            var path = Mats.Sidewalk(new Color(0.78f, 0.72f, 0.62f), new Color(0.62f, 0.58f, 0.52f));
             Props.Box(S, new Vector3(106, 0.025f, 2.4f), path, new Vector3(-4, 0.01f, 12.5f), default, 0f, false);
             for (int i = 0; i < 4; i++) Props.Box(S, new Vector3(2f, 0.025f, 5f), path, new Vector3(-40f + i * 26f, 0.01f, 8.8f), default, 0f, false);
             foreach (float bx in new[] { -44f, -20f, 4f, 28f })
@@ -387,6 +468,10 @@ namespace DropshippingGame
                 float x = Range(-55f, 47f), z = Range(8.2f, 28.5f);
                 if (Mathf.Abs(z - 12.5f) < 2.2f || Mathf.Abs(z - 14.4f) < 1f) continue;
                 if (x > -46f && x < 8f && z < 11.3f) continue;
+                bool blocked = false;
+                foreach (var rv in ParkReserved)
+                    if ((x - rv.x) * (x - rv.x) + (z - rv.y) * (z - rv.y) < rv.z * rv.z) blocked = true;
+                if (blocked) continue;
                 var tree = Props.Tree(S, Range(0.85f, 1.3f), _rng.Next(0, 6));
                 tree.transform.localPosition = new Vector3(x, 0, z);
                 tree.transform.localRotation = Quaternion.Euler(0, Range(0f, 360f), 0);
@@ -395,16 +480,21 @@ namespace DropshippingGame
             }
             for (int i = 0; i < 16; i++) Props.Bush(S, Range(0.7f, 1.1f)).transform.localPosition = new Vector3(-54f + i * 6.5f + Range(-1f, 1f), 0, 7.6f);
             Props.Fence(S, 106f).transform.localPosition = new Vector3(-4, 0, 29.8f);
-            var dump = Props.TrashBin(S, new Color(0.2f, 0.3f, 0.5f));
+            var dump = Props.Dumpster(S);
             dump.transform.localPosition = new Vector3(-30f, 0, -21f);
-            dump.transform.localScale = new Vector3(2.2f, 1.5f, 1.6f);
-            for (int i = 0; i < 2; i++) Props.Pallet(S).transform.localPosition = new Vector3(-24.5f, i * 0.15f, -20f);
+            Props.Collider(transform, new Vector3(2.4f, 1.4f, 1.5f), new Vector3(-30f, 0.7f, -21f));
+            // Parasols und Blumenkübel im Park, Sitzbank-Ecke
+            Props.AssetAt(S, "street.detail_parasol_a", new Vector3(-8f, 0, 20f), 0f, 3f);
+            Props.AssetAt(S, "nature.planter", new Vector3(-30f, 0, 10.4f), 0f, 2.2f);
+            Props.AssetAt(S, "nature.planter", new Vector3(24f, 0, 10.4f), 0f, 2.2f);
+            for (int i = 0; i < 2; i++) Props.Pallet(S).transform.localPosition = new Vector3(-24.5f, i * 0.3f, -20f);
         }
 
         private float Range(float a, float b) => a + (float)_rng.NextDouble() * (b - a);
 
         private void Background()
         {
+            if (BackgroundModels()) return;
             var rng = new System.Random(99);
             float R(float a, float b) => a + (float)rng.NextDouble() * (b - a);
             Color[] walls = { new Color(0.72f, 0.66f, 0.58f), new Color(0.6f, 0.62f, 0.66f), new Color(0.75f, 0.55f, 0.45f), new Color(0.55f, 0.58f, 0.52f), new Color(0.82f, 0.8f, 0.74f) };
@@ -436,6 +526,69 @@ namespace DropshippingGame
                 float hh = R(10f, 20f);
                 var mat3 = Mats.Facade(walls[rng.Next(walls.Length)], (variant++ % 5) + 1, 0.45f);
                 Props.Box(S, new Vector3(20f, hh, 22f), mat3, new Vector3(side > 0 ? 75f : -78f, hh / 2f, zz), default, 0f, true, true);
+            }
+        }
+
+        /// <summary>
+        /// Stadtkulisse aus Kenney-City-Modellen: vorne (Nordseite hinter dem Park) Geschäftshäuser, dahinter
+        /// Hochhäuser; im Süden hinter der Halle eine zweite Reihe. Das Hochhaus bei x = 18 bekommt das Penthouse.
+        /// false, wenn die Modelle fehlen (dann baut <see cref="Background"/> prozedural).
+        /// </summary>
+        private bool BackgroundModels()
+        {
+            if (!AssetLib.HasModel("city.building_a_2") || !AssetLib.HasModel("city.building_skyscraper_d")) return false;
+            var rng = new System.Random(99);
+            string[] front = { "city.building_a_2", "city.building_b_2", "city.building_c_2", "city.building_d_2", "city.building_e_2", "city.building_f_2",
+                "city.building_g_2", "city.building_h_2", "city.building_i", "city.building_j", "city.building_k", "city.building_l", "city.building_n" };
+            string[] tall = { "city.building_skyscraper_a", "city.building_skyscraper_b", "city.building_skyscraper_c", "city.building_skyscraper_e", "city.building_m" };
+            string[] low = { "city.low_detail_building_a", "city.low_detail_building_b", "city.low_detail_building_c", "city.low_detail_building_d", "city.low_detail_building_e",
+                "city.low_detail_building_f", "city.low_detail_building_g", "city.low_detail_building_h", "city.low_detail_building_i", "city.low_detail_building_j",
+                "city.low_detail_building_k", "city.low_detail_building_l", "city.low_detail_building_m", "city.low_detail_building_wide_a", "city.low_detail_building_wide_b" };
+
+            // Reihe 1: Nordseite, Front zur Straße (-Z)
+            Row(front, rng, -118f, 118f, 41f, 180f, 1.15f, 18f);
+            // Reihe 2: Hochhäuser dahinter
+            Row(tall, rng, -120f, 120f, 60f, 180f, 1f, 18f);
+            var tower = Props.AssetAt(S, "city.building_skyscraper_d", new Vector3(18f, 0, 46f), 180f, 48f);
+            if (tower != null)
+            {
+                var b = Props.LocalBounds(tower);
+                _penthouse = Props.Box(transform, new Vector3(b.size.x * 1.02f, 3f, b.size.z * 1.02f), Mats.Emit(new Color(1f, 0.78f, 0.3f), 3f),
+                    new Vector3(18f, Mathf.Max(8f, b.max.y - 5f), 46f - b.center.z), default, 0f, false);
+                _penthouse.SetActive(false);
+            }
+            // Reihe 3: Südseite hinter der Halle (Front nach +Z)
+            Row(low, rng, -120f, 120f, -44f, 0f, 1.6f, -1000f);
+            Row(tall, rng, -120f, 120f, -62f, 0f, 1f, -1000f);
+            // Seitliche Abschlüsse
+            foreach (float side in new[] { -1f, 1f })
+            foreach (float zz in new[] { -20f, 20f })
+                Props.AssetAt(S, low[rng.Next(low.Length)], new Vector3(side > 0 ? 72f : -76f, 0, zz), side > 0 ? -90f : 90f, 18f);
+            return true;
+        }
+
+        /// <summary>Eine Häuserreihe entlang X (Lücke bei skipX für das Penthouse-Hochhaus).</summary>
+        private void Row(string[] ids, System.Random rng, float xFrom, float xTo, float z, float rotY, float scale, float skipX)
+        {
+            float x = xFrom;
+            int guard = 0;
+            while (x < xTo && guard++ < 80)
+            {
+                string id = ids[rng.Next(ids.Length)];
+                var info = AssetLib.Info(id);
+                if (info == null) continue;
+                float fit = info.Meters * scale;
+                var mb = AssetLib.ModelBounds(id);
+                float k = info.Meters > 0.01f ? fit / info.Meters : 1f;
+                float w = Mathf.Max(4f, mb.size.x * k);
+                float cx = x + w / 2f + 0.3f;
+                if (Mathf.Abs(cx - skipX) < 7f)
+                {
+                    x = skipX + 7f;
+                    continue;
+                }
+                Props.AssetAt(S, id, new Vector3(cx, 0, z), rotY, fit);
+                x += w + 0.6f + (float)rng.NextDouble() * 1.5f;
             }
         }
 
@@ -549,6 +702,45 @@ namespace DropshippingGame
                 l.SetColor(Color.Lerp(Color.white, sim.BrandColor.ToColor(), 0.35f));
             }
             if (_brandLabels.Count > 1) _brandLabels[1].gameObject.SetActive(sim.LocationStage >= 1);
+            RefreshBillboard();
+        }
+
+        /// <summary>Plakatwand: Markenname in Markenfarbe, Spruch je nach Bekanntheit/Bewertung.</summary>
+        private void RefreshBillboard()
+        {
+            var sim = Game.Sim;
+            if (sim == null || _boardTitle == null) return;
+            Color brand = sim.BrandColor.ToColor();
+            if (_boardPanel != null) _boardPanel.sharedMaterial = Mats.Std(brand, 0.6f);
+            float lum = brand.r * 0.3f + brand.g * 0.59f + brand.b * 0.11f;
+            Color text = lum > 0.6f ? new Color(0.08f, 0.08f, 0.1f) : Color.white;
+            _boardTitle.SetText(sim.BrandName.ToUpperInvariant());
+            _boardTitle.SetColor(text);
+            string[] slogans =
+            {
+                "Bald auch in deiner Stadt.", "Jetzt online bestellen!", "Schon " + Mathf.Max(1, sim.TotalShipped) + " Pakete verschickt!",
+                "Die ganze Stadt redet drüber.",
+            };
+            int idx = sim.Awareness >= 0.8f ? 3 : (sim.TotalShipped >= 50 ? 2 : (sim.Awareness >= 0.2f ? 1 : 0));
+            _boardSub.SetText(slogans[idx]);
+            _boardSub.SetColor(text);
+        }
+
+        /// <summary>Anteil der Passanten mit Markentüte (Bekanntheit + Bewertung).</summary>
+        private void RefreshBags()
+        {
+            var sim = Game.Sim;
+            if (sim == null) return;
+            float share = Mathf.Clamp01((sim.Awareness - 0.15f) * 0.45f) * Mathf.Clamp01((sim.Reputation - 3f) / 1.5f);
+            Color brand = sim.BrandColor.ToColor();
+            for (int i = 0; i < _pedestrians.Count; i++)
+            {
+                var npc = _pedestrians[i];
+                if (npc == null) continue;
+                // stabil pro Figur: Figur i trägt eine Tüte, wenn ihr Anteil unter share liegt
+                float slot = ((i * 37) % 100) / 100f;
+                npc.SetBag(slot < share, brand);
+            }
         }
 
         private void RefreshGate(bool animate)
@@ -618,8 +810,8 @@ namespace DropshippingGame
                 }
                 case "gamingstuhl": return Props.GamingChair(p);
                 case "neon": return Props.NeonSign(p, "HUSTLE", new Color(1f, 0.3f, 0.8f));
-                case "auto": return Props.Car(p, new Color(0.3f, 0.45f, 0.35f));
-                case "sportwagen": return Props.Car(p, new Color(0.9f, 0.12f, 0.1f), true);
+                case "auto": return Props.Car(p, new Color(0.3f, 0.45f, 0.35f), false, "vehicle.kombi");
+                case "sportwagen": return Props.Car(p, new Color(0.9f, 0.12f, 0.1f), true, "vehicle.sportscar");
             }
             return null;
         }
@@ -637,6 +829,11 @@ namespace DropshippingGame
                 look.Sitting = true;
                 var go = Props.Node(_customers, "Guest", t.pos + new Vector3(0, 0, 0.62f), 180f);
                 go.AddComponent<NPC>().Setup(look);
+                // Essen auf dem Teller vor dem Gast
+                string[] dishes = { "food.food_burger", "food.food_dinner", "food.food_stew" };
+                if (Props.AssetAt(_customers, dishes[rng.Next(dishes.Length)], t.pos + new Vector3(0.05f, 0.77f, 0.24f), 180f, 0.3f) == null)
+                    Props.AssetAt(_customers, "food.plate_dinner", t.pos + new Vector3(0.05f, 0.77f, 0.24f), 180f, 0.28f);
+                Props.AssetAt(_customers, rng.Next(2) == 0 ? "food.soda" : "food.mug", t.pos + new Vector3(-0.3f, 0.77f, 0.22f), 0f, 0.13f);
             }
         }
 
@@ -776,6 +973,12 @@ namespace DropshippingGame
                 _trafficAcc = Random.Range(5f, 11f);
                 SpawnCar();
             }
+            _bagCheck -= Time.deltaTime;
+            if (_bagCheck <= 0f)
+            {
+                _bagCheck = 5f;
+                RefreshBags();
+            }
             _standCheck -= Time.deltaTime;
             if (_standCheck <= 0f)
             {
@@ -837,7 +1040,9 @@ namespace DropshippingGame
         public void SendVan()
         {
             var stop = VanStop[Mathf.Clamp(Game.Sim.LocationStage, 0, 1)];
-            var van = Props.Van(_dynamic, new Color(0.95f, 0.78f, 0.1f), "PaketBlitz");
+            string brandName = Game.Sim != null && !string.IsNullOrEmpty(Game.Sim.BrandName) ? Game.Sim.BrandName : "";
+            var van = Props.Van(_dynamic, new Color(0.95f, 0.78f, 0.1f), brandName.Length > 0 ? "PaketBlitz\nfür " + brandName : "PaketBlitz",
+                new Color(0.12f, 0.12f, 0.14f));
             var tr = van.transform;
             tr.localPosition = new Vector3(stop.x + 60f, 0, stop.z);
             tr.localRotation = Quaternion.Euler(0, 180, 0);

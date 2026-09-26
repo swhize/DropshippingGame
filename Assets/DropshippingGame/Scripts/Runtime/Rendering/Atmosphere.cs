@@ -13,6 +13,10 @@ namespace DropshippingGame
     {
         public Light Sun;
         public readonly List<Light> StreetLights = new List<Light>();
+        /// <summary>Weitere Lichter, die nur nachts brennen (Plakatwand-Strahler ...), mit Zielintensität.</summary>
+        public readonly List<(Light light, float intensity)> NightLights = new List<(Light, float)>();
+        private Cubemap _hdriDay, _hdriSunset, _hdriNight;
+        private Cubemap _currentHdri;
         private Material _sky;
         private ReflectionProbe _probe;
         private float _lastProbeHour = -100f;
@@ -57,6 +61,19 @@ namespace DropshippingGame
             _probe.size = new Vector3(140f, 50f, 90f);
             _probe.resolution = 128;
             _probe.boxProjection = false;
+
+            // HDRI (Poly Haven) als Umgebungsreflexion draußen; die Echtzeit-Sonde deckt dann nur die
+            // Innenräume ab (Imbiss, Garage, Halle), damit Autos, Fenster und Pfützen den Himmel spiegeln.
+            _hdriDay = AssetLib.Hdri("day");
+            _hdriSunset = AssetLib.Hdri("sunset");
+            _hdriNight = AssetLib.Hdri("night");
+            if (_hdriDay != null)
+            {
+                probeGo.transform.localPosition = new Vector3(-5f, 4f, -20f);
+                _probe.size = new Vector3(84f, 9f, 28f);
+                _probe.boxProjection = true;
+                RenderSettings.defaultReflectionMode = DefaultReflectionMode.Custom;
+            }
             _probe.importance = 1;
             _probe.intensity = 0.8f;
 
@@ -71,12 +88,18 @@ namespace DropshippingGame
             float elevation = Mathf.Sin(t * Mathf.PI) * 62f + 3f;
             float azimuth = Mathf.Lerp(-110f, 110f, t);
             float night = Mathf.Clamp01((hours - 18.6f) / 1.4f);
+            if (hours < 6.5f) night = Mathf.Max(night, Mathf.Clamp01((6.5f - hours) / 1.2f));
             if (Sun != null)
             {
-                Sun.transform.rotation = Quaternion.Euler(elevation, azimuth + 180f, 0f);
+                // Nachts wird die Sonne zum kühlen, hohen Mondlicht (weiche Schatten, blaue Stimmung).
+                var sunRot = Quaternion.Euler(elevation, azimuth + 180f, 0f);
+                var moonRot = Quaternion.Euler(38f, 150f, 0f);
+                Sun.transform.rotation = Quaternion.Slerp(sunRot, moonRot, Mathf.SmoothStep(0f, 1f, night));
                 float warm = 1f - Mathf.Clamp01((elevation - 6f) / 30f);
-                Sun.color = Color.Lerp(new Color(1f, 0.96f, 0.9f), new Color(1f, 0.58f, 0.32f), warm);
-                Sun.intensity = Mathf.Lerp(0.55f, 1.45f, Mathf.Clamp01(elevation / 40f)) * (1f - night * 0.55f);
+                Color sunCol = Color.Lerp(new Color(1f, 0.96f, 0.9f), new Color(1f, 0.58f, 0.32f), warm);
+                Sun.color = Color.Lerp(sunCol, new Color(0.55f, 0.66f, 1f), night);
+                Sun.intensity = Mathf.Lerp(Mathf.Lerp(0.55f, 1.45f, Mathf.Clamp01(elevation / 40f)), 0.22f, night);
+                Sun.shadowStrength = Mathf.Lerp(0.82f, 0.55f, night);
 
                 Color skyTop = Color.Lerp(new Color(0.34f, 0.55f, 0.85f), new Color(0.3f, 0.32f, 0.55f), warm);
                 Color horizon = Color.Lerp(new Color(0.72f, 0.8f, 0.9f), new Color(0.98f, 0.64f, 0.42f), warm);
@@ -101,14 +124,35 @@ namespace DropshippingGame
             {
                 if (l == null) continue;
                 l.enabled = night > 0.02f;
-                l.intensity = night * 5f;
+                l.intensity = night * 6f;
             }
+            foreach (var nl in NightLights)
+            {
+                if (nl.light == null) continue;
+                nl.light.enabled = night > 0.02f;
+                nl.light.intensity = night * nl.intensity;
+            }
+            ApplyHdri(hours, night);
             if (Mathf.Abs(hours - _lastEnvHour) > 0.5f)
             {
                 _lastEnvHour = hours;
                 DynamicGI.UpdateEnvironment();
             }
             if (Mathf.Abs(hours - _lastProbeHour) > 1f) RenderReflections();
+        }
+
+        /// <summary>Wählt das passende HDRI (Tag / Abendrot / Nacht) als Reflexions-Cubemap.</summary>
+        private void ApplyHdri(float hours, float night)
+        {
+            if (_hdriDay == null) return;
+            bool dusk = (hours >= 17.3f && hours < 19.6f) || (hours >= 5.5f && hours < 7.2f);
+            Cubemap want = night > 0.6f ? (_hdriNight ?? _hdriSunset ?? _hdriDay) : (dusk ? (_hdriSunset ?? _hdriDay) : _hdriDay);
+            if (want != _currentHdri)
+            {
+                _currentHdri = want;
+                RenderSettings.customReflectionTexture = want;
+            }
+            RenderSettings.reflectionIntensity = Mathf.Lerp(0.85f, 0.45f, night);
         }
 
         public void RenderReflections()
