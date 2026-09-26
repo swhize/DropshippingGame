@@ -154,7 +154,14 @@ namespace DropshippingGame
                         if (held.Product != pid) return "Falsches Regal (Kiste: " + GameData.Product(held.Product).Name + ")";
                         return "Kiste einräumen (+" + held.Quantity + ")";
                     }
-                    if (kind == ItemKind.Item) return held.Product == pid ? "Zurücklegen" : "Falsches Regal";
+                    if (kind == ItemKind.Item)
+                    {
+                        if (held.Product != pid) return "Hände voll – Artikel erst zum Packtisch";
+                        if (held.OrderId > 0 && gm.PendingCountFor(pid) > 0)
+                            return "Hände voll – erst zum Packtisch (2× " + GameInput.KeyLabel("interact") + ": zurücklegen)";
+                        return "Zurücklegen";
+                    }
+                    if (kind == ItemKind.Package || kind == ItemKind.Labeled) return "Hände voll – erst Pakete wegbringen";
                     if (kind != ItemKind.None) return "Hände voll";
                     int pending = gm.PendingCountFor(pid);
                     int forContract = gm.ContractUnitsNeeded(pid);
@@ -539,13 +546,26 @@ namespace DropshippingGame
                     }
                     break;
                 case ItemKind.Item:
-                    if (held.Product == pid)
+                    if (held.Product != pid)
                     {
-                        gm.ReturnItem(held);
-                        player.ClearHands();
-                        Game.Sound("place");
+                        gm.Notify("Hände voll – erst den Artikel in der Hand zum Packtisch bringen (oder ins Regal '" +
+                                  GameData.Product(held.Product).Name + "' zurücklegen).", "info");
+                        break;
                     }
-                    else gm.Notify("Das gehört in ein anderes Regal.", "bad");
+                    // Früher legte ein zweiter Druck den Artikel kommentarlos zurück – bei mehreren offenen
+                    // Bestellungen sah das aus wie "nimmt nichts raus". Jetzt: Hinweis, Zurücklegen erst
+                    // bei erneutem Druck innerhalb kurzer Zeit (oder wenn keine weitere Bestellung wartet).
+                    if (held.OrderId > 0 && gm.PendingCountFor(pid) > 0 && Time.unscaledTime > _returnArmedUntil)
+                    {
+                        _returnArmedUntil = Time.unscaledTime + 2.5f;
+                        gm.Notify("Du trägst schon einen Artikel (#" + held.OrderId +
+                                  ") – erst zum Packtisch, dann den nächsten holen. Nochmal " + GameInput.KeyLabel("interact") + " = zurücklegen.", "info");
+                        break;
+                    }
+                    _returnArmedUntil = -1f;
+                    gm.ReturnItem(held);
+                    player.ClearHands();
+                    Game.Sound("place");
                     break;
                 case ItemKind.None:
                     var item = gm.PickItem(pid);
@@ -556,10 +576,14 @@ namespace DropshippingGame
                     }
                     break;
                 default:
-                    gm.Notify("Damit kannst du hier nichts anfangen.", "info");
+                    gm.Notify(kind == ItemKind.Package || kind == ItemKind.Labeled
+                        ? "Hände voll – erst die Pakete wegbringen (Label/Versand), dann neue Artikel holen."
+                        : "Hände voll – damit kannst du am Regal nichts anfangen.", "info");
                     break;
             }
         }
+
+        private float _returnArmedUntil = -1f;
 
         // ---- Dynamische Inhalte -------------------------------------------------------------------
         private string Signature()

@@ -121,7 +121,7 @@ namespace DropshippingGame.Core
         public const float OrderDueMinutes = 240f;
         public const float ExpressDueMinutes = 100f;
         /// <summary>Wartende Express-Bestellungen werden nach dieser Zeit storniert (normale: <see cref="OrderExpireMinutes"/>).</summary>
-        public const float ExpressExpireMinutes = 360f;
+        public const float ExpressExpireMinutes = 160f;  // Frist (100) + 1 h Kulanz
         public const float ExpressPriceMult = 1.4f;
         public const int ExpressMinLevel = 2;
         public const float ExpressBaseChance = 0.16f;

@@ -523,7 +523,9 @@ namespace DropshippingGame.UI
                     int stock = sim.StockQty(o.Product);
                     stage = stock > 0 ? "wartet · im Regal: " + stock : "wartet · nicht auf Lager!";
                 }
-                var st = UIX.Text(foot, stage, "phone-item-sub");
+                stage += " · nächster Schritt: " + Sim.OrderNextStep(o) + " (" + Sim.OrderNextPlace(o) + ")";
+                var st = UIX.Ellipsis(UIX.Text(foot, stage, "phone-item-sub"));
+                st.style.flexShrink = 1;
                 if (v.Stage == OrderStage.Queued && sim.StockQty(o.Product) <= 0) st.AddToClassList("bad-text");
                 UIX.Spacer(foot);
                 UIX.Text(foot, "fällig " + sim.BClockText(o.DueAt), "phone-item-sub");

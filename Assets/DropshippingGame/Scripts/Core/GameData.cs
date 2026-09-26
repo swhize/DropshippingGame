@@ -116,7 +116,7 @@ namespace DropshippingGame.Core
 
         // ---- Nachfrage & Lieferung -----------------------------------------------------------
         public const float BaseOrderMinutes = 72f;
-        public const float OrderExpireMinutes = 720f;
+        public const float OrderExpireMinutes = 360f;      // Frist (240) + 2 h Kulanz, dann storniert
         public const float PromoDiscount = 0.2f;
         public const float BaseLeadMinutes = 45f;
         public const int ExpressSurcharge = 8;

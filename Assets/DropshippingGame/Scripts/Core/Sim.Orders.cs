@@ -304,6 +304,107 @@ namespace DropshippingGame.Core
             RaiseEconomyChanged();
         }
 
+        // ---- Verwaiste Zettel im laufenden Spiel ------------------------------------------------
+        private HashSet<int> _orphanSuspects = new HashSet<int>();
+
+        /// <summary>
+        /// Entfernt angefangene Zettel, zu denen es keinen Gegenstand mehr gibt (weder in
+        /// <paramref name="aliveIds"/> – Hände und Boden, von der Unity-Schicht gesammelt – noch in
+        /// fertigen Paketen oder auf dem Band). Sicherheitsnetz, damit verlorene Zettel nicht ewig
+        /// im HUD stehen. Ein Zettel muss bei zwei Aufrufen hintereinander fehlen, bevor er entfernt
+        /// wird. Gibt die Anzahl entfernter Zettel zurück.
+        /// </summary>
+        public int PruneOrdersInWork(ICollection<int> aliveIds)
+        {
+            if (OrdersInWork.Count == 0)
+            {
+                _orphanSuspects.Clear();
+                return 0;
+            }
+            var ids = new HashSet<int>();
+            if (aliveIds != null)
+                foreach (int id in aliveIds) ids.Add(id);
+            foreach (var p in PackedPackages)
+                if (p != null) ids.Add(p.OrderId);
+            foreach (var c in ConveyorQueue)
+                if (c != null && c.Pkg != null) ids.Add(c.Pkg.OrderId);
+            var suspects = new HashSet<int>();
+            int removed = 0;
+            for (int i = OrdersInWork.Count - 1; i >= 0; i--)
+            {
+                var o = OrdersInWork[i];
+                if (o == null)
+                {
+                    OrdersInWork.RemoveAt(i);
+                    removed++;
+                    continue;
+                }
+                if (ids.Contains(o.Id)) continue;
+                if (_orphanSuspects.Contains(o.Id))
+                {
+                    OrdersInWork.RemoveAt(i);
+                    removed++;
+                }
+                else suspects.Add(o.Id);
+            }
+            _orphanSuspects = suspects;
+            if (removed > 0) OrdersChanged?.Invoke();
+            return removed;
+        }
+
+        // ---- Anzeige-Hilfen für Bestellzettel ---------------------------------------------------
+        /// <summary>Arbeitsschritt 0 = holen, 1 = packen, 2 = Label, 3 = versenden, 4 = läuft (Band).</summary>
+        public static int OrderStepIndex(Order o)
+        {
+            if (o == null) return 0;
+            switch (o.Stage)
+            {
+                case OrderStage.Picked: return 1;
+                case OrderStage.Packed: return 2;
+                case OrderStage.Labeled: return 3;
+                case OrderStage.Conveyor: return 4;
+                default: return 0;
+            }
+        }
+
+        /// <summary>Nächster Arbeitsschritt als kurzer Text ("Holen", "Packen", "Label", "Versenden").</summary>
+        public static string OrderNextStep(Order o)
+        {
+            switch (OrderStepIndex(o))
+            {
+                case 1: return "Packen";
+                case 2: return "Label drucken";
+                case 3: return "Versenden";
+                case 4: return "Auf dem Band";
+                default: return "Holen";
+            }
+        }
+
+        /// <summary>Wohin für den nächsten Schritt ("Regal Handyhülle", "Packtisch", ...).</summary>
+        public static string OrderNextPlace(Order o)
+        {
+            switch (OrderStepIndex(o))
+            {
+                case 1: return "Packtisch";
+                case 2: return "Labeldrucker";
+                case 3: return "Versand";
+                case 4: return "läuft automatisch";
+                default:
+                    return o != null && GameData.IsProduct(o.Product) ? "Regal " + GameData.Product(o.Product).Name : "Regal";
+            }
+        }
+
+        /// <summary>Zeitampel: 0 = grün (mehr als die Hälfte der Frist übrig), 1 = gelb, 2 = rot (unter 20 % oder überfällig).</summary>
+        public int OrderTimeTone(Order o)
+        {
+            if (o == null) return 0;
+            float left = OrderTimeLeft(o);
+            if (left <= 0f) return 2;
+            float frac = left / Math.Max(1f, o.DueWindow);
+            if (frac < 0.2f) return 2;
+            return frac < 0.5f ? 1 : 0;
+        }
+
         /// <summary>Entfernt angefangene Zettel, zu denen kein Gegenstand mehr existiert (nach dem Laden).</summary>
         private void ReconcileOrdersInWork()
         {

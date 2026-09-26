@@ -17,7 +17,7 @@ namespace DropshippingGame.Tests
             Assert.AreEqual("#" + o.Id, o.Number, "Anzeige-Nummer");
             Assert.IsFalse(string.IsNullOrEmpty(o.Customer) || string.IsNullOrEmpty(o.City) || string.IsNullOrEmpty(o.Note), "Kundschaft, Ort und Notiz");
             Assert.AreEqual(o.Created + GameData.OrderDueMinutes, o.DueAt, 0.01f, "Fälligkeit 4 Spielstunden");
-            Assert.AreEqual(o.Created + GameData.OrderExpireMinutes, o.ExpiresAt, 0.01f, "Storno nach 12 Stunden");
+            Assert.AreEqual(o.Created + GameData.OrderExpireMinutes, o.ExpiresAt, 0.01f, "Storno 2 Stunden nach der Frist");
             Assert.IsFalse(o.Express, "Auf Level 1 gibt es kein Express");
             Assert.AreEqual(OrderStage.Queued, o.Stage, "Wartet");
             Assert.AreEqual(1, gm.Tickets().Count, "Zettel in der Übersicht");

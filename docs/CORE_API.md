@@ -73,7 +73,7 @@ Tagesbanner: `DayStarted` wie bisher, am Montag zusätzlich `WeekStarted` (siehe
 
 Jede Bestellung ist ein **Zettel** mit Nummer, Kundschaft, Ort, Notiz, Fälligkeit und optional
 **Express** (ab Level 2, 16–25 % der Bestellungen, +40 % Preis, Frist 100 statt 240 min,
-Storno nach 360 statt 720 min, wird häufiger und 1,6-fach gewichtet bewertet).
+Storno nach 160 statt 360 min – je Frist + Kulanz, wird häufiger und 1,6-fach gewichtet bewertet).
 Wartende Zettel liegen in `Sim.OrderQueue`, angefangene in `Sim.OrdersInWork`. **Artikel und Pakete
 tragen die Zettel-Daten selbst** (`ItemData.OrderId`, `Customer`, `City`, `Express`, `DueAt`).
 
