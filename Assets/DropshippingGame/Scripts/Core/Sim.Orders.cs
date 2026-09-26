@@ -57,7 +57,14 @@ namespace DropshippingGame.Core
             RaiseEconomyChanged();
         }
 
-        private bool RollExpress() => ExpressUnlocked && Rng.Value() < ExpressChance();
+        /// <summary>Express nur, solange die Warteschlange nicht (fast) voll ist – sonst wäre die Frist unschaffbar.</summary>
+        private bool RollExpress() => ExpressUnlocked && OrderQueue.Count < QueueCapacity() - 1 && Rng.Value() < ExpressChance();
+
+        /// <summary>Premium-Manufaktur: Tag der letzten Bestellung je Produkt (Kontingent 1 pro Tag).</summary>
+        public Dictionary<string, int> PremiumBoughtDay = new Dictionary<string, int>();
+
+        /// <summary>Darf heute noch bei der Premium-Manufaktur für dieses Produkt bestellt werden?</summary>
+        public bool PremiumQuotaLeft(string pid) => !(PremiumBoughtDay.TryGetValue(pid, out int d) && d == Day);
 
         // =====================================================================================
         // Bestellzettel erzeugen

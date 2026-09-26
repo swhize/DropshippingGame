@@ -154,6 +154,10 @@ namespace DropshippingGame.Core
             state["express_boost_until"] = (double)ExpressBoostUntil;
             state["express_boost_chance"] = (double)ExpressBoostChance;
             state["last_purchase"] = lastBuy;
+            var premium = new Dictionary<string, object>();
+            foreach (var kv in PremiumBoughtDay) premium[kv.Key] = kv.Value;
+            state["premium_bought_day"] = premium;
+            state["challenge_reroll_week"] = ChallengeRerollWeek;
             state["returns_incoming"] = JList(ReturnsIncoming, r => r.ToJson());
             state["dock_returns"] = JList(DockReturns, r => r.ToJson());
             state["total_returns"] = TotalReturns;
@@ -334,6 +338,10 @@ namespace DropshippingGame.Core
                 if (GameData.IsProduct(kv.Key) && kv.Value is List<object> l && l.Count >= 2)
                     LastPurchase[kv.Key] = new[] { J.I(l[0]), J.I(l[1]) };
 
+            PremiumBoughtDay.Clear();
+            foreach (var kv in J.O(s, "premium_bought_day"))
+                if (GameData.IsProduct(kv.Key)) PremiumBoughtDay[kv.Key] = J.I(kv.Value);
+            ChallengeRerollWeek = J.I(s, "challenge_reroll_week");
             ReturnsIncoming.Clear();
             foreach (var r in J.A(s, "returns_incoming")) ReturnsIncoming.Add(PendingReturn.FromJson(r));
             DockReturns.Clear();

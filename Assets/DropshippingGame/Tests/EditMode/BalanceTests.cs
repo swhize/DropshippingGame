@@ -262,7 +262,9 @@ namespace DropshippingGame.Tests
                 gm.EndDayNow();
                 gm.StartNextDay();
             }
+            TestContext.Out.WriteLine("Pleite an Tag " + gm.Day);
             Assert.IsTrue(broke, "Wer nur Schulden macht und nichts verkauft, geht irgendwann pleite");
+            Assert.IsTrue(gm.Day >= 14, "... aber nicht über Nacht (Tag " + gm.Day + ")");
         }
     }
 }

@@ -286,6 +286,8 @@ namespace DropshippingGame.Core
             ExpressBoostUntil = -1f;
             ExpressBoostChance = 0f;
             LastPurchase.Clear();
+            PremiumBoughtDay.Clear();
+            ChallengeRerollWeek = 0;
             ReturnsIncoming.Clear();
             DockReturns.Clear();
             TotalReturns = 0;
@@ -580,6 +582,7 @@ namespace DropshippingGame.Core
             float m = 1f;
             foreach (var b in Boosts)
                 if (string.IsNullOrEmpty(b.Product) || b.Product == id) m *= b.Mult;
+            m = Math.Min(m, GameData.MaxBoostMult);
             return m;
         }
 
@@ -737,6 +740,11 @@ namespace DropshippingGame.Core
                 Notify("Dafür brauchst du erst die Lagerhalle (kein Regal in der Garage).", "bad");
                 return false;
             }
+            if (supplierIndex == 2 && !PremiumQuotaLeft(p.Id))
+            {
+                Notify("Die Premium-Manufaktur liefert nur eine Bestellung pro Produkt und Tag.", "bad");
+                return false;
+            }
             if (!SupplierAvailable(supplierIndex))
             {
                 Notify("Dieser Anbieter ist gerade nicht verfügbar.", "bad");
@@ -758,6 +766,7 @@ namespace DropshippingGame.Core
             var s = GameData.Suppliers[supplierIndex];
             Spend(cost, "purchases");
             LastPurchase[p.Id] = new[] { bulkIndex, supplierIndex };
+            if (supplierIndex == 2) PremiumBoughtDay[p.Id] = Day;
             TravelingDeliveries.Add(new Delivery
             {
                 Product = p.Id, Quantity = b.Quantity, Quality = s.Quality, ArriveAt = BClock() + LeadMinutes(supplierIndex),
@@ -1454,25 +1463,32 @@ namespace DropshippingGame.Core
                 return false;
             }
             Spend(cost, "marketing");
-            Boosts.Add(new Boost { Source = "ad", Name = t.Name, Mult = t.Mult, EndsAt = BClock() + t.Minutes });
+            // v3.0: Tageskampagne bis Feierabend (Influencer: heute + morgen).
+            float adMinutes = GameData.DayEnd - TimeMinutes + (t.Minutes > GameData.BusinessMinutes ? GameData.BusinessMinutes : 0f);
+            Boosts.Add(new Boost { Source = "ad", Name = t.Name, Mult = t.Mult, EndsAt = BClock() + adMinutes });
             AddAwareness(t.Awareness);
-            Notify(t.Name + " gestartet! Mehr Bestellungen für " + (int)t.Minutes + " Minuten.", "good");
+            Notify(t.Name + " gestartet! Mehr Bestellungen " + (adMinutes > GameData.BusinessMinutes ? "heute und morgen" : "bis Feierabend") + ".", "good");
             RaiseEconomyChanged();
             return true;
         }
 
-        public bool TikTokAvailable() => Level >= GameData.TikTokLevel && BClock() >= TikTokReadyAt && ActiveBoost("tiktok") == null;
+        public bool TikTokAvailable() => Level >= GameData.TikTokLevel && BClock() >= TikTokReadyAt && Daily.TikToks < GameData.TikTokPerDay;
+
+        /// <summary>Noch mögliche TikToks heute (max. 3, Praktikant:in zählt mit).</summary>
+        public int TikToksLeftToday() => Math.Max(0, GameData.TikTokPerDay - Daily.TikToks);
 
         /// <summary>
         /// TikTok posten (Treffer 0..1). silent = ohne Hinweis (Praktikant:in, Ereignisse) – nur
-        /// nicht-stille TikToks zählen für Wochenziele. product: optional das beworbene Produkt; mit dem
-        /// Skill "Trendsetter" löst ein gutes TikTok (ab 60 %) dafür einen Hype aus (ohne Angabe: das
-        /// gelistete Produkt mit dem meisten Lagerbestand).
+        /// nicht-stille (eigene) TikToks zählen für Wochenziele und den Skill "Trendsetter": ein gutes
+        /// eigenes TikTok (ab 60 %) löst dann einen Hype für product aus (ohne Angabe: das gelistete
+        /// Produkt mit dem meisten Lagerbestand).
         /// </summary>
         public void TriggerTikTok(float score, bool silent = false, string product = "")
         {
             float s = Mathx.Clamp(score, 0.05f, 1f);
             float power = TikTokPowerMult();
+            if (GameData.IsProduct(product) && TrendMult(product) >= 1.3f) power *= GameData.TikTokTrendBonus;
+            Daily.TikToks++;
             float mult = 1f + (Mathx.Lerp(GameData.TikTokMinMult, GameData.TikTokMaxMult, s) - 1f) * power;
             float minutes = Mathx.Lerp(GameData.TikTokMinMinutes, GameData.TikTokMaxMinutes, s) * power;
             Boosts.RemoveAll(b => b.Source == "tiktok");
@@ -1484,7 +1500,7 @@ namespace DropshippingGame.Core
                 Notify("TikTok gepostet! " + (int)(s * 100) + " % Treffer → ×" + Fmt.Dec(mult, 1) + " Nachfrage für " + (int)minutes + " min.", "good");
                 ChallengeProgress("tiktok", 1f);
             }
-            if (TikTokStartsTrends && s >= 0.6f)
+            if (!silent && TikTokStartsTrends && s >= 0.6f)
             {
                 string target = product ?? "";
                 if (!GameData.IsProduct(target) || !IsListed(target))
@@ -1496,7 +1512,7 @@ namespace DropshippingGame.Core
                 if (target != "" && Trends.Phase(target) != TrendPhase.Rising && Trends.Phase(target) != TrendPhase.Peak)
                 {
                     Trends.Trigger(target, TrendPhase.Rising, 1.6f + 0.4f * s, "Dein TikTok hat einen Trend ausgelöst: #{tag}!");
-                    if (!silent) Notify("Trendsetter! Dein Video startet einen Hype um " + GameData.Product(target).Name + ".", "good");
+                    Notify("Trendsetter! Dein Video startet einen Hype um " + GameData.Product(target).Name + ".", "good");
                 }
             }
             RaiseEconomyChanged();

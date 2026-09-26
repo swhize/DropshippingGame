@@ -30,9 +30,9 @@ namespace DropshippingGame.Core
 
         public static readonly AssetDef[] Assets =
         {
-            new AssetDef { Id = "DROP", Name = "DROPCOIN", Start = 12f, Vol = 0.05f, Drift = 0.0004f, Icon = "coin", Desc = "Hochriskante Krypto. Kann alles – vor allem abstürzen." },
-            new AssetDef { Id = "GAME", Name = "GameShop AG", Start = 35f, Vol = 0.025f, Drift = 0.0004f, Icon = "gamepad", Desc = "Meme-Aktie. Das Internet liebt sie. Meistens." },
-            new AssetDef { Id = "ETF", Name = "Welt-ETF", Start = 100f, Vol = 0.006f, Drift = 0.0008f, Icon = "globe", Desc = "Langweilig. Und genau deshalb solide." },
+            new AssetDef { Id = "DROP", Name = "DROPCOIN", Start = 12f, Vol = 0.009f, Drift = -0.00008f, Icon = "coin", Desc = "Hochriskante Krypto. Kann alles – vor allem abstürzen." },
+            new AssetDef { Id = "GAME", Name = "GameShop AG", Start = 35f, Vol = 0.0035f, Drift = 0.00001f, Icon = "gamepad", Desc = "Meme-Aktie. Das Internet liebt sie. Meistens." },
+            new AssetDef { Id = "ETF", Name = "Welt-ETF", Start = 100f, Vol = 0.0006f, Drift = 0.00002f, Icon = "globe", Desc = "Langweilig. Und genau deshalb solide." },
         };
 
         public const float TickSeconds = 2f;
@@ -107,7 +107,7 @@ namespace DropshippingGame.Core
             {
                 float p = Prices[a.Id];
                 float shock = Rng.Normal(0f, a.Vol);
-                if (a.Id == "DROP" && Rng.Value() < 0.012f) shock += Rng.Range(-0.22f, 0.26f);
+                if (a.Id == "DROP" && Rng.Value() < 0.004f) shock += Rng.Range(-0.25f, 0.25f);
                 p = Math.Max(p * (float)Math.Exp(a.Drift + shock), 0.05f);
                 Prices[a.Id] = p;
                 var h = History[a.Id];

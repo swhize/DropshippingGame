@@ -288,6 +288,43 @@ namespace DropshippingGame.Core
             return c;
         }
 
+        /// <summary>Woche, in der schon ein Wochenziel getauscht wurde (1 Tausch pro Woche).</summary>
+        public int ChallengeRerollWeek;
+
+        public bool CanRerollChallenge(string id)
+        {
+            if (ChallengeRerollWeek == Week) return false;
+            var c = Challenges.Find(x => x.Id == id);
+            return c != null && !c.Done && !c.Bonus;
+        }
+
+        /// <summary>Tauscht ein offenes Wochenziel einmal pro Woche gegen ein anderes (anderer Typ, anteilig für die Restwoche).</summary>
+        public bool RerollChallenge(string id)
+        {
+            if (!CanRerollChallenge(id))
+            {
+                Notify("Diese Woche hast du schon ein Ziel getauscht.", "info");
+                return false;
+            }
+            int idx = Challenges.FindIndex(x => x.Id == id);
+            var used = new HashSet<string>();
+            foreach (var c in Challenges) used.Add(c.Type);
+            var pool = new List<string> { "ship", "revenue", "stars5", "perfect_day" };
+            if (ExpressUnlocked) pool.Add("express");
+            if (ContractsUnlocked) pool.Add("contract");
+            if (HasUpgrade("stand")) pool.Add("stand");
+            if (Level >= GameData.TikTokLevel) pool.Add("tiktok");
+            pool.RemoveAll(t => used.Contains(t));
+            if (pool.Count == 0) return false;
+            var fresh = MakeChallenge(pool[Rng.Index(pool.Count)], Math.Max(2f, 7f - Weekday) / 7f);
+            if (fresh == null) return false;
+            Challenges[idx] = fresh;
+            ChallengeRerollWeek = Week;
+            ChallengesChanged?.Invoke();
+            RaiseEconomyChanged();
+            return true;
+        }
+
         /// <summary>Zusatz-Wochenziel (z. B. aus einem Ereignis). Zählt ab jetzt. product nur für Typ "product".</summary>
         public WeeklyChallenge AddBonusChallenge(string type, float target, int reward, int xp, string sponsor, string title, string desc,
                                                  string icon = "trophy", string product = "")

@@ -149,7 +149,7 @@ namespace DropshippingGame.Core
         {
             new SupplierDef { Name = "Billig-Fabrik", Quality = 0.6f, PriceMult = 0.65f, LeadMult = 1.8f, Level = 1, Desc = "Spottbillig, aber langsam und die Ware ist... naja." },
             new SupplierDef { Name = "Standard-Großhändler", Quality = 1.0f, PriceMult = 1.0f, LeadMult = 1.0f, Level = 1, Desc = "Solide Qualität, normale Lieferzeit." },
-            new SupplierDef { Name = "Premium-Hersteller", Quality = 1.6f, PriceMult = 1.75f, LeadMult = 0.55f, Level = 2, Desc = "Teuer, blitzschnell, Kunden lieben es." },
+            new SupplierDef { Name = "Premium-Hersteller", Quality = 1.6f, PriceMult = 2.0f, LeadMult = 0.55f, Level = 2, Desc = "Manufaktur: teuer, blitzschnell, Kunden lieben es – nur eine Bestellung pro Produkt und Tag." },
         };
 
         // ---- Verpackung -------------------------------------------------------------------------
@@ -171,18 +171,24 @@ namespace DropshippingGame.Core
         // ---- Marketing -----------------------------------------------------------------------------
         public static readonly AdTier[] AdTiers =
         {
-            new AdTier { Id = "flyer", Name = "Flyer & Plakate", Cost = 15, Mult = 1.25f, Minutes = 90f, Awareness = 0.02f, Level = 1, Icon = "paper" },
-            new AdTier { Id = "facebook", Name = "Facebook-Ads", Cost = 60, Mult = 1.6f, Minutes = 120f, Awareness = 0.05f, Level = 2, Icon = "thumb" },
-            new AdTier { Id = "google", Name = "Google-Ads", Cost = 160, Mult = 2.0f, Minutes = 180f, Awareness = 0.08f, Level = 6, Icon = "search" },
-            new AdTier { Id = "influencer", Name = "Influencer-Kampagne", Cost = 650, Mult = 2.8f, Minutes = 240f, Awareness = 0.15f, Level = 7, Icon = "star" },
+            new AdTier { Id = "flyer", Name = "Flyer & Plakate", Cost = 25, Mult = 1.15f, Minutes = 720f, Awareness = 0.02f, Level = 1, Icon = "paper" },
+            new AdTier { Id = "facebook", Name = "Facebook-Ads", Cost = 80, Mult = 1.35f, Minutes = 720f, Awareness = 0.05f, Level = 2, Icon = "thumb" },
+            new AdTier { Id = "google", Name = "Google-Ads", Cost = 200, Mult = 1.6f, Minutes = 720f, Awareness = 0.08f, Level = 6, Icon = "search" },
+            new AdTier { Id = "influencer", Name = "Influencer-Kampagne", Cost = 700, Mult = 2.0f, Minutes = 1440f, Awareness = 0.15f, Level = 7, Icon = "star" },
         };
 
         public const int TikTokLevel = 2;
-        public const float TikTokCooldown = 120f;
-        public const float TikTokMinMult = 1.2f;
-        public const float TikTokMaxMult = 2.4f;
-        public const float TikTokMinMinutes = 60f;
-        public const float TikTokMaxMinutes = 180f;
+        public const float TikTokCooldown = 60f;
+        public const float TikTokMinMult = 1.3f;
+        public const float TikTokMaxMult = 2.2f;
+        public const float TikTokMinMinutes = 180f;
+        public const float TikTokMaxMinutes = 360f;
+        /// <summary>v3.0: höchstens so viele TikToks pro Tag (Praktikant:in zählt mit).</summary>
+        public const int TikTokPerDay = 3;
+        /// <summary>v3.0: Hype ab diesem Wert macht ein TikTok zum Produkt ×1,25 stärker.</summary>
+        public const float TikTokTrendBonus = 1.25f;
+        /// <summary>v3.0: Deckel für den Gesamt-Multiplikator aller Boosts.</summary>
+        public const float MaxBoostMult = 4f;
 
         // ---- Branding --------------------------------------------------------------------------------
         public static readonly RGBA[] BrandPalette =

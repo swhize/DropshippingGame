@@ -276,7 +276,7 @@ namespace DropshippingGame.Core
             },
             new EventDef
             {
-                Id = "street_fest", Title = "Straßenfest vor der Tür", Sender = "Stadtverwaltung", Icon = "tent",
+                Id = "street_fest", Title = "Straßenfest vor der Tür", Sender = "Stadtverwaltung", Icon = "stand",
                 Text = "Heute ist Straßenfest! Ein Verkaufsstand kostet 50 € – du verkaufst direkt aus deinem Lager an Passanten.",
                 Needs = "stock", MinLevel = 2, Cooldown = 6, Weight = 0.8f, Default = 1,
                 Choices = new[]

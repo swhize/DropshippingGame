@@ -368,7 +368,7 @@ namespace DropshippingGame.Core
             new SkillDef { Id = "m_viral", Branch = "marketing", Tier = 3, Level = 5, Icon = "fire", Name = "Viral-Gen",
                 Desc = "TikTok-Abklingzeit −40 %, Werbekampagnen 25 % günstiger." },
             new SkillDef { Id = "m_trendsetter", Branch = "marketing", Tier = 4, Level = 7, Icon = "sparkle", Name = "Trendsetter",
-                Desc = "Du machst die Trends: Ein gutes TikTok (ab 60 % Treffer) löst einen Hype für dein Produkt aus." },
+                Desc = "Du machst die Trends: Ein gutes eigenes TikTok (ab 60 % Treffer) löst einen Hype für dein Produkt aus." },
         };
 
         public static SkillDef Skill(string id)

@@ -309,8 +309,8 @@ namespace DropshippingGame.Core
             return true;
         }
 
-        /// <summary>Angebote pro Tag: werktags 1 (Level 3-4), 1-2 (Level 5-7), 1-3 (ab Level 8); am Wochenende 0-1.</summary>
-        public int ContractOffersToday()
+        /// <summary>Würfelt die Angebote für heute: werktags 1 (Level 3-4), 1-2 (Level 5-7), 1-3 (ab Level 8); am Wochenende 0-1.</summary>
+        private int RollContractOffersToday()
         {
             if (!ContractsUnlocked) return 0;
             if (Weekday >= 5) return Rng.Value() < 0.5f ? 1 : 0;
@@ -321,7 +321,7 @@ namespace DropshippingGame.Core
         private void ContractsNewDay()
         {
             ContractOfferTimes.Clear();
-            int count = ContractOffersToday();
+            int count = RollContractOffersToday();
             for (int i = 0; i < count; i++) ContractOfferTimes.Add(Rng.Range(500f, 900f));
             ContractOfferTimes.Sort();
         }

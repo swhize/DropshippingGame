@@ -353,6 +353,8 @@ namespace DropshippingGame.Core
         public int ContractIncome, Penalties, ContractsDone, ContractsFailed;
         /// <summary>Wochenziele heute geschafft und deren Geldbelohnung (ist auch in IncomeOther enthalten).</summary>
         public int ChallengesDone, ChallengeRewards;
+        /// <summary>Heute gepostete TikToks (max. <see cref="GameData.TikTokPerDay"/>).</summary>
+        public int TikToks;
         /// <summary>Kurze Meldungen des Tages für den Kassenbon.</summary>
         public List<string> Notes = new List<string>();
 
@@ -388,7 +390,7 @@ namespace DropshippingGame.Core
                 { "express", Express }, { "late", Late }, { "expired", Expired }, { "returns", Returns }, { "refunds", Refunds },
                 { "returns_restocked", ReturnsRestocked }, { "returns_disposed", ReturnsDisposed }, { "contract_income", ContractIncome },
                 { "penalties", Penalties }, { "contracts_done", ContractsDone }, { "contracts_failed", ContractsFailed },
-                { "challenges_done", ChallengesDone }, { "challenge_rewards", ChallengeRewards }, { "notes", notes },
+                { "challenges_done", ChallengesDone }, { "challenge_rewards", ChallengeRewards }, { "notes", notes }, { "tiktoks", TikToks },
             };
         }
 
@@ -406,7 +408,7 @@ namespace DropshippingGame.Core
                 Refunds = J.I(d, "refunds"), ReturnsRestocked = J.I(d, "returns_restocked"), ReturnsDisposed = J.I(d, "returns_disposed"),
                 ContractIncome = J.I(d, "contract_income"), Penalties = J.I(d, "penalties"), ContractsDone = J.I(d, "contracts_done"),
                 ContractsFailed = J.I(d, "contracts_failed"), ChallengesDone = J.I(d, "challenges_done"),
-                ChallengeRewards = J.I(d, "challenge_rewards"),
+                ChallengeRewards = J.I(d, "challenge_rewards"), TikToks = J.I(d, "tiktoks"),
             };
             foreach (var n in J.A(d, "notes"))
                 if (n is string ns) s.Notes.Add(ns);
@@ -434,6 +436,8 @@ namespace DropshippingGame.Core
         public int ContractIncome, Penalties, ContractsDone, ContractsFailed, ContractsActive;
         /// <summary>Wochenziele heute geschafft, deren Geldbelohnung (bereits in IncomeOther enthalten).</summary>
         public int ChallengesDone, ChallengeRewards;
+        /// <summary>Heute gepostete TikToks (max. <see cref="GameData.TikTokPerDay"/>).</summary>
+        public int TikToks;
         /// <summary>Sonntag: Wochenbilanz der Wochenziele.</summary>
         public bool WeekEnded;
         public int WeekChallengesDone, WeekChallengesTotal;

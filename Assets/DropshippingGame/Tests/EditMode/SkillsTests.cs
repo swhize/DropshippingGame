@@ -138,6 +138,8 @@ namespace DropshippingGame.Tests
             st.Phase = TrendPhase.Normal;
             gm.TriggerTikTok(0.4f);
             Assert.AreEqual(TrendPhase.Normal, gm.Trends.Phase("led"), "Schwaches TikTok reicht nicht");
+            gm.TriggerTikTok(0.9f, true, "led");
+            Assert.AreEqual(TrendPhase.Normal, gm.Trends.Phase("led"), "TikToks der Praktikant:in lösen keinen Hype aus");
             gm.TriggerTikTok(0.9f, false, "led");
             Assert.AreEqual(TrendPhase.Rising, gm.Trends.Phase("led"), "Gutes TikTok startet einen Hype");
         }
