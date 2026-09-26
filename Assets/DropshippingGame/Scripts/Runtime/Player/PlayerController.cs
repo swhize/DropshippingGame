@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DropshippingGame.Core;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -25,7 +26,14 @@ namespace DropshippingGame
         private const int IgnoreRaycastLayer = 2;
 
         public Camera Cam;
+        /// <summary>Oberster gehaltener Gegenstand (der, mit dem gearbeitet wird).</summary>
         public ItemData Held;
+        /// <summary>
+        /// v3.0 Paketstapel: weitere Pakete UNTER <see cref="Held"/> (unten zuerst). Nur Pakete
+        /// (mit oder ohne Etikett) lassen sich stapeln; Kapazität siehe <see cref="PackageCapacity"/>.
+        /// </summary>
+        public readonly List<ItemData> Stack = new List<ItemData>();
+        private ObjectiveMarker _marker;
         public IInteractable Focus;
         public string PromptText = "";
 
@@ -73,12 +81,14 @@ namespace DropshippingGame
             _handAnchor = new GameObject("Hands").transform;
             _handAnchor.SetParent(camGo.transform, false);
             Settings.Changed += ApplySettings;
+            _marker = ObjectiveMarker.Create(transform.parent, this);
         }
 
         private void OnDestroy()
         {
             Settings.Changed -= ApplySettings;
-            if (Focus != null) Focus.SetHighlighted(false);
+            if (_marker != null) Destroy(_marker.gameObject);
+            if (Focus != null && !(Focus is Object fo && fo == null)) Focus.SetHighlighted(false);
         }
 
         private void ApplySettings()
@@ -105,16 +115,112 @@ namespace DropshippingGame
         }
 
         // ---- Gehaltener Gegenstand mit Armen --------------------------------------------------------
+        /// <summary>Ersetzt den obersten Gegenstand (der Stapel darunter bleibt).</summary>
         public void Hold(ItemData data)
         {
+            if (data == null)
+            {
+                PopTop();
+                return;
+            }
+            if (!IsStackable(data)) Stack.Clear();
             Held = data;
-            RebuildHeldVisual();
-            Game.Root?.OnHeldChanged();
+            HeldChanged();
         }
 
+        /// <summary>Leert beide Hände komplett (inklusive Paketstapel).</summary>
         public void ClearHands()
         {
             Held = null;
+            Stack.Clear();
+            HeldChanged();
+        }
+
+        // ---- Paketstapel (GAME_IDEAS #5) ------------------------------------------------------------
+        public static bool IsStackable(ItemData d) => d != null && (d.Kind == ItemKind.Package || d.Kind == ItemKind.Labeled);
+
+        /// <summary>Anzahl getragener Gegenstände (0, 1 oder Stapelhöhe).</summary>
+        public int CarryCount => Held == null ? 0 : 1 + Stack.Count;
+
+        /// <summary>
+        /// Wie viele Pakete auf einmal getragen werden können: 1, +1 mit Skill "Starke Arme",
+        /// +1 mit "Prozess-Flow" (Logistik-Endknoten).
+        /// </summary>
+        public int PackageCapacity
+        {
+            get
+            {
+                var sim = Game.Sim;
+                if (sim == null) return 1;
+                int cap = 1;
+                if (sim.HasSkill("l_arme")) cap++;
+                if (sim.HasSkill("l_flow")) cap++;
+                return cap;
+            }
+        }
+
+        /// <summary>Passt dieses Paket noch oben auf den Stapel?</summary>
+        public bool CanStack(ItemData d) => Held != null && IsStackable(Held) && IsStackable(d) && CarryCount < PackageCapacity;
+
+        /// <summary>Legt einen Gegenstand oben auf (leere Hände: einfach halten).</summary>
+        public void Push(ItemData d)
+        {
+            if (d == null) return;
+            if (Held == null || !CanStack(d))
+            {
+                Hold(d);
+                return;
+            }
+            Stack.Add(Held);
+            Held = d;
+            HeldChanged();
+        }
+
+        /// <summary>Entfernt den obersten Gegenstand; der nächste im Stapel rückt nach.</summary>
+        public void PopTop()
+        {
+            if (Stack.Count > 0)
+            {
+                Held = Stack[Stack.Count - 1];
+                Stack.RemoveAt(Stack.Count - 1);
+            }
+            else Held = null;
+            HeldChanged();
+        }
+
+        /// <summary>Alle getragenen Gegenstände, unten zuerst, oben (Held) zuletzt. Neue Liste.</summary>
+        public List<ItemData> Carried()
+        {
+            var list = new List<ItemData>(Stack);
+            if (Held != null) list.Add(Held);
+            return list;
+        }
+
+        /// <summary>Setzt den ganzen Stapel neu (unten zuerst). Leere Liste = Hände leer.</summary>
+        public void SetCarried(List<ItemData> items)
+        {
+            Stack.Clear();
+            Held = null;
+            if (items != null)
+                foreach (var it in items)
+                {
+                    if (it == null) continue;
+                    if (Held != null) Stack.Add(Held);
+                    Held = it;
+                }
+            HeldChanged();
+        }
+
+        /// <summary>Wie viele getragene Gegenstände dieser Art (z. B. etikettierte Pakete)?</summary>
+        public int CountCarried(ItemKind kind)
+        {
+            int n = 0;
+            foreach (var it in Carried()) if (it.Kind == kind) n++;
+            return n;
+        }
+
+        private void HeldChanged()
+        {
             RebuildHeldVisual();
             Game.Root?.OnHeldChanged();
         }
@@ -126,13 +232,23 @@ namespace DropshippingGame
             if (Held == null) return;
             _heldVisual = new GameObject("Held");
             _heldVisual.transform.SetParent(_handAnchor, false);
-            var size = ItemKit.Bounds(Held);
-            bool twoHands = Held.Kind == ItemKind.Crate || Held.Kind == ItemKind.Package || Held.Kind == ItemKind.Labeled;
+            var bottom = Stack.Count > 0 && Stack[0] != null ? Stack[0] : Held;
+            var size = ItemKit.Bounds(bottom);
+            bool twoHands = Held.Kind == ItemKind.Crate || Held.Kind == ItemKind.Package || Held.Kind == ItemKind.Labeled || Held.Kind == ItemKind.Return;
             var itemPos = twoHands ? new Vector3(0f, -0.36f, 0.72f) : new Vector3(0.26f, -0.3f, 0.55f);
             if (Held.Kind == ItemKind.Crate) itemPos = new Vector3(0f, -0.5f, 0.8f);
-            var item = ItemKit.Build(_heldVisual.transform, Held, false);
-            item.transform.localPosition = itemPos;
-            item.transform.localRotation = Quaternion.Euler(0, twoHands ? 8f : 20f, 0);
+            // Stapel: unten zuerst, jedes Paket auf dem vorigen (leicht verdreht).
+            var carried = Carried();
+            float cursor = itemPos.y - size.y / 2f;
+            for (int i = 0; i < carried.Count; i++)
+            {
+                var data = carried[i];
+                var b = ItemKit.Bounds(data);
+                var item = ItemKit.Build(_heldVisual.transform, data, false);
+                item.transform.localPosition = new Vector3(itemPos.x, cursor + b.y / 2f, itemPos.z);
+                item.transform.localRotation = Quaternion.Euler(0, (twoHands ? 8f : 20f) + (i % 2 == 0 ? 0f : 7f), 0);
+                cursor += b.y + 0.004f;
+            }
             var sleeve = Mats.Std(new Color(0.2f, 0.22f, 0.28f), 0.8f);
             var skin = Mats.Std(new Color(0.93f, 0.76f, 0.62f), 0.7f);
             if (twoHands)
@@ -177,7 +293,7 @@ namespace DropshippingGame
             var item = DroppedItem.Spawn(Game.World != null ? Game.World.transform : null, Held, pos, Yaw);
             item.Body.AddForce(fwd * 2.2f + _velocity * 0.5f + new Vector3(0, 0.8f, 0), ForceMode.VelocityChange);
             Game.Sound("drop");
-            ClearHands();
+            PopTop();
         }
 
         public DroppedItem SpawnDropped(ItemData data, Vector3 pos, float rotY) =>
@@ -216,7 +332,7 @@ namespace DropshippingGame
             _camBaseY = Mathf.Lerp(_camBaseY, _cc.height < StandHeight - 0.1f ? CrouchCamY : StandCamY, 10f * dt);
 
             float speed = crouching ? SpeedCrouch : (sprinting ? SpeedSprint : SpeedWalk);
-            if (Held != null && Held.Kind == ItemKind.Crate) speed *= 0.85f;
+            if (Game.Sim != null) speed *= Game.Sim.CarrySpeedMult(Held?.Kind ?? ItemKind.None);
             var target = inputDir * speed;
             bool grounded = _cc.isGrounded;
             float accel = grounded ? 12f : 3f;
@@ -285,6 +401,25 @@ namespace DropshippingGame
             body.AddForce(push * 0.6f, ForceMode.Impulse);
         }
 
-        public PlayerSave ToSave() => new PlayerSave { Pos = transform.position.ToV3(), RotY = Yaw, Held = Held?.Clone() };
+        /// <summary>
+        /// Spielstand: Der Spielstand kennt nur einen gehaltenen Gegenstand. Weitere Pakete im Stapel
+        /// werden als am Boden liegende Gegenstände neben dem Spieler gespeichert (gehen nicht verloren).
+        /// GameRoot ruft dies nach dem Einsammeln der Welt-Gegenstände auf.
+        /// </summary>
+        public PlayerSave ToSave()
+        {
+            var sim = Game.Sim;
+            if (sim != null && sim.WorldItems != null)
+            {
+                for (int i = 0; i < Stack.Count; i++)
+                {
+                    var it = Stack[i];
+                    if (it == null) continue;
+                    var pos = transform.position + transform.forward * 0.6f + new Vector3(0, 0.3f + i * 0.3f, 0);
+                    sim.WorldItems.Add(new WorldItemSave { Item = it.Clone(), Pos = pos.ToV3(), RotY = Yaw });
+                }
+            }
+            return new PlayerSave { Pos = transform.position.ToV3(), RotY = Yaw, Held = Held?.Clone() };
+        }
     }
 }
