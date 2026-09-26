@@ -32,6 +32,38 @@ namespace DropshippingGame
         private bool _modelWalking;
         private bool _sitting;
         private GameObject _bag;
+        // Freies Ziel (Passanten-KI) statt Wegpunktliste
+        private bool _hasFacePoint;
+        private Vector3 _facePoint;
+        private bool _hasDest;
+        private Vector3 _dest;
+        private System.Action<NPC> _onArrive;
+        // Hindernisumgehung
+        private Vector3 _steer;
+        private bool _steerValid;
+        private float _steerTimer;
+        private float _stuckTimer;
+        private Vector3 _lastPos;
+
+        /// <summary>Hat gerade ein frei gesetztes Ziel (Passanten-Modus).</summary>
+        public bool HasDestination => _hasDest;
+        public bool IsWaiting => _wait > 0f;
+
+        /// <summary>Läuft zu einem Punkt (lokal zum Parent), umgeht Hindernisse und ruft danach <paramref name="onArrive"/>.</summary>
+        public void GoTo(Vector3 localPos, System.Action<NPC> onArrive = null)
+        {
+            _dest = localPos;
+            _hasDest = true;
+            _onArrive = onArrive;
+            _steerValid = false;
+        }
+
+        public void ClearDestination()
+        {
+            _hasDest = false;
+            _onArrive = null;
+            _steerValid = false;
+        }
 
         public void Setup(Look look, IList<Vector3> points = null, float speed = 1.4f)
         {
@@ -59,6 +91,16 @@ namespace DropshippingGame
         {
             _wait = Mathf.Max(_wait, seconds);
             _faceTarget = faceTarget;
+            _hasFacePoint = false;
+        }
+
+        /// <summary>Kurz stehen bleiben und in Richtung eines Weltpunkts schauen (Schaufenster, Plakat ...).</summary>
+        public void StopFacing(float seconds, Vector3 worldPoint)
+        {
+            _wait = Mathf.Max(_wait, seconds);
+            _faceTarget = null;
+            _facePoint = worldPoint;
+            _hasFacePoint = true;
         }
 
         public bool IsWalking => _walk > 0.5f;
@@ -73,32 +115,62 @@ namespace DropshippingGame
                 if (_bubbleTime <= 0f && _bubble != null) _bubble.gameObject.SetActive(false);
             }
             bool moving = false;
-            if (Waypoints.Count > 1)
+            bool navigating = _hasDest || Waypoints.Count > 1;
+            if (navigating)
             {
                 if (_wait > 0f)
                 {
                     _wait -= dt;
                     if (_faceTarget != null) FaceTowards(_faceTarget.position, 5f, dt);
-                    if (_wait <= 0f) _faceTarget = null;
+                    else if (_hasFacePoint) FaceTowards(_facePoint, 3f, dt);
+                    if (_wait <= 0f) { _faceTarget = null; _hasFacePoint = false; }
                 }
                 else
                 {
-                    Vector3 target = Waypoints[_idx];
+                    Vector3 target = _hasDest ? _dest : Waypoints[Mathf.Clamp(_idx, 0, Waypoints.Count - 1)];
                     Vector3 to = target - transform.localPosition;
                     to.y = 0f;
                     float dist = to.magnitude;
                     if (dist < 0.08f)
                     {
-                        NextPoint();
-                        _wait = PauseAtPoints;
+                        _steerValid = false;
+                        if (_hasDest)
+                        {
+                            _hasDest = false;
+                            var cb = _onArrive;
+                            _onArrive = null;
+                            if (cb != null) cb(this);
+                        }
+                        else
+                        {
+                            NextPoint();
+                            _wait = PauseAtPoints;
+                        }
                     }
                     else
                     {
-                        float step = Mathf.Min(dist, Speed * dt);
-                        transform.localPosition += to / dist * step;
-                        float yaw = Mathf.Atan2(to.x, to.z) * Mathf.Rad2Deg;
-                        transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(0, yaw, 0), Mathf.Min(1f, dt * 8f));
-                        moving = true;
+                        Vector3 aim = SteerPoint(target, dt);
+                        Vector3 toAim = aim - transform.localPosition;
+                        toAim.y = 0f;
+                        float aimDist = toAim.magnitude;
+                        if (aimDist < 0.1f)
+                        {
+                            // Umgehungsecke erreicht: sofort neu planen
+                            _steerValid = false;
+                            aim = SteerPoint(target, dt);
+                            toAim = aim - transform.localPosition;
+                            toAim.y = 0f;
+                            aimDist = toAim.magnitude;
+                        }
+                        if (aimDist > 0.0001f)
+                        {
+                            float step = Mathf.Min(aimDist, Speed * dt);
+                            transform.localPosition += toAim / aimDist * step;
+                            float yaw = Mathf.Atan2(toAim.x, toAim.z) * Mathf.Rad2Deg;
+                            transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(0, yaw, 0), Mathf.Min(1f, dt * 8f));
+                            moving = true;
+                        }
+                        StuckCheck(dt);
                     }
                 }
             }
@@ -155,6 +227,49 @@ namespace DropshippingGame
             if (d.sqrMagnitude < 0.0001f) return;
             var rot = Quaternion.LookRotation(d.normalized, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, rot, Mathf.Min(1f, dt * speed));
+        }
+
+        /// <summary>Zwischenziel mit Hindernisumgehung (lokal zum Parent), alle ~0,3 s neu berechnet.</summary>
+        private Vector3 SteerPoint(Vector3 targetLocal, float dt)
+        {
+            _steerTimer -= dt;
+            if (_steerValid && _steerTimer > 0f) return _steer;
+            _steerTimer = 0.25f + Random.value * 0.15f;
+            Vector3 result = targetLocal;
+            try
+            {
+                var parent = transform.parent;
+                Vector3 fromW = parent != null ? parent.TransformPoint(transform.localPosition) : transform.localPosition;
+                Vector3 toW = parent != null ? parent.TransformPoint(targetLocal) : targetLocal;
+                Vector3 s = NpcNav.Steer(fromW, toW);
+                result = parent != null ? parent.InverseTransformPoint(s) : s;
+                result.y = targetLocal.y;
+            }
+            catch (System.Exception)
+            {
+                result = targetLocal;
+            }
+            _steer = result;
+            _steerValid = true;
+            return _steer;
+        }
+
+        /// <summary>Hängt der NPC fest (z.B. zwischen zwei Hindernissen), notfalls direkt aufs Ziel.</summary>
+        private void StuckCheck(float dt)
+        {
+            if ((transform.localPosition - _lastPos).sqrMagnitude > 0.04f)
+            {
+                _lastPos = transform.localPosition;
+                _stuckTimer = 0f;
+                return;
+            }
+            _stuckTimer += dt;
+            if (_stuckTimer > 4f)
+            {
+                _stuckTimer = 0f;
+                _steerValid = false;
+                if (_hasDest) transform.localPosition = Vector3.MoveTowards(transform.localPosition, _dest, 0.5f);
+            }
         }
 
         private void NextPoint()

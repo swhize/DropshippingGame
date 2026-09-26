@@ -69,6 +69,7 @@ namespace DropshippingGame
         {
             MenuMode = menuMode;
             _rng = new System.Random(4242);
+            NpcNav.ClearPoints();
             _static = Props.Node(transform, "Static").transform;
             Atmos = gameObject.AddComponent<Atmosphere>();
             Atmos.Setup(transform);
@@ -129,6 +130,7 @@ namespace DropshippingGame
             {
                 var lp = Props.LampPost(transform, out var light);
                 lp.transform.localPosition = new Vector3(x, 0, 6.8f);
+                NpcNav.AddPoint(transform.TransformPoint(new Vector3(x, 0, 6.8f)));
                 lp.transform.localRotation = Quaternion.Euler(0, 180, 0);
                 Atmos.StreetLights.Add(light);
             }
@@ -136,6 +138,7 @@ namespace DropshippingGame
             {
                 var lp = Props.LampPost(transform, out var light);
                 lp.transform.localPosition = new Vector3(x, 0, -6.85f);
+                NpcNav.AddPoint(transform.TransformPoint(new Vector3(x, 0, -6.85f)));
                 Atmos.StreetLights.Add(light);
             }
             StreetDressing();
@@ -149,9 +152,18 @@ namespace DropshippingGame
         /// <summary>Hydranten, Mülleimer, Verkehrsschilder und die Plakatwand mit der eigenen Marke.</summary>
         private void StreetDressing()
         {
-            foreach (var x in new[] { -46.5f, -9f, 40f }) Props.AssetAt(S, "street.firehydrant", new Vector3(x, 0, 6.9f), 180f, 0.8f);
+            foreach (var x in new[] { -46.5f, -9f, 40f })
+            {
+                Props.AssetAt(S, "street.firehydrant", new Vector3(x, 0, 6.9f), 180f, 0.8f);
+                NpcNav.AddPoint(transform.TransformPoint(new Vector3(x, 0, 6.9f)));
+            }
             Props.AssetAt(S, "street.firehydrant", new Vector3(-27.5f, 0, -6.9f), 0f, 0.8f);
-            foreach (var x in new[] { -52f, -2f, 22f }) Props.AssetAt(S, "street.trafficlight_a", new Vector3(x, 0, 6.95f), 180f, 3.4f);
+            NpcNav.AddPoint(transform.TransformPoint(new Vector3(-27.5f, 0, -6.9f)));
+            foreach (var x in new[] { -52f, -2f, 22f })
+            {
+                Props.AssetAt(S, "street.trafficlight_a", new Vector3(x, 0, 6.95f), 180f, 3.4f);
+                NpcNav.AddPoint(transform.TransformPoint(new Vector3(x, 0, 6.95f)));
+            }
             Props.AssetAt(S, "street.construction_cone", new Vector3(46.2f, 0, -3.4f), 20f, 0.6f);
             Props.AssetAt(S, "street.construction_cone", new Vector3(46.9f, 0, -2.6f), -10f, 0.6f);
             // Plakatwand am Parkrand, Blick zur Straße (Marke sichtbar in der Welt, GAME_IDEAS #8)
@@ -970,28 +982,18 @@ namespace DropshippingGame
         // =====================================================================================
         // Leben auf der Straße
         // =====================================================================================
+        /// <summary>Passanten: zufällige Routen, Pausen, Spawn/Despawn am Rand (siehe <see cref="StreetLife"/>).</summary>
         private void Pedestrians_()
         {
-            var rng = new System.Random(314);
-            var paths = new[]
+            _pedestrians.Clear();
+            try
             {
-                new[] { new Vector3(-50, 0, -6.3f), new Vector3(40, 0, -6.3f) },
-                new[] { new Vector3(-8, 0, -4.6f), new Vector3(45, 0, -4.6f) },
-                new[] { new Vector3(-54, 0, -4.8f), new Vector3(-8, 0, -4.8f) },
-                new[] { new Vector3(-54, 0, 5.3f), new Vector3(44, 0, 5.3f) },
-                new[] { new Vector3(40, 0, 6.2f), new Vector3(-50, 0, 6.2f) },
-                new[] { new Vector3(-40, 0, 13.6f), new Vector3(30, 0, 13.6f) },
-                new[] { new Vector3(20, 0, 13.95f), new Vector3(-48, 0, 13.95f) },
-            };
-            foreach (var p in paths)
+                var life = gameObject.AddComponent<StreetLife>();
+                life.Setup(_dynamic, transform, _pedestrians, MenuMode ? 7 : 10);
+            }
+            catch (System.Exception e)
             {
-                var go = Props.Node(_dynamic, "Pedestrian");
-                var npc = go.AddComponent<NPC>();
-                npc.Setup(CharacterKit.RandomLook(rng), p, 1f + (float)rng.NextDouble() * 0.5f);
-                npc.PingPong = true;
-                npc.PauseAtPoints = 2f;
-                go.transform.localPosition = Vector3.Lerp(p[0], p[1], (float)rng.NextDouble());
-                _pedestrians.Add(npc);
+                Debug.LogWarning("StreetLife: " + e.Message);
             }
         }
 
