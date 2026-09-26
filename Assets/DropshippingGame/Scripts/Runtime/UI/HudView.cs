@@ -17,13 +17,14 @@ namespace DropshippingGame.UI
     /// </summary>
     public sealed class HudView
     {
-        private const int MaxTickets = 5;
+        private const int MaxTickets = 4;
 
         private sealed class TicketUi
         {
             public Order Order;
             public VisualElement Root, Bar;
             public Label Time;
+            public int Tone = -1;
         }
 
         private readonly VisualElement _layer, _toastLayer, _celeLayer;
@@ -391,7 +392,7 @@ namespace DropshippingGame.UI
             UIX.Show(_miniTravel, sim.TravelingDeliveries.Count > 0);
             UIX.Show(_miniPacked, sim.PackedCount() > 0);
 
-            // Sichtbare Bestellungen (Reihenfolge = Warteschlange, älteste zuerst) – nur bei Änderung neu bauen
+            // Sichtbare Bestellungen (dringendste zuerst, Sim.Tickets() sortiert nach Fälligkeit) – nur bei Änderung neu bauen
             var all = sim.Tickets();
             var visible = new List<Order>();
             for (int i = 0; i < all.Count && visible.Count < MaxTickets; i++) visible.Add(all[i]);
@@ -427,39 +428,81 @@ namespace DropshippingGame.UI
             int more = all.Count - visible.Count;
             if (more > 0)
             {
-                var m = UIX.Div(_ticketsRow, "ticket-more");
+                var m = UIX.Col(_ticketsRow, 0f, "ticket-more");
                 UIX.Text(m, "+" + more, "ticket-more-text");
+                UIX.Text(m, "weitere", "ticket-more-sub");
             }
             foreach (var el in _ticketsRow.Query<VisualElement>().ToList()) el.pickingMode = PickingMode.Ignore;
             TickTickets(sim);
         }
 
+        private static readonly string[] StepNames = { "Holen", "Packen", "Label", "Versand" };
+        private static readonly string[] StepIcons = { "box", "package", "tag", "truck" };
+
+        /// <summary>Zeitampel auf dem hellen Zettel: grün / gelb / rot.</summary>
+        private static Color TicketToneColor(int tone)
+        {
+            switch (tone)
+            {
+                case 0: return new Color(0.12f, 0.55f, 0.31f);
+                case 1: return new Color(0.80f, 0.52f, 0.05f);
+                default: return new Color(0.78f, 0.22f, 0.18f);
+            }
+        }
+
+        /// <summary>
+        /// Kompakter Bestellzettel: Nummer + Menge/Produkt, Fortschritt Holen → Packen → Label →
+        /// Versand, nächster Schritt mit Ort, Restzeit mit Ampelfarbe und Express-Kennzeichnung.
+        /// </summary>
         private TicketUi BuildTicket(Sim sim, Order o)
         {
             var v = OrderInfo.Get(sim, o);
+            int step = Mathf.Clamp(Sim.OrderStepIndex(o), 0, 4);
             var t = UIX.Col(_ticketsRow, 0f, "ticket");
-            var band = UIX.Div(t, "ticket-band");
-            band.style.backgroundColor = v.Product.Color.ToColor();
-            UIX.Icon(band, v.Product.Icon, 18f, Theme.OnColor(v.Product.Color.ToColor()));
+            if (v.Express) t.AddToClassList("express");
+
+            // Kopf: Produktfarbe, Icon, Nummer, Express
+            var band = UIX.Row(t, 4f, "ticket-band");
+            var pc = v.Product.Color.ToColor();
+            band.style.backgroundColor = pc;
+            var onColor = Theme.OnColor(pc);
+            UIX.Icon(band, v.Product.Icon, 14f, onColor);
+            var num = UIX.Text(band, v.Number, "ticket-number");
+            num.style.color = onColor;
+            UIX.Spacer(band);
             if (v.Express)
             {
-                t.AddToClassList("express");
-                var ex = UIX.Row(t, 2f, "ticket-express");
-                UIX.Icon(ex, "bolt", 10f, Color.white);
+                var ex = UIX.Row(band, 2f, "ticket-express");
+                UIX.Icon(ex, "bolt", 9f, Color.white);
                 UIX.Text(ex, "EXPRESS", "ticket-express-text");
             }
+
             var body = UIX.Col(t, 0f, "ticket-body");
-            var nr = UIX.Row(body, 4f, "ticket-top");
-            UIX.Text(nr, v.Number, "ticket-number");
-            UIX.Spacer(nr);
-            if (v.Stage != OrderStage.Queued) UIX.Icon(nr, OrderInfo.StageIcon(v.Stage), 11f, Theme.Teal);
-            UIX.Text(body, v.Product.Short, "ticket-name");
-            UIX.Ellipsis(UIX.Text(body, v.Customer, "ticket-customer"));
-            var bar = UIX.Bar(body, v.Fill, OrderInfo.ToneColor(v.Tone), 4f);
+            UIX.Ellipsis(UIX.Text(body, "1× " + v.Product.Short, "ticket-name"));
+
+            // Fortschritt: vier Segmente
+            var steps = UIX.Row(body, 2f, "ticket-steps");
+            for (int i = 0; i < StepNames.Length; i++)
+            {
+                var seg = UIX.Div(steps, "ticket-step");
+                if (i < step) seg.AddToClassList("done");
+                else if (i == step) seg.AddToClassList("now");
+            }
+
+            // Nächster Schritt + Ort
+            var next = UIX.Row(body, 3f, "ticket-next");
+            UIX.Icon(next, StepIcons[Mathf.Min(step, 3)], 10f, Theme.PaperInk);
+            UIX.Ellipsis(UIX.Text(next, Sim.OrderNextStep(o), "ticket-next-text"));
+            UIX.Ellipsis(UIX.Text(body, "» " + Sim.OrderNextPlace(o), "ticket-where"));
+
+            int tone = sim.OrderTimeTone(o);
+            var bar = UIX.Bar(body, v.Fill, TicketToneColor(tone), 4f);
             bar.AddToClassList("ticket-bar");
             var time = UIX.Num(body, v.TimeText, false, "ticket-time");
-            t.tooltip = v.Number + " · " + v.Product.Name + " · " + v.Customer + " · " + Fmt.Money(v.Price) + (v.Stage != OrderStage.Queued ? " · " + OrderInfo.StageText(v.Stage) : "");
-            return new TicketUi { Order = o, Root = t, Bar = bar, Time = time };
+            time.style.color = TicketToneColor(tone);
+            t.tooltip = v.Number + " · " + v.Product.Name + " · " + v.Customer + " · " + Fmt.Money(v.Price) +
+                        " · nächster Schritt: " + Sim.OrderNextStep(o) + " (" + Sim.OrderNextPlace(o) + ")";
+            return new TicketUi { Order = o, Root = t, Bar = bar, Time = time, Tone = tone };
         }
 
         private void TickTickets(Sim sim)
@@ -467,12 +510,20 @@ namespace DropshippingGame.UI
             if (sim.StoryStage != "business") return;
             foreach (var ui in _ticketUis)
             {
+                if (ui == null || ui.Order == null || ui.Root == null) continue;
                 var v = OrderInfo.Get(sim, ui.Order);
-                UIX.SetBar(ui.Bar, v.Fill, OrderInfo.ToneColor(v.Tone));
+                int tone = sim.OrderTimeTone(ui.Order);
+                var col = TicketToneColor(tone);
+                UIX.SetBar(ui.Bar, v.Fill, col);
                 if (ui.Time.text != v.TimeText) ui.Time.text = v.TimeText;
-                bool late = v.Tone == "late";
+                if (ui.Tone != tone)
+                {
+                    ui.Tone = tone;
+                    ui.Time.style.color = col;
+                }
+                bool late = sim.OrderOverdue(ui.Order);
                 if (late != ui.Root.ClassListContains("late")) ui.Root.EnableInClassList("late", late);
-                if (late) ui.Root.style.opacity = 0.78f + 0.22f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 3.2f));
+                ui.Root.style.opacity = late ? 0.78f + 0.22f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 3.2f)) : 1f;
             }
         }
 

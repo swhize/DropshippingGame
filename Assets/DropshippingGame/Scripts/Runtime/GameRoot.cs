@@ -23,7 +23,7 @@ namespace DropshippingGame
         private WorldBuilder _world;
         private PlayerController _player;
         private Camera _menuCam;
-        private float _menuT, _lightAcc, _autosaveAcc;
+        private float _menuT, _lightAcc, _autosaveAcc, _pruneAcc;
         private bool _inMenu = true;
 
         /// <summary>Frame, in dem die letzte Sperre gelöst wurde (dieser Frame bleibt noch gesperrt).</summary>
@@ -440,6 +440,25 @@ namespace DropshippingGame
             _sim.WorldItems.Clear();
         }
 
+        private void PruneOrphanOrders()
+        {
+            if (_sim == null || !_sim.InGame || _sim.StoryStage != "business" || _sim.OrdersInWork.Count == 0) return;
+            try
+            {
+                var alive = new HashSet<int>();
+                if (_player != null)
+                    foreach (var it in _player.Carried())
+                        if (it != null && it.OrderId > 0) alive.Add(it.OrderId);
+                foreach (var d in DroppedItem.All)
+                    if (d != null && d.Data != null && d.Data.OrderId > 0) alive.Add(d.Data.OrderId);
+                _sim.PruneOrdersInWork(alive);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+
         private void CollectWorldState()
         {
             _sim.WorldItems.Clear();
@@ -501,6 +520,14 @@ namespace DropshippingGame
                 _world.Atmos.SetTimeOfDay(_sim.TimeMinutes / 60f);
             }
             if (_player.transform.position.y < -20f) _player.Teleport(_world.SpawnPoint(), _world.SpawnYaw());
+
+            // Verwaiste Bestellzettel (Artikel existiert nirgends mehr) aus dem HUD räumen.
+            _pruneAcc += udt;
+            if (_pruneAcc >= 1.5f)
+            {
+                _pruneAcc = 0f;
+                PruneOrphanOrders();
+            }
 
             // Automatisch speichern (alle 90 Sekunden, nur wenn gerade nichts offen ist).
             _autosaveAcc += udt;
