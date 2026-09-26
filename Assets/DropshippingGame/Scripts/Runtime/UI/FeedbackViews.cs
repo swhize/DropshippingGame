@@ -36,18 +36,29 @@ namespace DropshippingGame.UI
             UIX.Icon(top, "receipt", 24f, Ink);
             Center(UIX.Text(top, brand.ToUpperInvariant(), "receipt-brand", "receipt-text", "num-b"));
             Center(UIX.Text(top, "KASSENBON · TAG " + s.Day, "receipt-text", "num"));
-            Center(UIX.Text(top, UiFmt.Weekday(s.Day) + " · 20:00 Uhr", "receipt-text", "receipt-muted", "num"));
+            Center(UIX.Text(top, (string.IsNullOrEmpty(s.WeekdayName) ? UiFmt.Weekday(s.Day) : s.WeekdayName) + " · 20:00 Uhr", "receipt-text", "receipt-muted", "num"));
 
             var lines = new List<VisualElement>();
             int delay = 0;
             Sep(r, false);
             lines.Add(Line(r, "Pakete verschickt", s.Shipped, v => v.ToString(), null, ref delay));
+            if (s.Express > 0) lines.Add(Line(r, "  davon Express", s.Express, v => v.ToString(), "receipt-muted", ref delay));
+            if (s.Late > 0) lines.Add(Line(r, "  davon verspätet", s.Late, v => v.ToString(), "bad-text", ref delay));
             if (s.Lost > 0) lines.Add(Line(r, "Bestellungen verloren", s.Lost, v => v.ToString(), "bad-text", ref delay));
+            if (s.Expired > 0) lines.Add(Line(r, "  davon storniert", s.Expired, v => v.ToString(), "receipt-muted", ref delay));
+            if (s.Returns > 0) lines.Add(Line(r, "Retouren", s.Returns, v => v.ToString(), "bad-text", ref delay));
+            if (s.ReturnsRestocked + s.ReturnsDisposed > 0)
+                lines.Add(Line(r, "  B-Ware / entsorgt", s.ReturnsRestocked, v => v + " / " + s.ReturnsDisposed, "receipt-muted", ref delay));
+            if (s.ContractsDone > 0) lines.Add(Line(r, "Großaufträge erfüllt", s.ContractsDone, v => v.ToString(), "good-text", ref delay));
+            if (s.ContractsFailed > 0) lines.Add(Line(r, "Großaufträge verpasst", s.ContractsFailed, v => v.ToString(), "bad-text", ref delay));
+            if (s.ChallengesDone > 0) lines.Add(Line(r, "Wochenziele geschafft", s.ChallengesDone, v => v.ToString(), "good-text", ref delay));
             lines.Add(Line(r, "Erfahrung", s.XpGained, v => "+" + v + " XP", null, ref delay));
             Sep(r, false);
             lines.Add(Line(r, "Umsatz", s.Revenue, v => Fmt.Money(v), "good-text", ref delay));
             if (s.Stand > 0) lines.Add(Line(r, "  davon Verkaufsstand", s.Stand, v => Fmt.Money(v), "receipt-muted", ref delay));
+            if (s.ContractIncome > 0) lines.Add(Line(r, "  davon Großaufträge", s.ContractIncome, v => Fmt.Money(v), "receipt-muted", ref delay));
             if (s.IncomeOther != 0) lines.Add(Line(r, "Sonstige Einnahmen", s.IncomeOther, v => Fmt.Money(v), "good-text", ref delay));
+            if (s.ChallengeRewards > 0) lines.Add(Line(r, "  davon Wochenziele", s.ChallengeRewards, v => Fmt.Money(v), "receipt-muted", ref delay));
 
             void Cost(string label, int v)
             {
@@ -58,6 +69,8 @@ namespace DropshippingGame.UI
             Cost("Verpackung", s.Packaging);
             Cost("Marketing", s.Marketing);
             Cost("Sonstiges", s.Other);
+            Cost("Erstattungen (Retouren)", s.Refunds);
+            Cost("Vertragsstrafen", s.Penalties);
             Cost("Miete", s.Rent);
             Cost("Löhne", s.Wages);
             Cost("Strom Förderband", s.Upkeep);
@@ -107,6 +120,25 @@ namespace DropshippingGame.UI
                 float sc = Mathf.Lerp(1.6f, 1f, t);
                 stamp.style.scale = new Scale(new Vector3(sc, sc, 1f));
             }, () => Game.Sound("place", 0.05f, -4f), Ease.OutCubic, true, stamp, stampDelay);
+
+            if (s.WeekEnded)
+            {
+                Sep(r, false);
+                Plain(r, "Wochenbilanz", s.WeekChallengesDone + " von " + s.WeekChallengesTotal + " Zielen", s.WeekChallengesDone >= s.WeekChallengesTotal ? "good-text" : null);
+            }
+            if (s.Notes != null && s.Notes.Count > 0)
+            {
+                Sep(r, false);
+                int nn = 0;
+                foreach (var note in s.Notes)
+                {
+                    if (++nn > 6) break;
+                    var nl = UIX.Text(r, "· " + note, "receipt-text", "receipt-muted");
+                    nl.style.whiteSpace = WhiteSpace.Normal;
+                }
+            }
+            if (s.ReturnsIncoming > 0 || s.ContractsActive > 0)
+                Plain(r, "Offen", (s.ReturnsIncoming > 0 ? s.ReturnsIncoming + " Retouren unterwegs" : "") + (s.ReturnsIncoming > 0 && s.ContractsActive > 0 ? " · " : "") + (s.ContractsActive > 0 ? s.ContractsActive + " Aufträge laufen" : ""), null);
 
             Barcode(r, s.Day);
             Center(UIX.Text(r, "Danke für deinen Einkauf bei " + brand + "! Bis morgen.", "receipt-text", "receipt-muted")).style.marginTop = 6;

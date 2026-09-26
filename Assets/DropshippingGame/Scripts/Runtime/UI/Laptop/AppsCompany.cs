@@ -139,6 +139,9 @@ namespace DropshippingGame.UI
             }
             else if (s.Level >= GameData.MaxLevel) P(lc, "Maximales Level erreicht. Legende.", "");
 
+            var wc = Card(Root, "Wochenziele", WeeklyUi.Summary(s));
+            WeeklyUi.Build(wc, s, false, Rebuild);
+
             int done = 0;
             foreach (var g in GameData.Goals)
                 if (s.GoalsDone.Contains(g.Id)) done++;
