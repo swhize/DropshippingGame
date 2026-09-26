@@ -133,17 +133,25 @@ namespace DropshippingGame
 
         public int Wrap;
 
+        /// <summary>False, wenn Label oder TextMesh schon zerstört wurden (z. B. Welt neu gebaut).</summary>
+        public bool Alive => this != null && Mesh != null;
+
         public void SetText(string text)
         {
+            if (!Alive) return;
             Mesh.text = Wrap > 0 ? WordWrap(text, Wrap) : text;
         }
 
-        public string Text => Mesh.text;
+        public string Text => Alive ? Mesh.text : "";
 
-        public void SetColor(Color c) => Mesh.color = c;
+        public void SetColor(Color c)
+        {
+            if (Alive) Mesh.color = c;
+        }
 
         public void SetAlpha(float a)
         {
+            if (!Alive) return;
             var c = Mesh.color;
             c.a = a;
             Mesh.color = c;
@@ -178,6 +186,7 @@ namespace DropshippingGame
         private void LateUpdate()
         {
             if (!Billboard && MaxDistance <= 0f) return;
+            if (_renderer == null) return;
             if (_cam == null)
             {
                 var c = Camera.main;

@@ -70,7 +70,7 @@ namespace DropshippingGame
             if (_bubbleTime > 0f)
             {
                 _bubbleTime -= dt;
-                if (_bubbleTime <= 0f) _bubble.gameObject.SetActive(false);
+                if (_bubbleTime <= 0f && _bubble != null) _bubble.gameObject.SetActive(false);
             }
             bool moving = false;
             if (Waypoints.Count > 1)

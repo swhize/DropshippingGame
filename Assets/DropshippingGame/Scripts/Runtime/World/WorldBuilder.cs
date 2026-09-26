@@ -727,6 +727,7 @@ namespace DropshippingGame
         private void RefreshBrand()
         {
             var sim = Game.Sim;
+            _brandLabels.RemoveAll(x => x == null);
             foreach (var l in _brandLabels)
             {
                 l.SetText(sim.BrandName.ToUpperInvariant());
@@ -740,7 +741,7 @@ namespace DropshippingGame
         private void RefreshBillboard()
         {
             var sim = Game.Sim;
-            if (sim == null || _boardTitle == null) return;
+            if (sim == null || _boardTitle == null || _boardSub == null) return;
             Color brand = sim.BrandColor.ToColor();
             if (_boardPanel != null) _boardPanel.sharedMaterial = Mats.Std(brand, 0.6f);
             float lum = brand.r * 0.3f + brand.g * 0.59f + brand.b * 0.11f;
