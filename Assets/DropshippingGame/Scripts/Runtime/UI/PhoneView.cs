@@ -719,10 +719,10 @@ namespace DropshippingGame.UI
             }
             if (shown == 0)
             {
-                UIX.Empty(_content, "box", "Noch nichts im Sortiment", "Kaufe am Laptop unter „Einkauf“ deine erste Ware – danach geht's hier mit einem Tipp.");
+                UIX.Empty(_content, "box", "Noch nichts im Sortiment", "Kaufe am Laptop bei „AllesExpress“ deine erste Ware – danach geht's hier mit einem Tipp.");
                 return;
             }
-            Hint("screen", "Andere Lieferanten, Mengen & neue Produkte: Laptop am Schreibtisch » Einkauf.");
+            Hint("screen", "Andere Lieferanten, Mengen & neue Produkte: Laptop am Schreibtisch » AllesExpress.");
         }
 
         private void BuildStatus(Sim sim)

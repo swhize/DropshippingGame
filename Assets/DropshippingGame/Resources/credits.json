@@ -37,6 +37,42 @@
    "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_jetbrains.txt"
   },
   {
+   "id": "font_comicneue",
+   "category": "font",
+   "name": "Comic Neue 2.51",
+   "author": "Craig Rozynski / Hrant Papazian",
+   "license": "SIL OFL 1.1",
+   "licenseUrl": "https://openfontlicense.org/",
+   "url": "https://github.com/crozynski/comicneue (via github.com/google/fonts ofl/comicneue)",
+   "files": "Fonts/Web-Comic-Regular.ttf, Fonts/Web-Comic-Bold.ttf",
+   "modifications": "umbenannt",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_comicneue.txt"
+  },
+  {
+   "id": "font_fredoka",
+   "category": "font",
+   "name": "Fredoka (variable, 2021)",
+   "author": "Milena Brandão / Hafontia",
+   "license": "SIL OFL 1.1",
+   "licenseUrl": "https://openfontlicense.org/",
+   "url": "https://github.com/hafontia/Fredoka-One (via github.com/google/fonts ofl/fredoka)",
+   "files": "Fonts/Web-Round-Regular.ttf (wght 400), Fonts/Web-Round-Bold.ttf (wght 600)",
+   "modifications": "statische Instanzen aus der variablen Schrift erzeugt (fontTools instancer), umbenannt",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_fredoka.txt"
+  },
+  {
+   "id": "font_bangers",
+   "category": "font",
+   "name": "Bangers 1.0",
+   "author": "Vernon Adams",
+   "license": "SIL OFL 1.1",
+   "licenseUrl": "https://openfontlicense.org/",
+   "url": "https://github.com/googlefonts/bangers (via github.com/google/fonts ofl/bangers)",
+   "files": "Fonts/Web-Comic-Title.ttf",
+   "modifications": "umbenannt",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bangers.txt"
+  },
+  {
    "id": "kenney_interface",
    "category": "sfx",
    "name": "Interface Sounds",
