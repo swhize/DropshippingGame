@@ -47,6 +47,9 @@ namespace DropshippingGame.UI
 
         public static readonly List<AppDef> Apps = CreateApps();
 
+        /// <summary>Markierung für „Markt & Trends“ nach einem Phasenwechsel (GameRoot setzt sie, Öffnen des Trendradars löscht sie).</summary>
+        public static string TrendBadge = "";
+
         /// <summary>Alte/kurze IDs → "app" oder "app/reiter".</summary>
         public static readonly Dictionary<string, string> Aliases = new Dictionary<string, string>
         {
@@ -55,7 +58,8 @@ namespace DropshippingGame.UI
             { "trends", "market/trends" }, { "analysis", "market/analysis" },
             { "bank", "finance/bank" }, { "stats", "finance/stats" }, { "analytics", "finance/stats" }, { "trading", "finance/trading" },
             { "staff", "company/team" }, { "team", "company/team" }, { "build", "company/build" }, { "goals", "company/goals" },
-            { "lifestyle", "company/lifestyle" }, { "skills", "company/skills" },
+            { "lifestyle", "company/lifestyle" }, { "skills", "company/skills" }, { "weekly", "company/goals" }, { "challenges", "company/goals" },
+            { "contracts", "orders/offers" }, { "b2b", "orders/offers" }, { "retouren", "returns" },
         };
 
         private static List<AppDef> CreateApps()
@@ -79,8 +83,10 @@ namespace DropshippingGame.UI
                 },
                 new AppDef
                 {
-                    Id = "returns", Title = "Retouren", Icon = "return", Group = "BETRIEB", Visible = () => ShowUpcoming,
-                    Make = () => new AppSoon("Retouren", "return", "Zurückgeschickte Pakete landen bald am Retourenplatz: als B-Ware einlagern oder entsorgen."),
+                    Id = "returns", Title = "Retouren", Icon = "return", Group = "BETRIEB",
+                    Visible = () => ShowUpcoming || (Game.Sim != null && (Game.Sim.TotalReturns > 0 || Game.Sim.ReturnsIncoming.Count > 0 || Game.Sim.ReturnsAtDock > 0)),
+                    Badge = () => Game.Sim != null && Game.Sim.ReturnsAtDock > 0 ? Game.Sim.ReturnsAtDock.ToString() : "",
+                    Make = () => new AppReturns(),
                 },
                 new AppDef
                 {
@@ -100,20 +106,32 @@ namespace DropshippingGame.UI
                 new AppDef
                 {
                     Id = "market", Title = "Markt & Trends", Icon = "trend", Group = "VERKAUF",
+                    Badge = () => TrendBadge,
                     Tabs = new List<TabDef>
                     {
                         new TabDef { Id = "analysis", Title = "Marktanalyse", Icon = "store", Make = () => new AppMarket() },
                         new TabDef
                         {
-                            Id = "trends", Title = "Trendradar", Icon = "fire", Visible = () => ShowUpcoming,
-                            Make = () => new AppSoon("Trendradar", "fire", "Hype-Werte, Zyklen und Prognosen für jedes Produkt – bald hier."),
+                            Id = "trends", Title = "Trendradar", Icon = "fire", Badge = () => TrendBadge,
+                            Make = () => new AppTrends(),
                         },
                     },
                 },
                 new AppDef
                 {
-                    Id = "orders", Title = "Aufträge", Icon = "pallet", Group = "VERKAUF", Visible = () => ShowUpcoming,
-                    Make = () => new AppSoon("Großaufträge", "pallet", "Firmen bestellen palettenweise. Angebote annehmen, am Palettenplatz erfüllen, Frist einhalten."),
+                    Id = "orders", Title = "Aufträge", Icon = "pallet", Group = "VERKAUF",
+                    Visible = () => ShowUpcoming || (Game.Sim != null && Game.Sim.ContractsUnlocked),
+                    Badge = () => Game.Sim != null && Game.Sim.ContractOffers().Count > 0 ? Game.Sim.ContractOffers().Count.ToString() : "",
+                    Tabs = new List<TabDef>
+                    {
+                        new TabDef
+                        {
+                            Id = "offers", Title = "Angebote", Icon = "inbox", Make = () => new AppContracts("offers"),
+                            Badge = () => Game.Sim != null && Game.Sim.ContractOffers().Count > 0 ? Game.Sim.ContractOffers().Count.ToString() : "",
+                        },
+                        new TabDef { Id = "active", Title = "Laufend", Icon = "pallet", Make = () => new AppContracts("active") },
+                        new TabDef { Id = "history", Title = "Verlauf", Icon = "list", Make = () => new AppContracts("history") },
+                    },
                 },
                 new AppDef
                 {
@@ -128,13 +146,14 @@ namespace DropshippingGame.UI
                 new AppDef
                 {
                     Id = "company", Title = "Firma", Icon = "building", Group = "FIRMA",
+                    Badge = () => Game.Sim != null && Game.Sim.SkillPointsAvailable() > 0 ? Game.Sim.SkillPointsAvailable().ToString() : "",
                     Tabs = new List<TabDef>
                     {
                         new TabDef { Id = "team", Title = "Team", Icon = "users", Make = () => new AppStaff(), Locked = () => LockedReason("staff") },
                         new TabDef
                         {
-                            Id = "skills", Title = "Skills", Icon = "sparkle", Visible = () => ShowUpcoming,
-                            Make = () => new AppSoon("Hustle-Skills", "sparkle", "Skillpunkte in Logistik, Vertrieb und Marketing – bald hier."),
+                            Id = "skills", Title = "Skills", Icon = "sparkle", Make = () => new AppSkills(),
+                            Badge = () => Game.Sim != null && Game.Sim.SkillPointsAvailable() > 0 ? Game.Sim.SkillPointsAvailable().ToString() : "",
                         },
                         new TabDef { Id = "build", Title = "Ausbau", Icon = "building", Make = () => new AppBuild() },
                         new TabDef { Id = "goals", Title = "Ziele", Icon = "trophy", Make = () => new AppGoals() },
@@ -539,6 +558,7 @@ namespace DropshippingGame.UI
             _current = def.Id;
             _currentTab = tabDef != null ? tabDef.Id : "";
             _dirty = false;
+            if (_current == "market" && _currentTab == "trends") TrendBadge = "";
             if (!silent) Game.Sound("click", 0.05f, -6f);
             try
             {

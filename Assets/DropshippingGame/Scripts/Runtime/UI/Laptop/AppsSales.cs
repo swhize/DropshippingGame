@@ -65,7 +65,13 @@ namespace DropshippingGame.UI
             var v = UIX.Col(row, 4f);
             v.style.width = 210;
             v.style.flexShrink = 0;
-            UIX.Text(v, p.Name, "h3");
+            var nameRow = UIX.Row(v, 6f);
+            UIX.Text(nameRow, p.Name, "h3");
+            var tph = s.Trends.Phase(p.Id);
+            if (tph == TrendPhase.Rising || tph == TrendPhase.Peak)
+                UIX.Icon(nameRow, "fire", 15f, Theme.LaptopAccent).tooltip = "Trend: " + s.TrendLabel(p.Id) + " ×" + Fmt.Dec(s.TrendMult(p.Id), 1);
+            else if (tph == TrendPhase.Falling || tph == TrendPhase.Dead)
+                UIX.Icon(nameRow, "trend_down", 15f, Theme.LaptopBad).tooltip = "Trend: " + s.TrendLabel(p.Id);
             if (!s.ProductAvailable(p.Id))
             {
                 UIX.Text(v, !s.ProductUnlocked(p.Id) ? "Ab Firmenlevel " + p.UnlockLevel : "Braucht die Lagerhalle", "small");
@@ -114,6 +120,17 @@ namespace DropshippingGame.UI
     public sealed class AppMarketing : LaptopApp
     {
         private TikTokPhone _phone;
+        private static string _topic = "";
+
+        private void Pick(VisualElement parent, string id, string label)
+        {
+            var b = Btn(parent, label, () =>
+            {
+                _topic = id;
+                Rebuild();
+            }, (_topic ?? "") == id ? "accent" : "ghost");
+            b.AddToClassList("btn-sm");
+        }
 
         public override string Lead => "Mehr Reichweite = mehr Bestellungen. Kampagnen wirken zeitlich begrenzt, die Bekanntheit deiner Marke bleibt teilweise.";
 
@@ -148,11 +165,13 @@ namespace DropshippingGame.UI
                 UIX.Round(UIX.Swatch(ch, Theme.LaptopAccent, 44f, t.Icon), 14f);
                 var v = Grow(UIX.Col(ch, 2f));
                 UIX.Text(v, t.Name, "h3");
-                UIX.Text(v, "×" + Fmt.Dec(t.Mult, 1) + " Nachfrage · " + UiFmt.Duration(t.Minutes) + " · +Bekanntheit", "small");
+                string dur = t.Minutes >= 1440f ? "heute + morgen" : (t.Minutes >= 720f ? "Tageskampagne bis 20 Uhr" : UiFmt.Duration(t.Minutes));
+                UIX.Text(v, "×" + Fmt.Dec(t.Mult, 1) + " Nachfrage · " + dur + " · +Bekanntheit", "small");
                 bool locked = s.Level < t.Level;
                 int idx = i;
-                string txt = locked ? LockText(t.Level) : (running ? "Läuft …" : "Starten · " + Fmt.Money(t.Cost));
-                Btn(ch, txt, () => S.StartAdCampaign(idx), locked || running ? "" : "accent", locked || running || s.Money < t.Cost, locked ? "lock" : "play");
+                int cost = s.AdCost(i);
+                string txt = locked ? LockText(t.Level) : (running ? "Läuft …" : "Starten · " + Fmt.Money(cost));
+                Btn(ch, txt, () => S.StartAdCampaign(idx), locked || running ? "" : "accent", locked || running || s.Money < cost, locked ? "lock" : "play");
             }
 
             var right = UIX.Col(h, 10f);
@@ -164,6 +183,11 @@ namespace DropshippingGame.UI
                 var lc = UIX.Card(right);
                 UIX.Empty(lc, "lock", "Ab Level " + GameData.TikTokLevel, "Dann kannst du hier virale Videos drehen.");
             }
+            else if (s.TikToksLeftToday() <= 0)
+            {
+                var lc = UIX.Card(right);
+                UIX.Empty(lc, "calendar", "Tageslimit erreicht", GameData.TikTokPerDay + " TikToks pro Tag – morgen geht's weiter.");
+            }
             else if (!s.TikTokAvailable())
             {
                 var lc = UIX.Card(right);
@@ -172,9 +196,17 @@ namespace DropshippingGame.UI
             }
             else
             {
+                var pick = UIX.Row(right, 6f);
+                pick.style.flexWrap = Wrap.Wrap;
+                P(pick, "Thema:", "small");
+                Pick(pick, "", "Marke");
+                foreach (var p in GameData.Products)
+                    if (s.IsListed(p.Id)) Pick(pick, p.Id, p.Short + (s.TrendMult(p.Id) >= 1.3f ? " (Hype)" : ""));
+                if (!string.IsNullOrEmpty(_topic) && !s.IsListed(_topic)) _topic = "";
                 _phone = new TikTokPhone();
-                _phone.Posted += score => S.TriggerTikTok(score);
+                _phone.Posted += score => S.TriggerTikTok(score, false, _topic ?? "");
                 right.Add(_phone);
+                P(right, "Heute noch " + s.TikToksLeftToday() + " von " + GameData.TikTokPerDay + " TikToks. Ein Produkt mit Hype wirkt stärker.", "small");
                 P(right, "Starte die Aufnahme und stopp die Markierung im grünen Bereich. Je genauer, desto viraler.", "small");
             }
         }

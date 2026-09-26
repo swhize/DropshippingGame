@@ -154,6 +154,10 @@ namespace DropshippingGame.UI
             var iv = Grow(UIX.Col(ih, 2f));
             UIX.Text(iv, pr.Name, "h2");
             P(iv, "Einkauf ab " + Fmt.Eur(pr.UnitCost) + "/Stk · Marktpreis ~" + Fmt.Money(s.Market.MarketPrice(pr.Id)) + " · Karton " + GameData.SizeName(pr.Size));
+            var tph = s.Trends.Phase(pr.Id);
+            if (tph != TrendPhase.Normal) UIX.Chip(iv, "Trend: " + s.TrendLabel(pr.Id) + " ×" + Fmt.Dec(s.TrendMult(pr.Id), 1), tph == TrendPhase.Falling || tph == TrendPhase.Dead ? "trend_down" : "fire",
+                tph == TrendPhase.Falling || tph == TrendPhase.Dead ? Theme.LaptopBad : Theme.LaptopAccent).style.alignSelf = Align.FlexStart;
+            P(iv, "Erwartete Retourenquote: " + UiFmt.Percent(s.ExpectedReturnRate(pr.Id)) + (s.ContractUnitsNeeded(pr.Id) > 0 ? " · " + s.ContractUnitsNeeded(pr.Id) + " Stk für Großaufträge" : ""), "small");
             var sv = UIX.Col(ih, 2f);
             sv.style.alignItems = Align.FlexEnd;
             UIX.Text(sv, "Lager: " + s.StockQty(pr.Id) + " Stück (" + GameData.QualityName(s.StockQuality(pr.Id)) + ")", "h3");
@@ -188,12 +192,13 @@ namespace DropshippingGame.UI
             {
                 var bo = GameData.BulkOptions[bi];
                 int cost = s.BulkCost(_product, bi, _supplier);
-                bool avail = s.BulkAvailable(bi);
+                bool quota = _supplier != 2 || s.PremiumQuotaLeft(pr.Id);
+                bool avail = s.BulkAvailable(bi) && quota;
                 int idx = bi;
                 int prodIdx = _product, supIdx = _supplier;
                 var t = Grow(Tile(qr, false, !avail || s.Money < cost, () =>
                 {
-                    if (S.BuyBulk(prodIdx, idx, supIdx)) ReorderMemory.Remember(GameData.Products[prodIdx].Id, supIdx, idx);
+                    S.BuyBulk(prodIdx, idx, supIdx);
                 }, -1f, "qty-tile"));
                 UIX.Text(t, bo.Quantity + " Stk", "qty-value", "display");
                 UIX.Text(t, bo.Name, "tile-sub");
@@ -203,6 +208,7 @@ namespace DropshippingGame.UI
                     UIX.Text(t, Fmt.Eur(cost / (float)bo.Quantity) + "/Stk" + (bo.Discount < 1f ? " · −" + Mathf.RoundToInt((1f - bo.Discount) * 100f) + " %" : ""), "tile-sub");
                     if (s.Money < cost) Stamp(t, "ZU TEUER");
                 }
+                else if (!quota) UIX.Text(t, "Premium: heute schon bestellt", "tile-sub");
                 else UIX.Text(t, s.Level < bo.Level ? LockText(bo.Level) : "Braucht Lagerhalle", "tile-sub");
                 UIX.PassThrough(t);
             }

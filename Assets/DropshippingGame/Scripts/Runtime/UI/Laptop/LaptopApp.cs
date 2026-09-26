@@ -270,8 +270,8 @@ namespace DropshippingGame.UI
                     var item = UIX.Row(feed, 10f, "feed-item");
                     UIX.Swatch(item, v.Product.Color.ToColor(), 34f, v.Product.Icon);
                     var mid = Grow(UIX.Col(item, 0f));
-                    UIX.Ellipsis(UIX.Text(mid, v.Product.Name, "feed-title"));
-                    var sub = UIX.Text(mid, v.Tone == "late" ? "überfällig · wartet " + UiFmt.Duration(v.Age) : "wartet " + UiFmt.Duration(v.Age), "feed-sub");
+                    UIX.Ellipsis(UIX.Text(mid, (v.Express ? "EXPRESS · " : "") + v.Number + " · " + v.Product.Name, "feed-title"));
+                    var sub = UIX.Text(mid, v.Customer + " · " + v.TimeText, "feed-sub");
                     if (v.Tone == "late") sub.AddToClassList("bad-text");
                     UIX.Num(item, Fmt.Money(v.Price), true);
                 }
@@ -304,7 +304,7 @@ namespace DropshippingGame.UI
             string title = obj.Title ?? "";
             if (title.StartsWith("Ziel: ")) title = title.Substring(6);
             UIX.Text(goal, title, "h2");
-            P(goal, (obj.Text ?? "").Replace("oben links", "oben rechts"), "");
+            P(goal, obj.Text ?? "", "");
             if (obj.Progress >= 0f)
             {
                 var gr = UIX.Row(goal, 10f);
@@ -318,9 +318,38 @@ namespace DropshippingGame.UI
             Btn(gb, "Alle Ziele", () => Go("company/goals"), "ghost", false, "trophy");
 
             // ---- Reihe 3: Aufgaben --------------------------------------------------------------
-            var todo = Card(Root, "Zu erledigen");
-            int count = BuildTodos(todo);
-            if (count == 0) UIX.Empty(todo, "check_circle", "Alles im Griff", "Zeit für Marketing – oder einen Kaffee.");
+            var hints = Advisor.Evaluate(s);
+            var todo = Card(Root, "Warum läuft's nicht?", hints.Count > 0 ? "Engpass-Assistent" : null);
+            if (hints.Count == 0) UIX.Empty(todo, "check_circle", "Alles im Griff", "Kein Engpass in Sicht. Zeit für Marketing – oder einen Kaffee.");
+            var list = UIX.Col(todo, 0f);
+            int shown = 0;
+            foreach (var h in hints)
+            {
+                if (++shown > 7) break;
+                VisualElement r;
+                if (h.Laptop != null)
+                {
+                    string target = h.Laptop;
+                    r = UIX.PressRow(list, 10f, () => Go(target), "todo-item");
+                }
+                else r = UIX.Row(list, 10f, "todo-item");
+                if (shown == 1 && h.Severity >= 1) r.AddToClassList("todo-top");
+                var dot = UIX.Div(r, "pending-dot");
+                dot.EnableInClassList("urgent", h.Severity >= 2);
+                if (h.Severity == 0) dot.style.opacity = 0.35f;
+                UIX.Icon(r, h.Icon, 16f, Advisor.SeverityColor(h.Severity));
+                var t = UIX.Text(r, h.Text, "todo-text");
+                t.style.whiteSpace = WhiteSpace.Normal;
+                t.style.flexShrink = 1;
+                if (h.Laptop != null)
+                {
+                    UIX.Spacer(r);
+                    if (!string.IsNullOrEmpty(h.Action)) UIX.Text(r, h.Action, "small");
+                    UIX.Icon(r, "chevron", 12f);
+                }
+                if (r is Button) UIX.PassThrough(r);
+            }
+            if (hints.Count > 7) P(todo, "+" + (hints.Count - 7) + " weitere Hinweise", "small");
 
             var q = UIX.Row(Root, 8f);
             q.style.flexWrap = Wrap.Wrap;
@@ -337,61 +366,6 @@ namespace DropshippingGame.UI
             UIX.Text(m, key, "mini-key");
             UIX.Text(m, value, "mini-value");
             extra?.Invoke(m);
-        }
-
-        private int BuildTodos(VisualElement card)
-        {
-            var s = S;
-            int n = 0;
-            var list = UIX.Col(card, 0f);
-
-            void Todo(string icon, string text, string app, bool urgent = false)
-            {
-                n++;
-                VisualElement r;
-                if (app != null)
-                {
-                    string target = app;
-                    r = UIX.PressRow(list, 10f, () => Go(target), "todo-item");
-                }
-                else r = UIX.Row(list, 10f, "todo-item");
-                var dot = UIX.Div(r, "pending-dot");
-                dot.EnableInClassList("urgent", urgent);
-                UIX.Icon(r, icon, 16f);
-                UIX.Text(r, text, "todo-text");
-                if (app != null) UIX.Icon(r, "chevron", 12f);
-                if (r is Button) UIX.PassThrough(r);
-            }
-
-            int pending = s.Events.PendingCount();
-            if (pending > 0) Todo("mail", pending == 1 ? "1 Entscheidung wartet im Postfach" : pending + " Entscheidungen warten im Postfach", "mail", true);
-            if (s.DockCrates.Count > 0) Todo("box", s.DockCrates.Count + " Kiste(n) am Wareneingang einräumen", null);
-            if (s.PackedPackages.Count > 0) Todo("truck", s.PackedPackages.Count + " Paket(e) etikettieren und verschicken", null);
-            if (s.TravelingDeliveries.Count > 0)
-            {
-                var d = s.TravelingDeliveries[0];
-                Todo("clock", "Lieferung unterwegs: " + d.Quantity + "× " + GameData.Product(d.Product).Name + " in " + s.EtaText(d), "buy/ware");
-            }
-            foreach (var p in GameData.Products)
-            {
-                if (!s.IsListed(p.Id)) continue;
-                int stock = s.StockQty(p.Id) + s.TravelingCountFor(p.Id) + s.DockCountFor(p.Id);
-                if (stock < 5) Todo("warning", p.Name + ": fast ausverkauft – nachbestellen", "buy/ware", stock == 0);
-            }
-            int pack = s.Packaging[0] + s.Packaging[1] + s.Packaging[2] + s.FlatTotal();
-            if (pack < 6) Todo("package", "Kartons werden knapp (" + pack + " übrig)", "buy/pack", pack == 0);
-            bool anyListed = false;
-            foreach (var p in GameData.Products)
-            {
-                if (s.IsListed(p.Id)) anyListed = true;
-                else if (s.ProductAvailable(p.Id) && s.StockQty(p.Id) > 0) Todo("globe", p.Name + " liegt im Lager, ist aber nicht online", "shop/webshop");
-            }
-            if (!anyListed && s.StoryStage == "business") Todo("globe", "Kein Produkt online – stell etwas in den Webshop", "shop/webshop", true);
-            if (s.TikTokAvailable()) Todo("music", "Ein neues TikTok ist möglich", "shop/marketing");
-            if (!s.BrandNamed) Todo("tag", "Gib deiner Marke einen Namen", "shop/brand");
-            if (s.HasUpgrade("stand") && s.StandTotal() == 0) Todo("store", "Der Verkaufsstand ist leer – stell eine Kiste drauf", null);
-            if (s.Money < 0) Todo("bank", "Konto im Minus – ab " + Fmt.Money(GameData.BankruptLimit) + " droht die Pleite", "finance/bank", true);
-            return n;
         }
     }
 }
