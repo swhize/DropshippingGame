@@ -22,18 +22,30 @@ namespace DropshippingGame
                 case ItemKind.Package:
                 case ItemKind.Labeled: return PackageSizes[SizeIndex(data)];
                 case ItemKind.Plate: return new Vector3(0.3f, 0.12f, 0.3f);
+                case ItemKind.Return: return PackageSizes[ProductSizeIndex(data)];
             }
             return new Vector3(0.2f, 0.2f, 0.2f);
         }
 
-        private static int SizeIndex(ItemData data) => string.IsNullOrEmpty(data.Product) ? 1 : GameData.Product(data.Product).Size;
+        /// <summary>Kartongröße eines Pakets: tatsächlich benutzter Karton (v3.0: evtl. größer als passend).</summary>
+        private static int SizeIndex(ItemData data)
+        {
+            if (data == null || string.IsNullOrEmpty(data.Product) || !GameData.IsProduct(data.Product)) return 1;
+            return Mathf.Clamp(data.EffectivePackSize, 0, PackageSizes.Length - 1);
+        }
+
+        private static int ProductSizeIndex(ItemData data)
+        {
+            if (data == null || string.IsNullOrEmpty(data.Product) || !GameData.IsProduct(data.Product)) return 1;
+            return Mathf.Clamp(GameData.Product(data.Product).Size, 0, PackageSizes.Length - 1);
+        }
 
         public static GameObject Build(Transform parent, ItemData data, bool showLabel = true)
         {
             var root = new GameObject(data.Kind.ToString());
             root.transform.SetParent(parent, false);
             var t = root.transform;
-            ProductDef product = string.IsNullOrEmpty(data.Product) ? null : GameData.Product(data.Product);
+            ProductDef product = string.IsNullOrEmpty(data.Product) || !GameData.IsProduct(data.Product) ? null : GameData.Product(data.Product);
             switch (data.Kind)
             {
                 case ItemKind.Crate:
@@ -71,7 +83,11 @@ namespace DropshippingGame
                     if (data.Kind == ItemKind.Labeled)
                     {
                         float lw = s.x * 0.5f, ld = s.z * 0.5f;
-                        Props.Box(t, new Vector3(lw, 0.004f, ld), Mats.Std(Color.white, 0.6f), new Vector3(-s.x * 0.12f, s.y / 2f + 0.006f, s.z * 0.12f), default, 0f, false);
+                        var labelCol = data.Express ? new Color(1f, 0.82f, 0.8f) : Color.white;
+                        if (data.Express)
+                            Props.Box(t, new Vector3(lw, 0.005f, ld * 0.22f), Mats.Std(new Color(0.9f, 0.15f, 0.12f), 0.5f),
+                                new Vector3(-s.x * 0.12f, s.y / 2f + 0.009f, s.z * 0.12f - ld * 0.36f), default, 0f, false);
+                        Props.Box(t, new Vector3(lw, 0.004f, ld), Mats.Std(labelCol, 0.6f), new Vector3(-s.x * 0.12f, s.y / 2f + 0.006f, s.z * 0.12f), default, 0f, false);
                         for (int i = 0; i < 7; i++)
                         {
                             float bw = 0.004f + (i % 3) * 0.003f;
@@ -79,6 +95,27 @@ namespace DropshippingGame
                                 new Vector3(-s.x * 0.12f - lw * 0.35f + i * lw * 0.11f, s.y / 2f + 0.008f, s.z * 0.12f + ld * 0.18f), default, 0f, false);
                         }
                     }
+                    break;
+                }
+                case ItemKind.Return:
+                {
+                    // Ramponierter Karton: leicht verzogen, kreuz und quer zugeklebt, roter RETOURE-Aufkleber.
+                    var s = PackageSizes[ProductSizeIndex(data)];
+                    var dented = new Color(0.62f, 0.5f, 0.34f);
+                    Props.Box(t, s, Mats.Std(dented, 0.85f), Vector3.zero, new Vector3(2.5f, 0, -1.8f), 0.02f);
+                    var tape = Mats.Std(new Color(0.78f, 0.7f, 0.5f), 0.3f);
+                    Props.Box(t, new Vector3(s.x + 0.01f, 0.006f, s.z * 0.2f), tape, new Vector3(0, s.y / 2f + 0.004f, 0), new Vector3(0, 28, 0), 0f, false);
+                    Props.Box(t, new Vector3(s.x + 0.01f, 0.006f, s.z * 0.2f), tape, new Vector3(0, s.y / 2f + 0.006f, 0), new Vector3(0, -34, 0), 0f, false);
+                    Props.Box(t, new Vector3(s.x * 0.2f, s.y + 0.01f, s.z + 0.01f), tape, new Vector3(s.x * 0.18f, 0, 0), default, 0f, false);
+                    // Knick an einer Ecke
+                    Props.Box(t, new Vector3(s.x * 0.3f, 0.01f, s.z * 0.3f), Mats.Std(dented.Darkened(0.25f), 0.9f),
+                        new Vector3(-s.x * 0.36f, s.y / 2f + 0.003f, -s.z * 0.36f), new Vector3(-18, 0, 12), 0f, false);
+                    var red = Mats.Std(StationKit.ReturnRed, 0.45f);
+                    Props.Box(t, new Vector3(s.x * 0.55f, s.y * 0.3f, 0.005f), red, new Vector3(-s.x * 0.12f, 0, s.z / 2f + 0.004f), default, 0f, false);
+                    Props.Box(t, new Vector3(s.x * 0.5f, 0.005f, s.z * 0.35f), red, new Vector3(-s.x * 0.15f, s.y / 2f + 0.008f, s.z * 0.18f), default, 0f, false);
+                    Label3D.Create(t, "RETOURE", Mathf.Clamp(s.x * 70f, 18f, 32f), Color.white, new Vector3(-s.x * 0.12f, 0, s.z / 2f + 0.008f), false);
+                    if (showLabel && product != null)
+                        Label3D.Create(t, "Retoure: " + product.Short, 32f, new Color(1f, 0.55f, 0.5f), new Vector3(0, s.y / 2f + 0.14f, 0), true, 8f);
                     break;
                 }
                 case ItemKind.Plate:

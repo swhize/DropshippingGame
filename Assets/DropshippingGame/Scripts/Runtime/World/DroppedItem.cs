@@ -47,18 +47,33 @@ namespace DropshippingGame
 
         private void OnDestroy() => All.Remove(this);
 
+        /// <summary>Aus der Welt gefallen: Gegenstand ist verloren (Bestellzettel wird storniert).</summary>
+        private void FixedUpdate()
+        {
+            if (transform.position.y > -25f) return;
+            if (Game.Sim != null && Data != null) Game.Sim.DiscardItem(Data);
+            Data = null;
+            Destroy(gameObject);
+        }
+
         public string Title => Data.Describe();
 
-        public string Prompt(PlayerController player) => player.Held != null ? "Hände voll" : "Aufheben: " + Data.Describe();
+        public string Prompt(PlayerController player)
+        {
+            if (player.Held == null) return "Aufheben: " + Data.Describe();
+            if (player.CanStack(Data)) return "Auf den Stapel legen (" + (player.CarryCount + 1) + "/" + player.PackageCapacity + ")";
+            return "Hände voll";
+        }
 
         public void Interact(PlayerController player)
         {
-            if (player.Held != null)
+            if (player.Held != null && !player.CanStack(Data))
             {
                 Game.Notify("Hände sind schon voll.", "info");
                 return;
             }
-            player.Hold(Data);
+            if (player.Held != null) player.Push(Data);
+            else player.Hold(Data);
             Game.Sound("pickup");
             Destroy(gameObject);
         }
