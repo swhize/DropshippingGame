@@ -109,8 +109,9 @@ namespace DropshippingGame
         /// Gezielt zu einem Punkt laufen und dort stehen bleiben (für gesteuerte Figuren wie Festbesucher).
         /// Ersetzt die Wegpunkte; die Figur wartet am Ziel, bis sie ein neues bekommt.
         /// </summary>
-        public void GoTo(Vector3 localTarget)
+        public void HoldAt(Vector3 localTarget)
         {
+            ClearDestination();
             Waypoints.Clear();
             Waypoints.Add(localTarget);
             Waypoints.Add(localTarget);

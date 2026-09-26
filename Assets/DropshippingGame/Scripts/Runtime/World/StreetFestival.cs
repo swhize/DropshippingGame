@@ -425,7 +425,7 @@ namespace DropshippingGame
                 v.Slot = i;
                 v.State = 0;
                 v.Target = SlotPos(i);
-                v.Npc.GoTo(v.Target);
+                v.Npc.HoldAt(v.Target);
                 return true;
             }
             return false;
@@ -442,7 +442,7 @@ namespace DropshippingGame
             v.State = 3;
             v.Timer = Rand(2f, 4.5f);
             v.Target = new Vector3(StallPos.x + Rand(-7f, 7f), 0, Rand(-2.8f, 2.6f));
-            v.Npc.GoTo(v.Target);
+            v.Npc.HoldAt(v.Target);
         }
 
         private void Leave(Visitor v)
@@ -451,7 +451,7 @@ namespace DropshippingGame
             v.State = 2;
             bool west = v.Npc.transform.localPosition.x < StallPos.x ? _rng.NextDouble() < 0.75 : _rng.NextDouble() < 0.25;
             v.Target = new Vector3(west ? -44f : 40f, 0, Rand(-3f, 3f));
-            v.Npc.GoTo(v.Target);
+            v.Npc.HoldAt(v.Target);
         }
 
         private void Remove(int i)
