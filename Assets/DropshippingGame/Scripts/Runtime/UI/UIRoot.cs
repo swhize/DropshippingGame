@@ -26,6 +26,7 @@ namespace DropshippingGame.UI
         public PauseView Pause;
         public MainMenuView Menu;
         public FaderView Fader;
+        public AdminPanel Admin;
 
         private UIDocument _doc;
         private PanelSettings _panelSettings;
@@ -110,6 +111,7 @@ namespace DropshippingGame.UI
             var bigmodal = Layer("bigmodal");
             var pause = Layer("pause");
             var menu = Layer("menu");
+            var admin = Layer("admin");
             var toast = Layer("toast");
             var fader = Layer("fader");
 
@@ -122,6 +124,7 @@ namespace DropshippingGame.UI
             Pause = new PauseView(pause);
             Menu = new MainMenuView(menu);
             Fader = new FaderView(fader);
+            Admin = new AdminPanel(admin);
         }
 
         private VisualElement Layer(string name)
@@ -142,6 +145,7 @@ namespace DropshippingGame.UI
             try { Laptop?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
             try { Dialogue?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
             try { Menu?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
+            try { Admin?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
             try { UpdateFocus(); } catch (Exception e) { Debug.LogException(e); }
         }
 
@@ -149,6 +153,7 @@ namespace DropshippingGame.UI
         public VisualElement TopInteractive()
         {
             if (Fader != null && Fader.Busy) return null;
+            if (Admin != null && Admin.IsOpen) return Admin.Panel;
             if (Menu != null && Menu.IsOpen) return Menu.Content;
             if (Pause != null && Pause.IsOpen) return Pause.Card;
             if (BigModal != null && BigModal.IsOpen) return BigModal.Card;

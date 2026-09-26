@@ -524,6 +524,17 @@ namespace DropshippingGame
 
             if (GameInput.ScreenshotDown) TakeScreenshot();
 
+            if (GameInput.AdminDown && _ui.Admin != null)
+            {
+                _ui.Admin.Toggle();
+                return;
+            }
+            if (_ui.Admin != null && _ui.Admin.IsOpen)
+            {
+                if (cancel || pause) _ui.Admin.Close();
+                return;
+            }
+
             if (_ui.Pause.IsOpen)
             {
                 if (cancel) _ui.Pause.Back();

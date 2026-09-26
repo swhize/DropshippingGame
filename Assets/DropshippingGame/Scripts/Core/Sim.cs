@@ -386,7 +386,7 @@ namespace DropshippingGame.Core
         {
             RealTime += dt;
             if (!InGame || !IsOpen) return;
-            AdvanceMinutes(dt * GameData.MinutesPerSecond);
+            AdvanceMinutes(dt * GameData.MinutesPerSecond * Math.Max(0f, AdminTimeScale));
             if (!IsOpen) return;
             Market.Process(dt);
             Events.Process();
@@ -479,7 +479,7 @@ namespace DropshippingGame.Core
             int fixedCosts = s.Rent + s.Wages + s.Upkeep + s.Interest;
             s.Profit = d.VariableProfit() - fixedCosts;
             s.MoneyAfter = Money - fixedCosts;
-            s.Bankrupt = s.MoneyAfter < GameData.BankruptLimit;
+            s.Bankrupt = s.MoneyAfter < GameData.BankruptLimit && !AdminNoBankrupt;
             DayEnded?.Invoke(s);
         }
 
@@ -495,7 +495,7 @@ namespace DropshippingGame.Core
                 Contracts = Daily.ContractsDone,
             });
             if (History.Count > 30) History.RemoveAt(0);
-            if (Money < GameData.BankruptLimit)
+            if (Money < GameData.BankruptLimit && !AdminNoBankrupt)
             {
                 GameOver?.Invoke("pleite");
                 return;
