@@ -13,13 +13,30 @@ namespace DropshippingGame.Core
     {
         public string Id, Name, Icon, Desc;
         public float Start, Vol, Drift;
+
+        // ---- Finanzviertel (Market.Exchange.cs) ---------------------------------------------
+        /// <summary>Anlageklasse: Krypto, Aktie oder ETF.</summary>
+        public AssetKind Kind;
+        /// <summary>Branche (Aktien) bzw. Thema (ETF/Krypto), z. B. "Logistik".</summary>
+        public string Sector = "";
+        /// <summary>Dividende pro Tag als Anteil vom Kurswert (0,002 = 0,2 % pro Tag, über Nacht ausgezahlt).</summary>
+        public float Dividend;
+        /// <summary>ETF: Ids der enthaltenen Aktien (gleich gewichtet). Leer = eigener Kursverlauf.</summary>
+        public string[] Components;
+        /// <summary>Krypto: Chance pro Tick auf einen Kurssprung (± <see cref="JumpSize"/>).</summary>
+        public float JumpChance, JumpSize;
+        /// <summary>Die drei ursprünglichen Anlagen (TradingViech, Spielstände v1–v4).</summary>
+        public bool Legacy;
     }
 
     /// <summary>
     /// Markt: Konkurrenz-Shops mit eigenen Preisen je Produkt (bestimmen die Nachfrage mit)
     /// und ein Trading-System mit drei fiktiven Anlagen (Krypto, Meme-Aktie, ETF).
+    /// Das Finanzviertel (Börse, Bank, Wallet-App) erweitert es in <c>Market.Exchange.cs</c> um
+    /// weitere Aktien, Index-ETFs, Kryptos, Nachrichten, Dividenden und ein Sparkonto.
+    /// <see cref="Assets"/> bleibt bei den drei Original-Anlagen (TradingViech), <see cref="AllAssets"/> enthält alle.
     /// </summary>
-    public sealed class Market
+    public sealed partial class Market
     {
         public static readonly CompetitorDef[] Competitors =
         {
@@ -30,9 +47,9 @@ namespace DropshippingGame.Core
 
         public static readonly AssetDef[] Assets =
         {
-            new AssetDef { Id = "DROP", Name = "DROPCOIN", Start = 12f, Vol = 0.009f, Drift = -0.00008f, Icon = "coin", Desc = "Hochriskante Krypto. Kann alles – vor allem abstürzen." },
-            new AssetDef { Id = "GAME", Name = "GameShop AG", Start = 35f, Vol = 0.0035f, Drift = 0.00001f, Icon = "gamepad", Desc = "Meme-Aktie. Das Internet liebt sie. Meistens." },
-            new AssetDef { Id = "ETF", Name = "Welt-ETF", Start = 100f, Vol = 0.0006f, Drift = 0.00002f, Icon = "globe", Desc = "Langweilig. Und genau deshalb solide." },
+            new AssetDef { Id = "DROP", Name = "DROPCOIN", Start = 12f, Vol = 0.009f, Drift = -0.00008f, Icon = "coin", Desc = "Hochriskante Krypto. Kann alles – vor allem abstürzen.", Kind = AssetKind.Crypto, Sector = "Krypto", Legacy = true },
+            new AssetDef { Id = "GAME", Name = "GameShop AG", Start = 35f, Vol = 0.0035f, Drift = 0.00001f, Icon = "gamepad", Desc = "Meme-Aktie. Das Internet liebt sie. Meistens.", Kind = AssetKind.Stock, Sector = "Gaming", Legacy = true },
+            new AssetDef { Id = "ETF", Name = "Welt-ETF", Start = 100f, Vol = 0.0006f, Drift = 0.00002f, Icon = "globe", Desc = "Langweilig. Und genau deshalb solide.", Kind = AssetKind.Etf, Sector = "Welt", Legacy = true },
         };
 
         public const float TickSeconds = 2f;
@@ -79,14 +96,16 @@ namespace DropshippingGame.Core
             History.Clear();
             Holdings.Clear();
             Invested.Clear();
-            foreach (var a in Assets)
+            foreach (var a in AllAssets)
             {
                 Prices[a.Id] = a.Start;
                 History[a.Id] = new List<float> { a.Start };
                 Holdings[a.Id] = 0f;
                 Invested[a.Id] = 0f;
             }
+            ResetExchange();
             for (int i = 0; i < 60; i++) Tick(false);
+            ResetExchangeAfterWarmup();
             _acc = 0f;
         }
 
@@ -114,6 +133,7 @@ namespace DropshippingGame.Core
                 h.Add(p);
                 if (h.Count > HistoryLength) h.RemoveAt(0);
             }
+            TickExchange();
             if (emit) TradingChanged?.Invoke();
         }
 
@@ -149,6 +169,7 @@ namespace DropshippingGame.Core
             foreach (var kv in CompMods)
                 if (kv.Value.Until < _sim.Day) expired.Add(kv.Key);
             foreach (var k in expired) CompMods.Remove(k);
+            ExchangeNewDay();
         }
 
         public void ApplyPriceWar(string pid, float mult, int days)
@@ -159,21 +180,21 @@ namespace DropshippingGame.Core
         // ---- Trading ------------------------------------------------------------------------------
         public static AssetDef Asset(string id)
         {
-            foreach (var a in Assets)
+            foreach (var a in AllAssets)
                 if (a.Id == id) return a;
             return Assets[0];
         }
 
         public bool Buy(string id, int amount)
         {
-            if (amount <= 0) return false;
+            if (amount <= 0 || !Prices.ContainsKey(id)) return false;
             if (_sim.Money < amount)
             {
                 _sim.Notify("Nicht genug Geld für diesen Kauf.", "bad");
                 _sim.Sound("error");
                 return false;
             }
-            float units = amount * (1f - Fee) / Prices[id];
+            float units = amount * (1f - FeeFor(id)) / Prices[id];
             Holdings[id] += units;
             Invested[id] += amount;
             _sim.AdjustMoney(-amount, "trading");
@@ -185,9 +206,10 @@ namespace DropshippingGame.Core
         public int Sell(string id, float fraction)
         {
             float f = Mathx.Clamp01(fraction);
+            if (!Holdings.ContainsKey(id) || !Prices.ContainsKey(id)) return 0;
             float units = Holdings[id] * f;
             if (units <= 0f) return 0;
-            int value = Mathx.RoundToInt(units * Prices[id] * (1f - Fee));
+            int value = Mathx.RoundToInt(units * Prices[id] * (1f - FeeFor(id)));
             if (f >= 0.999f)
             {
                 Holdings[id] = 0f;
@@ -204,27 +226,27 @@ namespace DropshippingGame.Core
             return value;
         }
 
-        public float HoldingValue(string id) => Holdings[id] * Prices[id];
+        public float HoldingValue(string id) => Holdings.TryGetValue(id, out float h) && Prices.TryGetValue(id, out float p) ? h * p : 0f;
 
         public int PortfolioValue()
         {
             float v = 0f;
-            foreach (var a in Assets) v += HoldingValue(a.Id);
+            foreach (var a in AllAssets) v += HoldingValue(a.Id);
             return Mathx.RoundToInt(v);
         }
 
-        public float Profit(string id) => HoldingValue(id) - Invested[id];
+        public float Profit(string id) => HoldingValue(id) - (Invested.TryGetValue(id, out float inv) ? inv : 0f);
 
         public float ChangePct(string id, int ticks = 30)
         {
-            var h = History[id];
-            if (h.Count < 2) return 0f;
+            if (!History.TryGetValue(id, out var h) || h.Count < 2) return 0f;
             float old = h[Math.Max(0, h.Count - 1 - ticks)];
             return h[h.Count - 1] / Math.Max(old, 0.0001f) - 1f;
         }
 
         public void Shock(string id, float mult)
         {
+            if (!Prices.ContainsKey(id)) return;
             Prices[id] = Math.Max(Prices[id] * mult, 0.05f);
             History[id].Add(Prices[id]);
             TradingChanged?.Invoke();
@@ -246,7 +268,7 @@ namespace DropshippingGame.Core
             var hist = new Dictionary<string, object>();
             var hold = new Dictionary<string, object>();
             var inv = new Dictionary<string, object>();
-            foreach (var a in Assets)
+            foreach (var a in AllAssets)
             {
                 prices[a.Id] = (double)Prices[a.Id];
                 var hl = new List<object>();
@@ -255,10 +277,12 @@ namespace DropshippingGame.Core
                 hold[a.Id] = (double)Holdings[a.Id];
                 inv[a.Id] = (double)Invested[a.Id];
             }
-            return new Dictionary<string, object>
+            var result = new Dictionary<string, object>
             {
                 { "comp_prices", cp }, { "comp_mods", mods }, { "prices", prices }, { "history", hist }, { "holdings", hold }, { "invested", inv },
             };
+            ExchangeToJson(result);
+            return result;
         }
 
         public void FromJson(Dictionary<string, object> d)
@@ -284,9 +308,9 @@ namespace DropshippingGame.Core
             var hist = J.O(d, "history");
             var hold = J.O(d, "holdings");
             var inv = J.O(d, "invested");
-            foreach (var a in Assets)
+            foreach (var a in AllAssets)
             {
-                if (prices.ContainsKey(a.Id)) Prices[a.Id] = J.F(prices[a.Id], a.Start);
+                if (prices.ContainsKey(a.Id)) Prices[a.Id] = Math.Max(0.05f, J.F(prices[a.Id], a.Start));
                 if (hist.TryGetValue(a.Id, out object ho) && ho is List<object> hl && hl.Count > 0)
                 {
                     var h = new List<float>();
@@ -296,6 +320,7 @@ namespace DropshippingGame.Core
                 if (hold.ContainsKey(a.Id)) Holdings[a.Id] = J.F(hold[a.Id]);
                 if (inv.ContainsKey(a.Id)) Invested[a.Id] = J.F(inv[a.Id]);
             }
+            ExchangeFromJson(d);
         }
     }
 }

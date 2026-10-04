@@ -289,6 +289,7 @@ namespace DropshippingGame.UI
                 b.style.unityTextAlign = TextAnchor.MiddleLeft;
                 _body.Add(b);
             }
+            FinanceAdmin.Build(_body, Do); // Finanzviertel
         }
 
         private void BuildTrends()
