@@ -163,7 +163,7 @@ namespace DropshippingGame
                 }
                 else
                 {
-                    var home = GarageHome + (Species == "katze" ? new Vector3(1.1f, 0f, -0.3f) : Vector3.zero);
+                    var home = GarageHome + (Species == "katze" ? new Vector3(-0.9f, 0f, 0.2f) : Vector3.zero);
                     _wanderT -= dt;
                     if (_wanderT <= 0f || (!_atSpot && Vector3.Distance(Flat(_wanderTarget), Flat(home)) > 2f))
                     {
