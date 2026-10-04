@@ -34,10 +34,175 @@ namespace DropshippingGame.UI
         {
             var s = S;
             if (s == null) return;
-            Header(s);
+            string r = Route ?? "";
+            if (r == "store")
+            {
+                Header(s);
+                Home(s);
+                return;
+            }
+            var shell = Row(Root, 0f, "sa-shell");
+            shell.style.alignItems = Align.Stretch;
+            var nav = Wd(Col(shell, 4f, "sa-nav"), 170f);
+            var lg = Row(nav, 6f, "sa-logo");
+            Div(lg, "sf-logo-drop");
+            H(lg, "shopifly", "sa-logo-text");
             string item = RouteArg("item/");
-            if (item != null && GameData.IsProduct(item)) ProductPage(s, item);
-            else Home(s);
+            NavItem(nav, "home", "Start", "", r == "");
+            NavItem(nav, "box", "Produkte", "products", r == "products" || item != null);
+            NavItem(nav, "tag", "Preise", "prices", r == "prices");
+            NavItem(nav, "eye", "Shop ansehen", "store", false);
+            T(nav, "", "sa-gap");
+            NavLink(nav, "thumb", "Fakebook", "fakebook/ads");
+            NavLink(nav, "search", "Gugel", "gugel/ads");
+            NavLink(nav, "brush", "Branding", "company/brand");
+            var main = Flex(Col(shell, 0f, "sa-main"));
+            var root = Root;
+            Root = main;
+            try
+            {
+                var top = Row(main, 10f, "sa-top");
+                var sb = Flex(Row(top, 6f, "sa-search"));
+                UIX.Icon(sb, "search", 14f, null, "sa-ic");
+                T(sb, "Suchen", "sf-muted");
+                top.Add(new FaceAvatar(W.Hash(s.BrandName), 30f));
+                B(top, s.BrandName, "sf-brandname");
+                if (item != null && GameData.IsProduct(item)) ProductPage(s, item);
+                else if (r == "products") ProductsPage(s);
+                else if (r == "prices") PricesPage(s);
+                else Dashboard(s);
+            }
+            finally
+            {
+                Root = root;
+            }
+        }
+
+        private void NavItem(VisualElement parent, string icon, string text, string route, bool on)
+        {
+            var b = Press(parent, () => Nav(route), "sa-navitem");
+            b.EnableInClassList("on", on);
+            var row = Row(b, 8f);
+            UIX.Icon(row, icon, 16f, null, "sa-ic");
+            B(row, text, "sa-navtext");
+            UIX.PassThrough(b);
+        }
+
+        private void NavLink(VisualElement parent, string icon, string text, string target)
+        {
+            var b = Press(parent, () => View?.OpenApp(target), "sa-navitem");
+            var row = Row(b, 8f);
+            UIX.Icon(row, icon, 16f, null, "sa-ic");
+            T(row, text, "sa-navtext");
+            UIX.PassThrough(b);
+        }
+
+        // ---- Admin: Start ---------------------------------------------------------------------
+        private void Dashboard(Sim s)
+        {
+            H(Root, "Hallo, " + s.BrandName + "!", "sa-h1");
+            var k = Row(Root, 10f, "sa-kpis");
+            MK.Kpi(k, "coin", Fmt.Money(s.Daily.Revenue), "Umsatz heute", Skin);
+            MK.Kpi(k, "package", s.Daily.Shipped.ToString(), "Verschickt", Skin);
+            MK.Kpi(k, "cart", s.PendingCount() + "/" + s.QueueCapacity(), "Offen", Skin, s.PendingCount() >= s.QueueCapacity() ? "bad" : "");
+            float interval = s.OrderIntervalMinutes();
+            MK.Kpi(k, "trend", interval > 0f ? Fmt.Dec(60f / interval, 1) : "0", "Bestell./Std.", Skin);
+            MK.Kpi(k, "star", Fmt.Rating(s.Reputation), s.ReviewCount + " Bew.", Skin);
+            if (s.ShopOfflineUntil > s.BClock()) B(Root, "Shop offline · noch " + UiFmt.Duration(s.ShopOfflineUntil - s.BClock()), "sf-warn", "sa-pad");
+
+            var acts = Row(Root, 10f, "sa-pad");
+            int pct = Mathf.RoundToInt(GameData.PromoDiscount * 100f);
+            Btn(acts, s.PromoActive ? "Rabatt −" + pct + " % läuft" : "Rabatt −" + pct + " %", () => S.SetPromoActive(!S.PromoActive), s.PromoActive ? "sf-btn-main" : "sf-btn-white");
+            Btn(acts, "Anzeige schalten", () => View?.OpenApp("fakebook/ads"), "sf-btn-white");
+            Btn(acts, "Preise", () => Nav("prices"), "sf-btn-white");
+            ProductTable(s, 6);
+        }
+
+        private void ProductsPage(Sim s)
+        {
+            int listed = 0;
+            foreach (var p in GameData.Products)
+                if (s.IsListed(p.Id)) listed++;
+            var h = Row(Root, 10f, "sa-pad");
+            H(h, "Produkte", "sa-h1");
+            B(h, listed + " aktiv", "sf-pill");
+            ProductTable(s, 99);
+        }
+
+        private void ProductTable(Sim s, int max)
+        {
+            var box = Col(Root, 0f, "sa-table");
+            var hd = Row(box, 10f, "sa-tr", "head");
+            Flex(T(hd, "Produkt", "sf-muted"));
+            Wd(T(hd, "Status", "sf-muted"), 80f);
+            Wd(T(hd, "Lager", "sf-muted"), 60f);
+            Wd(T(hd, "Preis", "sf-muted"), 70f);
+            Wd(T(hd, "Nachfrage", "sf-muted"), 90f);
+            int n = 0;
+            foreach (var p in GameData.Products)
+            {
+                if (!s.ProductUnlocked(p.Id) || ++n > max) continue;
+                string id = p.Id;
+                bool listed = s.IsListed(id);
+                var tr = Press(box, () => Nav("item/" + id), "sa-tr");
+                var c = Flex(Row(tr, 10f));
+                Wd(MK.Photo(c, id, 44f), 44f);
+                B(c, p.Name, "pp-text");
+                Wd(B(tr, !s.ProductAvailable(id) ? "Gesperrt" : (listed ? "Aktiv" : "Entwurf"), "sa-status", listed ? "on" : "off"), 80f);
+                Wd(B(tr, s.StockQty(id).ToString(), "pp-text"), 60f);
+                Wd(B(tr, Fmt.Money(s.CurrentSalePrice(id)), "pp-text"), 70f);
+                Wd(T(tr, s.DemandLabel(id), "sf-muted"), 90f);
+                UIX.PassThrough(tr);
+            }
+        }
+
+        // ---- Admin: Preise & Marke ---------------------------------------------------------------
+        private void PricesPage(Sim s)
+        {
+            var h = Row(Root, 12f, "sa-pad");
+            h.Add(new BrandPreview(s.BrandLogoIndex, s.BrandColor.ToColor(), s.BrandName, true));
+            var hv = Flex(Col(h, 2f));
+            H(hv, "Preise", "sa-h1");
+            T(hv, BrandPrice.FromBrand ? "Vorschlag aus deiner Marke" : "Vorschlag: knapp unter Markt", "sf-muted");
+            Btn(h, "Alle −5 %", () => ScaleAll(0.95f), "sf-btn-white");
+            Btn(h, "Alle +5 %", () => ScaleAll(1.05f), "sf-btn-white");
+            Btn(h, "Alle auf Vorschlag", () =>
+            {
+                foreach (var p in GameData.Products)
+                    if (S.ProductUnlocked(p.Id)) S.SetShopPrice(p.Id, BrandPrice.Suggested(S, p.Id));
+            }, "sf-btn-main");
+            var box = Col(Root, 0f, "sa-table");
+            foreach (var p in GameData.Products)
+            {
+                if (!s.ProductUnlocked(p.Id)) continue;
+                string id = p.Id;
+                int price = s.ShopPrices.TryGetValue(id, out int v) ? v : p.RefPrice;
+                int sug = BrandPrice.Suggested(s, id);
+                var tr = Row(box, 8f, "sa-tr");
+                Wd(MK.Photo(tr, id, 40f), 40f);
+                Flex(B(tr, p.Short, "pp-text"));
+                Btn(tr, "−1", () => S.SetShopPrice(id, price - 1), "sf-step");
+                Wd(H(tr, Fmt.Money(price), "sf-step-value"), 70f);
+                Btn(tr, "+1", () => S.SetShopPrice(id, price + 1), "sf-step");
+                Wd(T(tr, "Markt " + Fmt.Money(s.Market.MarketPrice(id)), "sf-muted"), 100f);
+                var g = Wd(B(tr, "+" + Fmt.Money(price - p.UnitCost) + "/Stk", "pp-text"), 90f);
+                g.style.color = price - p.UnitCost >= 0 ? W.Hex("#1A8A3A") : W.Hex("#D0341C");
+                BtnIf(tr, sug != price, "Vorschlag " + Fmt.Money(sug), () => S.SetShopPrice(id, sug), "sf-btn-white");
+            }
+        }
+
+        private static void ScaleAll(float f)
+        {
+            var s = S;
+            if (s == null) return;
+            foreach (var p in GameData.Products)
+            {
+                if (!s.ProductUnlocked(p.Id)) continue;
+                int price = s.ShopPrices.TryGetValue(p.Id, out int v) ? v : p.RefPrice;
+                int np = Mathf.Max(1, Mathf.RoundToInt(price * f));
+                if (np == price) np += f > 1f ? 1 : -1;
+                s.SetShopPrice(p.Id, Mathf.Max(1, np));
+            }
         }
 
         private void Header(Sim s)
@@ -56,34 +221,12 @@ namespace DropshippingGame.UI
             UIX.PassThrough(logo);
             B(hd, s.BrandName, "sf-brandname");
             Fill(hd);
-            T(hd, "Vorschau deines Shops · Kunden sehen das so", "sf-muted");
+            Btn(hd, "Zurück zum Admin", () => Nav(""), "sf-btn-white");
         }
 
         // =====================================================================================
         private void Home(Sim s)
         {
-            // Admin-Leiste (nur für dich sichtbar)
-            var admin = Col(Root, 10f, "sf-admin");
-            var ah = Row(admin, 10f);
-            B(ah, "Shop-Admin", "sf-admin-title");
-            T(ah, "nur für dich sichtbar", "sf-muted");
-            Fill(ah);
-            Btn(ah, "Branding", () => View?.OpenApp("company/brand"), "sf-btn-white");
-            Btn(ah, "Marktpreise", () => View?.OpenApp("market/analysis"), "sf-btn-white");
-            var stats = Row(admin, 10f, "sf-stats");
-            ShopStat(stats, "Bewertung", Fmt.Rating(s.Reputation) + " / 5", s.ReviewCount + " Bewertungen");
-            ShopStat(stats, "Offene Bestellungen", s.PendingCount() + " / " + s.QueueCapacity(), s.PendingCount() >= s.QueueCapacity() ? "Warteschlange voll!" : "passt");
-            float interval = s.OrderIntervalMinutes();
-            ShopStat(stats, "Bestellungen / Std.", interval > 0f ? "~" + Fmt.Dec(60f / interval, 1) : "—", interval > 0f ? "läuft" : "offline");
-            ShopStat(stats, "Verkauft heute", s.Daily.Shipped.ToString(), Fmt.Money(s.Daily.Revenue) + " Umsatz");
-            var pr = Row(admin, 10f);
-            int pct = Mathf.RoundToInt(GameData.PromoDiscount * 100f);
-            Btn(pr, s.PromoActive ? "Rabattaktion −" + pct + " % läuft" : "Rabattaktion −" + pct + " % starten", () => S.SetPromoActive(!S.PromoActive),
-                s.PromoActive ? "sf-btn-main" : "sf-btn-white");
-            T(pr, "Lockt mehr Kunden an, kleinere Marge.", "sf-muted");
-            if (s.ShopOfflineUntil > s.BClock())
-                B(admin, "Dein Shop ist gerade offline (Serverprobleme). Noch " + UiFmt.Duration(s.ShopOfflineUntil - s.BClock()) + ".", "sf-warn");
-
             // Marken-Banner
             var brand = Col(Root, 6f, "sf-brand");
             Div(brand, "sf-blob1");
@@ -144,7 +287,8 @@ namespace DropshippingGame.UI
             bool listed = s.IsListed(p.Id);
             var card = Press(grid, () => Nav("item/" + id), "sf-card");
             card.EnableInClassList("off", !listed);
-            var img = W.Art(card, p.Id, 140f, false, "sf-card-img");
+            var img = MK.Photo(card, p.Id, 140f);
+            img.AddToClassList("sf-card-img");
             var tph = s.Trends.Phase(p.Id);
             if (tph == TrendPhase.Rising || tph == TrendPhase.Peak) B(card, "HYPE", "sf-new");
             else if (listed && (s.ShippedPerProduct.TryGetValue(p.Id, out int sold0) ? sold0 : 0) == 0) B(card, "NEU", "sf-new");
@@ -168,14 +312,14 @@ namespace DropshippingGame.UI
                 _tab = 0;
             }
             var crumbs = Row(Root, 6f, "ae-crumbs");
-            Btn(crumbs, "Shop", () => Nav(""), "sf-link");
+            Btn(crumbs, "Produkte", () => Nav("products"), "sf-link");
             T(crumbs, "›", "sf-muted");
             T(crumbs, p.Name, "sf-muted");
 
             var pp = Row(Root, 18f, "pp");
             pp.style.alignItems = Align.FlexStart;
             var gal = Wd(Col(pp, 10f, "pp-gal"), 330f);
-            W.Art(gal, pid, 300f, false, "pp-main");
+            MK.Photo(gal, pid, 300f, s.IsListed(pid) ? "AKTIV" : "ENTWURF", s.PromoActive ? "−" + Mathf.RoundToInt(GameData.PromoDiscount * 100f) + " %" : "").AddToClassList("pp-main");
             var th = Row(gal, 8f, "pp-thumbs");
             for (int i = 0; i < 4; i++)
             {
@@ -240,8 +384,8 @@ namespace DropshippingGame.UI
                 Btn(step, "+1", () => S.SetShopPrice(pid, price + 1), "sf-step");
                 Btn(step, "+5", () => S.SetShopPrice(pid, price + 5), "sf-step");
                 float market = s.Market.MarketPrice(pid);
-                int target = Mathf.Max(1, Mathf.RoundToInt(market * 0.97f));
-                if (target != price) Btn(step, "Knapp unter Markt (" + Fmt.Money(target) + ")", () => S.SetShopPrice(pid, target), "sf-btn-white");
+                int sug = BrandPrice.Suggested(s, pid);
+                if (sug != price) Btn(step, "Vorschlag " + Fmt.Money(sug), () => S.SetShopPrice(pid, sug), "sf-btn-white");
                 T(adm, "Marktpreis ~" + Fmt.Money(market) + " · Nachfrage: " + s.DemandLabel(pid), "sf-muted");
             }
             var qr = Row(info, 8f, "pp-qty");

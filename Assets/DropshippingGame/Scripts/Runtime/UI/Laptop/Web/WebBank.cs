@@ -43,7 +43,7 @@ namespace DropshippingGame.UI
             NavItem(nv, "Loans", "loans", r);
             NavItem(nv, "Vaults & Invest", "vaults", r);
             Fill(nv);
-            T(nv, "Revoluut is not a bank. It is an app with a bank's font.", "rv-tiny");
+            
 
             var mid = Flex(Col(rv, 14f, "rv-mid"));
             if (r == "analytics") Analytics(mid, s);
@@ -261,7 +261,7 @@ namespace DropshippingGame.UI
             {
                 if (S.TakeLoan(_loan)) Toast("Money's in. Gary approved it while eating a sandwich.", "good");
             }, "rv-btn3");
-            T(box, "Loan money can't go into index funds. Our algorithm is watching. Our algorithm is Gary.", "rv-tiny");
+            
             UpdateLoan();
 
             var rb = Col(mid, 8f, "rv-box");
@@ -307,7 +307,7 @@ namespace DropshippingGame.UI
         {
             var box = Col(mid, 6f, "rv-box");
             B(box, "Vaults", "rv-h4");
-            T(box, "Vaults show what you're saving for. The money stays in your main account (Gary doesn't trust you with buttons).", "rv-muted");
+            T(box, "Savings goals. Money stays in main account.", "rv-muted");
             int shown = 0;
             foreach (var u in GameData.Upgrades)
             {
@@ -369,7 +369,7 @@ namespace DropshippingGame.UI
 
             var up = Col(rt, 4f, "rv-up");
             B(up, "Upgrade to Ultra Metal Pro Max", "rv-up-title");
-            T(up, "Only €49.99/month. Includes airport lounge access (you don't fly) and a heavier card.", "rv-up-text");
+            T(up, "€49.99/month. Heavier card.", "rv-up-text");
             Btn(up, "Upgrade", () => Toast("Nice try. Gary says your garage doesn't qualify for a heavier card."), "rv-btn2");
 
             var box = Col(rt, 2f, "rv-box", "grey");
