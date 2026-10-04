@@ -10,6 +10,9 @@ namespace DropshippingGame
     /// Basiert auf TextMesh mit eigenem Shader (DS/Text3D), damit Text korrekt verdeckt wird
     /// und optional im Bloom leuchten kann. Größe wie in Godot: size = Schriftgröße (× 4 mm).
     /// </summary>
+    /// <summary>Schriftstil für Schilder (Resources/Fonts/Sign-*.ttf). Default = bisherige Standardschrift.</summary>
+    public enum SignFont { Default, Display, Condensed, Script, Stencil, Retro }
+
     public sealed class Label3D : MonoBehaviour
     {
         private const int FontResolution = 64;
@@ -31,6 +34,9 @@ namespace DropshippingGame
             Materials.Clear();
             Shared.Clear();
             _cam = null;
+            SignFonts.Clear();
+            FontMaterials.Clear();
+            SharedStyled.Clear();
         }
 
         public static Font Font
@@ -65,9 +71,74 @@ namespace DropshippingGame
 
         private static void OnFontRebuilt(Font f)
         {
-            if (f != _font) return;
-            foreach (var m in Materials)
-                if (m != null) m.mainTexture = f.material.mainTexture;
+            if (f == null) return;
+            if (f == _font)
+                foreach (var m in Materials)
+                    if (m != null) m.mainTexture = f.material.mainTexture;
+            if (FontMaterials.TryGetValue(f, out var list))
+                foreach (var m in list)
+                    if (m != null) m.mainTexture = f.material.mainTexture;
+        }
+
+        private static readonly Dictionary<SignFont, Font> SignFonts = new Dictionary<SignFont, Font>();
+        private static readonly Dictionary<Font, List<Material>> FontMaterials = new Dictionary<Font, List<Material>>();
+        private static readonly Dictionary<string, Material> SharedStyled = new Dictionary<string, Material>();
+
+        /// <summary>Schrift zu einem Stil (null = Standardschrift / fehlt).</summary>
+        public static Font GetSignFont(SignFont style)
+        {
+            if (style == SignFont.Default) return null;
+            if (SignFonts.TryGetValue(style, out var f)) return f;
+            string key = style == SignFont.Display ? "display" : style == SignFont.Condensed ? "sign_condensed" :
+                style == SignFont.Script ? "sign_script" : style == SignFont.Stencil ? "sign_stencil" : "sign_retro";
+            f = null;
+            try { f = AssetLib.Font(key); }
+            catch (System.Exception) { f = null; }
+            if (f != null && f.material == null) f = null;
+            SignFonts[style] = f;
+            if (f != null)
+            {
+                var unused = Font; // sorgt dafür, dass OnFontRebuilt registriert ist
+            }
+            return f;
+        }
+
+        private static Material StyledMaterial(Font f, float intensity, bool onTop)
+        {
+            string key = f.GetInstanceID() + ":" + Mathf.RoundToInt(intensity * 10f) + (onTop ? "t" : "n");
+            if (SharedStyled.TryGetValue(key, out var m) && m != null) return m;
+            var sh = Shader.Find("DS/Text3D");
+            m = sh != null ? new Material(sh) : new Material(f.material);
+            m.mainTexture = f.material.mainTexture;
+            if (sh != null)
+            {
+                m.SetFloat("_Intensity", intensity);
+                m.SetFloat("_ZTest", onTop ? (float)CompareFunction.Always : (float)CompareFunction.LessEqual);
+            }
+            m.renderQueue = onTop ? 3100 : 3000;
+            if (!FontMaterials.TryGetValue(f, out var list)) { list = new List<Material>(); FontMaterials[f] = list; }
+            list.Add(m);
+            SharedStyled[key] = m;
+            return m;
+        }
+
+        private float _glow = 1f;
+        private bool _onTop;
+
+        /// <summary>Wechselt die Schrift (fehlt sie, bleibt alles wie es ist). Gibt this zurück.</summary>
+        public Label3D UseFont(SignFont style)
+        {
+            if (!Alive || style == SignFont.Default) return this;
+            var f = GetSignFont(style);
+            if (f == null || _renderer == null) return this;
+            try
+            {
+                Mesh.font = f;
+                _material = StyledMaterial(f, _glow, _onTop);
+                _renderer.sharedMaterial = _material;
+            }
+            catch (System.Exception) { }
+            return this;
         }
 
         private static Material NewMaterial(float intensity, bool onTop)
@@ -101,7 +172,7 @@ namespace DropshippingGame
         /// von der +Z-Seite ihres Elternobjekts lesbar. glow &gt; 1 lässt den Text leuchten.
         /// </summary>
         public static Label3D Create(Transform parent, string text, float size, Color color, Vector3 localPos, bool billboard = true,
-            float maxDistance = 0f, bool onTop = false, float glow = 1f, int wrapChars = 0)
+            float maxDistance = 0f, bool onTop = false, float glow = 1f, int wrapChars = 0, SignFont font = SignFont.Default)
         {
             var go = new GameObject("Label");
             go.transform.SetParent(parent, false);
@@ -126,8 +197,11 @@ namespace DropshippingGame
             l.MaxDistance = maxDistance;
             l._material = SharedMaterial(glow, onTop);
             r.sharedMaterial = l._material;
+            l._glow = glow;
+            l._onTop = onTop;
             l.Wrap = wrapChars;
             l.SetText(text);
+            if (font != SignFont.Default) l.UseFont(font);
             return l;
         }
 

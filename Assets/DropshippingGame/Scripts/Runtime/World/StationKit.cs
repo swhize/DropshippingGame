@@ -438,7 +438,7 @@ namespace DropshippingGame
             float big = o.Stage == 0 ? 1f : 1.8f;
             var bg = o.Color;
             var fg = bg.grayscale > 0.55f ? new Color(0.08f, 0.08f, 0.08f) : Color.white;
-            var sign = Props.SignBoard(root, text, bg, fg, new Vector2(0.24f * big * Mathf.Max(4, text.Length) * 0.62f, 0.3f * big));
+            var sign = Props.SignBoard(root, text, bg, fg, new Vector2(0.24f * big * Mathf.Max(4, text.Length) * 0.62f, 0.3f * big), SignFont.Condensed);
             sign.transform.localPosition = Vector3.zero;
             if (o.Stage != 0)
             {

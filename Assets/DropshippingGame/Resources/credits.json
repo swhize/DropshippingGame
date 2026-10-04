@@ -479,6 +479,114 @@
    "files": "Models/kaykit_prototype",
    "modifications": "keine",
    "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kaykit_prototype.txt"
+  },
+  {
+   "id": "font_bebasneue",
+   "category": "font",
+   "name": "Bebas Neue 2.000",
+   "author": "Ryoichi Tsunekawa (Dharma Type)",
+   "url": "https://github.com/dharmatype/Bebas-Neue (via google/fonts)",
+   "license": "SIL OFL 1.1",
+   "licenseUrl": "https://openfontlicense.org/",
+   "files": "Fonts/Sign-Condensed.ttf",
+   "modifications": "umbenannt",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bebasneue.txt"
+  },
+  {
+   "id": "font_pacifico",
+   "category": "font",
+   "name": "Pacifico 3.001",
+   "author": "Vernon Adams u. a.",
+   "url": "https://github.com/googlefonts/Pacifico (via google/fonts)",
+   "license": "SIL OFL 1.1",
+   "licenseUrl": "https://openfontlicense.org/",
+   "files": "Fonts/Sign-Script.ttf",
+   "modifications": "umbenannt",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_pacifico.txt"
+  },
+  {
+   "id": "font_sairastencil",
+   "category": "font",
+   "name": "Saira Stencil One 1.004",
+   "author": "Hector Gatti, Omnibus-Type",
+   "url": "https://github.com/Omnibus-Type/Saira (via google/fonts)",
+   "license": "SIL OFL 1.1",
+   "licenseUrl": "https://openfontlicense.org/",
+   "files": "Fonts/Sign-Stencil.ttf",
+   "modifications": "umbenannt",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_sairastencil.txt"
+  },
+  {
+   "id": "font_bungee",
+   "category": "font",
+   "name": "Bungee 2.000",
+   "author": "David Jonathan Ross",
+   "url": "https://github.com/djrrb/Bungee (via google/fonts)",
+   "license": "SIL OFL 1.1",
+   "licenseUrl": "https://openfontlicense.org/",
+   "files": "Fonts/Sign-Retro.ttf",
+   "modifications": "umbenannt",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bungee.txt"
+  },
+  {
+   "id": "kenney_city_industrial",
+   "category": "model",
+   "name": "City Kit (Industrial)",
+   "author": "Kenney",
+   "url": "https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert)",
+   "license": "CC0 1.0",
+   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "files": "Models/kenney_city_industrial",
+   "modifications": "GLB -> FBX (Blender 4.2)",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_city_industrial.txt"
+  },
+  {
+   "id": "kenney_mini_arcade",
+   "category": "model",
+   "name": "Mini Arcade",
+   "author": "Kenney",
+   "url": "https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert)",
+   "license": "CC0 1.0",
+   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "files": "Models/kenney_mini_arcade",
+   "modifications": "GLB -> FBX (Blender 4.2)",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_mini_arcade.txt"
+  },
+  {
+   "id": "kenney_furniture_kit",
+   "category": "model",
+   "name": "Furniture Kit",
+   "author": "Kenney",
+   "url": "https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert)",
+   "license": "CC0 1.0",
+   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "files": "Models/kenney_furniture_kit",
+   "modifications": "GLB -> FBX (Blender 4.2)",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_furniture_kit.txt"
+  },
+  {
+   "id": "kenney_cube_pets",
+   "category": "model",
+   "name": "Cube Pets 2.0",
+   "author": "Kenney",
+   "url": "https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert)",
+   "license": "CC0 1.0",
+   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "files": "Models/kenney_cube_pets",
+   "modifications": "GLB -> FBX (Blender 4.2), Animationen in Armature gebacken",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_cube_pets.txt"
+  },
+  {
+   "id": "kenney_modular_buildings",
+   "category": "model",
+   "name": "Modular Buildings",
+   "author": "Kenney",
+   "url": "https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert)",
+   "license": "CC0 1.0",
+   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "files": "Models/kenney_modular_buildings",
+   "modifications": "GLB -> FBX (Blender 4.2)",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_modular_buildings.txt"
   }
  ]
 }

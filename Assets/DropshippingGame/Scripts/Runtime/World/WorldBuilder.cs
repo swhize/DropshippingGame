@@ -277,11 +277,11 @@ namespace DropshippingGame
             Props.Box(S, new Vector3(16.4f, 0.12f, 1.4f), Mats.Std(new Color(0.78f, 0.14f, 0.16f), 0.6f), new Vector3(-36, 3.1f, z1 + 0.6f), new Vector3(-12, 0, 0));
             for (int i = 0; i < 8; i++)
                 Props.Box(S, new Vector3(1f, 0.13f, 1.41f), Mats.Std(new Color(0.95f, 0.95f, 0.93f), 0.6f), new Vector3(x0 + 0.5f + i * 2f, 3.101f, z1 + 0.6f), new Vector3(-12, 0, 0), 0f);
-            Label3D.Create(transform, "KALLES IMBISS", 220f, new Color(1f, 0.32f, 0.22f), new Vector3(-36, 3.75f, z1 + 0.05f), false, 0f, false, 3.2f);
+            Label3D.Create(transform, "KALLES IMBISS", 220f, new Color(1f, 0.32f, 0.22f), new Vector3(-36, 3.75f, z1 + 0.05f), false, 0f, false, 3.2f, 0, SignFont.Script);
             Props.PointLight(transform, new Vector3(-36, 3.6f, z1 + 1.2f), new Color(1f, 0.35f, 0.25f), 3f, 7f);
             var aboard = Props.Node(transform, "ABoard", new Vector3(-33f, 0, -5.8f), 20f);
             Props.Box(aboard.transform, new Vector3(0.7f, 1f, 0.05f), Mats.Std(new Color(0.12f, 0.12f, 0.12f), 0.7f), new Vector3(0, 0.5f, 0.18f), new Vector3(-10, 0, 0));
-            Label3D.Create(aboard.transform, "DÖNER 5,50\nPOMMES 3,-\nCURRYWURST 4,-", 40f, Color.white, new Vector3(0, 0.55f, 0.21f), false);
+            Label3D.Create(aboard.transform, "DÖNER 5,50\nPOMMES 3,-\nCURRYWURST 4,-", 40f, Color.white, new Vector3(0, 0.55f, 0.21f), false, 0f, false, 1f, 0, SignFont.Condensed);
             // Theke
             Props.Solid(S, new Vector3(10.5f, 1f, 0.8f), Mats.Std(new Color(0.75f, 0.16f, 0.18f), 0.5f), new Vector3(-38.25f, 0.5f, -15.2f));
             Props.Box(S, new Vector3(10.7f, 0.06f, 0.95f), Mats.Std(new Color(0.85f, 0.86f, 0.88f), 0.25f, 0.8f), new Vector3(-38.25f, 1.03f, -15.2f));
@@ -298,9 +298,9 @@ namespace DropshippingGame
             Props.Box(S, new Vector3(6f, 0.6f, 1f), steel, new Vector3(-39f, 3.2f, -18.4f));
             Props.Solid(S, new Vector3(1f, 2.1f, 0.8f), Mats.Std(new Color(0.9f, 0.9f, 0.92f), 0.3f, 0.3f), new Vector3(-43.3f, 1.05f, -17.6f));
             DinerDressing();
-            var menu = Props.SignBoard(transform, "KALLES KARTE", new Color(0.1f, 0.1f, 0.1f), new Color(1f, 0.85f, 0.3f), new Vector2(3.4f, 0.5f));
+            var menu = Props.SignBoard(transform, "KALLES KARTE", new Color(0.1f, 0.1f, 0.1f), new Color(1f, 0.85f, 0.3f), new Vector2(3.4f, 0.5f), SignFont.Retro);
             menu.transform.localPosition = new Vector3(-38, 2.6f, z0 + 0.32f);
-            Label3D.Create(transform, "Döner ....... 5,50\nCurrywurst .. 4,00\nPommes ...... 3,00\nSchnitzel ... 8,90", 48f, new Color(0.95f, 0.95f, 0.9f), new Vector3(-38, 1.95f, z0 + 0.33f), false);
+            Label3D.Create(transform, "Döner ....... 5,50\nCurrywurst .. 4,00\nPommes ...... 3,00\nSchnitzel ... 8,90", 48f, new Color(0.95f, 0.95f, 0.9f), new Vector3(-38, 1.95f, z0 + 0.33f), false, 0f, false, 1f, 0, SignFont.Condensed);
             foreach (float lx in new[] { -41f, -36f, -31f }) CeilingLamp(new Vector3(lx, h - 0.1f, -12f), 1.2f, new Color(1f, 0.85f, 0.65f), 1.4f, 8f);
             CeilingLamp(new Vector3(-38.5f, h - 0.1f, -17.2f), 2f, new Color(1f, 0.95f, 0.85f), 1.1f, 6f);
         }
@@ -343,7 +343,7 @@ namespace DropshippingGame
             Props.Box(S, new Vector3(7.2f, 0.35f, 0.05f), Mats.Shutter(new Color(0.7f, 0.72f, 0.75f)), new Vector3(-16, 2.85f, z1 - 0.2f), default, 0f);
             Window(new Vector3(x0 + 0.15f, 1.9f, -13f), new Vector2(1.6f, 1f), Vector3.left);
             foreach (float lx in new[] { -18f, -13.8f }) CeilingLamp(new Vector3(lx, h - 0.08f, -12f), 1.4f, new Color(0.92f, 0.96f, 1f), 1.5f, 8f);
-            var brand = Label3D.Create(transform, "GARAGE", 170f, Color.white, new Vector3(-16, 3.3f, z1 + 0.03f), false);
+            var brand = Label3D.Create(transform, "GARAGE", 170f, Color.white, new Vector3(-16, 3.3f, z1 + 0.03f), false, 0f, false, 1f, 0, SignFont.Stencil);
             _brandLabels.Add(brand);
             var spot = new GameObject("Spot").AddComponent<Light>();
             spot.transform.SetParent(transform, false);
@@ -403,7 +403,7 @@ namespace DropshippingGame
             _gateCol = gc;
             _saleSign = Props.SignBoard(transform, "ZU VERKAUFEN · 4.500 €", new Color(0.9f, 0.15f, 0.15f), Color.white, new Vector2(5f, 0.8f));
             _saleSign.transform.localPosition = new Vector3(6.5f, 2.6f, z1 + 0.05f);
-            var brand = Label3D.Create(transform, "LAGERHALLE", 300f, Color.white, new Vector3(17f, 6.3f, z1 + 0.05f), false);
+            var brand = Label3D.Create(transform, "LAGERHALLE", 300f, Color.white, new Vector3(17f, 6.3f, z1 + 0.05f), false, 0f, false, 1f, 0, SignFont.Stencil);
             _brandLabels.Add(brand);
             // Büro-Trennwand
             var low = Mats.Std(new Color(0.85f, 0.85f, 0.82f), 0.6f);
