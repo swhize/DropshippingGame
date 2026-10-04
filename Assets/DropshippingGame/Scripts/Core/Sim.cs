@@ -302,6 +302,7 @@ namespace DropshippingGame.Core
             TotalContractsDone = 0;
             TotalContractsFailed = 0;
             ContractOfferTimes.Clear();
+            TikTokVideos.Clear();
             Skills.Clear();
             BonusSkillPoints = 0;
             Challenges.Clear();
@@ -1495,11 +1496,8 @@ namespace DropshippingGame.Core
         public void TriggerTikTok(float score, bool silent = false, string product = "")
         {
             float s = Mathx.Clamp(score, 0.05f, 1f);
-            float power = TikTokPowerMult();
-            if (GameData.IsProduct(product) && TrendMult(product) >= 1.3f) power *= GameData.TikTokTrendBonus;
+            TikTokEffect(s, product, out float mult, out float minutes);
             Daily.TikToks++;
-            float mult = 1f + (Mathx.Lerp(GameData.TikTokMinMult, GameData.TikTokMaxMult, s) - 1f) * power;
-            float minutes = Mathx.Lerp(GameData.TikTokMinMinutes, GameData.TikTokMaxMinutes, s) * power;
             Boosts.RemoveAll(b => b.Source == "tiktok");
             Boosts.Add(new Boost { Source = "tiktok", Name = "TikTok-Trend", Mult = mult, EndsAt = BClock() + minutes });
             TikTokReadyAt = BClock() + TikTokCooldownMinutes();

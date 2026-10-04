@@ -37,6 +37,8 @@ namespace DropshippingGame
         public IInteractable Focus;
         /// <summary>Verschiebe-Modus für Möbel (Taste B).</summary>
         public readonly FurnitureMover Mover = new FurnitureMover();
+        /// <summary>Echte TikTok-Aufnahme in Ego-Sicht (Handy › TikTak, Laptop oder Ringlicht).</summary>
+        public readonly TikTokRecorder Recorder = new TikTokRecorder();
         public string PromptText = "";
 
         private CharacterController _cc;
@@ -48,6 +50,7 @@ namespace DropshippingGame
         private float _camBaseY = StandCamY;
         private Vector2 _sway;
         private bool _wasGrounded = true;
+        private bool _destroying;
 
         public bool IsEmpty => Held == null;
 
@@ -88,8 +91,10 @@ namespace DropshippingGame
 
         private void OnDestroy()
         {
+            _destroying = true;
             Settings.Changed -= ApplySettings;
             if (Mover.Active) Mover.Cancel();
+            if (Recorder.Active) Recorder.Cancel(true);
             if (_marker != null) Destroy(_marker.gameObject);
             if (Focus != null && !(Focus is Object fo && fo == null)) Focus.SetHighlighted(false);
         }
@@ -115,6 +120,13 @@ namespace DropshippingGame
             Cam.transform.localRotation = Quaternion.identity;
             _velocity = Vector3.zero;
             _cc.enabled = true;
+        }
+
+        /// <summary>Arme und gehaltenen Gegenstand ein-/ausblenden (TikTok-Aufnahme: freie Sicht).</summary>
+        public void SetHandsVisible(bool on)
+        {
+            if (_destroying || _handAnchor == null) return;
+            if (_handAnchor.gameObject.activeSelf != on) _handAnchor.gameObject.SetActive(on);
         }
 
         // ---- Gehaltener Gegenstand mit Armen --------------------------------------------------------
@@ -378,6 +390,14 @@ namespace DropshippingGame
                 ClearFocus();
                 if (!locked) Mover.Tick(this);
                 PromptText = Mover.Prompt;
+                return;
+            }
+            if (Recorder.Active)
+            {
+                // Aufnahme: laufen und umsehen ja, aber kein Benutzen/Ablegen/Verschieben (E = Aktion).
+                ClearFocus();
+                Recorder.Tick(this, locked);
+                PromptText = "";
                 return;
             }
             UpdateFocus(locked);

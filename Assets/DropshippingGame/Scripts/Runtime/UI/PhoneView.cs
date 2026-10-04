@@ -88,6 +88,7 @@ namespace DropshippingGame.UI
                     },
                 });
             }
+            TikTokStudio.RegisterPhoneApp();
             Build();
             UIX.Show(_layer, false);
             Settings.Changed += () =>

@@ -116,29 +116,13 @@ namespace DropshippingGame.UI
         }
     }
 
-    /// <summary>Shop › Marketing: Werbekampagnen, TikTok-Minispiel und Bekanntheit der Marke.</summary>
+    /// <summary>Shop › Marketing: Werbekampagnen, TikTok-Aufnahme (Einstieg) und Bekanntheit der Marke.</summary>
     public sealed class AppMarketing : LaptopApp
     {
-        private TikTokPhone _phone;
-        private static string _topic = "";
-
-        private void Pick(VisualElement parent, string id, string label)
-        {
-            var b = Btn(parent, label, () =>
-            {
-                _topic = id;
-                Rebuild();
-            }, (_topic ?? "") == id ? "accent" : "ghost");
-            b.AddToClassList("btn-sm");
-        }
-
         public override string Lead => "Mehr Reichweite = mehr Bestellungen. Kampagnen wirken zeitlich begrenzt, die Bekanntheit deiner Marke bleibt teilweise.";
-
-        public override bool CanRebuild() => _phone == null || !_phone.Busy;
 
         public override void Build()
         {
-            _phone = null;
             var s = S;
             var aw = Card(Root, "Bekanntheit deiner Marke", UiFmt.Percent(s.Awareness / 1.5f));
             UIX.Bar(aw, s.Awareness / 1.5f, Theme.LaptopTeal, 10f);
@@ -196,18 +180,16 @@ namespace DropshippingGame.UI
             }
             else
             {
-                var pick = UIX.Row(right, 6f);
-                pick.style.flexWrap = Wrap.Wrap;
-                P(pick, "Thema:", "small");
-                Pick(pick, "", "Marke");
-                foreach (var p in GameData.Products)
-                    if (s.IsListed(p.Id)) Pick(pick, p.Id, p.Short + (s.TrendMult(p.Id) >= 1.3f ? " (Hype)" : ""));
-                if (!string.IsNullOrEmpty(_topic) && !s.IsListed(_topic)) _topic = "";
-                _phone = new TikTokPhone();
-                _phone.Posted += score => S.TriggerTikTok(score, false, _topic ?? "");
-                right.Add(_phone);
+                TikTokStudio.EnsureSelection(s);
+                var tc = UIX.Card(right);
+                string rb = TikTokStudio.RecordBlocker(s);
+                if (rb != null) UIX.Empty(tc, "box", "Nichts zum Filmen", rb);
+                else
+                {
+                    TikTokStudio.BuildPicker(tc, s, Rebuild, false);
+                    Btn(tc, "Video aufnehmen", () => TikTokStudio.StartRecording(), "accent", false, "play");
+                }
                 P(right, "Heute noch " + s.TikToksLeftToday() + " von " + GameData.TikTokPerDay + " TikToks. Ein Produkt mit Hype wirkt stärker.", "small");
-                P(right, "Starte die Aufnahme und stopp die Markierung im grünen Bereich. Je genauer, desto viraler.", "small");
             }
         }
     }
