@@ -303,5 +303,23 @@ namespace DropshippingGame.Tests
             Assert.AreEqual(0, g3.Pets.Count);
             Assert.AreEqual(0, g3.PetFood);
         }
+
+        [Test]
+        public void NewPetGadgetsExistAndCountForBonus()
+        {
+            foreach (var id in new[] { "fn_gps", "fn_automat", "fn_laser" })
+            {
+                var it = ShopData.Item(id);
+                Assert.IsNotNull(it, id);
+                Assert.AreEqual(ShopData.PetShop, it.Store);
+                Assert.AreEqual("gadget", it.Kind);
+                Assert.Greater(it.Price, 0);
+            }
+            var sim = new Sim(4);
+            sim.ResetState();
+            sim.PetGadgets.Add("fn_laser");
+            sim.PetGadgets.Add("fn_gps");
+            Assert.AreEqual(1.5f, sim.PetGadgetMult(), 0.001f);
+        }
     }
 }

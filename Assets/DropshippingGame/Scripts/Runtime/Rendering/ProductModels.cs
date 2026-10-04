@@ -110,7 +110,7 @@ namespace DropshippingGame
         }
 
         /// <summary>Begrenzung aus den Meshes (funktioniert auch bei inaktiven Objekten).</summary>
-        private static Bounds MeshBounds(Transform root)
+        internal static Bounds MeshBounds(Transform root)
         {
             var b = new Bounds();
             bool any = false;
@@ -162,7 +162,7 @@ namespace DropshippingGame
         }
 
         /// <summary>Torus(-Segment) in der XY-Ebene (Achse = Z), Bogen startet bei startDeg und läuft arcDeg.</summary>
-        private static GameObject Torus(Transform p, float R, float r, Material m, Vector3 pos, Vector3 rot = default,
+        internal static GameObject Torus(Transform p, float R, float r, Material m, Vector3 pos, Vector3 rot = default,
             float arcDeg = 360f, float startDeg = 0f, int seg = 20, int sides = 8)
         {
             var go = new GameObject("Torus");

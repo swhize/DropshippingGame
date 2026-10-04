@@ -26,6 +26,7 @@ namespace DropshippingGame
         private PetRig _rig;
         private readonly Highlighter _hl = new Highlighter();
         private Vector3 _wanderTarget;
+        private bool _atSpot;
         private float _wanderT, _phase, _speed, _barkT;
         private float _seed;
 
@@ -164,11 +165,19 @@ namespace DropshippingGame
                 {
                     var home = GarageHome + (Species == "katze" ? new Vector3(1.1f, 0f, -0.3f) : Vector3.zero);
                     _wanderT -= dt;
-                    if (_wanderT <= 0f || Vector3.Distance(Flat(_wanderTarget), Flat(home)) > 2f)
+                    if (_wanderT <= 0f || (!_atSpot && Vector3.Distance(Flat(_wanderTarget), Flat(home)) > 2f))
                     {
                         _wanderT = Random.Range(3f, 7f);
                         var r = Random.insideUnitCircle * 1.2f;
                         _wanderTarget = home + new Vector3(r.x, 0f, r.y);
+                        _atSpot = false;
+                        // Tier-Ecke: ab und zu zum Napf oder ins Bett (PetCorner.cs)
+                        if (Random.value < 0.4f && PetCorner.TryGetSpot(Species, out var spot))
+                        {
+                            _wanderTarget = spot;
+                            _wanderT = Random.Range(8f, 16f);
+                            _atSpot = true;
+                        }
                     }
                     if (Vector3.Distance(Flat(transform.position), Flat(home)) > 14f) transform.position = home;
                     target = _wanderTarget;

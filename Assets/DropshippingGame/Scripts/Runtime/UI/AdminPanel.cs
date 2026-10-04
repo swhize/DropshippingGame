@@ -419,6 +419,9 @@ namespace DropshippingGame.UI
             r.Add(Btn("Tier-Tag simulieren", () => Do(sim.PetsNewDay)));
             r.Add(Btn("Aktionen neu würfeln", () => Do(() => { sim.ShopSeed += 1; sim.RaiseEconomyChanged(); })));
             r.Add(Btn("Tiere weg", () => Do(sim.RemoveAllPets)));
+            r.Add(Btn("Alle Tierprodukte vor mir anzeigen", () => Do(PetItemPreview.SpawnAllInFrontOfPlayer)));
+            r.Add(Btn("Tier-Vorschau weg", () => Do(PetItemPreview.Clear)));
+            r.Add(Btn("Alle Tier-Gadgets geben", () => Do(() => { foreach (var id in PetItemModels.ShopIds()) { var it = ShopData.Item(id); if (it != null && it.Kind == "gadget") sim.PetGadgets.Add(id); } sim.RaiseEconomyChanged(); })));
             _body.Add(r);
         }
 

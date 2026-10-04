@@ -71,6 +71,7 @@ namespace DropshippingGame
                 _sim.PetsChanged += SyncPets;
                 _sim.DayStarted += OnDayStarted;
                 SyncPets();
+                if (PetCorner.Instance == null) PetCorner.Create(Game.World != null ? Game.World.transform : transform);
             }
             RefreshTags();
         }
@@ -316,6 +317,22 @@ namespace DropshippingGame
             if (CharacterKit.BuildModel(parent, look) == null) CharacterKit.Build(parent, look);
         }
 
+        /// <summary>Größte Kante der Tierbedarf-Modelle im Regal (Fachhöhe ≈ 0,45 m).</summary>
+        private static float PetShelfSize(string id)
+        {
+            switch (id)
+            {
+                case "fn_futter": return 0.38f;
+                case "fn_premium": return 0.2f;
+                case "fn_ball": return 0.12f;
+                case "fn_kratzbaum": return 0.42f;
+                case "fn_bett": return 0.36f;
+                case "fn_automat": return 0.36f;
+                case "fn_laser": return 0.16f;
+                default: return 0.2f;
+            }
+        }
+
         private void Bay(StoreItemDef it, Vector3 pos, float rotY, Color frame)
         {
             var t = NodeAt(_dyn, "Bay " + it.Id, pos, rotY);
@@ -339,25 +356,20 @@ namespace DropshippingGame
                             break;
                         }
                         case "futter":
-                            Props.Box(t, new Vector3(0.32f, 0.4f, 0.16f), Mats.Std(col, 0.7f), p + new Vector3(0f, 0.2f, 0f), new Vector3(0, (k * 7) % 11 - 5, 0), 0.03f);
-                            Props.Box(t, new Vector3(0.2f, 0.12f, 0.005f), Mats.Std(Color.white, 0.6f), p + new Vector3(0f, 0.22f, 0.083f), default, 0f, false);
-                            break;
                         case "gadget":
-                            if (it.Id == "fn_ball") Props.Sphere(t, 0.09f, Mats.Std(col, 0.4f), p + new Vector3(0f, 0.09f, 0f));
-                            else if (it.Id == "fn_bett") Props.Cyl(t, 0.25f, 0.22f, 0.12f, Mats.Std(col, 0.9f), p + new Vector3(0f, 0.06f, 0f));
-                            else if (it.Id == "fn_halsband") Props.Cyl(t, 0.1f, 0.1f, 0.03f, Mats.Emit(col, 1.2f), p + new Vector3(0f, 0.02f, 0f));
-                            else Props.Box(t, new Vector3(0.25f, 0.35f, 0.25f), Mats.Std(col, 0.8f), p + new Vector3(0f, 0.175f, 0f), default, 0.02f);
+                        {
+                            var m = PetItemModels.Build(t, it.Id, PetShelfSize(it.Id), true);
+                            m.transform.localPosition = p;
+                            m.transform.localRotation = Quaternion.Euler(0f, (k * 7) % 11 - 5, 0f);
                             break;
+                        }
                     }
                 }
             }
             if (it.Id == "fn_kratzbaum")
             {
-                var tree = NodeAt(t, "Kratzbaum", new Vector3(0f, 0f, 0.75f), 0f);
-                var sisal = Mats.Std(new Color(0.78f, 0.68f, 0.5f), 0.95f);
-                Props.Box(tree, new Vector3(0.6f, 0.06f, 0.6f), Mats.Std(col, 0.9f), new Vector3(0f, 0.03f, 0f));
-                Props.Cyl(tree, 0.07f, 0.07f, 1.2f, sisal, new Vector3(0f, 0.6f, 0f));
-                Props.Box(tree, new Vector3(0.45f, 0.06f, 0.45f), Mats.Std(col, 0.9f), new Vector3(0f, 1.2f, 0f));
+                var tree = PetItemModels.Build(t, "fn_kratzbaum", 1.3f, true);
+                tree.transform.localPosition = new Vector3(0f, 0f, 0.75f);
             }
             // Kopfschild + Preisschild
             Props.Box(t, new Vector3(2.3f, 0.32f, 0.05f), Mats.Std(it.Store == ShopData.Electro ? MmRed : FnGreen, 0.5f), new Vector3(0f, 2.0f, -0.2f), default, 0.01f);
@@ -424,9 +436,12 @@ namespace DropshippingGame
             var east = new[] { "fn_futter", "fn_premium", "fn_brunnen", "fn_ball" };
             for (int i = 0; i < east.Length; i++)
                 Bay(ShopData.Item(east[i]), new Vector3(x1 - 0.6f, 0f, -15.4f - i * 2.5f), -90f, new Color(0.3f, 0.5f, 0.35f));
-            var back = new[] { "fn_kratzbaum", "fn_halsband", "fn_bett" };
+            var back = new[] { "fn_laser", "fn_gps", "fn_kratzbaum", "fn_halsband", "fn_bett", "fn_automat" };
             for (int i = 0; i < back.Length; i++)
-                Bay(ShopData.Item(back[i]), new Vector3(-108.5f + i * 2.5f, 0f, z0 + 0.6f), 0f, new Color(0.3f, 0.5f, 0.35f));
+            {
+                var bi = ShopData.Item(back[i]);
+                if (bi != null) Bay(bi, new Vector3(-113.5f + i * 2.5f, 0f, z0 + 0.6f), 0f, new Color(0.3f, 0.5f, 0.35f));
+            }
 
             // Kasse
             var k = NodeAt(_dyn, "PetCheckout", new Vector3(-102.3f, 0f, -12.2f), 0f);

@@ -155,6 +155,12 @@ namespace DropshippingGame.Core
                 Price = 15, DailyStock = 3, Color = new RGBA(0.3f, 0.8f, 0.95f), Desc = "Leuchtet. Perfekt für TikTak-Videos bei Nacht." },
             new StoreItemDef { Id = "fn_bett", Store = PetShop, Kind = "gadget", Name = "Kuschelbett", Short = "Bett", Icon = "moon",
                 Price = 29, DailyStock = 2, Color = new RGBA(0.55f, 0.45f, 0.85f), Desc = "Flauschiger als deine Matratze." },
+            new StoreItemDef { Id = "fn_gps", Store = PetShop, Kind = "gadget", Name = "GPS-Halsband Pro", Short = "GPS", Icon = "signal",
+                Price = 49, DailyStock = 2, Color = new RGBA(0.2f, 0.25f, 0.3f), Desc = "Weiß immer, wo dein Tier ist: auf dem Sofa." },
+            new StoreItemDef { Id = "fn_automat", Store = PetShop, Kind = "gadget", Name = "Smart-Futterautomat", Short = "Automat", Icon = "phone",
+                Price = 59, DailyStock = 2, Color = new RGBA(0.92f, 0.92f, 0.95f), Desc = "Füttert per App. Nur mit Abo und WLAN." },
+            new StoreItemDef { Id = "fn_laser", Store = PetShop, Kind = "gadget", Name = "Laser-Spielzeug", Short = "Laser", Icon = "bolt",
+                Price = 9, DailyStock = 4, Color = new RGBA(0.95f, 0.2f, 0.25f), Desc = "Roter Punkt. Stundenlange Unterhaltung." },
             new StoreItemDef { Id = "fn_brunnen", Store = PetShop, Kind = "ware", Product = "katzenbrunnen", Pack = 2, Name = "Trinkbrunnen Duo", Short = "Brunnen",
                 Icon = "drop", DailyStock = 4, Color = new RGBA(0.36f, 0.78f, 0.84f), Desc = "2 Katzen-Trinkbrunnen – auch zum Weiterverkaufen im Shop." },
         };
