@@ -104,6 +104,7 @@ namespace DropshippingGame.UI
                     Fav = "P", FavColor = new Color(0.83f, 0.02f, 0.07f),
                     Badge = () => Game.Sim != null && Game.Sim.PendingCount() > 0 ? Game.Sim.PendingCount().ToString() : "",
                 },
+                WebStadtblatt.Def(),
                 new AppDef
                 {
                     Id = "tiktak", Title = "TikTak", Icon = "music", Group = "VERKAUF", Make = () => new WebTikTak(),

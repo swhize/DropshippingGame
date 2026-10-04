@@ -88,6 +88,7 @@ namespace DropshippingGame
             _belt = Props.Node(transform, "Belt").transform;
             Pedestrians_();
             if (!menuMode) gameObject.AddComponent<StreetFestival>().Setup();
+            gameObject.AddComponent<ShoppingDistrict>().Build(menuMode);
             // Statische Geometrie zusammenfassen: deutlich weniger Draw Calls.
             // Nur lesbare (prozedurale) Meshes: importierte Modelle sind nicht lesbar und würden Fehler werfen.
             var batch = new List<GameObject>();

@@ -344,6 +344,23 @@ namespace DropshippingGame.UI
             tp.Add(Btn("Kalles Imbiss", () => Teleport(WorldBuilder.SpawnDiner)));
             _body.Add(tp);
             _body.Add(Info("Tipp: Die Lagerhalle steht erst nach „Alle Upgrades“ bzw. „Alles freischalten“."));
+            BuildShops(sim);
+        }
+
+        /// <summary>Einkaufsviertel (MediaMarkd, Fressnix, Haustiere).</summary>
+        private void BuildShops(Sim sim)
+        {
+            _body.Add(Section("Einkaufsviertel"));
+            var r = Row();
+            r.style.flexWrap = Wrap.Wrap;
+            r.Add(Btn("Teleport: Läden", () => Teleport(ShoppingDistrict.SpawnShops)));
+            r.Add(Btn("Hund adoptieren", () => Do(() => sim.AdoptPet("hund"))));
+            r.Add(Btn("Katze adoptieren", () => Do(() => sim.AdoptPet("katze"))));
+            r.Add(Btn("+14 Futter", () => Do(() => { sim.PetFood += 14; sim.RaiseEconomyChanged(); })));
+            r.Add(Btn("Tier-Tag simulieren", () => Do(sim.PetsNewDay)));
+            r.Add(Btn("Aktionen neu würfeln", () => Do(() => { sim.ShopSeed += 1; sim.RaiseEconomyChanged(); })));
+            r.Add(Btn("Tiere weg", () => Do(sim.RemoveAllPets)));
+            _body.Add(r);
         }
 
         // =====================================================================================
