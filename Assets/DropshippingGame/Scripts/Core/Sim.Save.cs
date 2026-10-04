@@ -181,6 +181,7 @@ namespace DropshippingGame.Core
             state["total_challenges_done"] = TotalChallengesDone;
             state["furniture"] = FurnitureToJson();
             state["tiktok_videos"] = TikTokVideosToJson();
+            state["shops"] = ShopsToJson();
         }
 
         /// <summary>Speichert in den aktuellen Slot. Das Imbiss-Intro wird nicht gespeichert.</summary>
@@ -390,6 +391,7 @@ namespace DropshippingGame.Core
             ReadFurniture(s);
             ReadTikTokVideos(s);
             ReadCityState(s);
+            ShopsFromJson(J.O(s, "shops"));
 
             FixupLegacyOrders();
             ReconcileOrdersInWork();
