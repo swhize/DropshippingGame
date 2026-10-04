@@ -692,15 +692,15 @@ namespace DropshippingGame
             return n;
         }
 
-        public static GameObject SignBoard(Transform parent, string text, Color bg, Color fg, Vector2 size)
+        public static GameObject SignBoard(Transform parent, string text, Color bg, Color fg, Vector2 size, SignFont font = SignFont.Default)
         {
             var n = Node(parent, "Sign");
             var t = n.transform;
             Box(t, new Vector3(size.x, size.y, 0.06f), Mats.Std(bg, 0.5f), Vector3.zero, default, 0.01f);
             float fontSize = Mathf.Min(110f, size.y * 0.7f / 0.004f);
-            Label3D.Create(t, text, fontSize, fg, new Vector3(0, 0, 0.035f), false);
+            Label3D.Create(t, text, fontSize, fg, new Vector3(0, 0, 0.035f), false, 0f, false, 1f, 0, font);
             var back = Node(t, "Back", new Vector3(0, 0, -0.035f), 180f);
-            Label3D.Create(back.transform, text, fontSize, fg, Vector3.zero, false);
+            Label3D.Create(back.transform, text, fontSize, fg, Vector3.zero, false, 0f, false, 1f, 0, font);
             return n;
         }
 

@@ -49,4 +49,18 @@ Alle Drittanbieter-Assets in diesem Projekt stehen unter freien Lizenzen (CC0/Pu
 | kaykit_restaurant | KayKit Restaurant Bits | Kay Lousberg | https://kaylousberg.itch.io/restaurant-bits ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/kaykit_restaurant` | keine |
 | kaykit_prototype | KayKit Prototype Bits | Kay Lousberg | https://kaylousberg.itch.io/prototype-bits ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/kaykit_prototype` | keine |
 
+**v3.1-Ergänzungen:** Weitere Modelle aus bereits gelisteten Packs (City Kit Suburban/Commercial/Roads, Car Kit, Mini Market, Food Kit, KayKit Furniture) wurden aus den GLB-Dateien desselben Spiegels nach FBX konvertiert. Originalseiten (kenney.nl, quaternius.com, polyhaven.com) waren nicht erreichbar – vor Release Lizenz-Stichprobe prüfen.
+
+| ID | Asset / Pack | Autor | Quelle | Lizenz | Dateien | Änderungen |
+|---|---|---|---|---|---|---|
+| font_bebasneue | Bebas Neue 2.000 | Ryoichi Tsunekawa (Dharma Type) | https://github.com/dharmatype/Bebas-Neue (via google/fonts) | [SIL OFL 1.1](https://openfontlicense.org/) | `Fonts/Sign-Condensed.ttf` | umbenannt |
+| font_pacifico | Pacifico 3.001 | Vernon Adams u. a. | https://github.com/googlefonts/Pacifico (via google/fonts) | [SIL OFL 1.1](https://openfontlicense.org/) | `Fonts/Sign-Script.ttf` | umbenannt |
+| font_sairastencil | Saira Stencil One 1.004 | Hector Gatti, Omnibus-Type | https://github.com/Omnibus-Type/Saira (via google/fonts) | [SIL OFL 1.1](https://openfontlicense.org/) | `Fonts/Sign-Stencil.ttf` | umbenannt |
+| font_bungee | Bungee 2.000 | David Jonathan Ross | https://github.com/djrrb/Bungee (via google/fonts) | [SIL OFL 1.1](https://openfontlicense.org/) | `Fonts/Sign-Retro.ttf` | umbenannt |
+| kenney_city_industrial | City Kit (Industrial) | Kenney | https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/kenney_city_industrial` | GLB -> FBX (Blender 4.2) |
+| kenney_mini_arcade | Mini Arcade | Kenney | https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/kenney_mini_arcade` | GLB -> FBX (Blender 4.2) |
+| kenney_furniture_kit | Furniture Kit | Kenney | https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/kenney_furniture_kit` | GLB -> FBX (Blender 4.2) |
+| kenney_cube_pets | Cube Pets 2.0 | Kenney | https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/kenney_cube_pets` | GLB -> FBX (Blender 4.2), Animationen in Armature gebacken |
+| kenney_modular_buildings | Modular Buildings | Kenney | https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/kenney_modular_buildings` | GLB -> FBX (Blender 4.2) |
+
 Spielcode und eigene Inhalte: siehe README. Blankie (codybrom/Blankie, MIT) diente nur als Quelle der geschnittenen CC0/PD/CC-BY-Aufnahmen; kein Code übernommen.

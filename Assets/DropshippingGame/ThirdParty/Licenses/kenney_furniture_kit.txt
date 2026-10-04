@@ -1,0 +1,32 @@
+Furniture Kit
+Autor: Kenney
+Quelle: https://kenney.nl ; Spiegel series-ai/jam-ready-assets (GCS-Mirror run-asset-library)
+Lizenz: CC0 1.0
+Dateien: Models/kenney_furniture_kit
+Änderungen: GLB -> FBX konvertiert (Blender 4.2)
+
+--- Original-Lizenzdatei des Packs ---
+	
+
+	Furniture Kit (2.1)
+
+	Created/distributed by Kenney (www.kenney.nl)
+	Creation date: 11-11-2018 13:11
+
+			------------------------------
+
+	License: (Creative Commons Zero, CC0)
+	http://creativecommons.org/publicdomain/zero/1.0/
+
+	This content is free to use in personal, educational and commercial projects.
+
+	Support us by crediting Kenney or www.kenney.nl (this is not mandatory)
+
+			------------------------------
+
+	Donate:   http://support.kenney.nl
+	Request:  http://request.kenney.nl
+	Patreon:  http://patreon.com/kenney/
+
+	Follow on Twitter for updates:
+	http://twitter.com/KenneyNL

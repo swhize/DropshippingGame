@@ -20,10 +20,12 @@ namespace DropshippingGame.EditorTools
     {
         private const string Root = "Assets/DropshippingGame/Resources/";
         private const string CharDir = Root + "Models/kenney_mini_characters/";
+        private const string PetDir = Root + "Models/kenney_cube_pets/";
 
         private static readonly string[] LoopClips =
         {
             "idle", "walk", "sprint", "sit", "drive", "static", "crouch",
+            "run", "eat", "dance",
             "holding-both", "holding-right", "holding-left", "wheelchair-sit", "wheelchair-move"
         };
 
@@ -52,7 +54,8 @@ namespace DropshippingGame.EditorTools
                 mi.isReadable = false;
                 mi.importBlendShapes = false;
 
-                bool character = assetPath.Replace('\\', '/').StartsWith(CharDir, StringComparison.Ordinal);
+                string np = assetPath.Replace('\\', '/');
+                bool character = np.StartsWith(CharDir, StringComparison.Ordinal) || np.StartsWith(PetDir, StringComparison.Ordinal);
                 if (character)
                 {
                     mi.animationType = ModelImporterAnimationType.Legacy;

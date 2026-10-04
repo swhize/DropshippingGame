@@ -5798,6 +5798,5663 @@
     "alias"
    ],
    "desc": "Karton"
+  },
+  {
+   "id": "building.house_a",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-a",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.3,
+    0.8335,
+    1.0281
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.1,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_b",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-b",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.828,
+    1.1375,
+    1.14
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 12.8,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_c",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-c",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.2864,
+    1.0335,
+    1.0281
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.0,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_d",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-d",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.7564,
+    1.2375,
+    1.028
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 12.29,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_e",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-e",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.3,
+    1.1375,
+    1.028
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.1,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_f",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-f",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.428,
+    1.1375,
+    1.4059
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 10.0,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_g",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-g",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.45,
+    0.7682,
+    1.178
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 10.15,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_h",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-h",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.3,
+    0.7375,
+    0.916
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.1,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_i",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-i",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.2864,
+    0.7375,
+    1.028
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.0,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_j",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-j",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.37,
+    1.0375,
+    0.916
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.59,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_k",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-k",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.9209,
+    1.1496,
+    1.02
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 8.05,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_l",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-l",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.0336,
+    1.0492,
+    1.02
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 7.34,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_m",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-m",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.428,
+    0.7375,
+    1.428
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 10.0,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_n",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-n",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.7843,
+    1.1375,
+    1.3779
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 12.49,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_o",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-o",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.27,
+    1.1375,
+    1.028
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 8.89,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_p",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-p",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.24,
+    0.918,
+    0.99
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 8.68,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_q",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-q",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.24,
+    0.918,
+    0.8856
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 8.68,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_r",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-r",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.028,
+    1.1411,
+    1.02
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 7.99,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_s",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-s",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.406,
+    1.1375,
+    1.0864
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.84,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_t",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-t",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.3136,
+    1.1563,
+    1.4064
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.84,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "building.house_u",
+   "category": "building",
+   "path": "Models/kenney_city_suburban/building-type-u",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.428,
+    1.1375,
+    1.0869
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "building",
+    "v3.1"
+   ],
+   "meters": 10.0,
+   "fitAxis": "max",
+   "desc": "Einfamilienhaus"
+  },
+  {
+   "id": "street.driveway_long",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/driveway-long",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.36,
+    0.01,
+    0.4
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 2.8,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.driveway_short",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/driveway-short",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.36,
+    0.01,
+    0.2
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 2.52,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.path_long",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/path-long",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.2,
+    0.01,
+    0.4
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 2.8,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.path_short",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/path-short",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.2,
+    0.01,
+    0.2
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 1.4,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.path_stones_long",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/path-stones-long",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.14,
+    0.01,
+    0.4
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 2.8,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.path_stones_short",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/path-stones-short",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.14,
+    0.01,
+    0.2
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 1.4,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.path_stones_messy",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/path-stones-messy",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.1556,
+    0.01,
+    0.3614
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 2.53,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.fence_1x2",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/fence-1x2",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.875,
+    0.27,
+    0.4375
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 6.12,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.fence_1x3",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/fence-1x3",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.275,
+    0.27,
+    0.4375
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 8.92,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.fence_1x4",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/fence-1x4",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.675,
+    0.27,
+    0.4375
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 11.72,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.fence_2x2",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/fence-2x2",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.875,
+    0.27,
+    0.8375
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 6.12,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.fence_2x3",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/fence-2x3",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.275,
+    0.27,
+    0.8375
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 8.92,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.fence_3x2",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/fence-3x2",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    0.875,
+    0.27,
+    1.2375
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 8.66,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.fence_3x3",
+   "category": "street",
+   "path": "Models/kenney_city_suburban/fence-3x3",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_suburban/Textures/colormap",
+   "size": [
+    1.275,
+    0.27,
+    1.2375
+   ],
+   "credit": "kenney_city_suburban",
+   "tags": [
+    "kenney_city_suburban",
+    "street",
+    "v3.1"
+   ],
+   "meters": 8.92,
+   "fitAxis": "max"
+  },
+  {
+   "id": "building.industrial_a",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-a",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    2.0836,
+    1.47,
+    1.242
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 15.63,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_b",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-b",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    2.0836,
+    1.47,
+    1.262
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 15.63,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_c",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-c",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.8759,
+    1.25,
+    2.108
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 15.81,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_d",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-d",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    0.8836,
+    1.4146,
+    1.42
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 10.65,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_e",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-e",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.6836,
+    1.65,
+    1.29
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 12.63,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_f",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-f",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.79,
+    1.925,
+    1.28
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 14.44,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_g",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-g",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.6781,
+    1.28,
+    1.2836
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 12.59,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_h",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-h",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.3217,
+    0.7335,
+    1.31
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.91,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_i",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-i",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.0281,
+    0.7335,
+    1.3
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.75,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_j",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-j",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.0266,
+    0.8611,
+    1.3
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.75,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_k",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-k",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.3029,
+    0.7727,
+    0.9136
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.77,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_l",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-l",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    2.0836,
+    1.925,
+    1.87
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 15.63,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_m",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-m",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.3163,
+    1.519,
+    1.7
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 12.75,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_n",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-n",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    0.9766,
+    1.9046,
+    1.42
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 14.28,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_o",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-o",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    0.8836,
+    0.918,
+    1.24
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 9.3,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_p",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-p",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.6836,
+    0.7146,
+    0.992
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 12.63,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_q",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-q",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    2.14,
+    0.88,
+    1.7699
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 16.05,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_r",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-r",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    2.4836,
+    1.393,
+    1.272
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 18.63,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_s",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-s",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    2.12,
+    0.8368,
+    0.9163
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 15.9,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.industrial_t",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/building-t",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.7217,
+    1.0146,
+    1.39
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 12.91,
+   "fitAxis": "max",
+   "desc": "Industriehalle/Fabrik"
+  },
+  {
+   "id": "building.chimney_basic",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/chimney-basic",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    0.2,
+    1.0,
+    0.2
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 7.5,
+   "fitAxis": "max",
+   "desc": "Schornstein"
+  },
+  {
+   "id": "building.chimney_large",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/chimney-large",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    1.0,
+    1.7,
+    1.0
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 12.75,
+   "fitAxis": "max",
+   "desc": "Schornstein"
+  },
+  {
+   "id": "building.chimney_medium",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/chimney-medium",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    0.45,
+    1.925,
+    0.45
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 14.44,
+   "fitAxis": "max",
+   "desc": "Schornstein"
+  },
+  {
+   "id": "building.chimney_small",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/chimney-small",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    0.3,
+    0.75,
+    0.3
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 5.62,
+   "fitAxis": "max",
+   "desc": "Schornstein"
+  },
+  {
+   "id": "building.tank",
+   "category": "building",
+   "path": "Models/kenney_city_industrial/detail-tank",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_industrial/Textures/colormap",
+   "size": [
+    0.848,
+    0.4153,
+    0.5153
+   ],
+   "credit": "kenney_city_industrial",
+   "tags": [
+    "kenney_city_industrial",
+    "building",
+    "v3.1"
+   ],
+   "meters": 6.36,
+   "fitAxis": "max",
+   "desc": "Tank/Silo"
+  },
+  {
+   "id": "street.awning",
+   "category": "street",
+   "path": "Models/kenney_city_commercial/detail-awning",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_commercial/Textures/colormap",
+   "size": [
+    0.4,
+    0.4,
+    0.1479
+   ],
+   "credit": "kenney_city_commercial",
+   "tags": [
+    "kenney_city_commercial",
+    "street",
+    "v3.1"
+   ],
+   "meters": 3.0,
+   "fitAxis": "max",
+   "desc": "Markise/Vordach (Wand)"
+  },
+  {
+   "id": "street.awning_wide",
+   "category": "street",
+   "path": "Models/kenney_city_commercial/detail-awning-wide",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_commercial/Textures/colormap",
+   "size": [
+    0.8,
+    0.4,
+    0.1479
+   ],
+   "credit": "kenney_city_commercial",
+   "tags": [
+    "kenney_city_commercial",
+    "street",
+    "v3.1"
+   ],
+   "meters": 6.0,
+   "fitAxis": "max",
+   "desc": "Markise/Vordach (Wand)"
+  },
+  {
+   "id": "street.overhang",
+   "category": "street",
+   "path": "Models/kenney_city_commercial/detail-overhang",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_commercial/Textures/colormap",
+   "size": [
+    0.5,
+    0.4,
+    0.2
+   ],
+   "credit": "kenney_city_commercial",
+   "tags": [
+    "kenney_city_commercial",
+    "street",
+    "v3.1"
+   ],
+   "meters": 3.75,
+   "fitAxis": "max",
+   "desc": "Markise/Vordach (Wand)"
+  },
+  {
+   "id": "street.overhang_wide",
+   "category": "street",
+   "path": "Models/kenney_city_commercial/detail-overhang-wide",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_commercial/Textures/colormap",
+   "size": [
+    1.0,
+    0.4,
+    0.2
+   ],
+   "credit": "kenney_city_commercial",
+   "tags": [
+    "kenney_city_commercial",
+    "street",
+    "v3.1"
+   ],
+   "meters": 7.5,
+   "fitAxis": "max",
+   "desc": "Markise/Vordach (Wand)"
+  },
+  {
+   "id": "street.light_curved_double",
+   "category": "street",
+   "path": "Models/kenney_city_roads/light-curved-double",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_roads/Textures/colormap",
+   "size": [
+    0.05,
+    0.675,
+    0.4
+   ],
+   "credit": "kenney_city_roads",
+   "tags": [
+    "kenney_city_roads",
+    "street",
+    "v3.1"
+   ],
+   "meters": 5.06,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.light_curved_cross",
+   "category": "street",
+   "path": "Models/kenney_city_roads/light-curved-cross",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_roads/Textures/colormap",
+   "size": [
+    0.4,
+    0.675,
+    0.4
+   ],
+   "credit": "kenney_city_roads",
+   "tags": [
+    "kenney_city_roads",
+    "street",
+    "v3.1"
+   ],
+   "meters": 5.06,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.light_square_double",
+   "category": "street",
+   "path": "Models/kenney_city_roads/light-square-double",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_roads/Textures/colormap",
+   "size": [
+    0.05,
+    0.6,
+    0.425
+   ],
+   "credit": "kenney_city_roads",
+   "tags": [
+    "kenney_city_roads",
+    "street",
+    "v3.1"
+   ],
+   "meters": 4.5,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.light_square_cross",
+   "category": "street",
+   "path": "Models/kenney_city_roads/light-square-cross",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_roads/Textures/colormap",
+   "size": [
+    0.425,
+    0.6,
+    0.425
+   ],
+   "credit": "kenney_city_roads",
+   "tags": [
+    "kenney_city_roads",
+    "street",
+    "v3.1"
+   ],
+   "meters": 4.5,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.sign_highway_wide",
+   "category": "street",
+   "path": "Models/kenney_city_roads/sign-highway-wide",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_roads/Textures/colormap",
+   "size": [
+    0.1324,
+    0.7074,
+    1.0
+   ],
+   "credit": "kenney_city_roads",
+   "tags": [
+    "kenney_city_roads",
+    "street",
+    "v3.1"
+   ],
+   "meters": 7.5,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.sign_highway_detailed",
+   "category": "street",
+   "path": "Models/kenney_city_roads/sign-highway-detailed",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_city_roads/Textures/colormap",
+   "size": [
+    0.1324,
+    0.8221,
+    1.0
+   ],
+   "credit": "kenney_city_roads",
+   "tags": [
+    "kenney_city_roads",
+    "street",
+    "v3.1"
+   ],
+   "meters": 7.5,
+   "fitAxis": "max"
+  },
+  {
+   "id": "vehicle.tractor",
+   "category": "vehicle",
+   "path": "Models/kenney_car_kit/tractor",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_car_kit/Textures/colormap",
+   "size": [
+    1.3421,
+    1.6021,
+    2.2016
+   ],
+   "credit": "kenney_car_kit",
+   "tags": [
+    "kenney_car_kit",
+    "vehicle",
+    "v3.1"
+   ],
+   "meters": 3.79,
+   "fitAxis": "max",
+   "desc": "Traktor"
+  },
+  {
+   "id": "vehicle.tractor_shovel",
+   "category": "vehicle",
+   "path": "Models/kenney_car_kit/tractor-shovel",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_car_kit/Textures/colormap",
+   "size": [
+    1.6606,
+    1.512,
+    2.4701
+   ],
+   "credit": "kenney_car_kit",
+   "tags": [
+    "kenney_car_kit",
+    "vehicle",
+    "v3.1"
+   ],
+   "meters": 4.25,
+   "fitAxis": "max",
+   "desc": "Radlader"
+  },
+  {
+   "id": "vehicle.tractor_police",
+   "category": "vehicle",
+   "path": "Models/kenney_car_kit/tractor-police",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_car_kit/Textures/colormap",
+   "size": [
+    1.3421,
+    1.7021,
+    2.3016
+   ],
+   "credit": "kenney_car_kit",
+   "tags": [
+    "kenney_car_kit",
+    "vehicle",
+    "v3.1"
+   ],
+   "meters": 3.96,
+   "fitAxis": "max",
+   "desc": "Polizei-Traktor"
+  },
+  {
+   "id": "vehicle.race_future",
+   "category": "vehicle",
+   "path": "Models/kenney_car_kit/race-future",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_car_kit/Textures/colormap",
+   "size": [
+    1.2,
+    0.8325,
+    2.6598
+   ],
+   "credit": "kenney_car_kit",
+   "tags": [
+    "kenney_car_kit",
+    "vehicle",
+    "v3.1"
+   ],
+   "meters": 4.57,
+   "fitAxis": "max",
+   "desc": "Rennwagen"
+  },
+  {
+   "id": "vehicle.kart_a",
+   "category": "vehicle",
+   "path": "Models/kenney_car_kit/kart-oobi",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_car_kit/Textures/colormap",
+   "size": [
+    0.9743,
+    1.3291,
+    1.4278
+   ],
+   "credit": "kenney_car_kit",
+   "tags": [
+    "kenney_car_kit",
+    "vehicle",
+    "v3.1"
+   ],
+   "meters": 2.46,
+   "fitAxis": "max",
+   "desc": "Kart"
+  },
+  {
+   "id": "vehicle.kart_b",
+   "category": "vehicle",
+   "path": "Models/kenney_car_kit/kart-oozi",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_car_kit/Textures/colormap",
+   "size": [
+    0.9743,
+    1.3291,
+    1.4278
+   ],
+   "credit": "kenney_car_kit",
+   "tags": [
+    "kenney_car_kit",
+    "vehicle",
+    "v3.1"
+   ],
+   "meters": 2.46,
+   "fitAxis": "max",
+   "desc": "Kart"
+  },
+  {
+   "id": "street.tire",
+   "category": "street",
+   "path": "Models/kenney_car_kit/debris-tire",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_car_kit/Textures/colormap",
+   "size": [
+    0.35,
+    0.6,
+    0.6
+   ],
+   "credit": "kenney_car_kit",
+   "tags": [
+    "kenney_car_kit",
+    "street",
+    "v3.1"
+   ],
+   "meters": 1.03,
+   "fitAxis": "max",
+   "desc": "Altreifen"
+  },
+  {
+   "id": "street.cone_flat",
+   "category": "street",
+   "path": "Models/kenney_car_kit/cone-flat",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_car_kit/Textures/colormap",
+   "size": [
+    0.4762,
+    0.281,
+    0.4762
+   ],
+   "credit": "kenney_car_kit",
+   "tags": [
+    "kenney_car_kit",
+    "street",
+    "v3.1"
+   ],
+   "meters": 0.82,
+   "fitAxis": "max",
+   "desc": "Pylone flach"
+  },
+  {
+   "id": "logistics.crate_car",
+   "category": "logistics",
+   "path": "Models/kenney_car_kit/box",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_car_kit/Textures/colormap",
+   "size": [
+    0.715,
+    0.715,
+    0.715
+   ],
+   "credit": "kenney_car_kit",
+   "tags": [
+    "kenney_car_kit",
+    "logistics",
+    "v3.1"
+   ],
+   "meters": 1.23,
+   "fitAxis": "max",
+   "desc": "Holzkiste"
+  },
+  {
+   "id": "shop.wall",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/wall",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    1.0,
+    1.0,
+    0.6
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "shop",
+    "v3.1"
+   ],
+   "meters": 1.7,
+   "fitAxis": "max",
+   "desc": "Laden-Bauteil"
+  },
+  {
+   "id": "shop.wall_window",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/wall-window",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    1.0,
+    1.0,
+    0.6
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "shop",
+    "v3.1"
+   ],
+   "meters": 1.7,
+   "fitAxis": "max",
+   "desc": "Laden-Bauteil"
+  },
+  {
+   "id": "shop.wall_door",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/wall-door-rotate",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    1.0,
+    1.0,
+    0.6
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "shop",
+    "v3.1"
+   ],
+   "meters": 1.7,
+   "fitAxis": "max",
+   "desc": "Laden-Bauteil"
+  },
+  {
+   "id": "shop.wall_corner",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/wall-corner",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.8,
+    1.0,
+    0.8
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "shop",
+    "v3.1"
+   ],
+   "meters": 1.7,
+   "fitAxis": "max",
+   "desc": "Laden-Bauteil"
+  },
+  {
+   "id": "shop.column",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/column",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.7258,
+    1.0,
+    0.7258
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "shop",
+    "v3.1"
+   ],
+   "meters": 1.7,
+   "fitAxis": "max",
+   "desc": "Laden-Bauteil"
+  },
+  {
+   "id": "shop.floor",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/floor",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    1.0,
+    0.025,
+    1.0
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "shop",
+    "v3.1"
+   ],
+   "meters": 1.7,
+   "fitAxis": "max",
+   "desc": "Laden-Bauteil"
+  },
+  {
+   "id": "shop.fence",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/fence",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.575,
+    0.379,
+    0.15
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "shop",
+    "v3.1"
+   ],
+   "meters": 0.98,
+   "fitAxis": "max",
+   "desc": "Laden-Bauteil"
+  },
+  {
+   "id": "shop.fence_door",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/fence-door-rotate",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    1.0,
+    0.379,
+    0.1652
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "shop",
+    "v3.1"
+   ],
+   "meters": 1.7,
+   "fitAxis": "max",
+   "desc": "Laden-Bauteil"
+  },
+  {
+   "id": "shop.employee",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/character-employee",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    1.9021,
+    2.0,
+    2.0
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "shop",
+    "v3.1"
+   ],
+   "meters": 3.4,
+   "fitAxis": "max",
+   "desc": "Verkäufer (statisch)"
+  },
+  {
+   "id": "arcade.machine",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/arcade-machine",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.4,
+    0.725,
+    0.5375
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 1.74,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.claw",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/claw-machine",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.653,
+    0.95,
+    0.6932
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 2.28,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.pinball",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/pinball",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.5,
+    0.7417,
+    0.75
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 1.8,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.air_hockey",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/air-hockey",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    1.0,
+    0.5,
+    0.7
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 2.4,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.dance",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/dance-machine",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.7232,
+    0.95,
+    1.025
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 2.46,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.basketball",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/basketball-game",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.65,
+    0.8,
+    1.0125
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 2.43,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.gambling",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/gambling-machine",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.5245,
+    0.7759,
+    0.4875
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 1.86,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.prize_wheel",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/prize-wheel",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.5852,
+    0.8426,
+    0.3015
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 2.02,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.prizes",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/prizes",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.8,
+    0.8,
+    0.4
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 1.92,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.ticket",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/ticket-machine",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.4,
+    0.925,
+    0.3958
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 2.22,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.vending",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/vending-machine",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.5,
+    0.75,
+    0.475
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 1.8,
+   "fitAxis": "max"
+  },
+  {
+   "id": "arcade.cash_register",
+   "category": "arcade",
+   "path": "Models/kenney_mini_arcade/cash-register",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.9,
+    0.5449,
+    0.5
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 2.16,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.bed_double",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bedDouble",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.956,
+    0.375,
+    1.125
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.14,
+   "fitAxis": "max",
+   "desc": "Doppelbett"
+  },
+  {
+   "id": "furniture.bed_single",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bedSingle",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.571,
+    0.375,
+    1.125
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.14,
+   "fitAxis": "max",
+   "desc": "Einzelbett"
+  },
+  {
+   "id": "furniture.bed_bunk",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bedBunk",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.571,
+    0.85,
+    1.095
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.08,
+   "fitAxis": "max",
+   "desc": "Etagenbett"
+  },
+  {
+   "id": "furniture.desk",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/desk",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.7345,
+    0.3844,
+    0.3923
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.4,
+   "fitAxis": "max",
+   "desc": "Schreibtisch"
+  },
+  {
+   "id": "furniture.desk_corner",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/deskCorner",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.9745,
+    0.3844,
+    0.9745
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.85,
+   "fitAxis": "max",
+   "desc": "Eckschreibtisch"
+  },
+  {
+   "id": "furniture.chair_desk",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/chairDesk",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.335,
+    0.6076,
+    0.3143
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.15,
+   "fitAxis": "max",
+   "desc": "Bürostuhl"
+  },
+  {
+   "id": "furniture.chair",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/chair",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2,
+    0.47,
+    0.2
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.89,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.chair_cushion",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/chairCushion",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2,
+    0.46,
+    0.2
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.87,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.chair_modern",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/chairModernCushion",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2,
+    0.46,
+    0.2
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.87,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.lounge_chair",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/loungeChair",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.49,
+    0.46,
+    0.41
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.93,
+   "fitAxis": "max",
+   "desc": "Sessel"
+  },
+  {
+   "id": "furniture.lounge_chair_relax",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/loungeChairRelax",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.49,
+    0.63,
+    0.6747
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.28,
+   "fitAxis": "max",
+   "desc": "Relaxsessel"
+  },
+  {
+   "id": "furniture.sofa",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/loungeSofa",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.98,
+    0.46,
+    0.41
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.86,
+   "fitAxis": "max",
+   "desc": "Sofa"
+  },
+  {
+   "id": "furniture.sofa_long",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/loungeSofaLong",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.98,
+    0.46,
+    0.82
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.86,
+   "fitAxis": "max",
+   "desc": "Sofa lang"
+  },
+  {
+   "id": "furniture.sofa_corner",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/loungeSofaCorner",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.98,
+    0.46,
+    0.98
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.86,
+   "fitAxis": "max",
+   "desc": "Ecksofa"
+  },
+  {
+   "id": "furniture.sofa_design",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/loungeDesignSofa",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    1.12,
+    0.4,
+    0.41
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.13,
+   "fitAxis": "max",
+   "desc": "Designsofa"
+  },
+  {
+   "id": "furniture.ottoman",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/loungeSofaOttoman",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.4398,
+    0.23,
+    0.45
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.85,
+   "fitAxis": "max",
+   "desc": "Hocker"
+  },
+  {
+   "id": "furniture.bookcase_open",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bookcaseOpen",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.4,
+    0.88,
+    0.25
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.67,
+   "fitAxis": "max",
+   "desc": "Regal offen"
+  },
+  {
+   "id": "furniture.bookcase_low",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bookcaseOpenLow",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.4,
+    0.4,
+    0.25
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.76,
+   "fitAxis": "max",
+   "desc": "Regal niedrig"
+  },
+  {
+   "id": "furniture.bookcase_wide",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bookcaseClosedWide",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.8,
+    0.79,
+    0.25
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.52,
+   "fitAxis": "max",
+   "desc": "Schrank breit"
+  },
+  {
+   "id": "furniture.wardrobe",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bookcaseClosedDoors",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.4,
+    0.85,
+    0.25
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.61,
+   "fitAxis": "max",
+   "desc": "Schrank"
+  },
+  {
+   "id": "furniture.tv_cabinet",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/cabinetTelevision",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.8,
+    0.31,
+    0.25
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.52,
+   "fitAxis": "max",
+   "desc": "TV-Lowboard"
+  },
+  {
+   "id": "furniture.nightstand",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/cabinetBedDrawerTable",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.266,
+    0.2632,
+    0.2173
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.51,
+   "fitAxis": "max",
+   "desc": "Nachttisch"
+  },
+  {
+   "id": "furniture.side_table",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/sideTable",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.5345,
+    0.3844,
+    0.22
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.02,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.coffee_table",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/tableCoffee",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.661,
+    0.23,
+    0.4
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.26,
+   "fitAxis": "max",
+   "desc": "Couchtisch"
+  },
+  {
+   "id": "furniture.coffee_table_glass",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/tableCoffeeGlass",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.661,
+    0.23,
+    0.4
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.26,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.table",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/table",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.8415,
+    0.3267,
+    0.4474
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.6,
+   "fitAxis": "max",
+   "desc": "Esstisch"
+  },
+  {
+   "id": "furniture.table_round",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/tableRound",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.6928,
+    0.3667,
+    0.8
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.52,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.stool_bar",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/stoolBar",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2654,
+    0.435,
+    0.2299
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.83,
+   "fitAxis": "max",
+   "desc": "Barhocker"
+  },
+  {
+   "id": "furniture.kitchen_bar",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/kitchenBar",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.43,
+    0.42,
+    0.21
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.82,
+   "fitAxis": "max",
+   "desc": "Küchentheke"
+  },
+  {
+   "id": "furniture.kitchen_cabinet",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/kitchenCabinet",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.43,
+    0.45,
+    0.45
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.85,
+   "fitAxis": "max",
+   "desc": "Küchenunterschrank"
+  },
+  {
+   "id": "furniture.kitchen_cabinet_upper",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/kitchenCabinetUpper",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.43,
+    0.39,
+    0.22
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.82,
+   "fitAxis": "max",
+   "desc": "Hängeschrank"
+  },
+  {
+   "id": "furniture.kitchen_sink",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/kitchenSink",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.43,
+    0.49,
+    0.45
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.93,
+   "fitAxis": "max",
+   "desc": "Spüle"
+  },
+  {
+   "id": "furniture.kitchen_stove",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/kitchenStove",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.43,
+    0.45,
+    0.45
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.85,
+   "fitAxis": "max",
+   "desc": "Herd"
+  },
+  {
+   "id": "furniture.toilet",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/toilet",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.3125,
+    0.451,
+    0.4772
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.91,
+   "fitAxis": "max",
+   "desc": "WC"
+  },
+  {
+   "id": "furniture.shower",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/shower",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.5618,
+    1.094,
+    0.5818
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.08,
+   "fitAxis": "max",
+   "desc": "Dusche"
+  },
+  {
+   "id": "furniture.bathtub",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bathtub",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    1.19,
+    0.42,
+    0.56
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.26,
+   "fitAxis": "max",
+   "desc": "Badewanne"
+  },
+  {
+   "id": "furniture.bathroom_sink",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bathroomSink",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.34,
+    0.56,
+    0.29
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.06,
+   "fitAxis": "max",
+   "desc": "Waschbecken"
+  },
+  {
+   "id": "furniture.bathroom_mirror",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bathroomMirror",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.3013,
+    0.4346,
+    0.1444
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.83,
+   "fitAxis": "max",
+   "desc": "Spiegel"
+  },
+  {
+   "id": "furniture.lamp_floor",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/lampRoundFloor",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.152,
+    0.86,
+    0.1756
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.63,
+   "fitAxis": "max",
+   "desc": "Stehlampe"
+  },
+  {
+   "id": "furniture.lamp_table",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/lampSquareTable",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.12,
+    0.29,
+    0.12
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.55,
+   "fitAxis": "max",
+   "desc": "Tischlampe"
+  },
+  {
+   "id": "furniture.lamp_wall",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/lampWall",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2266,
+    0.0928,
+    0.1503
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.43,
+   "fitAxis": "max",
+   "desc": "Wandlampe"
+  },
+  {
+   "id": "furniture.lamp_ceiling",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/lampSquareCeiling",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.12,
+    0.23,
+    0.12
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.44,
+   "fitAxis": "max",
+   "desc": "Deckenlampe"
+  },
+  {
+   "id": "furniture.plant",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/pottedPlant",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2121,
+    0.654,
+    0.2415
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.24,
+   "fitAxis": "max",
+   "desc": "Zimmerpflanze"
+  },
+  {
+   "id": "furniture.plant_small",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/plantSmall1",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.0947,
+    0.14,
+    0.0947
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.27,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.rug_round",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/rugRound",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.92,
+    0.01,
+    0.92
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.75,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.rug",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/rugRectangle",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    1.57,
+    0.01,
+    0.92
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.98,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.doormat",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/rugDoormat",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.4293,
+    0.01,
+    0.237
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.82,
+   "fitAxis": "max",
+   "desc": "Fußmatte"
+  },
+  {
+   "id": "furniture.coat_rack",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/coatRackStanding",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2728,
+    0.77,
+    0.2728
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.46,
+   "fitAxis": "max",
+   "desc": "Garderobe"
+  },
+  {
+   "id": "furniture.books",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/books",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.1504,
+    0.1039,
+    0.0945
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.29,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.teddy",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/bear",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.3897,
+    0.45,
+    0.2475
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.85,
+   "fitAxis": "max",
+   "desc": "Teddybär"
+  },
+  {
+   "id": "furniture.box_closed",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/cardboardBoxClosed",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2125,
+    0.281,
+    0.2125
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.53,
+   "fitAxis": "max",
+   "desc": "Umzugskarton"
+  },
+  {
+   "id": "furniture.box_open",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/cardboardBoxOpen",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.3719,
+    0.281,
+    0.2125
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.71,
+   "fitAxis": "max",
+   "desc": "Umzugskarton offen"
+  },
+  {
+   "id": "furniture.pillow",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/pillow",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.23,
+    0.2222,
+    0.0885
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.44,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.trashcan",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/trashcan",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2077,
+    0.4279,
+    0.2341
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.81,
+   "fitAxis": "max",
+   "desc": "Mülleimer"
+  },
+  {
+   "id": "furniture.ceiling_fan",
+   "category": "furniture",
+   "path": "Models/kenney_furniture_kit/ceilingFan",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.4547,
+    0.1337,
+    0.5251
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.0,
+   "fitAxis": "max",
+   "desc": "Deckenventilator"
+  },
+  {
+   "id": "electronics.tv_modern",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/televisionModern",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.6848,
+    0.4548,
+    0.1284
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 1.3,
+   "fitAxis": "max",
+   "desc": "Flachbild-TV"
+  },
+  {
+   "id": "electronics.tv_vintage",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/televisionVintage",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.41,
+    0.27,
+    0.27
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.78,
+   "fitAxis": "max",
+   "desc": "Röhren-TV"
+  },
+  {
+   "id": "electronics.tv_antenna",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/televisionAntenna",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2645,
+    0.1027,
+    0.08
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.5,
+   "fitAxis": "max",
+   "desc": "Alter TV mit Antenne"
+  },
+  {
+   "id": "electronics.laptop",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/laptop",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.264,
+    0.1618,
+    0.2401
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.5,
+   "fitAxis": "max",
+   "desc": "Laptop"
+  },
+  {
+   "id": "electronics.monitor",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/computerScreen",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.3927,
+    0.2943,
+    0.104
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.75,
+   "fitAxis": "max",
+   "desc": "Monitor"
+  },
+  {
+   "id": "electronics.keyboard",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/computerKeyboard",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.2822,
+    0.0276,
+    0.1182
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.54,
+   "fitAxis": "max",
+   "desc": "Tastatur"
+  },
+  {
+   "id": "electronics.mouse",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/computerMouse",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.0497,
+    0.0236,
+    0.0851
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.16,
+   "fitAxis": "max",
+   "desc": "Maus"
+  },
+  {
+   "id": "electronics.radio",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/radio",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.315,
+    0.2282,
+    0.0975
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.6,
+   "fitAxis": "max",
+   "desc": "Radio"
+  },
+  {
+   "id": "electronics.speaker",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/speaker",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.148,
+    0.6364,
+    0.148
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 1.21,
+   "fitAxis": "max",
+   "desc": "Lautsprecher"
+  },
+  {
+   "id": "electronics.speaker_small",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/speakerSmall",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.148,
+    0.298,
+    0.1332
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.57,
+   "fitAxis": "max"
+  },
+  {
+   "id": "electronics.coffee_machine",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/kitchenCoffeeMachine",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.1895,
+    0.1775,
+    0.2402
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.46,
+   "fitAxis": "max",
+   "desc": "Kaffeemaschine"
+  },
+  {
+   "id": "electronics.microwave",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/kitchenMicrowave",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.29,
+    0.18,
+    0.23
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.55,
+   "fitAxis": "max",
+   "desc": "Mikrowelle"
+  },
+  {
+   "id": "electronics.blender",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/kitchenBlender",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.1358,
+    0.2275,
+    0.1091
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.43,
+   "fitAxis": "max",
+   "desc": "Mixer"
+  },
+  {
+   "id": "electronics.toaster",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/toaster",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.188,
+    0.13,
+    0.1
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.36,
+   "fitAxis": "max",
+   "desc": "Toaster"
+  },
+  {
+   "id": "electronics.washer",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/washer",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.39,
+    0.47,
+    0.39
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.89,
+   "fitAxis": "max",
+   "desc": "Waschmaschine"
+  },
+  {
+   "id": "electronics.dryer",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/dryer",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.39,
+    0.47,
+    0.38
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.89,
+   "fitAxis": "max",
+   "desc": "Trockner"
+  },
+  {
+   "id": "electronics.fridge",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/kitchenFridge",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.43,
+    0.92,
+    0.2919
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 1.75,
+   "fitAxis": "max",
+   "desc": "Kühlschrank"
+  },
+  {
+   "id": "electronics.fridge_large",
+   "category": "electronics",
+   "path": "Models/kenney_furniture_kit/kitchenFridgeLarge",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "",
+   "size": [
+    0.52,
+    0.92,
+    0.4055
+   ],
+   "credit": "kenney_furniture_kit",
+   "tags": [
+    "kenney_furniture_kit",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 1.75,
+   "fitAxis": "max",
+   "desc": "Kühlschrank groß"
+  },
+  {
+   "id": "furniture.bed_double_kk_a",
+   "category": "furniture",
+   "path": "Models/kaykit_furniture/bed_double_A",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    3.1,
+    1.0,
+    3.0
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.17,
+   "fitAxis": "max",
+   "desc": "Doppelbett (KayKit)"
+  },
+  {
+   "id": "furniture.bed_double_kk_b",
+   "category": "furniture",
+   "path": "Models/kaykit_furniture/bed_double_B",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    3.1,
+    1.0,
+    3.0
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.17,
+   "fitAxis": "max",
+   "desc": "Doppelbett (KayKit)"
+  },
+  {
+   "id": "furniture.bed_single_kk_b",
+   "category": "furniture",
+   "path": "Models/kaykit_furniture/bed_single_B",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    1.6,
+    1.0,
+    3.0
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.1,
+   "fitAxis": "max",
+   "desc": "Einzelbett (KayKit)"
+  },
+  {
+   "id": "furniture.desk_large",
+   "category": "furniture",
+   "path": "Models/kaykit_furniture/desk_large",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    4.0,
+    1.0,
+    1.5016
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 2.8,
+   "fitAxis": "max",
+   "desc": "Großer Schreibtisch"
+  },
+  {
+   "id": "furniture.cabinet_small",
+   "category": "furniture",
+   "path": "Models/kaykit_furniture/cabinet_small",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    1.0,
+    1.0,
+    1.0016
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.7,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.shelf_small",
+   "category": "furniture",
+   "path": "Models/kaykit_furniture/shelf_A_small",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    1.0,
+    0.4,
+    0.5
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.7,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.table_low",
+   "category": "furniture",
+   "path": "Models/kaykit_furniture/table_low",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    2.4,
+    0.5,
+    1.5
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 1.68,
+   "fitAxis": "max"
+  },
+  {
+   "id": "furniture.table_small",
+   "category": "furniture",
+   "path": "Models/kaykit_furniture/table_small",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.7,
+   "fitAxis": "max"
+  },
+  {
+   "id": "electronics.mousepad_large",
+   "category": "electronics",
+   "path": "Models/kaykit_furniture/mousepad_large_A",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    1.4,
+    0.02,
+    0.8
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "electronics",
+    "v3.1"
+   ],
+   "meters": 0.98,
+   "fitAxis": "max",
+   "desc": "Gaming-Mauspad"
+  },
+  {
+   "id": "furniture.stool_wood",
+   "category": "furniture",
+   "path": "Models/kaykit_furniture/chair_stool_wood",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    0.75,
+    0.5,
+    0.75
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "furniture",
+    "v3.1"
+   ],
+   "meters": 0.52,
+   "fitAxis": "max"
+  },
+  {
+   "id": "decor.cactus_medium_b",
+   "category": "decor",
+   "path": "Models/kaykit_furniture/cactus_medium_B",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    0.8799,
+    0.8272,
+    0.8368
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "decor",
+    "v3.1"
+   ],
+   "meters": 0.62,
+   "fitAxis": "max"
+  },
+  {
+   "id": "decor.pictureframe_medium",
+   "category": "decor",
+   "path": "Models/kaykit_furniture/pictureframe_medium",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_furniture/furniturebits_texture",
+   "size": [
+    0.7,
+    0.9,
+    0.2
+   ],
+   "credit": "kaykit_furniture",
+   "tags": [
+    "kaykit_furniture",
+    "decor",
+    "v3.1"
+   ],
+   "meters": 0.63,
+   "fitAxis": "max"
+  },
+  {
+   "id": "building.modular_house_a",
+   "category": "building",
+   "path": "Models/kenney_modular_buildings/building-sample-house-a",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    1.0956,
+    1.1438,
+    2.0
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "building",
+    "v3.1"
+   ],
+   "meters": 14.0,
+   "fitAxis": "max",
+   "desc": "Stadthaus"
+  },
+  {
+   "id": "building.modular_house_b",
+   "category": "building",
+   "path": "Models/kenney_modular_buildings/building-sample-house-b",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    1.0913,
+    1.9813,
+    2.2
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "building",
+    "v3.1"
+   ],
+   "meters": 15.4,
+   "fitAxis": "max",
+   "desc": "Stadthaus"
+  },
+  {
+   "id": "building.modular_house_c",
+   "category": "building",
+   "path": "Models/kenney_modular_buildings/building-sample-house-c",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    2.0,
+    1.9813,
+    2.2
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "building",
+    "v3.1"
+   ],
+   "meters": 15.4,
+   "fitAxis": "max",
+   "desc": "Stadthaus"
+  },
+  {
+   "id": "building.modular_tower_a",
+   "category": "building",
+   "path": "Models/kenney_modular_buildings/building-sample-tower-a",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    1.1,
+    2.5,
+    1.25
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "building",
+    "v3.1"
+   ],
+   "meters": 17.5,
+   "fitAxis": "max",
+   "desc": "Stadthaus"
+  },
+  {
+   "id": "building.modular_tower_b",
+   "category": "building",
+   "path": "Models/kenney_modular_buildings/building-sample-tower-b",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    1.1,
+    1.8875,
+    1.25
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "building",
+    "v3.1"
+   ],
+   "meters": 13.21,
+   "fitAxis": "max",
+   "desc": "Stadthaus"
+  },
+  {
+   "id": "building.modular_tower_c",
+   "category": "building",
+   "path": "Models/kenney_modular_buildings/building-sample-tower-c",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    1.1,
+    3.1375,
+    1.275
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "building",
+    "v3.1"
+   ],
+   "meters": 21.96,
+   "fitAxis": "max",
+   "desc": "Stadthaus"
+  },
+  {
+   "id": "building.modular_tower_d",
+   "category": "building",
+   "path": "Models/kenney_modular_buildings/building-sample-tower-d",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    1.1,
+    3.7625,
+    1.1
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "building",
+    "v3.1"
+   ],
+   "meters": 26.34,
+   "fitAxis": "max",
+   "desc": "Stadthaus"
+  },
+  {
+   "id": "street.ac_unit_a",
+   "category": "street",
+   "path": "Models/kenney_modular_buildings/detail-ac-a",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    0.24,
+    0.1063,
+    0.24
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "street",
+    "v3.1"
+   ],
+   "meters": 1.68,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.ac_unit_b",
+   "category": "street",
+   "path": "Models/kenney_modular_buildings/detail-ac-b",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    0.31,
+    0.225,
+    0.125
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "street",
+    "v3.1"
+   ],
+   "meters": 2.17,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.awning_flat_a",
+   "category": "street",
+   "path": "Models/kenney_modular_buildings/roof-flat-awning-a",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    1.0,
+    0.2125,
+    1.11
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "street",
+    "v3.1"
+   ],
+   "meters": 7.77,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.awning_flat_b",
+   "category": "street",
+   "path": "Models/kenney_modular_buildings/roof-flat-awning-b",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_modular_buildings/Textures/colormap",
+   "size": [
+    1.0,
+    0.2125,
+    1.225
+   ],
+   "credit": "kenney_modular_buildings",
+   "tags": [
+    "kenney_modular_buildings",
+    "street",
+    "v3.1"
+   ],
+   "meters": 8.58,
+   "fitAxis": "max"
+  },
+  {
+   "id": "pet.dog",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-dog",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.4068,
+    1.5985,
+    1.5241
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.55,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Hund"
+  },
+  {
+   "id": "pet.cat",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-cat",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.3799,
+    1.6955,
+    1.8021
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.4,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Katze"
+  },
+  {
+   "id": "pet.bunny",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-bunny",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.4141,
+    2.0376,
+    1.355
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.35,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Hase"
+  },
+  {
+   "id": "pet.parrot",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-parrot",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.9946,
+    1.6673,
+    1.8874
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.35,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Papagei"
+  },
+  {
+   "id": "pet.fish",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-fish",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.9258,
+    1.6754,
+    1.3129
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.25,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Fisch"
+  },
+  {
+   "id": "pet.chick",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-chick",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.9946,
+    1.5884,
+    1.3865
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.25,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Küken"
+  },
+  {
+   "id": "pet.pig",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-pig",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.4068,
+    1.5985,
+    1.4917
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.6,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Schwein"
+  },
+  {
+   "id": "pet.fox",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-fox",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.3799,
+    1.7262,
+    2.3003
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.5,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Fuchs"
+  },
+  {
+   "id": "pet.penguin",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-penguin",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.9918,
+    1.5884,
+    1.3865
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.55,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Pinguin"
+  },
+  {
+   "id": "pet.panda",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-panda",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.4639,
+    1.5598,
+    1.4655
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.9,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Panda"
+  },
+  {
+   "id": "pet.koala",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-koala",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.9209,
+    1.5135,
+    1.4164
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.6,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Koala"
+  },
+  {
+   "id": "pet.monkey",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-monkey",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.9474,
+    1.597,
+    1.7756
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.6,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Affe"
+  },
+  {
+   "id": "pet.beaver",
+   "category": "pet",
+   "path": "Models/kenney_cube_pets/animal-beaver",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_cube_pets/Textures/colormap",
+   "size": [
+    1.3983,
+    1.5598,
+    1.8285
+   ],
+   "credit": "kenney_cube_pets",
+   "tags": [
+    "kenney_cube_pets",
+    "pet",
+    "v3.1",
+    "animated"
+   ],
+   "meters": 0.45,
+   "fitAxis": "y",
+   "anim": {
+    "clips": [
+     "dance",
+     "eat",
+     "gesture-negative",
+     "gesture-positive",
+     "idle",
+     "run",
+     "static",
+     "walk"
+    ]
+   },
+   "desc": "Biber"
+  },
+  {
+   "id": "food.apple",
+   "category": "food",
+   "path": "Models/kenney_food/apple",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.1963,
+    0.1908,
+    0.1963
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.06,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.banana",
+   "category": "food",
+   "path": "Models/kenney_food/banana",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.1376,
+    0.1958,
+    0.6299
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.19,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.bread",
+   "category": "food",
+   "path": "Models/kenney_food/bread",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.4423,
+    0.0397,
+    0.3659
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.13,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.loaf",
+   "category": "food",
+   "path": "Models/kenney_food/loaf",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.5797,
+    0.4423,
+    0.3659
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.17,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.croissant",
+   "category": "food",
+   "path": "Models/kenney_food/croissant",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.3461,
+    0.1936,
+    0.4777
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.14,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.donut",
+   "category": "food",
+   "path": "Models/kenney_food/donut",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.2451,
+    0.0889,
+    0.283
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.08,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.donut_chocolate",
+   "category": "food",
+   "path": "Models/kenney_food/donut-chocolate",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.2451,
+    0.0889,
+    0.283
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.08,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.cake",
+   "category": "food",
+   "path": "Models/kenney_food/cake",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.6392,
+    0.2731,
+    0.6392
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.19,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.cupcake",
+   "category": "food",
+   "path": "Models/kenney_food/cupcake",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.3552,
+    0.4238,
+    0.3076
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.13,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.cookie",
+   "category": "food",
+   "path": "Models/kenney_food/cookie",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.2197,
+    0.0498,
+    0.1903
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.07,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.ice_cream",
+   "category": "food",
+   "path": "Models/kenney_food/ice-cream",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.2352,
+    0.4632,
+    0.2716
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.14,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.popsicle",
+   "category": "food",
+   "path": "Models/kenney_food/popsicle",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.075,
+    0.49,
+    0.18
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.15,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.soda_bottle",
+   "category": "food",
+   "path": "Models/kenney_food/soda-bottle",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.1805,
+    0.5804,
+    0.1563
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.17,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.carton_small",
+   "category": "food",
+   "path": "Models/kenney_food/carton-small",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.23,
+    0.3905,
+    0.23
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.12,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.can_small",
+   "category": "food",
+   "path": "Models/kenney_food/can-small",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.3,
+    0.1611,
+    0.3
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.09,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.chocolate",
+   "category": "food",
+   "path": "Models/kenney_food/chocolate",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.2924,
+    0.0337,
+    0.1462
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.09,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.candy_bar",
+   "category": "food",
+   "path": "Models/kenney_food/candy-bar",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.2924,
+    0.0653,
+    0.0745
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.09,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.cheese",
+   "category": "food",
+   "path": "Models/kenney_food/cheese",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.68,
+    0.22,
+    0.68
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.2,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.egg",
+   "category": "food",
+   "path": "Models/kenney_food/egg",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.1161,
+    0.1652,
+    0.134
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.05,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.salad",
+   "category": "food",
+   "path": "Models/kenney_food/salad",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.5022,
+    0.2734,
+    0.5798
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.17,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.sushi_salmon",
+   "category": "food",
+   "path": "Models/kenney_food/sushi-salmon",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.1079,
+    0.0892,
+    0.2008
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.06,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.waffle",
+   "category": "food",
+   "path": "Models/kenney_food/waffle",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.3204,
+    0.0401,
+    0.3204
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.1,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.pancakes",
+   "category": "food",
+   "path": "Models/kenney_food/pancakes",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.4355,
+    0.1216,
+    0.5039
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.15,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.cup_tea",
+   "category": "food",
+   "path": "Models/kenney_food/cup-tea",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.2369,
+    0.2,
+    0.2921
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.09,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.glass",
+   "category": "food",
+   "path": "Models/kenney_food/glass",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.1596,
+    0.2851,
+    0.1843
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.09,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.bowl",
+   "category": "food",
+   "path": "Models/kenney_food/bowl",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.5022,
+    0.2138,
+    0.5798
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.17,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.watermelon",
+   "category": "food",
+   "path": "Models/kenney_food/watermelon",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.4554,
+    0.4761,
+    0.4554
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.14,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.whole_ham",
+   "category": "food",
+   "path": "Models/kenney_food/whole-ham",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.3809,
+    0.4399,
+    0.6397
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.19,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.burger_double",
+   "category": "food",
+   "path": "Models/kenney_food/burger-double",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.4041,
+    0.36,
+    0.4041
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.12,
+   "fitAxis": "max"
+  },
+  {
+   "id": "food.corn_dog",
+   "category": "food",
+   "path": "Models/kenney_food/corn-dog",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_food/Textures/colormap",
+   "size": [
+    0.6044,
+    0.094,
+    0.1085
+   ],
+   "credit": "kenney_food_kit",
+   "tags": [
+    "kenney_food_kit",
+    "food",
+    "v3.1"
+   ],
+   "meters": 0.18,
+   "fitAxis": "max"
+  },
+  {
+   "id": "shop.cart",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/shopping-cart",
+   "meters": 0.81,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.3,
+    0.3906,
+    0.4789
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.shopping_cart"
+  },
+  {
+   "id": "shop.basket",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/shopping-basket",
+   "meters": 0.59,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.35,
+    0.25,
+    0.35
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.shopping_basket"
+  },
+  {
+   "id": "shop.register",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/cash-register",
+   "meters": 1.44,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.85,
+    0.5949,
+    0.85
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.cash_register"
+  },
+  {
+   "id": "shop.shelf_boxes",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/shelf-boxes",
+   "meters": 1.44,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.8,
+    0.85,
+    0.7
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.shelf_boxes"
+  },
+  {
+   "id": "shop.shelf_bags",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/shelf-bags",
+   "meters": 1.47,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.8,
+    0.8634,
+    0.7
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.shelf_bags"
+  },
+  {
+   "id": "shop.shelf_end",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/shelf-end",
+   "meters": 1.78,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.8,
+    1.05,
+    0.4
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.shelf_end"
+  },
+  {
+   "id": "shop.freezer",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/freezer",
+   "meters": 1.36,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.8,
+    0.35,
+    0.6
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.freezer"
+  },
+  {
+   "id": "shop.freezers_standing",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/freezers-standing",
+   "meters": 1.7,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    1.0,
+    0.9,
+    0.5
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.freezers_standing"
+  },
+  {
+   "id": "shop.display_fruit",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/display-fruit",
+   "meters": 1.02,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.6,
+    0.516,
+    0.6
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.display_fruit"
+  },
+  {
+   "id": "shop.display_bread",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/display-bread",
+   "meters": 1.19,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.7,
+    0.5,
+    0.6
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.display_bread"
+  },
+  {
+   "id": "shop.bottle_return",
+   "category": "shop",
+   "path": "Models/kenney_mini_market/bottle-return",
+   "meters": 1.86,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_market/Textures/colormap",
+   "size": [
+    0.45,
+    1.0925,
+    0.481
+   ],
+   "credit": "kenney_mini_market",
+   "tags": [
+    "kenney_mini_market",
+    "logistics"
+   ],
+   "desc": "Alias von logistics.bottle_return"
+  },
+  {
+   "id": "vehicle.delivery_van",
+   "category": "vehicle",
+   "path": "Models/kenney_car_kit/delivery",
+   "meters": 5.59,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_car_kit/Textures/colormap",
+   "size": [
+    1.5,
+    1.65,
+    3.25
+   ],
+   "credit": "kenney_car_kit",
+   "tags": [
+    "kenney_car_kit",
+    "vehicle"
+   ],
+   "desc": "Alias von vehicle.delivery"
+  },
+  {
+   "id": "street.vending_machine",
+   "category": "street",
+   "path": "Models/kenney_mini_arcade/vending-machine",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kenney_mini_arcade/Textures/colormap",
+   "size": [
+    0.5,
+    0.75,
+    0.475
+   ],
+   "credit": "kenney_mini_arcade",
+   "tags": [
+    "kenney_mini_arcade",
+    "arcade",
+    "v3.1"
+   ],
+   "meters": 1.8,
+   "fitAxis": "max"
+  },
+  {
+   "id": "street.trash_bin",
+   "category": "street",
+   "path": "Models/kaykit_city/trash_A",
+   "meters": 0.63,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_city/citybits_texture",
+   "size": [
+    0.1268,
+    0.0524,
+    0.1333
+   ],
+   "credit": "kaykit_city_builder",
+   "tags": [
+    "kaykit_city",
+    "street"
+   ],
+   "desc": "Alias von street.trash_a"
+  },
+  {
+   "id": "street.bench_park",
+   "category": "street",
+   "path": "Models/kaykit_city/bench",
+   "meters": 1.88,
+   "fitAxis": "max",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/kaykit_city/citybits_texture",
+   "size": [
+    0.4,
+    0.1,
+    0.15
+   ],
+   "credit": "kaykit_city_builder",
+   "tags": [
+    "kaykit_city",
+    "street"
+   ],
+   "desc": "Alias von street.bench"
   }
  ],
  "surfaces": [
@@ -6061,7 +11718,11 @@
   "ui_bold": "Fonts/UI-Bold",
   "display": "Fonts/Display-Bold",
   "mono": "Fonts/Mono-Regular",
-  "mono_bold": "Fonts/Mono-Bold"
+  "mono_bold": "Fonts/Mono-Bold",
+  "sign_condensed": "Fonts/Sign-Condensed",
+  "sign_script": "Fonts/Sign-Script",
+  "sign_stencil": "Fonts/Sign-Stencil",
+  "sign_retro": "Fonts/Sign-Retro"
  },
  "hdri": {
   "day": "HDRI/day",
