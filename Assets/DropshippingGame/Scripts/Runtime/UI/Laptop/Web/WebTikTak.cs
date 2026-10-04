@@ -7,9 +7,10 @@ using UnityEngine.UIElements;
 namespace DropshippingGame.UI
 {
     /// <summary>
-    /// TikTak Creator-Studio (dunkel, Cyan/Pink-Glitch-Logo): Feed der eigenen Videos, Video posten
-    /// (bestehendes TikTok-Minispiel, max. <see cref="GameData.TikTokPerDay"/> pro Tag), Analysen,
-    /// Kommentare, Trend-Ideen und Werbekampagnen.
+    /// TikTak Creator-Studio (dunkel, Cyan/Pink-Glitch-Logo): Feed der eigenen, wirklich
+    /// aufgenommenen Videos (<see cref="Sim.TikTokVideos"/>, gespeichert), Video aufnehmen (Produkt +
+    /// Format wählen, „Video aufnehmen“ klappt den Laptop zu und startet die Aufnahme in der Welt,
+    /// max. <see cref="GameData.TikTokPerDay"/> pro Tag), Analysen, Kommentare, Trend-Ideen und Werbung.
     /// Routen: "" (Feed) · "post" · "stats" · "ads".
     /// </summary>
     public sealed class WebTikTak : WebApp
@@ -19,26 +20,14 @@ namespace DropshippingGame.UI
         public override WebSkin Skin => WebSkin.Neo;
         protected override string Domain => "tiktak.com/creator-studio";
 
-        private sealed class Video
-        {
-            public string Product, Overlay, Caption;
-            public int Views, Likes, Comments;
-        }
-
-        /// <summary>Videos dieser Sitzung (nicht gespeichert – reine Deko).</summary>
-        private static readonly List<Video> Videos = new List<Video>();
         private static int _index;
         private static bool _liked;
-        private static string _topic = "";
-        private TikTokPhone _phone;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
         {
-            Videos.Clear();
             _index = 0;
             _liked = false;
-            _topic = "";
         }
 
         private static readonly string[][] Comments =
@@ -50,11 +39,8 @@ namespace DropshippingGame.UI
             new[] { "torben.w", "gekauft. danke tiktak", "#7AC142" },
         };
 
-        public override bool CanRebuild() => _phone == null || !_phone.Busy;
-
         public override void Build()
         {
-            _phone = null;
             var s = S;
             if (s == null) return;
             string r = Route ?? "";
@@ -64,10 +50,10 @@ namespace DropshippingGame.UI
             var nav = Wd(Col(tt, 4f, "tt-nav"), 210f);
             H(nav, "TikTak", "tt-glitch");
             NavItem(nav, "Für dich", "", r);
-            NavItem(nav, "Video posten", "post", r);
+            NavItem(nav, "Video aufnehmen", "post", r);
             NavItem(nav, "Analysen", "stats", r);
             NavItem(nav, "Werbung (Ads)", "ads", r);
-            Btn(nav, "+ Video posten (" + s.Daily.TikToks + "/" + GameData.TikTokPerDay + " heute)", () => Nav("post"), "tt-post");
+            Btn(nav, "+ Video aufnehmen (" + s.Daily.TikToks + "/" + GameData.TikTokPerDay + " heute)", () => Nav("post"), "tt-post");
 
             var mid = Flex(Col(tt, 12f, "tt-mid"));
             if (r == "post") Post(mid, s);
@@ -83,37 +69,18 @@ namespace DropshippingGame.UI
             Btn(nav, text, () => Nav(route), "tt-nav-item", route == cur ? "on" : "");
 
         // =====================================================================================
-        private List<Video> Feed(Sim s)
-        {
-            var list = new List<Video>(Videos);
-            if (list.Count == 0)
-            {
-                // Beispielvideos zu gelisteten Produkten
-                foreach (var p in GameData.Products)
-                {
-                    if (!s.IsListed(p.Id)) continue;
-                    int h = W.Hash(p.Id);
-                    list.Add(new Video
-                    {
-                        Product = p.Id, Overlay = "POV: dein Zimmer nachdem du " + W.Eur(p.UnitCost) + " ausgegeben hast",
-                        Caption = p.Name + " die dein Leben verändern (nicht wirklich) #fyp #" + W.Slug(s.BrandName).Replace("-", ""),
-                        Views = 900 + h % 40000, Likes = 60 + h % 3000, Comments = 5 + h % 200,
-                    });
-                    if (list.Count >= 3) break;
-                }
-            }
-            return list;
-        }
-
         private void Feed(VisualElement mid, Sim s)
         {
-            var list = Feed(s);
+            var list = new List<TikTokVideo>();
+            foreach (var v0 in s.TikTokVideos)
+                if (v0 != null)
+                    list.Add(v0);
             if (list.Count == 0)
             {
                 var e = Col(mid, 8f, "tt-box");
                 B(e, "Noch keine Videos", "tt-h");
-                T(e, "Stell im Shop ein Produkt online und poste dein erstes Video.", "tt-muted");
-                Btn(e, "Video posten", () => Nav("post"), "tt-post");
+                T(e, "Hier landen deine echten Aufnahmen. Produkt wählen, Laptop zu, Handy hoch – und los.", "tt-muted");
+                Btn(e, "Video aufnehmen", () => Nav("post"), "tt-post");
                 return;
             }
             _index = Mathf.Clamp(_index, 0, list.Count - 1);
@@ -124,18 +91,22 @@ namespace DropshippingGame.UI
             vid.style.backgroundColor = Color.Lerp(col, Color.black, 0.35f);
             var glow = Div(vid, "tt-vid-glow");
             glow.style.backgroundColor = Color.Lerp(col, Color.white, 0.2f);
-            var art = new ProductArt(v.Product, false) { Dots = false, IconScale = 0.55f };
-            art.style.position = Position.Absolute;
-            art.style.left = 0;
-            art.style.right = 0;
-            art.style.top = 60;
-            art.style.height = 300;
-            vid.Add(art);
-            B(vid, v.Overlay, "tt-overlay");
+            if (GameData.IsProduct(v.Product))
+            {
+                var art = new ProductArt(v.Product, false) { Dots = false, IconScale = 0.55f };
+                art.style.position = Position.Absolute;
+                art.style.left = 0;
+                art.style.right = 0;
+                art.style.top = 60;
+                art.style.height = 300;
+                vid.Add(art);
+            }
+            B(vid, string.IsNullOrEmpty(v.Title) ? "Mein Video" : v.Title, "tt-overlay");
             var cap = Col(vid, 2f, "tt-cap");
             B(cap, "@" + W.Slug(s.BrandName).Replace("-", "."), "tt-text");
-            T(cap, v.Caption, "tt-small");
-            T(cap, "Originalton – " + W.Slug(s.BrandName), "tt-small");
+            T(cap, TikTokFormats.Name(v.Format) + " · Tag " + v.Day + " · Treffer " + Mathf.RoundToInt(v.Score * 100f) + " % #fyp #" +
+                   W.Slug(s.BrandName).Replace("-", ""), "tt-small");
+            T(cap, Fmt.Thousands(v.Views) + " Aufrufe · Video " + (_index + 1) + "/" + list.Count, "tt-small");
 
             var acts = Col(feed, 16f, "tt-acts");
             Act(acts, "♥", Fmt.Thousands(v.Likes + (_liked ? 1 : 0)), () =>
@@ -143,7 +114,7 @@ namespace DropshippingGame.UI
                 _liked = !_liked;
                 Rebuild();
             }, _liked);
-            Act(acts, "…", Fmt.Thousands(v.Comments), () => Toast("„wo gibt's das?? link???“ – 212 Mal."), false);
+            Act(acts, "…", Fmt.Thousands(v.Comments), () => Toast("„wo gibt's das?? link???“ – " + Math.Max(3, v.Comments / 5) + " Mal."), false);
             Act(acts, "↗", "Teilen", () => Toast("Link kopiert. An wen? An Mama."), false);
             Act(acts, "↓", "Nächstes", () =>
             {
@@ -167,62 +138,66 @@ namespace DropshippingGame.UI
         private void Post(VisualElement mid, Sim s)
         {
             var box = Col(mid, 10f, "tt-box");
-            B(box, "Video posten", "tt-h");
-            if (s.Level < GameData.TikTokLevel)
+            B(box, "Video aufnehmen", "tt-h");
+            string block = TikTokStudio.RecordBlocker(s);
+            if (TikTokStudio.HasDraft) Draft(mid, s);
+            if (block != null)
             {
-                T(box, "Ab Firmenlevel " + GameData.TikTokLevel + ". Bis dahin: üben vor dem Spiegel.", "tt-muted");
-                return;
-            }
-            if (s.TikToksLeftToday() <= 0)
-            {
-                T(box, "Tageslimit erreicht (" + GameData.TikTokPerDay + " pro Tag). Der Algorithmus braucht Schlaf. Du auch.", "tt-muted");
-                return;
-            }
-            if (!s.TikTokAvailable())
-            {
+                T(box, block, "tt-muted");
                 if (s.ActiveBoost("tiktok") != null) T(box, "Dein Trend läuft noch! Genieß die Bestellungen.", "tt-muted");
-                T(box, "Nächstes Video in " + UiFmt.Duration(s.TikTokReadyAt - s.BClock()) + ".", "tt-muted");
                 return;
             }
+            TikTokStudio.EnsureSelection(s);
+            T(box, "Produkt", "tt-muted");
             var pick = Row(box, 6f);
             pick.style.flexWrap = Wrap.Wrap;
-            T(pick, "Thema:", "tt-muted");
-            if (!string.IsNullOrEmpty(_topic) && !s.IsListed(_topic)) _topic = "";
-            Topic(pick, "", "Marke");
-            foreach (var p in GameData.Products)
-                if (s.IsListed(p.Id)) Topic(pick, p.Id, p.Short + (s.TrendMult(p.Id) >= 1.3f ? " (Hype)" : ""));
-            _phone = new TikTokPhone();
-            string topic = _topic ?? "";
-            _phone.Posted += score =>
+            foreach (var id in TikTokStudio.Filmable(s))
             {
-                S.TriggerTikTok(score, false, topic);
-                int views = Mathf.RoundToInt(500f + score * score * 250000f);
-                Videos.Insert(0, new Video
+                string pid = id;
+                Btn(pick, GameData.Product(pid).Short + " · " + TikTokStudio.ProductSub(s, pid), () =>
                 {
-                    Product = GameData.IsProduct(topic) ? topic : FirstListed(S),
-                    Overlay = score >= 0.7f ? "UNBOXING GONE WRONG (viral)" : "Life-Hack: Das hier braucht JEDER",
-                    Caption = "Teil " + (Videos.Count + 1) + " · Treffer " + Mathf.RoundToInt(score * 100f) + " % #tiktakmademebuyit",
-                    Views = views, Likes = views / 9, Comments = views / 120 + 3,
-                });
-                _index = 0;
-            };
-            box.Add(_phone);
-            T(box, "Noch " + s.TikToksLeftToday() + " von " + GameData.TikTokPerDay + " heute. Starte die Aufnahme und stopp im grünen Bereich. Produkte mit Hype wirken stärker.", "tt-muted");
+                    TikTokStudio.Product = pid;
+                    Rebuild();
+                }, "tt-chip", TikTokStudio.Product == pid ? "on" : "");
+            }
+            T(box, "Format", "tt-muted");
+            var fr = Row(box, 6f);
+            fr.style.flexWrap = Wrap.Wrap;
+            foreach (var f in TikTokFormats.All)
+            {
+                string fid = f;
+                Btn(fr, TikTokStudio.FormatLabel(s, fid), () =>
+                {
+                    TikTokStudio.Format = fid;
+                    Rebuild();
+                }, "tt-chip", TikTokStudio.Format == fid ? "on" : "");
+            }
+            T(box, TikTokFormats.Tip(TikTokStudio.Format), "tt-text");
+            T(box, "Der Laptop klappt zu, das Produkt steht vor dir und du filmst 10–20 Sekunden in Ego-Sicht. " +
+                   GameInput.KeyLabel("rec_action") + " = Aktion (gleich am Anfang = Hook), " + GameInput.KeyLabel("rec_stop") + " = Stopp, " +
+                   GameInput.KeyLabel("rec_cancel") + " = Abbrechen. Bewertet werden Bildmitte, Abstand, ruhige Kamera, Licht, Blickwinkel, Länge, Aktionen und Deko im Bild. " +
+                   "Trend-Format heute: " + TikTokFormats.Name(s.TrendingTikTokFormat()) + " (+" + Mathf.RoundToInt(TikTokScoring.TrendingFormatBonus * 100f) + " %).", "tt-muted");
+            Btn(box, "Video aufnehmen", () => TikTokStudio.StartRecording(), "tt-post");
+            T(box, "Noch " + s.TikToksLeftToday() + " von " + GameData.TikTokPerDay + " heute. Produkte mit Hype wirken stärker. Tipp: Das Ringlicht am Schreibtisch startet die Aufnahme auch.", "tt-muted");
         }
 
-        private void Topic(VisualElement parent, string id, string label) =>
-            Btn(parent, label, () =>
-            {
-                _topic = id;
-                Rebuild();
-            }, "tt-chip", (_topic ?? "") == id ? "on" : "");
-
-        private static string FirstListed(Sim s)
+        private void Draft(VisualElement mid, Sim s)
         {
-            if (s != null)
-                foreach (var p in GameData.Products)
-                    if (s.IsListed(p.Id)) return p.Id;
-            return "huelle";
+            var d = Col(mid, 6f, "tt-box");
+            B(d, "Entwurf von vorhin", "tt-h");
+            T(d, "Deine letzte Aufnahme wartet noch. Posten oder neu aufnehmen.", "tt-muted");
+            bool canPost = s.TikTokBlocker() == null;
+            var r = Row(d, 8f);
+            BtnIf(r, canPost, "Entwurf posten", () =>
+            {
+                TikTokStudio.PostDraft();
+                Rebuild();
+            }, "tt-post");
+            Btn(r, "Verwerfen", () =>
+            {
+                TikTokStudio.ClearDraft();
+                Rebuild();
+            }, "tt-chip");
         }
 
         // =====================================================================================
@@ -230,13 +205,26 @@ namespace DropshippingGame.UI
         {
             var grid = Div(mid, "tt-stat");
             int views = 0;
-            foreach (var v in Videos) views += v.Views;
+            TikTokVideo best = null;
+            foreach (var v in s.TikTokVideos)
+            {
+                if (v == null) continue;
+                views += v.Views;
+                if (best == null || v.Views > best.Views) best = v;
+            }
             float mult = 1f;
             foreach (var b in s.Boosts) mult *= b.Mult;
-            Stat2(grid, "Aufrufe (Sitzung)", Fmt.Thousands(views), "");
+            Stat2(grid, "Aufrufe (letzte " + s.TikTokVideos.Count + " Videos)", Fmt.Thousands(views), "");
             Stat2(grid, "Follower", Fmt.Thousands(Mathf.RoundToInt(s.Awareness * 12000f)), "Bekanntheit " + UiFmt.Percent(s.Awareness / 1.5f));
             Stat2(grid, "Reichweite", "×" + Fmt.Dec(mult, 1), s.Boosts.Count + " Boost(s) aktiv");
             Stat2(grid, "Videos heute", s.Daily.TikToks + "/" + GameData.TikTokPerDay, s.TikTokAvailable() ? "bereit" : "Pause");
+            if (best != null)
+            {
+                var bb = Col(mid, 6f, "tt-box");
+                B(bb, "Dein bestes Video", "tt-h");
+                T(bb, best.Title, "tt-text");
+                T(bb, Fmt.Thousands(best.Views) + " Aufrufe · Treffer " + Mathf.RoundToInt(best.Score * 100f) + " % · Tag " + best.Day, "tt-muted");
+            }
             var box = Col(mid, 6f, "tt-box");
             B(box, "Aktive Boosts", "tt-h");
             if (s.Boosts.Count == 0) T(box, "Nichts aktiv. Der Algorithmus hat dich vergessen.", "tt-muted");
@@ -297,7 +285,8 @@ namespace DropshippingGame.UI
                 string id = p.Id;
                 Idea(side, "„Things TikTak made me buy“", p.Name + " · Hype ×" + Fmt.Dec(s.TrendMult(p.Id), 1), () =>
                 {
-                    _topic = s.IsListed(id) ? id : "";
+                    if (TikTokStudio.Filmable(S).Contains(id)) TikTokStudio.Product = id;
+                    else Toast("Dafür brauchst du " + GameData.Product(id).Name + " im Lager.");
                     Nav("post");
                 });
                 n++;

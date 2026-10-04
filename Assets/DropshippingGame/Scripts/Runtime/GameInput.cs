@@ -15,6 +15,7 @@ namespace DropshippingGame
     /// Controller: linker Stick laufen · rechter Stick umsehen · X/Quadrat interagieren · B/Kreis ablegen
     /// bzw. zurück · A/Kreuz springen · L3 sprinten · R3 ducken · Y/Dreieck Handy · LB/RB App wechseln
     /// · Start Pause · Select Hilfe · Steuerkreuz unten Möbel verschieben (LB/RB drehen, X/A abstellen)
+    /// TikTok-Aufnahme: E/X Aktion (Hook) · Enter/Linksklick/RB Stopp · Esc/B abbrechen
     /// Den vollen Laptop „HustleOS“ gibt es nur am Schreibtisch (Station benutzen).
     /// </summary>
     public static class GameInput
@@ -183,6 +184,11 @@ namespace DropshippingGame
             }
         }
 
+        /// <summary>TikTok-Aufnahme stoppen: Enter, Linksklick oder RB am Controller.</summary>
+        public static bool RecordStopDown => Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.RightShoulder);
+        /// <summary>Aktion während der TikTok-Aufnahme (Hook, Auspacken, Zeigen): E / X.</summary>
+        public static bool RecordActionDown => InteractDown;
+
         /// <summary>Zifferntaste 1–4 gedrückt (für die Handy-Apps), sonst 0.</summary>
         public static int NumberDown
         {
@@ -237,6 +243,9 @@ namespace DropshippingGame
                 case "build": return "B";
                 case "rotate": return "R / Mausrad";
                 case "place": return "Linksklick / E";
+                case "rec_action": return "E";
+                case "rec_stop": return "Enter / Linksklick";
+                case "rec_cancel": return "Esc";
             }
             return action;
         }
@@ -261,6 +270,9 @@ namespace DropshippingGame
                 case "build": return "Steuerkreuz ↓";
                 case "rotate": return "LB / RB";
                 case "place": return "X / A";
+                case "rec_action": return "X";
+                case "rec_stop": return "RB";
+                case "rec_cancel": return "B";
             }
             return action;
         }
@@ -278,6 +290,9 @@ namespace DropshippingGame
             new[] { "Möbel verschieben (anvisieren)", "B", "Steuerkreuz ↓" },
             new[] { "Möbel drehen", "R / Mausrad", "LB / RB" },
             new[] { "Möbel abstellen / abbrechen", "Linksklick / E · Esc", "X / A · B" },
+            new[] { "TikTok aufnehmen (Handy › TikTak, Laptop, Ringlicht am Schreibtisch)", "–", "–" },
+            new[] { "Aufnahme: Aktion / Hook", "E", "X" },
+            new[] { "Aufnahme: Stopp / abbrechen", "Enter / Linksklick · Esc", "RB · B" },
             new[] { "Handy öffnen / schließen", "Tab", "Y" },
             new[] { "Handy-App wechseln", "1 2 3 4", "LB / RB" },
             new[] { "Laptop (am Schreibtisch)", "E", "X" },

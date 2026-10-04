@@ -296,7 +296,7 @@ namespace DropshippingGame.UI
                 Grow(UIX.Ellipsis(UIX.Text(br, b.Name + "  ×" + Fmt.Dec(b.Mult, 1), "feed-title")));
                 UIX.Num(br, "noch " + UiFmt.Duration(b.EndsAt - s.BClock()), false, "feed-sub");
             }
-            if (s.TikTokAvailable()) Btn(reach, "TikTok drehen", () => Go("shop/marketing"), "accent", false, "music").style.alignSelf = Align.FlexStart;
+            if (s.TikTokAvailable()) Btn(reach, "TikTok aufnehmen", () => Go("tiktak/post"), "accent", false, "music").style.alignSelf = Align.FlexStart;
             else Btn(reach, "Marketing", () => Go("shop/marketing"), "soft", false, "mega").style.alignSelf = Align.FlexStart;
 
             var goal = Grow(Card(r2, s.TutorialStep >= 0 ? "Tutorial" : "Nächstes Ziel"), 0f);

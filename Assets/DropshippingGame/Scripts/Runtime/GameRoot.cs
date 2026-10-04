@@ -23,7 +23,7 @@ namespace DropshippingGame
         private WorldBuilder _world;
         private PlayerController _player;
         private Camera _menuCam;
-        private float _menuT, _lightAcc, _autosaveAcc, _pruneAcc;
+        private float _menuT, _lightAcc, _autosaveAcc, _pruneAcc, _ringAcc;
         private bool _inMenu = true;
 
         /// <summary>Frame, in dem die letzte Sperre gelöst wurde (dieser Frame bleibt noch gesperrt).</summary>
@@ -401,6 +401,7 @@ namespace DropshippingGame
             RestoreWorldItems();
             _sim.InGame = true;
             _autosaveAcc = 0f;
+            TikTokStudio.ClearDraft();
             PostFX.SetMenuLook(false);
             PostFX.SetDimmed(0f);
             _world.Atmos.SetTimeOfDay(_sim.TimeMinutes / 60f);
@@ -540,6 +541,21 @@ namespace DropshippingGame
                 PruneOrphanOrders();
             }
 
+            // Ringlicht (TikTok-Einstieg) am Schreibtisch aufstellen bzw. entfernen.
+            _ringAcc += udt;
+            if (_ringAcc >= 1f)
+            {
+                _ringAcc = 0f;
+                try
+                {
+                    TikTokRingLight.Ensure();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
+
             // Automatisch speichern (alle 90 Sekunden, nur wenn gerade nichts offen ist).
             _autosaveAcc += udt;
             if (_autosaveAcc > 90f && !InputLocked && CanAutosave())
@@ -629,6 +645,12 @@ namespace DropshippingGame
                 if (cancel || pause || phoneKey) _player.Mover.Cancel();
                 return;
             }
+            // TikTok-Aufnahme: Esc/B/Start bricht ab (statt Pause), Handy und Hilfe bleiben zu.
+            if (_player.Recorder.Active)
+            {
+                if (cancel || pause || phoneKey) _player.Recorder.Cancel();
+                return;
+            }
             if (pause)
             {
                 _ui.Pause.Open();
@@ -654,6 +676,8 @@ namespace DropshippingGame
                 case "confirm":
                 case "event_result":
                 case "event":
+                case "tiktok_pick":
+                case "tiktok_result":
                     m.Close();
                     break;
             }
@@ -785,6 +809,7 @@ namespace DropshippingGame
 
         private void ShowSummary(DaySummary s)
         {
+            if (_player != null && _player.Recorder.Active) _player.Recorder.Cancel(true);
             if (_sim.PcOpen) _sim.ClosePc();
             _ui.Phone.Close(true);
             _ui.Modal.Close();
@@ -861,6 +886,8 @@ namespace DropshippingGame
         {
             if (mail == null || !mail.Pending) return;
             if (_ui.Modal.IsOpen || _ui.BigModal.IsOpen || _ui.Dialogue.Active || _ui.Pause.IsOpen || _inMenu) return;
+            // Während einer TikTok-Aufnahme nicht dazwischenfunken – die Entscheidung wartet im Handy.
+            if (_player != null && _player.Recorder.Active) return;
             // Handy offen: nicht dazwischenfunken – die Entscheidung steht dort unter „Nachrichten“.
             if (_ui.Phone.IsOpen)
             {

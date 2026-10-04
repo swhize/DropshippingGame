@@ -139,6 +139,9 @@ namespace DropshippingGame.UI
                                 "Den vollen Laptop <b>HustleOS</b> gibt es am Schreibtisch: AllesExpress, Mein Shop, TikTak, Revoluut, Firma.", "help-step-text");
             UIX.Text(grow, "Gute Preise, schneller Versand und Qualität bringen gute Bewertungen und mehr Kundschaft. Mit Erfahrung steigt dein Firmenlevel und schaltet Produkte, " +
                            "Lagerhalle, Personal und mehr frei. Um 20 Uhr ist Feierabend – dann werden Miete, Löhne und Zinsen fällig.", "help-step-text");
+            UIX.Text(grow, "<b>TikTok</b> (ab Level " + GameData.TikTokLevel + "): Handy › TikTak, Laptop › TikTak oder das Ringlicht am Schreibtisch. Produkt und Format wählen, dann filmst du 10–20 Sekunden selbst: " +
+                           "Produkt mittig im 9:16-Rahmen, nah genug, ruhig, gutes Licht, einmal herumgehen, gleich zu Beginn eine Aktion (" + GameInput.KeyboardLabel("rec_action") + " / " + GameInput.PadLabel("rec_action") +
+                           ") als Hook und Deko mit ins Bild. Danach Ergebnis ansehen und posten oder neu aufnehmen.", "help-step-text");
         }
 
         private static void KeyCell(VisualElement parent, string keys)
