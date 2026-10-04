@@ -393,6 +393,16 @@ namespace DropshippingGame.UI
                 }));
             }
             _body.Add(city);
+            _body.Add(Section("Karte"));
+            var map = Row();
+            map.style.flexWrap = Wrap.Wrap;
+            map.Add(Btn(BirdsEyeView.Active ? "Vogelperspektive AUS" : "Vogelperspektive", () =>
+            {
+                Close();
+                BirdsEyeView.Toggle();
+            }, BirdsEyeView.Active ? Accent : Card));
+            map.Add(Btn("Karte als PNG speichern", () => Do(BirdsEyeView.SaveMapPng)));
+            _body.Add(map);
             BuildShops(sim);
         }
 

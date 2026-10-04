@@ -23,7 +23,7 @@ namespace DropshippingGame
         {
             (new Vector3(8f, 0f, 7.55f), 180f, "Parkecke"),
             (new Vector3(90f, 0f, -7.9f), 0f, "Filiale"),
-            (new Vector3(-110f, 0f, 7.6f), 180f, "West"),
+            (new Vector3(-104f, 0f, 7.6f), 180f, "West"),
             (new Vector3(-18f, 0f, 61f), 180f, "Lindenweg"),
             (new Vector3(138f, 0f, -7.9f), 0f, "Ost"),
         };
