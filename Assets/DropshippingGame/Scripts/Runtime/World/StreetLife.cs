@@ -24,7 +24,7 @@ namespace DropshippingGame
         private static float[] EdgeEast => CityLayout.Built ? CityLayout.EdgeEastX : OldEdgeEast;
         private static readonly float[] ParkConnectors = { -40f, -14f, 12f, 38f };
         /// <summary>Gehwege der Querstraßen zwischen Hauptstraße (Nord) und Wohnstraße.</summary>
-        private static readonly float[] ResConnectors = { -96.75f, -83.25f, 46.75f, 57.25f };
+        private static readonly float[] ResConnectors = { -95.25f, -84.75f, 46.75f, 57.25f };
         private const float CrossMin = -37.2f, CrossMax = -32.8f;
 
         private struct Poi

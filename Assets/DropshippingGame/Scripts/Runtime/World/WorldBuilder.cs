@@ -170,13 +170,11 @@ namespace DropshippingGame
             }
             Props.AssetAt(S, "street.firehydrant", new Vector3(-27.5f, 0, -6.9f), 0f, 0.8f);
             NpcNav.AddPoint(transform.TransformPoint(new Vector3(-27.5f, 0, -6.9f)));
-            foreach (var x in new[] { -52f, -2f, 22f })
+            foreach (var x in new[] { -2f }) // nur am Zebrastreifen x = 0 (−52 und 22 standen ohne Kreuzung)
             {
                 Props.AssetAt(S, "street.trafficlight_a", new Vector3(x, 0, 6.95f), 180f, 3.4f);
                 NpcNav.AddPoint(transform.TransformPoint(new Vector3(x, 0, 6.95f)));
             }
-            Props.AssetAt(S, "street.construction_cone", new Vector3(46.2f, 0, -3.4f), 20f, 0.6f);
-            Props.AssetAt(S, "street.construction_cone", new Vector3(46.9f, 0, -2.6f), -10f, 0.6f);
             // Plakatwand am Parkrand, Blick zur Straße (Marke sichtbar in der Welt, GAME_IDEAS #8)
             var board = Props.Billboard(transform, new Vector2(7f, 3.2f), new Color(0.15f, 0.15f, 0.17f), out _boardTitle, out _boardSub, out _boardPanel, null);
             board.transform.localPosition = new Vector3(BoardPos.x, 0, BoardPos.z);
@@ -474,7 +472,7 @@ namespace DropshippingGame
         private void Park()
         {
             var path = Mats.Sidewalk(new Color(0.78f, 0.72f, 0.62f), new Color(0.62f, 0.58f, 0.52f));
-            Props.Box(S, new Vector3(106, 0.025f, 2.4f), path, new Vector3(-4, 0.01f, 12.5f), default, 0f, false);
+            Props.Box(S, new Vector3(104, 0.025f, 2.4f), path, new Vector3(-5, 0.01f, 12.5f), default, 0f, false);
             for (int i = 0; i < 4; i++) Props.Box(S, new Vector3(2f, 0.025f, 5f), path, new Vector3(-40f + i * 26f, 0.01f, 8.8f), default, 0f, false);
             foreach (float bx in new[] { -44f, -20f, 4f, 28f })
             {
@@ -491,6 +489,7 @@ namespace DropshippingGame
                 float x = Range(-55f, 47f), z = Range(8.2f, 28.5f);
                 if (Mathf.Abs(z - 12.5f) < 2.2f || Mathf.Abs(z - 14.4f) < 1f) continue;
                 if (x > -46f && x < 8f && z < 11.3f) continue;
+                if (z < 11.3f && (Mathf.Abs(x - 12f) < 1.8f || Mathf.Abs(x - 38f) < 1.8f || Mathf.Abs(x - 8f) < 2.5f)) continue; // Parkzugänge, Packstation
                 bool blocked = false;
                 foreach (var rv in ParkReserved)
                     if ((x - rv.x) * (x - rv.x) + (z - rv.y) * (z - rv.y) < rv.z * rv.z) blocked = true;
@@ -501,7 +500,15 @@ namespace DropshippingGame
                 Props.Collider(transform, new Vector3(0.4f, 3f, 0.4f), new Vector3(x, 1.5f, z));
                 placed++;
             }
-            for (int i = 0; i < 16; i++) Props.Bush(S, Range(0.7f, 1.1f)).transform.localPosition = new Vector3(-54f + i * 6.5f + Range(-1f, 1f), 0, 7.6f);
+            for (int i = 0; i < 16; i++)
+            {
+                var bush = Props.Bush(S, Range(0.7f, 1.1f));
+                float bx = -54f + i * 6.5f + Range(-1f, 1f);
+                bush.transform.localPosition = new Vector3(bx, 0, 7.6f);
+                // nicht auf die Parkzugänge (x −40, −14, 12, 38)
+                foreach (float cx in new[] { -40f, -14f, 12f, 38f })
+                    if (Mathf.Abs(bx - cx) < 2f) bush.SetActive(false);
+            }
             Props.Fence(S, 104f).transform.localPosition = new Vector3(-5, 0, 29.8f);
             var dump = Props.Dumpster(S);
             dump.transform.localPosition = new Vector3(-30f, 0, -21f);

@@ -163,8 +163,9 @@ namespace DropshippingGame
             Props.Collider(_world, new Vector3(312f, 8f, 1f), new Vector3(0f, 4f, WorldLots.CityMinZ - 2f));
             Props.Collider(_world, new Vector3(312f, 8f, 1f), new Vector3(0f, 4f, WorldLots.CityMaxZ + 2f));
             // Absperrungen an den Straßenenden
+            // nur neben der Fahrbahn: Autos und Müllwagen fahren auf z = ±2 über den Kartenrand hinaus
             foreach (float bx in new[] { WorldLots.CityMinX - 1.2f, WorldLots.CityMaxX + 1.2f })
-            foreach (float bz in new[] { -5.5f, -2f, 2f, 5.5f })
+            foreach (float bz in new[] { -7.8f, 7.8f })
                 Props.Barrier(_s).transform.localPosition = new Vector3(bx, 0, bz);
             foreach (var b in _s.GetComponentsInChildren<Transform>())
                 if (b.name == "Barrier") b.localRotation = Quaternion.Euler(0, 90, 0);
@@ -187,7 +188,7 @@ namespace DropshippingGame
             foreach (float side in new[] { -1f, 1f })
             {
                 var sign = Props.SignBoard(_signs, "ENDE GELÄNDE\nUmleitung", new Color(0.95f, 0.8f, 0.1f), new Color(0.1f, 0.1f, 0.1f), new Vector2(2.6f, 1f));
-                sign.transform.localPosition = new Vector3(side * (WorldLots.CityMaxX + 0.6f), 1.8f, 0f);
+                sign.transform.localPosition = new Vector3(side * (WorldLots.CityMaxX + 0.6f), 1.8f, 8.4f);
                 sign.transform.localRotation = Quaternion.Euler(0, side > 0 ? -90f : 90f, 0);
             }
         }
@@ -215,14 +216,16 @@ namespace DropshippingGame
                     Props.Box(_s, new Vector3(0.5f, 0.012f, 3.6f), _white, new Vector3(cx - 3f + i, 0.018f, -1.9f), default, 0f, false);
                     Props.Box(_s, new Vector3(0.5f, 0.012f, 3.6f), _white, new Vector3(cx - 3f + i, 0.018f, 1.9f), default, 0f, false);
                 }
-                // Zebrastreifen-Schild auf beiden Seiten
+                // Zebrastreifen-Schild auf beiden Seiten (nicht in einer Querstraßen-Einmündung)
+                float signX = cx + 3.4f;
+                if (WorldLots.OnSideStreet(signX, 0f) || WorldLots.OnSideStreet(signX, 0f, true)) signX = cx - 3.4f;
                 foreach (float sz in new[] { -6.9f, 6.9f })
                 {
-                    var pole = Props.Node(_s, "CrossSign", new Vector3(cx + 3.4f, 0, sz));
+                    var pole = Props.Node(_s, "CrossSign", new Vector3(signX, 0, sz));
                     Props.Cyl(pole.transform, 0.05f, 0.05f, 2.6f, Mats.DarkMetal(), new Vector3(0, 1.3f, 0), default, 8);
                     Props.Box(pole.transform, new Vector3(0.6f, 0.6f, 0.04f), Mats.Std(new Color(0.15f, 0.35f, 0.75f), 0.5f), new Vector3(0, 2.45f, 0), default, 0.01f);
                     Props.Box(pole.transform, new Vector3(0.36f, 0.36f, 0.05f), Mats.Std(Color.white, 0.5f), new Vector3(0, 2.45f, 0), new Vector3(0, 0, 45f), 0f, false);
-                    NpcNav.AddPoint(_world.TransformPoint(new Vector3(cx + 3.4f, 0, sz)));
+                    NpcNav.AddPoint(_world.TransformPoint(new Vector3(signX, 0, sz)));
                 }
             }
             // Querstraßen
@@ -304,7 +307,7 @@ namespace DropshippingGame
             {
                 if (x > -56f && x < 50f) continue;
                 if (!WorldLots.OnSideStreet(x, 1f)) Lamp(new Vector3(x, 0, 6.8f), 180f);
-                if (!WorldLots.OnSideStreet(x + 8f, 1f, true) && !(x + 8f > -50f && x + 8f < 40f)) Lamp(new Vector3(x + 8f, 0, -6.85f), 0f);
+                if (!WorldLots.OnSideStreet(x + 8f, 1f, true) && !(x + 8f > -50f && x + 8f < 40f) && x + 8f <= WorldLots.CityMaxX - 2f) Lamp(new Vector3(x + 8f, 0, -6.85f), 0f);
             }
             // Wohnstraße
             for (float x = WorldLots.ResidentialFromX + 6f; x < WorldLots.ResidentialToX - 3f; x += 18f)
@@ -826,7 +829,7 @@ namespace DropshippingGame
                 placed++;
             }
             // Kleine Grünflächen an den Querstraßen-Ecken
-            foreach (float sx in new[] { -128.5f, 118.5f })
+            foreach (float sx in new[] { -128.5f }) // Ostseite (118,5) lag in der Häuserzeile x 97..118
                 for (int i = 0; i < 3; i++) Props.Bush(_s, R(0.7f, 1f)).transform.localPosition = new Vector3(sx + R(-1f, 1f) + (sx > 0 ? -1.5f : 1.5f), 0, -10f - i * 3f);
         }
 
@@ -847,7 +850,10 @@ namespace DropshippingGame
             for (float x = -140f; x <= 140f; x += 28f)
             {
                 if (!WorldLots.OnSideStreet(x + 3f, 1f)) Bin(binsRoot, new Vector3(x + 3f, 0, 6.7f), 180f, false);
-                if (!WorldLots.OnSideStreet(x - 11f, 1f, true)) Bin(binsRoot, new Vector3(x - 11f, 0, -6.7f), 0f, false);
+                float sbx = x - 11f;
+                // nicht direkt vor die Abholung an der Garage (x −11) oder das Hallentor (x 17)
+                if (Mathf.Abs(sbx + 11f) < 1f || Mathf.Abs(sbx - 17f) < 1f) sbx += 5f;
+                if (sbx > WorldLots.CityMinX + 1f && !WorldLots.OnSideStreet(sbx, 1f, true)) Bin(binsRoot, new Vector3(sbx, 0, -6.7f), 0f, false);
             }
             for (float x = WorldLots.ResidentialFromX + 10f; x < WorldLots.ResidentialToX - 5f; x += 36f)
             {

@@ -588,6 +588,7 @@ namespace DropshippingGame
                 if (cancel || pause) _ui.Admin.Close();
                 return;
             }
+            if (BirdsEyeView.Active) return; // eigene Steuerung (WASD/Mausrad/Esc)
 
             if (_ui.Pause.IsOpen)
             {

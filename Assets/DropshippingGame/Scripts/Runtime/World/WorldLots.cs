@@ -67,7 +67,7 @@ namespace DropshippingGame
         public const float ResidentialSidewalkSouthZ = 46.75f, ResidentialSidewalkNorthZ = 59.25f;
 
         /// <summary>Zebrastreifen über die Hauptstraße (Mitte x).</summary>
-        public static readonly float[] CrosswalksX = { -141f, -96f, -35f, 0f, 45f, 80f, 118f };
+        public static readonly float[] CrosswalksX = { -144f, -98f, -35f, 0f, 45f, 80f, 118f };
 
         // ---- Reservierte Grundstücke -------------------------------------------------------------------
         /// <summary>Finanzviertel (Bank + Börse), Nordseite, Front nach Süden zur Hauptstraße.</summary>
