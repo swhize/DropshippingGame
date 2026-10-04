@@ -183,6 +183,24 @@ namespace DropshippingGame
             }
         }
 
+        /// <summary>Emote-Rad: gedrückt halten (T / Steuerkreuz links), siehe EmoteController.</summary>
+        public static bool EmoteHeld
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                var kb = Keyboard.current;
+                if (kb != null && kb.tKey.isPressed) return true;
+                var pad = Gamepad.current;
+                return pad != null && pad.dpad.left.isPressed;
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetKey(KeyCode.T);
+#else
+                return false;
+#endif
+            }
+        }
+
         /// <summary>Zifferntaste 1–4 gedrückt (für die Handy-Apps), sonst 0.</summary>
         public static int NumberDown
         {
@@ -237,6 +255,7 @@ namespace DropshippingGame
                 case "build": return "B";
                 case "rotate": return "R / Mausrad";
                 case "place": return "Linksklick / E";
+                case "emote": return "T";
             }
             return action;
         }
@@ -261,6 +280,7 @@ namespace DropshippingGame
                 case "build": return "Steuerkreuz ↓";
                 case "rotate": return "LB / RB";
                 case "place": return "X / A";
+                case "emote": return "Steuerkreuz ←";
             }
             return action;
         }
@@ -278,6 +298,7 @@ namespace DropshippingGame
             new[] { "Möbel verschieben (anvisieren)", "B", "Steuerkreuz ↓" },
             new[] { "Möbel drehen", "R / Mausrad", "LB / RB" },
             new[] { "Möbel abstellen / abbrechen", "Linksklick / E · Esc", "X / A · B" },
+            new[] { "Emote-Rad (halten, zielen, loslassen)", "T · Maus / 1–6", "Steuerkreuz ← · Rechter Stick" },
             new[] { "Handy öffnen / schließen", "Tab", "Y" },
             new[] { "Handy-App wechseln", "1 2 3 4", "LB / RB" },
             new[] { "Laptop (am Schreibtisch)", "E", "X" },

@@ -225,6 +225,7 @@ namespace DropshippingGame
         // ---- Versand ------------------------------------------------------------------------------------
         private static StationKitResult Ship(Transform root, int stage)
         {
+            if (stage >= PostService.StagePackstation) return PostService.BuildKit(root, stage);
             if (stage == 0)
             {
                 var yellow = Mats.Std(new Color(0.98f, 0.78f, 0.1f), 0.45f);

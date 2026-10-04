@@ -131,6 +131,7 @@ namespace DropshippingGame.Core
                 { "saved_unix", DateTimeOffset.UtcNow.ToUnixTimeSeconds() },
             };
             AddV4State(state);
+            AddCityState(state);
             return state;
         }
 
@@ -384,6 +385,7 @@ namespace DropshippingGame.Core
             TotalChallengesDone = J.I(s, "total_challenges_done");
 
             ReadFurniture(s);
+            ReadCityState(s);
 
             FixupLegacyOrders();
             ReconcileOrdersInWork();

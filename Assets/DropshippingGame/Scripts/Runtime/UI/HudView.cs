@@ -705,7 +705,7 @@ namespace DropshippingGame.UI
                     break;
                 case ItemKind.Labeled:
                     _handsText.text = (data.Express ? "Express · versandfertig · " : "Versandfertig · ") + pname;
-                    sub = (string.IsNullOrEmpty(data.Customer) ? "" : "An: " + data.Customer + (string.IsNullOrEmpty(data.City) ? "" : ", " + data.City) + " · ") + "ab in die Versand-Box";
+                    sub = (string.IsNullOrEmpty(data.Customer) ? "" : "An: " + data.Customer + (string.IsNullOrEmpty(data.City) ? "" : ", " + data.City) + " · ") + "ab zur Packstation";
                     icon = "truck";
                     break;
                 case ItemKind.Return:

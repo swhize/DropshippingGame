@@ -214,6 +214,7 @@ namespace DropshippingGame.Core
             TimeMinutes = GameData.DayStart;
             DayOver = false;
             Furniture.Clear();
+            ResetCityState();
             StoryStage = "business";
             IntroStep = 0;
             IntroServed.Clear();
