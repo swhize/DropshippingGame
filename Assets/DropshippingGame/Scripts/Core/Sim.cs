@@ -308,6 +308,7 @@ namespace DropshippingGame.Core
             ChallengeWeek = 0;
             TotalChallengesDone = 0;
             FestivalReset();
+            AdsReset();
             ResetDaily();
             Market.Reset();
             Events.Reset();
@@ -400,6 +401,7 @@ namespace DropshippingGame.Core
             TimeMinutes += m;
             UpdateDeliveries();
             UpdateOrders(m);
+            AdsUpdate(m);
             UpdateBoosts();
             UpdateStaff(m);
             UpdateConveyor();
@@ -519,6 +521,7 @@ namespace DropshippingGame.Core
             Events.NewDay();
             ContractsNewDay();
             FestivalNewDay();
+            AdsNewDay();
             if (Weekday == 0 || ChallengeWeek != Week) StartWeek();
             CheckGoals();
             CheckChallenges();

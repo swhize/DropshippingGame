@@ -149,6 +149,7 @@ namespace DropshippingGame.Core
 
             state["explained"] = Flags(Explained);
             state["festival"] = FestivalToJson();
+            state["ads"] = AdsToJson();
             state["orders_in_work"] = JList(OrdersInWork, o => o.ToJson());
             state["next_order_id"] = NextOrderId;
             state["launch_orders"] = launch;
@@ -323,6 +324,7 @@ namespace DropshippingGame.Core
         {
             ReadFlags(s, "explained", Explained);
             FestivalFromJson(J.O(s, "festival"));
+            AdsFromJson(J.O(s, "ads"));
             OrdersInWork.Clear();
             foreach (var o in J.A(s, "orders_in_work"))
             {

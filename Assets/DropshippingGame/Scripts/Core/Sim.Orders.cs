@@ -127,6 +127,7 @@ namespace DropshippingGame.Core
                     Explain("express", GameData.MailExpress, "bolt");
                 }
                 TutorialCheck();
+                AdsOnOrder(order);
                 OrderReceived?.Invoke(order);
                 OrdersChanged?.Invoke();
             }
