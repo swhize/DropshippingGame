@@ -731,3 +731,15 @@ Ablauf: Einladung per Mail (ab Level 2, ~14 %/Tag, mind. 4 Tage Abstand) → am 
 
 Welt: `Runtime/World/StreetFestival.cs` (Banner, Marktstand mit Markise, Packtisch vor der Tür,
 Besucher; Autos pausieren über `StreetFestival.BlocksTraffic`). Gespeichert unter `"festival"`.
+
+## 15. Fortschritt & Wirtschaftstiefe (Sim.Progress.cs, GameData.Progress.cs)
+
+* **Hustle-Perks:** `PerkPointsTotal/Available()`, `PerkRank(id)`, `PerkState(id)`, `BuyPerk(id)` – Punkte aus XP (`GameData.PerkXpThreshold(k) = 500·k^1,5`). Wirken in den bestehenden Faktoren (`QueueBonus`, `PurchasePriceMult`, `LeadTimeMult`, `StaffSpeedMult`, `CapacityMult`) + `DemandPerkMult()`, `CarryBonus()`.
+* **Einrichtung & Energie:** `HomeTier(slot)`, `NextHomeItem(slot)`, `BuyHomeItem(slot)` (laptop/bed/chair/desk/coffee), `Energy`, `MorningEnergy()`, `EnergyDrainMult()`, `WalkSpeedMult()` (Welt: Lauftempo).
+* **Ausrüstung:** `BuyEquipment(id)`, `EquipmentCount/Active(id)`, `AutoLabelOnPickup`, `StaffRoleMult(role)`, Ereignis `EquipmentChanged` (Welt baut Stationen neu, `EquipmentWorld`).
+* **Skaleneffekte:** `VolumeDiscount(pid)`, `LevelDiscount()`, `ScaleDiscountMult(pid)` (in `BulkCost`), Porto `PortoFor(size, carrier)`, `CurrentPortoTier()`, `Daily.Shipping` / `DaySummary.Shipping`.
+* **Paketdienst & Störungen:** `Carrier`, `SetCarrier(i)`, `ActiveDisruption`, `StartDisruption(id, days)`, `EndDisruption()`, Ereignis `DisruptionChanged`.
+* **Defekte Chargen:** `DefectsOf(pid)`, `DefectiveProducts()`, `AddDefectBatch`, `RecallDefects(pid)`, Ereignis `DefectiveBatch`.
+* **Müll:** `Waste`, `WasteCapacity()`, `WasteFull`, `AddWaste(n)`, **`CollectGarbage()`** (vom Müllwagen aufrufen), Ereignis **`GarbagePickupDue(bool special)`** (Mo/Mi/Fr 10:00 oder Sonderabholung `OrderGarbagePickup()`); ohne Abonnent leert der Kern sofort, sonst Fallback nach 90 min. `GarbageCollected(int)`, `WasteChanged`. Tonnen-Position: `EquipmentWorld.BinPosition(stage)`.
+* **Großhändler & Marke:** `Contract.Wholesale`, `GenerateWholesaleOffer()`, `WholesaleUnlocked` (Level 4 + Markenname), `BrandStrength()`, `BrandPriceMult()`, `SuggestedPrice(pid)`; bis zum Markenpreis kostet ein Aufpreis keine Nachfrage.
+* **HUD:** `StatusChips()` → {Text, Icon, Ton}.

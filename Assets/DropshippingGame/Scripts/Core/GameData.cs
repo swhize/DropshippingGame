@@ -112,7 +112,7 @@ namespace DropshippingGame.Core
         public static readonly int[] StageRent = { 15, 140 };
         public static readonly int[] StageCapacity = { 400, 3000 };
         public static readonly int[] StageQueue = { 6, 14 };
-        public const int GarageProducts = 3;
+        public const int GarageProducts = 5;
 
         // ---- Nachfrage & Lieferung -----------------------------------------------------------
         public const float BaseOrderMinutes = 72f;
@@ -126,15 +126,20 @@ namespace DropshippingGame.Core
         public static readonly ProductDef[] Products =
         {
             new ProductDef { Id = "huelle", Name = "Handyhülle", Short = "Hülle", UnitCost = 2f, RefPrice = 25, Size = 0, Popularity = 1.2f, UnlockLevel = 1, Color = new RGBA(0.93f, 0.42f, 0.62f), Icon = "phone" },
-            new ProductDef { Id = "led", Name = "LED-Lichterkette", Short = "LED", UnitCost = 4f, RefPrice = 45, Size = 1, Popularity = 1.0f, UnlockLevel = 2, Color = new RGBA(0.98f, 0.8f, 0.24f), Icon = "bulb" },
-            new ProductDef { Id = "massage", Name = "Massagepistole", Short = "Massage", UnitCost = 12f, RefPrice = 110, Size = 2, Popularity = 0.55f, UnlockLevel = 3, Color = new RGBA(0.32f, 0.34f, 0.42f), Icon = "bolt" },
+            new ProductDef { Id = "led", Name = "LED-Lichterkette", Short = "LED", UnitCost = 4f, RefPrice = 45, Size = 1, Popularity = 1.0f, UnlockLevel = 1, Color = new RGBA(0.98f, 0.8f, 0.24f), Icon = "bulb" },
+            new ProductDef { Id = "massage", Name = "Massagepistole", Short = "Massage", UnitCost = 12f, RefPrice = 110, Size = 2, Popularity = 0.55f, UnlockLevel = 2, Color = new RGBA(0.32f, 0.34f, 0.42f), Icon = "bolt" },
             new ProductDef { Id = "kopfhoerer", Name = "Bluetooth-Kopfhörer", Short = "Kopfhörer", UnitCost = 8f, RefPrice = 69, Size = 1, Popularity = 0.8f, UnlockLevel = 4, Color = new RGBA(0.3f, 0.55f, 0.96f), Icon = "headphones" },
-            new ProductDef { Id = "ringlicht", Name = "Ringlicht", Short = "Ringlicht", UnitCost = 6f, RefPrice = 60, Size = 1, Popularity = 0.85f, UnlockLevel = 5, Color = new RGBA(0.82f, 0.88f, 1.0f), Icon = "ring" },
-            new ProductDef { Id = "katzenbrunnen", Name = "Katzen-Trinkbrunnen", Short = "Katzenbr.", UnitCost = 9f, RefPrice = 79, Size = 2, Popularity = 0.7f, UnlockLevel = 6, Color = new RGBA(0.36f, 0.78f, 0.84f), Icon = "drop" },
-            new ProductDef { Id = "haltung", Name = "Haltungskorrektor", Short = "Haltung", UnitCost = 3f, RefPrice = 35, Size = 0, Popularity = 1.1f, UnlockLevel = 7, Color = new RGBA(0.58f, 0.46f, 0.9f), Icon = "user" },
-            new ProductDef { Id = "smartwatch", Name = "Smartwatch", Short = "Watch", UnitCost = 15f, RefPrice = 129, Size = 0, Popularity = 0.6f, UnlockLevel = 8, Color = new RGBA(0.2f, 0.22f, 0.26f), Icon = "clock" },
-            new ProductDef { Id = "beamer", Name = "Mini-Beamer", Short = "Beamer", UnitCost = 22f, RefPrice = 179, Size = 2, Popularity = 0.45f, UnlockLevel = 9, Color = new RGBA(0.95f, 0.55f, 0.25f), Icon = "screen" },
-            new ProductDef { Id = "drohne", Name = "Kamera-Drohne", Short = "Drohne", UnitCost = 35f, RefPrice = 249, Size = 2, Popularity = 0.35f, UnlockLevel = 10, Color = new RGBA(0.85f, 0.2f, 0.25f), Icon = "drone" },
+            new ProductDef { Id = "ringlicht", Name = "Ringlicht", Short = "Ringlicht", UnitCost = 6f, RefPrice = 60, Size = 1, Popularity = 0.85f, UnlockLevel = 4, Color = new RGBA(0.82f, 0.88f, 1.0f), Icon = "ring" },
+            new ProductDef { Id = "katzenbrunnen", Name = "Katzen-Trinkbrunnen", Short = "Katzenbr.", UnitCost = 9f, RefPrice = 79, Size = 2, Popularity = 0.7f, UnlockLevel = 5, Color = new RGBA(0.36f, 0.78f, 0.84f), Icon = "drop" },
+            new ProductDef { Id = "haltung", Name = "Haltungskorrektor", Short = "Haltung", UnitCost = 3f, RefPrice = 35, Size = 0, Popularity = 1.1f, UnlockLevel = 6, Color = new RGBA(0.58f, 0.46f, 0.9f), Icon = "user" },
+            new ProductDef { Id = "smartwatch", Name = "Smartwatch", Short = "Watch", UnitCost = 15f, RefPrice = 129, Size = 0, Popularity = 0.6f, UnlockLevel = 7, Color = new RGBA(0.2f, 0.22f, 0.26f), Icon = "clock" },
+            new ProductDef { Id = "beamer", Name = "Mini-Beamer", Short = "Beamer", UnitCost = 22f, RefPrice = 179, Size = 2, Popularity = 0.45f, UnlockLevel = 8, Color = new RGBA(0.95f, 0.55f, 0.25f), Icon = "screen" },
+            new ProductDef { Id = "drohne", Name = "Kamera-Drohne", Short = "Drohne", UnitCost = 35f, RefPrice = 249, Size = 2, Popularity = 0.35f, UnlockLevel = 9, Color = new RGBA(0.85f, 0.2f, 0.25f), Icon = "drone" },
+            // Neu: lustige Produkte (Garage: Toaster ab Level 1, Bart-Glitzer ab Level 2)
+            new ProductDef { Id = "toaster", Name = "Selfie-Toaster", Short = "Toaster", UnitCost = 5f, RefPrice = 39, Size = 1, Popularity = 0.9f, UnlockLevel = 1, Color = new RGBA(0.95f, 0.6f, 0.35f), Icon = "fire" },
+            new ProductDef { Id = "bartglitzer", Name = "Bart-Glitzer", Short = "Glitzer", UnitCost = 1.5f, RefPrice = 19, Size = 0, Popularity = 1.15f, UnlockLevel = 2, Color = new RGBA(0.85f, 0.45f, 0.95f), Icon = "sparkle" },
+            new ProductDef { Id = "giesskanne", Name = "Smarte Gießkanne mit App", Short = "Gießkanne", UnitCost = 10f, RefPrice = 89, Size = 2, Popularity = 0.6f, UnlockLevel = 5, Color = new RGBA(0.35f, 0.75f, 0.4f), Icon = "drop" },
+            new ProductDef { Id = "wackeldackel", Name = "Wackeldackel mit Bluetooth", Short = "Dackel", UnitCost = 4f, RefPrice = 34, Size = 0, Popularity = 0.95f, UnlockLevel = 6, Color = new RGBA(0.7f, 0.5f, 0.3f), Icon = "music" },
         };
 
         public static readonly BulkOption[] BulkOptions =
@@ -210,15 +215,15 @@ namespace DropshippingGame.Core
 
         public static readonly Dictionary<int, string> LevelUnlocks = new Dictionary<int, string>
         {
-            { 2, "LED-Lichterkette · Express-Bestellungen · Premium-Hersteller · Facebook-Ads · TikTok · Großbestellung · Verkaufsstand" },
-            { 3, "Massagepistole · Großaufträge (B2B) · Skill-Stufe 2 · Trading-App · Shop-Server-Upgrade · größerer Kredit" },
-            { 4, "Lagerhalle kaufbar · Bluetooth-Kopfhörer" },
-            { 5, "Ringlicht · Personal · Palettenbestellung · eigener Lieferwagen · Skill-Stufe 3 · 2 Großaufträge gleichzeitig" },
-            { 6, "Katzen-Trinkbrunnen · Google-Ads · Förderband" },
-            { 7, "Haltungskorrektor · Influencer-Kampagnen · Großkredit · Skill-Stufe 4" },
-            { 8, "Smartwatch · Hochregal-Erweiterung · 3 Großaufträge gleichzeitig" },
-            { 9, "Mini-Beamer" },
-            { 10, "Kamera-Drohne · Legendenstatus" },
+            { 2, "Massagepistole · Bart-Glitzer · Express-Bestellungen · Premium-Hersteller · Facebook-Ads · TikTok · Großbestellung · Verkaufsstand" },
+            { 3, "Großaufträge (B2B) · Skill-Stufe 2 · Trading-App · Shop-Server-Upgrade · größerer Kredit" },
+            { 4, "Lagerhalle kaufbar · Bluetooth-Kopfhörer · Ringlicht · Großhändler" },
+            { 5, "Katzen-Trinkbrunnen · Smarte Gießkanne · Personal · Palettenbestellung · eigener Lieferwagen · Skill-Stufe 3 · 2 Großaufträge gleichzeitig" },
+            { 6, "Haltungskorrektor · Wackeldackel · Google-Ads · Förderband" },
+            { 7, "Smartwatch · Influencer-Kampagnen · Großkredit · Skill-Stufe 4" },
+            { 8, "Mini-Beamer · Hochregal-Erweiterung · 3 Großaufträge gleichzeitig" },
+            { 9, "Kamera-Drohne" },
+            { 10, "Legendenstatus" },
         };
 
         public const int TradingLevel = 3;

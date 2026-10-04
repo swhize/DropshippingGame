@@ -317,6 +317,7 @@ namespace DropshippingGame
                             Anim.Delay(0.12f * taken, () => Game.Sound("pickup"));
                             taken++;
                         }
+                        AutoLabel(player, gm);
                     }
                     else if (kind == ItemKind.Package)
                     {
@@ -332,6 +333,7 @@ namespace DropshippingGame
                         {
                             player.Hold(pkg);
                             Game.Sound("pickup");
+                            AutoLabel(player, gm);
                         }
                     }
                     else gm.Notify("Damit kannst du hier nichts anfangen.", "info");
@@ -584,6 +586,23 @@ namespace DropshippingGame
         }
 
         private float _returnArmedUntil = -1f;
+
+        /// <summary>Hand-Labelgerät: alle Pakete in der Hand sofort etikettieren.</summary>
+        private static void AutoLabel(PlayerController player, Sim gm)
+        {
+            if (gm == null || !gm.AutoLabelOnPickup || player.CountCarried(ItemKind.Package) == 0) return;
+            var items = player.Carried();
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (items[i].Kind != ItemKind.Package) continue;
+                var labeled = items[i].Clone();
+                labeled.Kind = ItemKind.Labeled;
+                items[i] = labeled;
+                gm.OnLabeled(labeled);
+            }
+            player.SetCarried(items);
+            Game.Sound("printer", 0.1f, -6f);
+        }
 
         // ---- Dynamische Inhalte -------------------------------------------------------------------
         private string Signature()

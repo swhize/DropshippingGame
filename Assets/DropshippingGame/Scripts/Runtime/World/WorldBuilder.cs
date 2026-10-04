@@ -657,8 +657,7 @@ namespace DropshippingGame
             {
                 defs.Add(D(StationType.Pc, new Vector3(-20f, 0, -16.35f), 0f));
                 defs.Add(D(StationType.Label, new Vector3(-17.6f, 0, -16.45f), 0f));
-                for (int i = 0; i < GameData.GarageProducts; i++)
-                    defs.Add(D(StationType.Regal, new Vector3(-10.75f, 0, -14.2f + i * 2.3f), -90f, 0, i));
+                foreach (var sh in ShelfLayout.For(0)) defs.Add(D(StationType.Regal, sh.Pos, sh.Rot, sh.Visual, sh.Product));
                 defs.Add(D(StationType.Pack, new Vector3(-15.2f, 0, -12.6f), 0f));
                 defs.Add(D(StationType.Fold, new Vector3(-21.3f, 0, -12.6f), 90f));
                 defs.Add(D(StationType.Dock, new Vector3(-20.4f, 0, -9f), 90f));
@@ -680,15 +679,8 @@ namespace DropshippingGame
                 defs.Add(D(StationType.Pc, new Vector3(1.5f, 0, -13.2f), 90f, 1));
                 defs.Add(D(StationType.EndDay, new Vector3(12.6f, 0, -7.7f), 180f, 1));
                 // Reihe A an der Rückwand (Produkte 1-6), Reihe B gegenüber (Produkte 7-10) - Gang dazwischen
-                for (int i = 0; i < GameData.Products.Length; i++)
-                {
-                    if (i < 6) defs.Add(D(StationType.Regal, new Vector3(2.8f + i * 5f, 0, -29.3f), 0f, 1, i));
-                    else
-                    {
-                        float[] rowB = { 7.8f, 12.8f, 22.8f, 27.8f };
-                        defs.Add(D(StationType.Regal, new Vector3(rowB[i - 6], 0, -24.9f), 180f, 1, i));
-                    }
-                }
+                // Reihen A/B + Wandregale für weitere Produkte (ShelfLayout)
+                foreach (var sh in ShelfLayout.For(1)) defs.Add(D(StationType.Regal, sh.Pos, sh.Rot, sh.Visual, sh.Product));
                 defs.Add(D(StationType.Fold, new Vector3(8f, 0, -20f), 0f));
                 defs.Add(D(StationType.Pack, new Vector3(13f, 0, -20f), 0f));
                 defs.Add(D(StationType.Label, new Vector3(17.5f, 0, -20f), 0f));
@@ -795,6 +787,7 @@ namespace DropshippingGame
                 if (d.Type == StationType.NpcTalk && st.Npc != null && Game.Player != null) st.Npc.LookAtTarget = Game.Player.transform;
                 if (d.Type == StationType.Stand) _stand = st;
             }
+            if (!MenuMode) EquipmentWorld.Build(_stations, stage);
             RefreshBelt();
         }
 

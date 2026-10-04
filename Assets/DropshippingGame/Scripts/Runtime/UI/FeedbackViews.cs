@@ -67,6 +67,7 @@ namespace DropshippingGame.UI
 
             Cost("Wareneinkauf", s.Purchases);
             Cost("Verpackung", s.Packaging);
+            Cost("Porto (Versand)", s.Shipping);
             Cost("Marketing", s.Marketing);
             Cost("Sonstiges", s.Other);
             Cost("Erstattungen (Retouren)", s.Refunds);

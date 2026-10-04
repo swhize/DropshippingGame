@@ -355,6 +355,8 @@ namespace DropshippingGame.Core
         public int ChallengesDone, ChallengeRewards;
         /// <summary>Heute gepostete TikToks (max. <see cref="GameData.TikTokPerDay"/>).</summary>
         public int TikToks;
+        /// <summary>Porto für Kundenpakete (€).</summary>
+        public int Shipping;
         /// <summary>Kurze Meldungen des Tages für den Kassenbon.</summary>
         public List<string> Notes = new List<string>();
 
@@ -372,11 +374,12 @@ namespace DropshippingGame.Core
                 case "stand": Stand += amount; break;
                 case "refunds": Refunds += amount; break;
                 case "penalties": Penalties += amount; break;
+                case "shipping": Shipping += amount; break;
             }
         }
 
         /// <summary>Ergebnis des Tages ohne Fixkosten (Umsatz + Sonstiges − variable Kosten).</summary>
-        public int VariableProfit() => Revenue + IncomeOther - Purchases - Packaging - Marketing - Other - Refunds - Penalties;
+        public int VariableProfit() => Revenue + IncomeOther - Purchases - Packaging - Marketing - Other - Refunds - Penalties - Shipping;
 
         public Dictionary<string, object> ToJson()
         {
@@ -390,7 +393,7 @@ namespace DropshippingGame.Core
                 { "express", Express }, { "late", Late }, { "expired", Expired }, { "returns", Returns }, { "refunds", Refunds },
                 { "returns_restocked", ReturnsRestocked }, { "returns_disposed", ReturnsDisposed }, { "contract_income", ContractIncome },
                 { "penalties", Penalties }, { "contracts_done", ContractsDone }, { "contracts_failed", ContractsFailed },
-                { "challenges_done", ChallengesDone }, { "challenge_rewards", ChallengeRewards }, { "notes", notes }, { "tiktoks", TikToks },
+                { "challenges_done", ChallengesDone }, { "challenge_rewards", ChallengeRewards }, { "notes", notes }, { "tiktoks", TikToks }, { "shipping", Shipping },
             };
         }
 
@@ -408,7 +411,7 @@ namespace DropshippingGame.Core
                 Refunds = J.I(d, "refunds"), ReturnsRestocked = J.I(d, "returns_restocked"), ReturnsDisposed = J.I(d, "returns_disposed"),
                 ContractIncome = J.I(d, "contract_income"), Penalties = J.I(d, "penalties"), ContractsDone = J.I(d, "contracts_done"),
                 ContractsFailed = J.I(d, "contracts_failed"), ChallengesDone = J.I(d, "challenges_done"),
-                ChallengeRewards = J.I(d, "challenge_rewards"), TikToks = J.I(d, "tiktoks"),
+                ChallengeRewards = J.I(d, "challenge_rewards"), TikToks = J.I(d, "tiktoks"), Shipping = J.I(d, "shipping"),
             };
             foreach (var n in J.A(d, "notes"))
                 if (n is string ns) s.Notes.Add(ns);
@@ -439,6 +442,8 @@ namespace DropshippingGame.Core
         /// <summary>Heute gepostete TikToks (max. <see cref="GameData.TikTokPerDay"/>).</summary>
         public int TikToks;
         /// <summary>Sonntag: Wochenbilanz der Wochenziele.</summary>
+        /// <summary>Porto für Kundenpakete (€, Kosten, bereits im Gewinn).</summary>
+        public int Shipping;
         public bool WeekEnded;
         public int WeekChallengesDone, WeekChallengesTotal;
         /// <summary>Kurze deutsche Meldungen für den Kassenbon (Großaufträge, Wochenziele, Trends ...).</summary>

@@ -243,6 +243,11 @@ namespace DropshippingGame.UI
                 int target = Mathf.Max(1, Mathf.RoundToInt(market * 0.97f));
                 if (target != price) Btn(step, "Knapp unter Markt (" + Fmt.Money(target) + ")", () => S.SetShopPrice(pid, target), "sf-btn-white");
                 T(adm, "Marktpreis ~" + Fmt.Money(market) + " · Nachfrage: " + s.DemandLabel(pid), "sf-muted");
+                int brandPrice = s.SuggestedPrice(pid);
+                if (brandPrice > target && brandPrice != price)
+                    Btn(step, "Markenpreis (" + Fmt.Money(brandPrice) + ")", () => S.SetShopPrice(pid, brandPrice), "sf-btn-white");
+                T(adm, "Markenstärke " + Mathf.RoundToInt(s.BrandStrength() * 100f) + " % → bis " + Fmt.Money(Mathf.RoundToInt(market * s.BrandPriceMult())) +
+                       " ohne Kundenverlust", "sf-muted");
             }
             var qr = Row(info, 8f, "pp-qty");
             B(qr, "Menge:", "pp-text");

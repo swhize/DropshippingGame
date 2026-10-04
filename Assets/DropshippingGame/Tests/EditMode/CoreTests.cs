@@ -46,13 +46,13 @@ namespace DropshippingGame.Tests
         {
             var gm = Fresh();
             Assert.AreEqual(GameData.StartCapital, gm.Money, "Startkapital");
-            Assert.AreEqual(10, GameData.Products.Length, "10 Produkte im Katalog");
+            Assert.AreEqual(14, GameData.Products.Length, "14 Produkte im Katalog");
             Assert.IsTrue(gm.Level == 1 && gm.LocationStage == 0, "Level 1, Garage");
-            Assert.IsTrue(gm.ProductAvailable("huelle") && !gm.ProductAvailable("led"), "Nur Handyhülle zu Beginn verfügbar");
+            Assert.IsTrue(gm.ProductAvailable("huelle") && gm.ProductAvailable("led") && gm.ProductAvailable("toaster") && !gm.ProductAvailable("massage"), "Drei Produkte zu Beginn verfügbar");
             Assert.AreEqual(40, gm.BulkCost(0, 0, 1), "20 Hüllen beim Standard-Anbieter kosten 40 €");
             Assert.IsTrue(gm.BuyBulk(0, 0, 1), "Einkauf klappt");
             Assert.AreEqual(GameData.StartCapital - 40, gm.Money, "Geld abgezogen");
-            Assert.IsFalse(gm.BuyBulk(1, 0, 1), "Gesperrtes Produkt (LED) kann nicht gekauft werden");
+            Assert.IsFalse(gm.BuyBulk(2, 0, 1), "Gesperrtes Produkt (Massagepistole) kann nicht gekauft werden");
             Assert.IsFalse(gm.BuyBulk(0, 0, 2), "Premium-Anbieter ist auf Level 1 gesperrt");
             float lead = gm.LeadMinutes(1);
             gm.AdvanceMinutes(lead + 0.5f);
@@ -252,7 +252,7 @@ namespace DropshippingGame.Tests
             gm.LevelUp += l => ups.Add(l);
             gm.AddXp(160);
             Assert.IsTrue(gm.Level == 2 && ups.Count == 1, "150 XP → Level 2");
-            Assert.IsTrue(gm.ProductAvailable("led"), "Level 2 schaltet LED frei");
+            Assert.IsTrue(gm.ProductAvailable("massage") && gm.ProductAvailable("bartglitzer"), "Level 2 schaltet Massagepistole und Bart-Glitzer frei");
             Assert.AreEqual("level", gm.UpgradeState("warehouse"), "Lagerhalle erst ab Level 4");
             gm.Level = 4;
             gm.Money = 6000;

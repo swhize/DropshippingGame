@@ -259,6 +259,7 @@ namespace DropshippingGame.Core
                 }
                 AddXp(GameData.ReturnRestockXp);
                 ChallengeProgress("restock", 1f);
+                AddWaste(GameData.WastePerReturn);
             }
             else
             {
