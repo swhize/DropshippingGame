@@ -122,7 +122,7 @@ namespace DropshippingGame.UI
                 "Bestellungen erscheinen <b>oben rechts als Zettel</b>. Je schneller verschickt, desto besser die Bewertung.",
                 "Artikel aus dem Regal nehmen und am <b>Packtisch</b> verpacken.",
                 "Am <b>Labeldrucker</b> ein Versandlabel drucken.",
-                "Das Paket in die <b>Versand-Box</b> – Geld kassieren!",
+                "Das Paket zur <b>PaketBlitz-Packstation</b> bringen (gratis) – oder gegen Gebühr abholen lassen. Geld kassieren!",
             };
             for (int i = 0; i < steps.Length; i++)
             {

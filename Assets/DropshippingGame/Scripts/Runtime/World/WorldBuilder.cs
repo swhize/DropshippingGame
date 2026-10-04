@@ -78,8 +78,14 @@ namespace DropshippingGame
             Garage();
             Warehouse();
             Park();
-            Background();
-            Bounds();
+            // Große Stadt (CityBuilder); alte Kulisse nur als Rückfall
+            try { _penthouse = CityBuilder.Build(this, S, menuMode); }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning("CityBuilder: " + e);
+                Background();
+                Bounds();
+            }
             _stations = Props.Node(transform, "Stations").transform;
             _decor = Props.Node(transform, "Decor").transform;
             _dynamic = Props.Node(transform, "Dynamic").transform;
@@ -87,6 +93,8 @@ namespace DropshippingGame
             _staff = Props.Node(transform, "Staff").transform;
             _belt = Props.Node(transform, "Belt").transform;
             Pedestrians_();
+            gameObject.AddComponent<CityTraffic>().Setup(_dynamic);
+            if (!menuMode) gameObject.AddComponent<GarbageTruck>().Setup(_dynamic);
             if (!menuMode) gameObject.AddComponent<StreetFestival>().Setup();
             try { gameObject.AddComponent<FinanceDistrict>().Setup(menuMode); } catch (System.Exception e) { Debug.LogWarning("Finanzviertel: " + e.Message); }
             // Statische Geometrie zusammenfassen: deutlich weniger Draw Calls.
@@ -493,7 +501,7 @@ namespace DropshippingGame
                 placed++;
             }
             for (int i = 0; i < 16; i++) Props.Bush(S, Range(0.7f, 1.1f)).transform.localPosition = new Vector3(-54f + i * 6.5f + Range(-1f, 1f), 0, 7.6f);
-            Props.Fence(S, 106f).transform.localPosition = new Vector3(-4, 0, 29.8f);
+            Props.Fence(S, 104f).transform.localPosition = new Vector3(-5, 0, 29.8f);
             var dump = Props.Dumpster(S);
             dump.transform.localPosition = new Vector3(-30f, 0, -21f);
             Props.Collider(transform, new Vector3(2.4f, 1.4f, 1.5f), new Vector3(-30f, 0.7f, -21f));
@@ -710,6 +718,8 @@ namespace DropshippingGame
                 defs.Add(Sign("B2B", new Vector3(1.4f, 4.2f, -22f), 90f, SignB2B, 1));
             }
             if (sim.HasUpgrade("stand")) defs.Add(D(StationType.Stand, StandPos, 0f));
+            // PaketBlitz: Packstationen in der Stadt + Schalter in der Filiale (gratis Abgabe)
+            foreach (var pd in PostService.StationDefs()) defs.Add(D(StationType.Ship, pd.pos, pd.rot, pd.stage));
             return defs;
         }
 
@@ -1069,7 +1079,7 @@ namespace DropshippingGame
             try
             {
                 var life = gameObject.AddComponent<StreetLife>();
-                life.Setup(_dynamic, transform, _pedestrians, MenuMode ? 7 : 10);
+                life.Setup(_dynamic, transform, _pedestrians, MenuMode ? 9 : 24);
             }
             catch (System.Exception e)
             {
@@ -1085,7 +1095,7 @@ namespace DropshippingGame
             if (_trafficAcc <= 0f)
             {
                 _trafficAcc = Random.Range(5f, 11f);
-                if (!StreetFestival.BlocksTraffic) SpawnCar();
+                if (!StreetFestival.BlocksTraffic && !CityTraffic.Active) SpawnCar();
             }
             _bagCheck -= Time.deltaTime;
             if (_bagCheck <= 0f)

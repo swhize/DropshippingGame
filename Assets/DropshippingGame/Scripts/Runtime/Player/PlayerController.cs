@@ -87,6 +87,7 @@ namespace DropshippingGame
             _handAnchor.SetParent(camGo.transform, false);
             Settings.Changed += ApplySettings;
             _marker = ObjectiveMarker.Create(transform.parent, this);
+            gameObject.AddComponent<EmoteController>();
         }
 
         private void OnDestroy()
@@ -320,7 +321,7 @@ namespace DropshippingGame
             float dt = Time.deltaTime;
             if (dt <= 0f) return;
             bool locked = Game.Root != null && Game.Root.InputLocked;
-            if (!locked)
+            if (!locked && !EmoteController.WheelOpen)
             {
                 var look = GameInput.Look;
                 Yaw += look.x;

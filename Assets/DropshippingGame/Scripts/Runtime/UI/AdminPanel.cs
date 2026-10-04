@@ -345,6 +345,19 @@ namespace DropshippingGame.UI
             tp.Add(Btn("Kalles Imbiss", () => Teleport(WorldBuilder.SpawnDiner)));
             _body.Add(tp);
             _body.Add(Info("Tipp: Die Lagerhalle steht erst nach „Alle Upgrades“ bzw. „Alles freischalten“."));
+            _body.Add(Section("Stadt, Post & Emotes"));
+            var city = Row();
+            city.style.flexWrap = Wrap.Wrap;
+            foreach (var a in CityDebug.Actions())
+            {
+                var act = a;
+                city.Add(Btn(act.label, () =>
+                {
+                    if (act.close) Close();
+                    Do(act.run);
+                }));
+            }
+            _body.Add(city);
         }
 
         // =====================================================================================

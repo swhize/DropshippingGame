@@ -86,7 +86,7 @@ namespace DropshippingGame
                     case StationType.Regal: return "Regal: " + GameData.Products[Opts.ProductIndex].Name;
                     case StationType.Pack: return "Packtisch";
                     case StationType.Label: return "Labeldrucker";
-                    case StationType.Ship: return Opts.Stage == 0 ? "PaketBlitz-Abgabe" : "Versandkäfig";
+                    case StationType.Ship: return PostService.Title(Opts.Stage);
                     case StationType.Fold: return "Falttisch";
                     case StationType.Conveyor: return "Förderband";
                     case StationType.DinerPass: return "Durchreiche";
@@ -192,13 +192,7 @@ namespace DropshippingGame
                 }
                     return "Bring ein verpacktes Paket hierher";
                 case StationType.Ship:
-                {
-                    int nl = player.CountCarried(ItemKind.Labeled);
-                    if (nl > 1) return nl + " Pakete abgeben (+" + Fmt.Money(LabeledValue(player)) + ")";
-                    if (nl == 1) return "Paket abgeben (+" + Fmt.Money(LabeledValue(player)) + ")";
-                }
-                    if (kind == ItemKind.Package) return "Erst ein Versandlabel drucken!";
-                    return "Etikettierte Pakete hier abgeben";
+                    return PostService.Prompt(this, player);
                 case StationType.Fold:
                     if (kind != ItemKind.None) return "Hände frei machen zum Falten";
                     return gm.FlatTotal() > 0 ? "Karton falten (" + gm.FlatTotal() + " ungefaltet)" : "Keine ungefalteten Kartons";
@@ -359,30 +353,7 @@ namespace DropshippingGame
                     else gm.Notify("Bring ein verpacktes Paket zum Labeldrucker.", "info");
                     break;
                 case StationType.Ship:
-                    if (player.CountCarried(ItemKind.Labeled) > 0)
-                    {
-                        var items = player.Carried();
-                        var keep = new List<ItemData>();
-                        int shipped = 0;
-                        foreach (var it in items)
-                        {
-                            if (it.Kind != ItemKind.Labeled)
-                            {
-                                keep.Add(it);
-                                continue;
-                            }
-                            gm.ShipPackage(it, (transform.position + new Vector3(0, 1.8f + shipped * 0.35f, 0)).ToV3());
-                            shipped++;
-                        }
-                        player.SetCarried(keep);
-                        if (keep.Count > 0) gm.Notify("Pakete ohne Versandlabel bleiben in der Hand.", "info");
-                    }
-                    else if (kind == ItemKind.Package)
-                    {
-                        gm.Notify("Ohne Versandlabel nimmt PaketBlitz nichts an!", "bad");
-                        Game.Sound("error");
-                    }
-                    else gm.Notify("Hier gibst du etikettierte Pakete ab.", "info");
+                    PostService.Interact(this, player);
                     break;
                 case StationType.Fold:
                     if (kind != ItemKind.None) gm.Notify("Zum Falten brauchst du freie Hände.", "info");

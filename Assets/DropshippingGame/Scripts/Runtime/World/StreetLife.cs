@@ -13,13 +13,18 @@ namespace DropshippingGame
     public sealed class StreetLife : MonoBehaviour
     {
         // Zonen: 0 = Gehweg Süd (Läden), 1 = Gehweg Nord, 2 = Parkweg
-        private const int South = 0, North = 1, ParkPath = 2;
+        // 3 = Wohnstraße Süd, 4 = Wohnstraße Nord (nur mit großer Stadt, siehe CityLayout)
+        private const int South = 0, North = 1, ParkPath = 2, ResSouth = 3, ResNorth = 4;
 
-        private static readonly float[] LaneMin = { -6.45f, 4.55f, 11.75f };
-        private static readonly float[] LaneMax = { -4.55f, 6.45f, 13.25f };
-        private static readonly float[] EdgeWest = { -60f, -60f, -56f };
-        private static readonly float[] EdgeEast = { 52f, 52f, 47f };
+        private static float[] LaneMin => CityLayout.LaneMinZ;
+        private static float[] LaneMax => CityLayout.LaneMaxZ;
+        private static readonly float[] OldEdgeWest = { -60f, -60f, -56f, -60f, -60f };
+        private static readonly float[] OldEdgeEast = { 52f, 52f, 47f, 52f, 52f };
+        private static float[] EdgeWest => CityLayout.Built ? CityLayout.EdgeWestX : OldEdgeWest;
+        private static float[] EdgeEast => CityLayout.Built ? CityLayout.EdgeEastX : OldEdgeEast;
         private static readonly float[] ParkConnectors = { -40f, -14f, 12f, 38f };
+        /// <summary>Gehwege der Querstraßen zwischen Hauptstraße (Nord) und Wohnstraße.</summary>
+        private static readonly float[] ResConnectors = { -96.75f, -83.25f, 46.75f, 57.25f };
         private const float CrossMin = -37.2f, CrossMax = -32.8f;
 
         private struct Poi
@@ -171,7 +176,11 @@ namespace DropshippingGame
             var look = CharacterKit.RandomLook(_rng);
             if (look != null) look.Sitting = false;
             var w = new Walker { Npc = npc, BaseSpeed = Chance(0.06f) ? R(2.2f, 2.6f) : R(0.9f, 1.55f), ChatCooldown = R(5f, 20f) };
+            var style = GoofyWalk.Roll(_rng);
+            w.BaseSpeed *= GoofyWalk.SpeedFactor(style);
             npc.Setup(look, null, w.BaseSpeed);
+            try { GoofyWalk.Attach(npc, style); }
+            catch (System.Exception e) { Debug.LogWarning("GoofyWalk: " + e.Message); }
             int zone = PickZone();
             bool fromWest = Chance(0.5f);
             float x = anywhere ? R(EdgeWest[zone] + 8f, EdgeEast[zone] - 8f) : (fromWest ? EdgeWest[zone] : EdgeEast[zone]);
@@ -189,6 +198,7 @@ namespace DropshippingGame
         private int PickZone()
         {
             double r = _rng.NextDouble();
+            if (CityLayout.Built) return r < 0.38 ? South : r < 0.68 ? North : r < 0.8 ? ParkPath : r < 0.9 ? ResSouth : ResNorth;
             return r < 0.45 ? South : r < 0.8 ? North : ParkPath;
         }
 
@@ -196,9 +206,17 @@ namespace DropshippingGame
         {
             w.Steps.Clear();
             int stops = _rng.Next(0, 4);
-            for (int i = 0; i < stops && _pois.Count > 0; i++)
+            int total = _pois.Count + CityLayout.Pois.Count;
+            for (int i = 0; i < stops && total > 0; i++)
             {
-                var poi = _pois[_rng.Next(_pois.Count)];
+                int pi = _rng.Next(total);
+                Poi poi;
+                if (pi < _pois.Count) poi = _pois[pi];
+                else
+                {
+                    var cp = CityLayout.Pois[pi - _pois.Count];
+                    poi = new Poi { Zone = cp.Zone, Pos = cp.Pos, Look = cp.Look, MinPause = cp.MinPause, MaxPause = cp.MaxPause };
+                }
                 Vector3 p = poi.Pos + new Vector3(R(-0.7f, 0.7f), 0, R(-0.15f, 0.15f));
                 Travel(w, ref zone, ref x, poi.Zone, p.x);
                 var st = new Step { Pos = p, HasLook = true, Look = poi.Look + new Vector3(R(-1f, 1f), 0, 0), Pause = R(poi.MinPause, poi.MaxPause) };
@@ -225,12 +243,48 @@ namespace DropshippingGame
         private void Travel(Walker w, ref int zone, ref float x, int targetZone, float targetX)
         {
             int guard = 0;
-            while (zone != targetZone && guard++ < 4)
+            while (zone != targetZone && guard++ < 6)
             {
-                if (zone == South || (zone == North && targetZone == South))
+                if (zone == ResSouth || zone == ResNorth || targetZone == ResSouth || targetZone == ResNorth)
+                {
+                    if (zone == ResNorth || (zone == ResSouth && targetZone == ResNorth))
+                    {
+                        // Wohnstraße überqueren
+                        float qx = Mathf.Clamp(x, EdgeWest[zone] + 4f, EdgeEast[zone] - 4f);
+                        int to = zone == ResNorth ? ResSouth : ResNorth;
+                        w.Steps.Enqueue(new Step { Pos = new Vector3(qx, 0, zone == ResNorth ? 58.2f : 47.8f), Pause = R(0.3f, 1.2f) });
+                        w.Steps.Enqueue(new Step { Pos = new Vector3(qx + R(-0.5f, 0.5f), 0, to == ResNorth ? 58.2f : 47.8f) });
+                        zone = to;
+                        x = qx;
+                        continue;
+                    }
+                    if (zone == ResSouth || zone == North)
+                    {
+                        float mid = (x + targetX) * 0.5f;
+                        float best = ResConnectors[0];
+                        foreach (float c in ResConnectors)
+                            if (Mathf.Abs(c - mid) < Mathf.Abs(best - mid)) best = c;
+                        Walk(w, zone, x, best);
+                        int to = zone == North ? ResSouth : North;
+                        w.Steps.Enqueue(new Step { Pos = new Vector3(best, 0, zone == North ? 6.3f : 45.9f) });
+                        w.Steps.Enqueue(new Step { Pos = new Vector3(best + R(-0.3f, 0.3f), 0, to == ResSouth ? 46.5f : 6f) });
+                        zone = to;
+                        x = best;
+                        continue;
+                    }
+                    // Park/Süd: erst zum Nordgehweg (unten)
+                }
+                if (zone == South || (zone == North && (targetZone == South)))
                 {
                     // Straße nur am Zebrastreifen queren, vorher kurz umschauen
                     float cx = R(CrossMin, CrossMax);
+                    if (CityLayout.Built)
+                    {
+                        float mid = (x + targetX) * 0.5f, best = -35f;
+                        foreach (float c in WorldLots.CrosswalksX)
+                            if (Mathf.Abs(c - mid) < Mathf.Abs(best - mid)) best = c;
+                        cx = best + R(-2.2f, 2.2f);
+                    }
                     Walk(w, zone, x, cx);
                     float curbFrom = zone == South ? -4.5f : 4.5f;
                     w.Steps.Enqueue(new Step { Pos = new Vector3(cx, 0, curbFrom), Pause = R(0.4f, 2f), HasLook = true, Look = new Vector3(cx + (Chance(0.5f) ? -8f : 8f), 1f, 0f) });

@@ -188,6 +188,23 @@ namespace DropshippingGame
         public static bool RecordStopDown => Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.RightShoulder);
         /// <summary>Aktion während der TikTok-Aufnahme (Hook, Auspacken, Zeigen): E / X.</summary>
         public static bool RecordActionDown => InteractDown;
+        /// <summary>Emote-Rad: gedrückt halten (T / Steuerkreuz links), siehe EmoteController.</summary>
+        public static bool EmoteHeld
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                var kb = Keyboard.current;
+                if (kb != null && kb.tKey.isPressed) return true;
+                var pad = Gamepad.current;
+                return pad != null && pad.dpad.left.isPressed;
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetKey(KeyCode.T);
+#else
+                return false;
+#endif
+            }
+        }
 
         /// <summary>Zifferntaste 1–4 gedrückt (für die Handy-Apps), sonst 0.</summary>
         public static int NumberDown
@@ -246,6 +263,7 @@ namespace DropshippingGame
                 case "rec_action": return "E";
                 case "rec_stop": return "Enter / Linksklick";
                 case "rec_cancel": return "Esc";
+                case "emote": return "T";
             }
             return action;
         }
@@ -273,6 +291,7 @@ namespace DropshippingGame
                 case "rec_action": return "X";
                 case "rec_stop": return "RB";
                 case "rec_cancel": return "B";
+                case "emote": return "Steuerkreuz ←";
             }
             return action;
         }
@@ -293,6 +312,7 @@ namespace DropshippingGame
             new[] { "TikTok aufnehmen (Handy › TikTak, Laptop, Ringlicht am Schreibtisch)", "–", "–" },
             new[] { "Aufnahme: Aktion / Hook", "E", "X" },
             new[] { "Aufnahme: Stopp / abbrechen", "Enter / Linksklick · Esc", "RB · B" },
+            new[] { "Emote-Rad (halten, zielen, loslassen)", "T · Maus / 1–6", "Steuerkreuz ← · Rechter Stick" },
             new[] { "Handy öffnen / schließen", "Tab", "Y" },
             new[] { "Handy-App wechseln", "1 2 3 4", "LB / RB" },
             new[] { "Laptop (am Schreibtisch)", "E", "X" },

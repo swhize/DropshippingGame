@@ -250,6 +250,12 @@ namespace DropshippingGame
                     return Nearest(p, s => s.Type == StationType.Label);
                 case ItemKind.Labeled:
                     if (p.CountCarried(ItemKind.Package) > 0) return Nearest(p, s => s.Type == StationType.Label);
+                    // Nach dem Tutorial: nächste Gratis-Abgabe (Packstation/Filiale) oder Förderband, sonst Abholung
+                    if (!PostRules.TutorialActive(sim))
+                    {
+                        var free = Nearest(p, s => PostService.IsFreeDrop(s) || s.Type == StationType.Conveyor);
+                        if (free != null) return free;
+                    }
                     return Nearest(p, s => s.Type == StationType.Ship || s.Type == StationType.Conveyor);
                 case ItemKind.Return:
                     return Nearest(p, s => s.Type == StationType.ReturnDesk);
