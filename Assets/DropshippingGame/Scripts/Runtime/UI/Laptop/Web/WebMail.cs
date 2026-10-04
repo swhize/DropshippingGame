@@ -39,7 +39,7 @@ namespace DropshippingGame.UI
             FakeFolder(f, "Lieferanten", "");
             FakeFolder(f, "Gesendet", "");
             FakeFolder(f, "Werbung", (38 + s.Day).ToString());
-            T(f, "Speicher: 4,9 von 5 GB belegt (davon 4,8 GB Newsletter)", "iw-small");
+            
 
             // Liste
             var ls = Wd(Col(iw, 0f, "iw-list"), 320f);
@@ -87,7 +87,7 @@ namespace DropshippingGame.UI
             {
                 var e = Col(ls, 6f, "iw-empty");
                 H(e, "Leer!", "iw-empty-title");
-                T(e, folder == "pending" ? "Keine offenen Entscheidungen. Genieß die Ruhe." : "Hier ist nichts. Nicht mal Spam.", "iw-text");
+                
             }
 
             // Lesebereich
@@ -96,7 +96,7 @@ namespace DropshippingGame.UI
             if (mail == null)
             {
                 H(rd, "Keine Mail ausgewählt", "iw-subject-big");
-                T(rd, "Wähl links eine Nachricht aus.", "iw-text");
+                
                 return;
             }
             ev.MarkRead(mail.Id);
@@ -128,7 +128,7 @@ namespace DropshippingGame.UI
                         Rebuild();
                     }, "iw-btn", i == 0 ? "main" : "");
                 }
-                T(rd, "Keine Zeit? Um 20 Uhr gilt automatisch die vorsichtigste Antwort.", "iw-small");
+                T(rd, "20 Uhr: automatisch die vorsichtigste Antwort.", "iw-small");
             }
             else if (!string.IsNullOrEmpty(mail.Result))
             {

@@ -19,7 +19,7 @@ namespace DropshippingGame.UI
     /// - <see cref="Aliases"/>: alte App-IDs ("brand", "bank", "buy/ware" …) zeigen auf App/Reiter bzw. App/Route.
     /// - Web-Apps merken ihre Route (<see cref="GetRoute"/>); "app/route" öffnet direkt eine Unterseite.
     /// </summary>
-    public sealed class LaptopView
+    public sealed partial class LaptopView
     {
         public sealed class TabDef
         {
@@ -387,6 +387,7 @@ namespace DropshippingGame.UI
         /// <summary>Reiterleiste und Adressleiste (Browser-Chrome) aufbauen.</summary>
         private void BuildChrome()
         {
+            if (Tablet && BuildTabletChrome()) return;
             _chrome.Clear();
             _navItems.Clear();
             _navBadges.Clear();

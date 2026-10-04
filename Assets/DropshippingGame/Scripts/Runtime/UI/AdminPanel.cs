@@ -265,6 +265,30 @@ namespace DropshippingGame.UI
             r.Add(Btn("Retourenwelle (3)", () => Do(() => sim.AdminReturnWave(3))));
             _body.Add(r);
             _body.Add(Info("Bestellungen nehmen gelistete Produkte (sonst zufällig). Offene Bestellungen: " + sim.PendingCount()));
+
+            _body.Add(Section("Marketing (Fakebook / Gugel)"));
+            _body.Add(Info("Kampagnen: " + sim.ActiveAdCount("fakebook") + " Fakebook, " + sim.ActiveAdCount("gugel") + " Gugel · Fake-Profile " + sim.FakeProfiles + " · KI-Seiten " + sim.FakeSites.Count));
+            var mk = Row();
+            mk.style.flexWrap = Wrap.Wrap;
+            mk.Add(Btn("Fakebook-Ad (bestes Produkt, 100 €)", () => Do(() =>
+            {
+                foreach (var p in GameData.Products)
+                    if (sim.IsListed(p.Id) && sim.CanStartAd("fakebook", p.Id, 100) == "") { sim.StartFakebookAd(p.Id, GameData.AdTargets.Length - 1, 0, 100); break; }
+            })));
+            mk.Add(Btn("Gugel-Ad Platz 1 (60 €)", () => Do(() =>
+            {
+                foreach (var p in GameData.Products)
+                    if (sim.IsListed(p.Id) && sim.CanStartAd("gugel", p.Id, 60) == "") { sim.StartGugelAd(p.Id, 0, GameData.GugelMaxBid, 60); break; }
+            })));
+            mk.Add(Btn("+3 Fake-Profile", () => Do(() => { for (int i = 0; i < 3; i++) sim.CreateFakeProfile(); })));
+            mk.Add(Btn("+1 KI-Seite", () => Do(() =>
+            {
+                foreach (var p in GameData.Products)
+                    if (sim.CanCreateFakeSite(p.Id) == "") { sim.CreateFakeSite(p.Id); break; }
+            })));
+            mk.Add(Btn("Fakes auffliegen lassen", () => Do(sim.AdminExposeFakes)));
+            mk.Add(Btn("Alle Kampagnen beenden", () => Do(sim.AdminFinishAds)));
+            _body.Add(mk);
         }
 
         private void BuildEvents()

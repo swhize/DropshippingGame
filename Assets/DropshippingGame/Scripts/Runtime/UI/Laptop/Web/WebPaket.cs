@@ -56,7 +56,7 @@ namespace DropshippingGame.UI
             Btn(track, "Suchen", () => Toast(sel != null ? "Gefunden! Sie ist da, wo sie ist." : "Keine Sendung. Keine Sorgen."), "pb-btn-red");
             if (sel == null)
             {
-                T(box, "Gerade nichts zu verschicken. Die Fahrer machen Pause (sie machen immer Pause).", "pb-muted");
+                T(box, "Nichts zu verschicken.", "pb-muted");
             }
             else
             {
@@ -73,8 +73,8 @@ namespace DropshippingGame.UI
                     H(dot, (i + 1).ToString(), "pb-step-num");
                     B(st, Steps[i], "pb-step-label");
                 }
-                string eta = sel.Stage == OrderStage.Conveyor ? "Liegt auf dem Band. Abholung heute um 20:00 Uhr (eher 19:58)."
-                    : (sel.Express ? "EXPRESS! Bitte schnell packen – die Kundschaft drückt schon F5." : "Voraussichtlich morgen zwischen 8:00 und 21:00 Uhr (eher 20:58).");
+                string eta = sel.Stage == OrderStage.Conveyor ? "Auf dem Band. Abholung 20:00."
+                    : (sel.Express ? "EXPRESS – schnell packen!" : "Zustellung morgen.");
                 T(box, v.Number + " · " + v.Product.Name + " an " + (string.IsNullOrEmpty(v.Customer) ? "Kundschaft" : v.Customer) +
                        (string.IsNullOrEmpty(v.City) ? "" : " in " + v.City) + " · " + v.TimeText, "pb-center");
                 T(box, eta, "pb-muted", "pb-center");
@@ -93,7 +93,7 @@ namespace DropshippingGame.UI
             Mini(stats, "Express", s.Daily.Express.ToString());
             Mini(stats, "Zu spät", s.Daily.Late.ToString());
             Mini(stats, "Storniert", (s.Daily.Expired + s.Daily.Lost).ToString());
-            if (all.Count == 0) T(today, "Keine offenen Pakete. Zeit für Marketing – oder einen Kaffee.", "pb-muted");
+            if (all.Count == 0) T(today, "Keine offenen Pakete.", "pb-muted");
             int n = 0;
             foreach (var o in all)
             {
@@ -119,17 +119,17 @@ namespace DropshippingGame.UI
             {
                 var e = Col(lab, 6f, "pb-label-empty");
                 H(e, "Kein Label", "pb-h");
-                T(e, "Sobald eine Bestellung da ist, siehst du hier ihr Versandlabel. Gedruckt wird am Labeldrucker im Lager.", "pb-text");
+                T(e, "Kommt mit der nächsten Bestellung.", "pb-text");
             }
 
             // Wareneingang
             var inb = Col(Root, 6f, "pb-box");
             var ih = Row(inb, 8f);
-            B(ih, "Eingehende Sendungen (Wareneingang)", "pb-h");
+            B(ih, "Wareneingang", "pb-h");
             int dock = 0;
             foreach (var p in GameData.Products) dock += s.DockCountFor(p.Id);
             T(ih, "· am Tor: " + dock + " Stk" + (s.ReturnsAtDock > 0 ? " · Retouren: " + s.ReturnsAtDock : ""), "pb-muted");
-            if (s.TravelingDeliveries.Count == 0) T(inb, "Nichts unterwegs. Neue Ware gibt's bei AllesExpress.", "pb-muted");
+            if (s.TravelingDeliveries.Count == 0) T(inb, "Nichts unterwegs.", "pb-muted");
             foreach (var d in s.TravelingDeliveries)
             {
                 if (!GameData.IsProduct(d.Product)) continue;

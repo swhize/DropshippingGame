@@ -124,7 +124,7 @@ namespace DropshippingGame.UI
                     if (v > 0) Toast("Verkauft für " + Fmt.Money(v) + ".", "good");
                 }, "tv-btn", "sell");
             }
-            T(order, "Revoluut-Kreditgeld hier reinzustecken ist mutig. Gary schaut zu.", "tv-small");
+            
             LiveUpdate();
         }
 

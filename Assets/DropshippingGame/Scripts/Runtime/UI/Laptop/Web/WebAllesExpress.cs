@@ -129,7 +129,7 @@ namespace DropshippingGame.UI
             deal.Add(new DotLayer(new Color(1f, 1f, 1f, 0.5f)));
             H(deal, "SUPER DEALS −97 %", "ae-deal-big");
             var dv = Col(deal, 6f);
-            B(dv, "Nur heute! (Seit 2019 jeden Tag nur heute)", "ae-deal-text");
+            B(dv, "Nur heute!", "ae-deal-text");
             var timer = Row(dv, 4f, "ae-timer");
             T(timer, "Endet in", "ae-deal-text");
             var parts = UntilClose();
@@ -255,7 +255,7 @@ namespace DropshippingGame.UI
                 Rebuild();
             }, "ae-link");
             T(rr, "· " + W.Rough(fl.Sold) + " verkauft", "pp-text");
-            B(info, (fl.ReviewCount % 89 + 11 + s.Day % 7) + " Leute schauen gerade", "ae-watch");
+            
 
             float unit = UnitPrice(s, idx, _supplier, _bulk);
             float old = OldPrice(p);
@@ -280,7 +280,7 @@ namespace DropshippingGame.UI
                 }, "pp-var", i == _variant ? "on" : "");
             }
 
-            B(info, "Händler (Lieferant):", "pp-label");
+            B(info, "Händler:", "pp-label");
             var sups = Div(info, "pp-vars");
             for (int i = 0; i < GameData.Suppliers.Length; i++)
             {
@@ -295,7 +295,7 @@ namespace DropshippingGame.UI
                 }, "pp-var", i == _supplier ? "on" : "");
                 b.tooltip = sup.Desc;
             }
-            T(info, GameData.Suppliers[_supplier].Desc, "ae-muted");
+            
 
             B(info, "Menge:", "pp-label");
             var qty = Div(info, "pp-vars");
@@ -316,7 +316,7 @@ namespace DropshippingGame.UI
             var qr = Row(info, 8f, "pp-qty");
             B(qr, "Summe:", "pp-text");
             H(qr, Fmt.Money(total), "pp-qty-box");
-            T(qr, "Mindestmenge " + GameData.BulkOptions[0].Quantity + " Stk. · Karton " + GameData.SizeName(p.Size), "ae-muted");
+            T(qr, "Karton " + GameData.SizeName(p.Size), "ae-muted");
 
             var ex = Row(info, 8f);
             Btn(ex, (s.ExpressDelivery ? "An: " : "") + "Express-Lieferung (+" + Fmt.Money(GameData.ExpressSurcharge) + ")", () => S.SetExpressDelivery(!S.ExpressDelivery),
@@ -325,9 +325,9 @@ namespace DropshippingGame.UI
             string reason = BuyBlock(s, p, total);
             var br = Row(info, 10f, "pp-buy");
             int prodIdx = idx, supIdx = _supplier, bulkIdx = _bulk;
-            BtnIf(br, reason == null, "Jetzt kaufen (ins Lager)", () =>
+            BtnIf(br, reason == null, "Kaufen", () =>
             {
-                if (S.BuyBulk(prodIdx, bulkIdx, supIdx)) Toast("Bestellt! Die Kiste kommt per Lieferwagen. Verfolgen bei PaketBlitz.", "good");
+                if (S.BuyBulk(prodIdx, bulkIdx, supIdx)) Toast("Bestellt! Kommt per Lieferwagen.", "good");
             }, "ae-btn-main");
             Btn(br, "Kartons dazu", () => Nav("pack"), "ae-btn-yellow");
             if (reason != null) B(info, reason, "ae-warn");
@@ -347,7 +347,7 @@ namespace DropshippingGame.UI
             mr.AddToClassList(sale - unit >= 0 ? "good" : "bad");
             SideRow(side, "Im Lager", s.StockQty(pid) + " Stk.");
             SideRow(side, "Unterwegs", s.TravelingCountFor(pid) + " Stk.");
-            Btn(side, "Händler kontaktieren", () => Toast("„Dear friend!!! Very good price for you my friend. MOQ 5000 pcs.“"), "ae-btn-white", "wide");
+            
 
             // Reiter
             var tabs = Row(Root, 8f, "pp-tabs");
@@ -365,7 +365,7 @@ namespace DropshippingGame.UI
             if (_tab == 0)
             {
                 T(body, fl.Desc, "pp-text");
-                T(body, "Hinweis: Bilder dienen nur zur Illustration. Tatsächliches Produkt kann Produkt ähneln.", "ae-muted");
+                
             }
             else if (_tab == 1) ReviewsBlock(body, fl.Rating, fl.ReviewCount, fl.Reviews, fl.Variants.Length > 0 ? fl.Variants[0] : "", p.Color.ToColor());
             else
@@ -453,7 +453,7 @@ namespace DropshippingGame.UI
             intro.Add(new BrandPreview(s.BrandLogoIndex, s.BrandColor.ToColor(), s.BrandName));
             var iv = Flex(Col(intro, 6f));
             B(iv, "Dein aktueller Druck", "pp-title");
-            T(iv, "Neue Kartons bekommen Logo und Farbe deiner Marke. Ungefaltete Kartons kosten die Hälfte, müssen aber erst am Falttisch gefaltet werden.", "pp-text");
+            T(iv, "Mit deinem Logo. Ungefaltet = halber Preis.", "pp-text");
             Btn(iv, "Branding ändern", () => View?.OpenApp("company/brand"), "ae-btn-white");
 
             var grid = Div(Root, "ae-grid");
@@ -465,7 +465,7 @@ namespace DropshippingGame.UI
                 var brand = s.PackagingBrand[size];
                 img.style.backgroundColor = brand != null ? brand.Color.ToColor() : s.BrandColor.ToColor();
                 H(img, GameData.SizeName(size), "ae-pack-size");
-                B(c, "Karton " + GameData.SizeName(size) + " – Stabil Braun Versand Paket Umzug Post Box Wellpappe", "ae-card-title");
+                B(c, "Karton " + GameData.SizeName(size), "ae-card-title");
                 var fits = new List<string>();
                 foreach (var p in GameData.Products)
                     if (p.Size == size) fits.Add(p.Short);
@@ -497,7 +497,7 @@ namespace DropshippingGame.UI
             if (s.TravelingDeliveries.Count == 0)
             {
                 B(box, "Gerade ist nichts unterwegs.", "pp-title");
-                T(box, "Leerer Wagen, volles Konto. Oder umgekehrt?", "pp-text");
+                
                 Btn(box, "Weiter shoppen", () => Nav(""), "ae-btn-main");
             }
             foreach (var d in s.TravelingDeliveries)
@@ -508,13 +508,13 @@ namespace DropshippingGame.UI
                 Wd(W.Art(r, d.Product, 56f, false, "ae-order-img"), 56f);
                 var v = Flex(Col(r, 2f));
                 B(v, d.Quantity + "× " + dp.Name + " (" + GameData.QualityName(d.Quality) + ")", "pp-text");
-                T(v, "Status: " + (d.VanSent ? "Im eigenen Lieferwagen" : "Unterwegs aus Shenzhen (angeblich)"), "ae-muted");
+                T(v, d.VanSent ? "Eigener Wagen" : "Unterwegs", "ae-muted");
                 H(r, "in " + s.EtaText(d), "ae-card-price");
             }
             int dock = 0;
             foreach (var p in GameData.Products) dock += s.DockCountFor(p.Id);
             if (dock > 0) B(Root, "Am Wareneingang warten " + dock + " Stück aufs Einräumen.", "ae-warn");
-            Btn(Root, "Sendungen bei PaketBlitz ansehen", () => View?.OpenApp("paket"), "ae-btn-white");
+            Btn(Root, "PaketBlitz", () => View?.OpenApp("paket"), "ae-btn-white");
         }
 
         // =====================================================================================
