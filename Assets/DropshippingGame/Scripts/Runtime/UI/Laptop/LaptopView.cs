@@ -515,7 +515,7 @@ namespace DropshippingGame.UI
             var sim = Game.Sim;
             if (sim == null || _money == null) return;
             _day.text = UiFmt.DayShort(sim.Day) + " · " + Fmt.Clock(sim.TimeMinutes);
-            _rating.text = "★ " + Fmt.Rating(sim.Reputation);
+            _rating.text = (Tablet ? "" : "★ ") + Fmt.Rating(sim.Reputation);
             _money.text = Fmt.Money(sim.Money);
             _moneyChip?.EnableInClassList("neg", sim.Money < 0);
             _backBtn?.SetEnabled(_history.Count > 0);

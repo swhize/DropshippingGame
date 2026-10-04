@@ -434,14 +434,14 @@ Label {
 
 .bar {
     background-color: var(--rule);
-    border-radius: 999px;
+    border-radius: 16px;
     overflow: hidden;
 }
 
 .bar-fill {
     height: 100%;
     background-color: var(--accent);
-    border-radius: 999px;
+    border-radius: 16px;
 }
 
 .chip {
@@ -502,7 +502,7 @@ Label {
     color: var(--accent-ink);
     -unity-font-style: bold;
     font-size: 11px;
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 0 6px;
     min-width: 18px;
     height: 18px;
@@ -667,7 +667,7 @@ Label {
 
 .seg {
     background-color: var(--card-2);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 3px;
     border-width: 1px;
     border-color: var(--rule);
@@ -676,7 +676,7 @@ Label {
 
 .seg-item {
     padding: 6px 14px;
-    border-radius: 999px;
+    border-radius: 16px;
     border-width: 1px;
     border-color: rgba(0, 0, 0, 0);
     align-items: center;
@@ -708,7 +708,7 @@ Label {
 
 .tabbar {
     background-color: var(--card);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 3px;
     border-width: 1px;
     border-color: var(--rule);
@@ -718,7 +718,7 @@ Label {
 
 .tab {
     padding: 6px 14px 6px 11px;
-    border-radius: 999px;
+    border-radius: 16px;
     border-width: 1px;
     border-color: rgba(0, 0, 0, 0);
     transition-property: background-color;
@@ -985,7 +985,7 @@ Label {
     background-color: var(--glass);
     border-width: 1px;
     border-color: rgba(82, 219, 199, 0.28);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 4px 11px 4px 8px;
     margin-bottom: 6px;
     align-self: flex-start;
@@ -1026,7 +1026,7 @@ Label {
 
 .tickets-count {
     background-color: var(--glass);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 2px 9px;
     font-size: 12px;
     color: var(--ink);
@@ -1040,7 +1040,7 @@ Label {
 
 .hud-mini {
     background-color: var(--glass);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 3px 9px 3px 7px;
     margin-left: 6px;
 }
@@ -1348,7 +1348,7 @@ Label {
     background-color: var(--glass-2);
     border-width: 1px;
     border-color: rgba(255, 255, 255, 0.10);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 6px 18px 6px 6px;
 }
 
@@ -1356,7 +1356,7 @@ Label {
     font-size: 14px;
     min-width: 28px;
     padding: 3px 8px;
-    border-radius: 999px;
+    border-radius: 16px;
 }
 
 .prompt-text {
@@ -1549,7 +1549,7 @@ Label {
     background-color: var(--glass-2);
     border-width: 1px;
     border-color: rgba(255, 189, 66, 0.45);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 5px 12px;
     margin: 4px;
 }
@@ -1636,7 +1636,7 @@ Label {
     padding: 3px 8px 3px 4px;
     margin-left: -4px;
     margin-bottom: 4px;
-    border-radius: 999px;
+    border-radius: 16px;
     border-width: 1px;
     border-color: rgba(0, 0, 0, 0);
 }
@@ -1773,7 +1773,7 @@ Label {
     background-color: var(--card);
     border-width: 1px;
     border-color: var(--rule);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 4px 10px;
     margin-right: 6px;
     flex-direction: row;
@@ -1852,7 +1852,7 @@ Label {
     flex-direction: row;
     align-items: center;
     background-color: var(--accent);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 6px 12px 6px 10px;
     border-width: 1px;
     border-color: var(--accent);
@@ -1883,7 +1883,7 @@ Label {
 
 .reorder-size {
     padding: 5px 9px;
-    border-radius: 999px;
+    border-radius: 16px;
     background-color: var(--card-2);
     border-width: 1px;
     border-color: var(--rule);
@@ -2099,7 +2099,7 @@ Label {
 
 .choice-cost {
     background-color: rgba(0, 0, 0, 0.25);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 2px 9px;
     margin-left: 10px;
     font-size: 12.5px;
@@ -2449,7 +2449,7 @@ Label {
 
 .license-pill {
     background-color: var(--accent-soft);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 1px 8px;
 }
 
@@ -2526,7 +2526,7 @@ Label {
 .version-pill {
     border-width: 1.5px;
     border-color: var(--accent);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 3px 11px;
     margin-left: 12px;
 }
@@ -2943,7 +2943,7 @@ Label {
     background-color: var(--card);
     border-width: 1px;
     border-color: var(--rule);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 5px 12px;
     margin-left: 8px;
 }
@@ -3002,7 +3002,7 @@ Label {
     background-color: var(--card);
     border-width: 1px;
     border-color: var(--rule);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 7px 14px 7px 10px;
     margin-right: 6px;
     transition-property: background-color, border-color;
@@ -3077,7 +3077,7 @@ Label {
     background-color: var(--card);
     border-width: 1px;
     border-color: var(--rule);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 4px 10px;
 }
 
@@ -3167,7 +3167,7 @@ Label {
 }
 
 .delta {
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 3px 9px;
     background-color: rgba(61, 214, 176, 0.14);
 }
@@ -3337,7 +3337,7 @@ Label {
 
 .pill {
     background-color: var(--card-2);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 2px 8px;
     align-self: flex-start;
     margin-top: 2px;
@@ -3487,7 +3487,7 @@ Label {
     flex-direction: row;
     align-items: center;
     background-color: var(--card-2);
-    border-radius: 999px;
+    border-radius: 16px;
     padding: 3px;
 }
 

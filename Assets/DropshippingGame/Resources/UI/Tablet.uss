@@ -217,3 +217,7 @@
 .sf .sa-status { font-size: 12px; border-radius: 10px; padding: 2px 8px; -unity-text-align: middle-center; }
 .sf .sa-status.on { background-color: #CDFEE1; color: #0C5132; }
 .sf .sa-status.off { background-color: #E3E3E3; color: #4A4A4A; }
+
+/* Alte HustleOS-Seiten (dunkles Design) im Tablet: dunkler Hintergrund, damit helle Titel lesbar sind. */
+.tablet .br-content { background-color: #12141C; }
+.tablet .br-content.web { background-color: rgba(0, 0, 0, 0); }
