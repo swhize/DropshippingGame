@@ -784,6 +784,7 @@ namespace DropshippingGame
                     var pos = new Vector3(-0.72f + slot * 0.36f, 0.115f + level * 0.5f + 0.11f, 0);
                     Props.Box(Kit.Content, new Vector3(0.3f, 0.22f, 0.34f), body, pos, default, 0.012f);
                     Props.Box(Kit.Content, new Vector3(0.302f, 0.05f, 0.342f), band, pos + new Vector3(0, 0.04f, 0), default, 0f, false);
+                    if (slot == 0 || slot == 3) RegalShowcase(pos + new Vector3(0, 0.11f, 0.04f), 0.15f);
                 }
             }
             else
@@ -796,8 +797,16 @@ namespace DropshippingGame
                     var pos = new Vector3(x, 0.15f + level * 1.15f + 0.05f + 0.18f, z);
                     Props.Box(Kit.Content, new Vector3(0.4f, 0.36f, 0.4f), body, pos, default, 0.015f);
                     Props.Box(Kit.Content, new Vector3(0.402f, 0.07f, 0.402f), band, pos + new Vector3(0, 0.06f, 0), default, 0f, false);
+                    if (k == 3 || k == 5) RegalShowcase(pos + new Vector3(0, 0.18f, 0.05f), 0.24f);
                 }
             }
+        }
+
+        /// <summary>Ausgepacktes Produktmodell oben auf einem Regalkarton, damit man sieht, was drin ist.</summary>
+        private void RegalShowcase(Vector3 top, float size)
+        {
+            var m = ProductModels.Build(Kit.Content, GameData.Products[Opts.ProductIndex].Id, size, true);
+            m.transform.localPosition = top;
         }
 
         private void FillPacked()

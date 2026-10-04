@@ -245,6 +245,11 @@ namespace DropshippingGame.UI
             }
             _body.Add(grid);
 
+            var pv = Row();
+            pv.Add(Btn("Alle Produkte vor mir anzeigen", () => Do(ProductPreview.SpawnAllInFrontOfPlayer)));
+            pv.Add(Btn("Vorschau weg", () => Do(ProductPreview.Clear)));
+            _body.Add(pv);
+
             _body.Add(Section("Sonstiges"));
             var r = Row();
             r.style.flexWrap = Wrap.Wrap;

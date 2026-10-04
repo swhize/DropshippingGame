@@ -57,17 +57,31 @@ namespace DropshippingGame
                     float q = data.Quality;
                     var qcol = q < 0.8f ? new Color(0.9f, 0.3f, 0.25f) : (q >= 1.3f ? new Color(0.95f, 0.8f, 0.2f) : new Color(0.85f, 0.85f, 0.85f));
                     Props.Box(t, new Vector3(0.12f, 0.08f, 0.004f), Mats.Std(qcol, 0.5f), new Vector3(-s.x * 0.3f, s.y * 0.25f, s.z / 2f), default, 0f, false);
+                    if (product != null)
+                    {
+                        // Produktbild an der Seite: kleines Modell vor weißem Etikettfeld + Name.
+                        Props.Box(t, new Vector3(0.16f, 0.16f, 0.004f), Mats.Std(Color.white, 0.6f), new Vector3(s.x * 0.22f, 0.02f, s.z / 2f + 0.002f), default, 0f, false);
+                        var pic = ProductModels.Build(t, product.Id, 0.12f);
+                        pic.transform.localPosition = new Vector3(s.x * 0.22f, 0.03f, s.z / 2f + 0.03f);
+                        pic.transform.localScale = new Vector3(1f, 1f, 0.35f);
+                        Label3D.Create(t, product.Short, 22f, new Color(0.15f, 0.12f, 0.1f), new Vector3(s.x * 0.22f, -0.07f, s.z / 2f + 0.006f), false);
+                    }
                     if (showLabel && product != null)
                         Label3D.Create(t, data.Quantity + "× " + product.Short, 36f, Color.white, new Vector3(0, s.y / 2f + 0.12f, 0), true, 8f);
                     break;
                 }
                 case ItemKind.Item:
                 {
+                    if (product != null)
+                    {
+                        // Echtes Produktmodell (passt in die Item-Box, steht auf deren Boden).
+                        ProductModels.BuildFitted(t, product.Id, ItemSize * 1.15f);
+                        break;
+                    }
                     var s = ItemSize;
-                    var col = product != null ? product.Color.ToColor() : new Color(0.9f, 0.8f, 0.3f);
+                    var col = new Color(0.9f, 0.8f, 0.3f);
                     Props.Box(t, s, Mats.Std(new Color(0.97f, 0.97f, 0.96f), 0.5f), Vector3.zero, default, 0.01f);
                     Props.Box(t, new Vector3(s.x + 0.003f, s.y * 0.55f, s.z + 0.003f), Mats.Std(col, 0.45f), new Vector3(0, s.y * 0.1f, 0), default, 0f, false);
-                    Props.Box(t, new Vector3(0.05f, 0.05f, 0.004f), Mats.Std(col.Darkened(0.4f), 0.5f), new Vector3(s.x * 0.25f, 0, s.z / 2f + 0.002f), default, 0f, false);
                     break;
                 }
                 case ItemKind.Package:
