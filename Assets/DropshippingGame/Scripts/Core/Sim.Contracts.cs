@@ -40,6 +40,8 @@ namespace DropshippingGame.Core
         public bool Special;
         /// <summary>Tatsächlich ausgezahlter Betrag nach Abschluss (bei Misserfolg: Teilzahlung − Strafe).</summary>
         public int PaidOut;
+        /// <summary>Großhändler-Auftrag für deine Markenware (größer, besser bezahlt, Nachbestellungen).</summary>
+        public bool Wholesale;
 
         public int Remaining => Math.Max(0, Quantity - Delivered);
         public float Progress => Quantity > 0 ? Mathx.Clamp01((float)Delivered / Quantity) : 0f;
@@ -57,7 +59,7 @@ namespace DropshippingGame.Core
             { "delivered", Delivered }, { "payment", Payment }, { "penalty", Penalty }, { "xp", Xp }, { "rep_bonus", (double)RepBonus },
             { "rep_penalty", (double)RepPenalty }, { "min_quality", (double)MinQuality }, { "days", Days }, { "offer_day", OfferDay },
             { "offer_expires_day", OfferExpiresDay }, { "accepted_day", AcceptedDay }, { "deadline_day", DeadlineDay },
-            { "closed_day", ClosedDay }, { "state", (int)State }, { "special", Special }, { "paid_out", PaidOut },
+            { "closed_day", ClosedDay }, { "state", (int)State }, { "special", Special }, { "paid_out", PaidOut }, { "wholesale", Wholesale },
         };
 
         public static Contract FromJson(object o)
@@ -71,7 +73,7 @@ namespace DropshippingGame.Core
                 MinQuality = J.F(d, "min_quality"), Days = Math.Max(1, J.I(d, "days", 3)), OfferDay = J.I(d, "offer_day", 1),
                 OfferExpiresDay = J.I(d, "offer_expires_day", 1), AcceptedDay = J.I(d, "accepted_day"), DeadlineDay = J.I(d, "deadline_day"),
                 ClosedDay = J.I(d, "closed_day"), State = (ContractState)Mathx.Clamp(J.I(d, "state"), 0, 5), Special = J.B(d, "special"),
-                PaidOut = J.I(d, "paid_out"),
+                PaidOut = J.I(d, "paid_out"), Wholesale = J.B(d, "wholesale"),
             };
             if (!GameData.IsProduct(c.Product)) c.Product = "huelle";
             return c;
@@ -511,6 +513,7 @@ namespace DropshippingGame.Core
             AddXp(c.Xp);
             ChallengeProgress("contract", 1f);
             ChallengeProgress("revenue", c.Payment);
+            OnContractCompletedProgress(c);
             ContractCompleted?.Invoke(c);
             TrimContractHistory();
             CheckGoals();

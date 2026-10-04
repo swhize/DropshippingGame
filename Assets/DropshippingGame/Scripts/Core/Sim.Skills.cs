@@ -138,19 +138,19 @@ namespace DropshippingGame.Core
         }
 
         /// <summary>Lagerplatz-Faktor ("Lager-Tetris").</summary>
-        public float CapacityMult() => HasSkill("l_tetris") ? 1.3f : 1f;
+        public float CapacityMult() => (HasSkill("l_tetris") ? 1.3f : 1f) * ProgressCapacityMult();
 
         /// <summary>Lieferzeit-Faktor ("Kurze Wege").</summary>
-        public float LeadTimeMult() => HasSkill("l_wege") ? 0.7f : 1f;
+        public float LeadTimeMult() => (HasSkill("l_wege") ? 0.7f : 1f) * ProgressLeadMult();
 
         /// <summary>Arbeitstempo des Personals ("Prozess-Flow").</summary>
-        public float StaffSpeedMult() => HasSkill("l_flow") ? 1.25f : 1f;
+        public float StaffSpeedMult() => (HasSkill("l_flow") ? 1.25f : 1f) * ProgressStaffMult();
 
         /// <summary>Laufzeit eines Pakets auf dem Förderband in Minuten.</summary>
         public float ConveyorMinutes() => HasSkill("l_flow") ? 3f : 6f;
 
         /// <summary>Einkaufspreis-Faktor ("Feilschen").</summary>
-        public float PurchasePriceMult() => HasSkill("v_feilschen") ? 0.9f : 1f;
+        public float PurchasePriceMult() => (HasSkill("v_feilschen") ? 0.9f : 1f) * ProgressPurchaseMult();
 
         /// <summary>Retourenquoten-Faktor ("Kundenflüsterer").</summary>
         public float ReturnRateMult() => HasSkill("v_kulanz") ? 0.65f : 1f;
@@ -161,7 +161,7 @@ namespace DropshippingGame.Core
         public int ContractSlotBonus() => HasSkill("v_netzwerk") ? 1 : 0;
 
         /// <summary>Zusätzliche Plätze in der Warteschlange ("Stammkundschaft").</summary>
-        public int QueueBonus() => HasSkill("v_stamm") ? 3 : 0;
+        public int QueueBonus() => (HasSkill("v_stamm") ? 3 : 0) + ProgressQueueBonus();
 
         /// <summary>Gewicht schlechter Bewertungen ("Stammkundschaft").</summary>
         public float BadReviewWeightMult() => HasSkill("v_stamm") ? 0.5f : 1f;

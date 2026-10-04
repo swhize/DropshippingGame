@@ -316,6 +316,8 @@ namespace DropshippingGame.UI
             foreach (var b in sim.Boosts) sb.Append(b.Name).Append((int)Mathf.Max(0f, b.EndsAt - now)).Append(';');
             bool offline = now < sim.ShopOfflineUntil;
             sb.Append(offline);
+            var chips = sim.StatusChips();
+            foreach (var c in chips) sb.Append(c[0]).Append(';');
             string sig = sb.ToString();
             if (sig == _boostSig) return;
             _boostSig = sig;
@@ -326,6 +328,11 @@ namespace DropshippingGame.UI
                 string what = string.IsNullOrEmpty(b.Product) ? "" : " (" + GameData.Product(b.Product).Short + ")";
                 var c = UIX.Chip(_boosts, b.Name + what + "  ×" + Fmt.Dec(b.Mult, 1) + " · " + UiFmt.Duration(left), "bolt", Theme.Teal, "boost-chip");
                 if (b.Mult < 1f) c.AddToClassList("bad");
+            }
+            foreach (var c in chips)
+            {
+                var chip = UIX.Chip(_boosts, c[0], Icons.Has(c[1]) ? c[1] : "warning", c[2] == "bad" ? Theme.Bad : Theme.Teal, "boost-chip");
+                if (c[2] == "bad") chip.AddToClassList("bad");
             }
             if (offline)
                 UIX.Chip(_boosts, "Shop offline · noch " + UiFmt.Duration(sim.ShopOfflineUntil - now), "warning", Theme.Bad, "boost-chip").AddToClassList("bad");

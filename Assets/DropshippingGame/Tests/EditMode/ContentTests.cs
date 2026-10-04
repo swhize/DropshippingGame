@@ -176,7 +176,7 @@ namespace DropshippingGame.Tests
             Assert.AreEqual("Montag", s.WeekdayName);
             Assert.IsTrue(s.Notes.Count >= 2, "Meldungen für den Kassenbon");
             int fixedCosts = s.Rent + s.Wages + s.Upkeep + s.Interest;
-            int expected = s.Revenue + s.IncomeOther - s.Purchases - s.Packaging - s.Marketing - s.Other - s.Refunds - s.Penalties - fixedCosts;
+            int expected = s.Revenue + s.IncomeOther - s.Purchases - s.Packaging - s.Marketing - s.Other - s.Refunds - s.Penalties - s.Shipping - fixedCosts;
             Assert.AreEqual(expected, s.Profit, "Gewinn berücksichtigt Erstattungen und Strafen");
             Assert.AreEqual(gm.Money - fixedCosts, s.MoneyAfter, "Kontostand danach");
             gm.StartNextDay();

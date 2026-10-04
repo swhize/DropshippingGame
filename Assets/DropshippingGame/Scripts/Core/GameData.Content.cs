@@ -204,6 +204,10 @@ namespace DropshippingGame.Core
             { "smartwatch", new[] { "Damit ich meine Schritte zählen kann. Es sind nicht viele.", "Endlich pünktlich sein. Vielleicht." } },
             { "beamer", new[] { "Kinoabend im Schrebergarten!", "Für PowerPoint-Karaoke im Büro." } },
             { "drohne", new[] { "Nur für Landschaftsaufnahmen. Ehrlich.", "Mein Nachbar hat auch eine. Jetzt ist Krieg." } },
+            { "toaster", new[] { "Mein Gesicht auf Toast. Endlich.", "Für meine Schwiegermutter. Sie wird es hassen." } },
+            { "bartglitzer", new[] { "Für den Junggesellenabschied. Bitte diskret!", "Mein Bart soll strahlen wie meine Zukunft." } },
+            { "giesskanne", new[] { "Meine Pflanzen brauchen WLAN.", "Damit der Kaktus endlich überlebt." } },
+            { "wackeldackel", new[] { "Für die Hutablage. Mit Bass.", "Opa will ihn mit seinem Hörgerät koppeln." } },
         };
 
         // =====================================================================================

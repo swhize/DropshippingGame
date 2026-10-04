@@ -9,7 +9,7 @@ namespace DropshippingGame.UI
     /// Admin-Panel zum Testen (F10): Geld, Level, alles freischalten, Ware, Bestellungen,
     /// Ereignisse, Trends, Zeit und Teleport. Baut sich komplett im Code auf (keine USS nötig).
     /// </summary>
-    public sealed class AdminPanel
+    public sealed partial class AdminPanel
     {
         public VisualElement Panel { get; private set; }
         public bool IsOpen { get; private set; }
@@ -28,8 +28,8 @@ namespace DropshippingGame.UI
         private static readonly Color Text = new Color(0.93f, 0.93f, 0.95f, 1f);
         private static readonly Color Muted = new Color(0.6f, 0.6f, 0.66f, 1f);
 
-        private static readonly string[] TabIds = { "general", "stock", "orders", "events", "trends", "world" };
-        private static readonly string[] TabNames = { "Allgemein", "Ware", "Bestellungen", "Ereignisse", "Trends", "Welt & Zeit" };
+        private static readonly string[] TabIds = { "general", "stock", "orders", "events", "trends", "world", "progress" };
+        private static readonly string[] TabNames = { "Allgemein", "Ware", "Bestellungen", "Ereignisse", "Trends", "Welt & Zeit", "Wirtschaft+" };
 
         public AdminPanel(VisualElement layer)
         {
@@ -154,6 +154,7 @@ namespace DropshippingGame.UI
                     case "events": BuildEvents(); break;
                     case "trends": BuildTrends(); break;
                     case "world": BuildWorld(); break;
+                    case "progress": BuildProgress(); break;
                 }
             }
             catch (Exception e)

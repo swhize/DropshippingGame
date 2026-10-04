@@ -132,6 +132,7 @@ namespace DropshippingGame.Core
             };
             AddV4State(state);
             AddCityState(state);
+            AddProgressState(state);
             return state;
         }
 
@@ -392,6 +393,7 @@ namespace DropshippingGame.Core
             ReadTikTokVideos(s);
             ReadCityState(s);
             ShopsFromJson(J.O(s, "shops"));
+            ReadProgressState(s);
 
             FixupLegacyOrders();
             ReconcileOrdersInWork();

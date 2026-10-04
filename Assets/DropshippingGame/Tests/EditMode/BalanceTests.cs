@@ -42,6 +42,11 @@ namespace DropshippingGame.Tests
                 "v_stamm", "l_flow", "m_viral", "m_trendsetter",
             };
 
+            private static readonly string[] PerkOrder =
+            {
+                "p_einkauf", "p_queue", "p_porto", "p_team", "p_liefer", "p_kunden", "p_lager", "p_ausdauer", "p_tragen",
+            };
+
             public Bot(int seed, string mode = "skip")
             {
                 Gm = new Sim(seed);
@@ -80,11 +85,16 @@ namespace DropshippingGame.Tests
                 {
                     string id = GameData.Products[i].Id;
                     if (!gm.ProductAvailable(id)) continue;
-                    if (!gm.IsListed(id)) gm.SetListed(id, true);
                     if (gm.StockQty(id) + gm.TravelingCountFor(id) * 50 < 30 && gm.Money >= gm.BulkCost(i, 1, 1))
                         gm.BuyBulk(i, 1, 1);
+                    // Nur Ware online stellen, die da ist oder kommt (sonst verfallen Bestellungen).
+                    bool supply = gm.StockQty(id) > 0 || gm.TravelingCountFor(id) > 0 || gm.DockCountFor(id) > 0;
+                    if (gm.IsListed(id) != supply) gm.SetListed(id, supply);
                 }
                 if (UseContracts) HandleContracts();
+                AdjustPrices();
+                gm.SetCarrier(gm.ActiveDisruption != null ? 1 : 0);
+                foreach (var pid in gm.DefectiveProducts()) gm.RecallDefects(pid);
                 while (gm.DockCrates.Count > 0)
                 {
                     var c = gm.PickupCrate();
@@ -128,6 +138,29 @@ namespace DropshippingGame.Tests
                     pkg.Kind = ItemKind.Labeled;
                     gm.OnLabeled(pkg);
                     gm.ShipPackage(pkg);
+                }
+            }
+
+            private float _priceCheck;
+
+            /// <summary>
+            /// Wie ein echter Spieler: Läuft die Warteschlange über, gehen die Preise hoch (bis zum Markenpreis
+            /// + etwas), ist sie leer, wieder runter Richtung Startpreis.
+            /// </summary>
+            private void AdjustPrices()
+            {
+                var gm = Gm;
+                if (gm.BClock() < _priceCheck) return;
+                _priceCheck = gm.BClock() + 30f;
+                int open = gm.OrderQueue.Count;
+                foreach (var p in GameData.Products)
+                {
+                    if (!gm.IsListed(p.Id)) continue;
+                    int price = gm.ShopPrices[p.Id];
+                    int floor = (int)Math.Round(p.RefPrice * 0.8f);
+                    int cap = (int)Math.Round(gm.SuggestedPrice(p.Id) * 1.1f);
+                    if (open >= gm.QueueCapacity() / 2 && price < cap) gm.SetShopPrice(p.Id, price + Math.Max(1, price / 20));
+                    else if (open <= 1 && price > floor) gm.SetShopPrice(p.Id, Math.Max(floor, price - Math.Max(1, price / 20)));
                 }
             }
 
@@ -178,6 +211,11 @@ namespace DropshippingGame.Tests
                     foreach (var r in new[] { "packer", "versand", "lager" })
                         if (gm.StaffCount(r) == 0 && gm.Money > 600) gm.Hire(r);
                 }
+                // Fleißiger Spieler: Marke benennen, Hustle-Punkte ausgeben, Müllcontainer, Defekte zurückschicken.
+                if (!gm.BrandNamed) gm.SetBrandName("BotShop");
+                foreach (var pk in PerkOrder)
+                    while (gm.PerkState(pk) == "available") gm.BuyPerk(pk);
+                if (gm.WasteFull && gm.EquipmentState("container") == "available" && gm.Money > 1500) gm.BuyEquipment("container");
                 if (UseSkills)
                 {
                     foreach (var id in SkillOrder)

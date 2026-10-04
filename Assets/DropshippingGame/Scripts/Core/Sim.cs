@@ -312,6 +312,7 @@ namespace DropshippingGame.Core
             FestivalReset();
             AdsReset();
             ResetShops();
+            ProgressReset();
             ResetDaily();
             Market.Reset();
             Events.Reset();
@@ -412,6 +413,7 @@ namespace DropshippingGame.Core
             UpdateReturns();
             UpdateContractOffers();
             FestivalUpdate();
+            ProgressUpdate(m);
             if (TimeMinutes >= GameData.DayEnd)
             {
                 TimeMinutes = GameData.DayEnd;
@@ -491,6 +493,7 @@ namespace DropshippingGame.Core
             s.Profit = d.VariableProfit() - fixedCosts;
             s.MoneyAfter = Money - fixedCosts;
             s.Bankrupt = s.MoneyAfter < GameData.BankruptLimit && !AdminNoBankrupt;
+            ProgressEndDay(s);
             DayEnded?.Invoke(s);
         }
 
@@ -527,6 +530,7 @@ namespace DropshippingGame.Core
             FestivalNewDay();
             AdsNewDay();
             ShopsNewDay();
+            ProgressNewDay();
             if (Weekday == 0 || ChallengeWeek != Week) StartWeek();
             CheckGoals();
             CheckChallenges();
@@ -540,7 +544,7 @@ namespace DropshippingGame.Core
         // Produkte & Nachfrage
         // =====================================================================================
         public bool ProductUnlocked(string id) => Level >= GameData.Product(id).UnlockLevel;
-        public bool ProductHasShelf(string id) => GameData.ProductIndex(id) < GameData.GarageProducts || LocationStage >= 1;
+        public bool ProductHasShelf(string id) => GameData.HasGarageShelf(id) || LocationStage >= 1;
         public bool ProductAvailable(string id) => ProductUnlocked(id) && ProductHasShelf(id);
         public bool IsListed(string id) => Listed.TryGetValue(id, out bool v) && v;
         public int StockQty(string id) => Stock.TryGetValue(id, out var e) ? e.Qty : 0;
@@ -619,9 +623,10 @@ namespace DropshippingGame.Core
             var p = GameData.Product(id);
             float market = Market.MarketPrice(id);
             float price = CurrentSalePrice(id);
-            float priceFactor = Mathx.Clamp((float)Math.Pow(market / Math.Max(price, 1f), 1.6), 0.08f, 2.6f);
+            float refPrice = DemandReferencePrice(id, market, price);
+            float priceFactor = Mathx.Clamp((float)Math.Pow(refPrice / Math.Max(price, 1f), 1.6), 0.08f, 2.6f);
             float repMult = Mathx.Lerp(0.35f, 1.6f, Mathx.Clamp01(Reputation / 5f));
-            return p.Popularity * priceFactor * repMult * (0.6f + Awareness) * BoostMult(id) * TrendMult(id) * WeekdayDemand();
+            return p.Popularity * priceFactor * repMult * (0.6f + Awareness) * BoostMult(id) * TrendMult(id) * WeekdayDemand() * DemandPerkMult();
         }
 
         public string DemandLabel(string id)
@@ -727,7 +732,7 @@ namespace DropshippingGame.Core
             var p = GameData.Products[productIndex];
             var b = GameData.BulkOptions[bulkIndex];
             var s = GameData.Suppliers[supplierIndex];
-            int cost = Mathx.RoundToInt(p.UnitCost * b.Quantity * b.Discount * s.PriceMult * PurchasePriceMult());
+            int cost = Mathx.RoundToInt(p.UnitCost * b.Quantity * b.Discount * s.PriceMult * PurchasePriceMult() * ScaleDiscountMult(p.Id));
             if (ExpressDelivery) cost += GameData.ExpressSurcharge;
             return cost;
         }
@@ -780,6 +785,7 @@ namespace DropshippingGame.Core
             var s = GameData.Suppliers[supplierIndex];
             Spend(cost, "purchases");
             LastPurchase[p.Id] = new[] { bulkIndex, supplierIndex };
+            TrackPurchase(p.Id, b.Quantity);
             if (supplierIndex == 2) PremiumBoughtDay[p.Id] = Day;
             TravelingDeliveries.Add(new Delivery
             {
@@ -815,6 +821,7 @@ namespace DropshippingGame.Core
                         Notify("Beschädigte Lieferung: " + lost + " Stück unbrauchbar.", "bad");
                     }
                     DockCrates.Add(ItemData.Crate(d.Product, qty, d.Quality));
+                    OnDeliveryArrived(d, qty);
                     TravelingDeliveries.RemoveAt(i);
                     DeliveryArrived?.Invoke(d.Product);
                     Notify("Lieferung angekommen: " + qty + "× " + GameData.Product(d.Product).Name + " am Wareneingang.", "info");
@@ -869,6 +876,7 @@ namespace DropshippingGame.Core
                 return false;
             }
             AddToStock(id, quantity, quality);
+            AddWaste(GameData.WastePerCrate);
             TutorialCheck();
             RaiseEconomyChanged();
             return true;
@@ -966,6 +974,7 @@ namespace DropshippingGame.Core
             };
             pkg.CopyTicketFrom(item);
             PackedPackages.Add(pkg);
+            AddWaste(GameData.WastePerPackage);
             if (use > size)
                 Notify("Kein Karton " + GameData.SizeName(size) + " mehr – in " + GameData.SizeName(use) + " verpackt. Zu groß: höheres Retourenrisiko!" +
                        (FlatPackaging[size] > 0 ? " (Tipp: " + GameData.SizeName(size) + "-Kartons am Falttisch falten.)" : ""), "bad");
@@ -1041,10 +1050,15 @@ namespace DropshippingGame.Core
             float now = BClock();
             var order = TakeFromWork(pkg.OrderId) ?? Order.FromItem(pkg);
             bool onTime = now <= order.DueAt;
+            float reviewNow = now;
+            bool defect = ProgressShip(pkg, ref onTime, ref reviewNow, order.DueWindow);
             if (pkg.Express) Daily.Express++;
             if (!onTime) Daily.Late++;
-            ReviewShipment(pkg, now, order.DueWindow, onTime);
-            MaybeScheduleReturn(pkg, !onTime);
+            if (!defect)
+            {
+                if (!ReviewAlreadyGiven()) ReviewShipment(pkg, reviewNow, order.DueWindow, onTime);
+                MaybeScheduleReturn(pkg, !onTime);
+            }
             ChallengeProgress("ship", 1f);
             ChallengeProgress("revenue", reward);
             ChallengeProgress("product", 1f, id);
@@ -1079,6 +1093,7 @@ namespace DropshippingGame.Core
             float q = pkg.Quality;
             if (q < 0.8f) stars -= 1;
             else if (q >= 1.3f) stars += 1;
+            stars += ConsumeStarBonus();
             if (Rng.Value() < 0.25f) stars += Rng.RangeInt(-1, 1);
             stars = Mathx.Clamp(stars, 1, 5);
             string text = "";
@@ -1621,7 +1636,7 @@ namespace DropshippingGame.Core
                     }
                     continue;
                 }
-                s.Progress += m * StaffSpeedMult() / role.Interval;
+                s.Progress += m * StaffSpeedMult() * StaffRoleMult(s.Role) / role.Interval;
                 if (s.Progress >= 1f) s.Progress = StaffWork(s.Role) ? 0f : 1f;
             }
         }
@@ -1638,6 +1653,7 @@ namespace DropshippingGame.Core
                         {
                             DockCrates.RemoveAt(i);
                             AddToStock(c.Product, c.Quantity, c.Quality);
+                            AddWaste(GameData.WastePerCrate);
                             RaiseEconomyChanged();
                             return true;
                         }
@@ -1679,6 +1695,7 @@ namespace DropshippingGame.Core
                     pkg.Logo = brand.Logo;
                     pkg.PackSize = bestCarton;
                     PackedPackages.Insert(0, pkg);
+                    AddWaste(GameData.WastePerPackage);
                     order.Stage = OrderStage.Packed;
                     OrdersInWork.Add(order);
                     OrdersChanged?.Invoke();

@@ -171,6 +171,7 @@ namespace DropshippingGame
                 int cap = 1;
                 if (sim.HasSkill("l_arme")) cap++;
                 if (sim.HasSkill("l_flow")) cap++;
+                cap += sim.CarryBonus();
                 return cap;
             }
         }
@@ -348,7 +349,7 @@ namespace DropshippingGame
             _camBaseY = Mathf.Lerp(_camBaseY, _cc.height < StandHeight - 0.1f ? CrouchCamY : StandCamY, 10f * dt);
 
             float speed = crouching ? SpeedCrouch : (sprinting ? SpeedSprint : SpeedWalk);
-            if (Game.Sim != null) speed *= Game.Sim.CarrySpeedMult(Held?.Kind ?? ItemKind.None);
+            if (Game.Sim != null) speed *= Game.Sim.CarrySpeedMult(Held?.Kind ?? ItemKind.None) * Game.Sim.WalkSpeedMult();
             var target = inputDir * speed;
             bool grounded = _cc.isGrounded;
             float accel = grounded ? 12f : 3f;
