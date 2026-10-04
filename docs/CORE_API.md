@@ -731,3 +731,14 @@ Ablauf: Einladung per Mail (ab Level 2, ~14 %/Tag, mind. 4 Tage Abstand) → am 
 
 Welt: `Runtime/World/StreetFestival.cs` (Banner, Marktstand mit Markise, Packtisch vor der Tür,
 Besucher; Autos pausieren über `StreetFestival.BlocksTraffic`). Gespeichert unter `"festival"`.
+
+## Finanzviertel (Market.Exchange.cs)
+
+* `Market.Assets` bleibt bei DROP/GAME/ETF (TradingViech). `Market.AllAssets` = alle 14 Anlagen; `Market.OfKind(AssetKind)`, `AssetDef.Kind/Sector/Dividend/Components`.
+* Neue Aktien KART, PAKT, HYPE, FRIT, BOTX, ROLL; Index-ETFs HSTL, TECX (folgen ihren Aktien); Kryptos KEKS, BLOK, MOON. Eigener Zufall – Original-Kurse unverändert.
+* Gebühr `Market.FeeFor(id)` (Original 1 %, Krypto 1,5 %, Aktie 1 %, ETF 0,5 %). `Buy/Sell/HoldingValue/Profit/PortfolioValue` wie gehabt, für alle Anlagen.
+* Nachrichten: `PostNews(type, dir)`, `News` (neueste zuerst), Ereignis `NewsPosted`. `Frenzy` 0..1 (Makler-Hektik), `BiggestMover`.
+* Über Nacht (`NewDay`): Dividenden (`DividendForecast`, Kategorie trading), Sparzinsen 0,3 %/Tag nur ohne Schulden, gedeckelt (`Savings`, `Deposit`, `Withdraw`).
+* `CoverFromSavings` (Hook in `Sim.EndDay`): Sparkonto deckt die Fixkosten → keine Pleite trotz Erspartem.
+* `NetWorth()`, `CreditScore()` ("Schufi"), `KindValue(kind)`. Gespeichert im Objekt `market` (neue Schlüssel optional, alte Spielstände laden).
+* Runtime: `World/FinanceDistrict.cs` (Bank, Geldautomat, Börse, Makler), `UI/FinanceUI.cs` (Bank-Fenster, Terminal, Handy-App „Wallet“), `UI/FinanceAdmin.cs`.

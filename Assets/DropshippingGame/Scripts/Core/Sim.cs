@@ -463,6 +463,7 @@ namespace DropshippingGame.Core
             FestivalEndDay();
             Events.ResolvePendingChoices();
             ContractsEndDay();
+            Market.CoverFromSavings(FixedCostsPerDay()); // Finanzviertel: Dispo-Schutz vom Sparkonto
             var d = Daily;
             var s = new DaySummary
             {
