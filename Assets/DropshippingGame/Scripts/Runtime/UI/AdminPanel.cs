@@ -368,6 +368,11 @@ namespace DropshippingGame.UI
             tp.Add(Btn("Garage", () => Teleport(WorldBuilder.SpawnGarage)));
             tp.Add(Btn("Lagerhalle", () => Teleport(WorldBuilder.SpawnWarehouse)));
             tp.Add(Btn("Kalles Imbiss", () => Teleport(WorldBuilder.SpawnDiner)));
+            tp.Add(Btn(PlayerController.Noclip ? "Noclip AUS (Alt)" : "Noclip AN (Alt)", () =>
+            {
+                Close();
+                if (Game.Player != null) Game.Player.SetNoclip(!PlayerController.Noclip);
+            }, PlayerController.Noclip ? Accent : Card));
             _body.Add(tp);
             _body.Add(Info("Tipp: Die Lagerhalle steht erst nach „Alle Upgrades“ bzw. „Alles freischalten“."));
             _body.Add(Section("Stadt, Post & Emotes"));

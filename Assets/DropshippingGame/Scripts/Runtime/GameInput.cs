@@ -150,6 +150,22 @@ namespace DropshippingGame
         public static bool CancelDown => Key(KeyId.Escape) || PadDown(PadButton.East) || PadDown(PadButton.Start);
         public static bool HelpDown => Key(KeyId.F1) || PadDown(PadButton.Select);
         public static bool ScreenshotDown => Key(KeyId.F12);
+        /// <summary>Alt (links oder rechts): Noclip/Flugmodus für Tests an/aus.</summary>
+        public static bool NoclipDown
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                var kb = Keyboard.current;
+                return kb != null && (kb.leftAltKey.wasPressedThisFrame || kb.rightAltKey.wasPressedThisFrame);
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt);
+#else
+                return false;
+#endif
+            }
+        }
+
         /// <summary>F10, F9 oder ^ (links neben der 1): Admin-Panel (Testmodus).</summary>
         public static bool AdminDown => Key(KeyId.F10) || Key(KeyId.F9) || Key(KeyId.Backquote);
         /// <summary>Vorherige App / vorheriger Reiter (LB).</summary>
@@ -312,6 +328,7 @@ namespace DropshippingGame
             new[] { "TikTok aufnehmen (Handy › TikTak, Laptop, Ringlicht am Schreibtisch)", "–", "–" },
             new[] { "Aufnahme: Aktion / Hook", "E", "X" },
             new[] { "Aufnahme: Stopp / abbrechen", "Enter / Linksklick · Esc", "RB · B" },
+            new[] { "Noclip / Fliegen (Test): Leertaste hoch, Strg runter", "Alt", "–" },
             new[] { "Emote-Rad (halten, zielen, loslassen)", "T · Maus / 1–6", "Steuerkreuz ← · Rechter Stick" },
             new[] { "Handy öffnen / schließen", "Tab", "Y" },
             new[] { "Handy-App wechseln", "1 2 3 4", "LB / RB" },

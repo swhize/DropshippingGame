@@ -67,6 +67,7 @@ namespace DropshippingGame
         private void Init()
         {
             _cc = GetComponent<CharacterController>();
+            Noclip = false;
             _cc.height = StandHeight;
             _cc.radius = 0.32f;
             _cc.center = new Vector3(0, StandHeight / 2f, 0);
@@ -120,7 +121,7 @@ namespace DropshippingGame
             _pitch = 0f;
             Cam.transform.localRotation = Quaternion.identity;
             _velocity = Vector3.zero;
-            _cc.enabled = true;
+            _cc.enabled = !Noclip;
         }
 
         /// <summary>Arme und gehaltenen Gegenstand ein-/ausblenden (TikTok-Aufnahme: freie Sicht).</summary>
@@ -316,6 +317,36 @@ namespace DropshippingGame
         public DroppedItem SpawnDropped(ItemData data, Vector3 pos, float rotY) =>
             DroppedItem.Spawn(Game.World != null ? Game.World.transform : null, data, pos + new Vector3(0, 0.05f, 0), rotY);
 
+        // ---- Noclip (Admin/Test: Alt) ----------------------------------------------------------------
+        /// <summary>Flugmodus ohne Kollision: WASD in Blickrichtung, Leertaste hoch, Strg/C runter, Shift schnell.</summary>
+        public static bool Noclip { get; private set; }
+
+        public void SetNoclip(bool on)
+        {
+            Noclip = on;
+            if (_cc != null) _cc.enabled = !on;
+            _velocity = Vector3.zero;
+            Game.Notify(on ? "Noclip AN (Alt zum Beenden)" : "Noclip AUS", "info");
+        }
+
+        private void UpdateNoclip(bool locked, float dt)
+        {
+            if (locked) return;
+            Vector2 mv = GameInput.Move;
+            var dir = Cam.transform.forward * mv.y + Cam.transform.right * mv.x;
+#if ENABLE_INPUT_SYSTEM
+            var kb = UnityEngine.InputSystem.Keyboard.current;
+            if (kb != null)
+            {
+                if (kb.spaceKey.isPressed) dir += Vector3.up;
+                if (kb.leftCtrlKey.isPressed || kb.cKey.isPressed) dir += Vector3.down;
+            }
+#endif
+            if (dir.sqrMagnitude > 1f) dir.Normalize();
+            float speed = GameInput.SprintHeld ? 30f : 9f;
+            transform.position += dir * speed * dt;
+        }
+
         // ---- Eingabe & Bewegung --------------------------------------------------------------------
         private void Update()
         {
@@ -329,6 +360,13 @@ namespace DropshippingGame
                 _pitch = Mathf.Clamp(_pitch - look.y, -PitchLimit, PitchLimit);
                 Cam.transform.localRotation = Quaternion.Euler(_pitch, 0, 0);
                 _sway += new Vector2(look.x, look.y) * 0.004f;
+            }
+
+            if (!locked && GameInput.NoclipDown) SetNoclip(!Noclip);
+            if (Noclip)
+            {
+                UpdateNoclip(locked, dt);
+                return;
             }
 
             Vector2 mv = locked ? Vector2.zero : GameInput.Move;
