@@ -13,9 +13,9 @@ trifft *Game Dev Tycoon* / *Startup Company* (Langzeit-Progression, Wirtschaftss
 ## 2. Plattform & Team
 
 - **Ziel:** Steam (Windows, ggf. später weitere Plattformen)
-- **Engine:** Godot 4.7 (GDScript, kein C#) – Begründung: Szenen/Code sind reine Textdateien, die
-  komplett von der KI geschrieben/verdrahtet werden können, minimaler manueller Editor-Aufwand
-  nötig; passt am besten zu "KI schreibt den kompletten Code"
+- **Engine:** Unity 6 LTS (C#, URP, UI Toolkit, Input System) – seit v2.0; vorher Godot 4.7.
+  Alles wird zur Laufzeit per Code gebaut, ein Editor-Skript richtet das Projekt automatisch ein,
+  sodass kein manueller Editor-Aufwand nötig ist ("KI schreibt den kompletten Code")
 - **Team:** Freundesgruppe, kein bestehendes Coding-Know-how im Team – Code wird vollständig
   KI-gestützt (Claude Code) entwickelt
 - **Umfang:** Langzeit-Progression, Dutzende Spielstunden
@@ -155,18 +155,22 @@ Der Kern ist nicht nur Logistik, sondern eine **echte Marke aufbauen**:
    Endziel. Neue Stadt-Kulisse, prozedurale Shader, Tageslicht, NPCs, Verkehr,
    prozedurale Musik und Soundeffekte, neues UI ("HustleOS"). Details: `docs/ROADMAP.md`.
 
+9. **v2.0 – Unity-Umbau (25.09.2026):** komplette Portierung nach Unity 6 mit URP-Grafik
+   (SSAO, Bloom, weiche Schatten), neuem UI Toolkit-Interface, HustleOS in zwei Designs
+   (hell/dunkel), neuen Apps (Übersicht, Bank), Verkaufsstand, Pitch-Day-Minispiel,
+   10 Produkten, 3 Spielständen und Controller-Unterstützung. Details: `docs/ROADMAP.md`.
+
 ### Bewusst vereinfacht / nächste Ausbaustufe
 - Koop-Multiplayer noch nicht umgesetzt (Einzelspieler)
 - Alle Modelle sind stilisierte Grundformen (kein importiertes Art-Asset)
-- Pitch Day und Straßenverkauf sind Entscheidungs-Ereignisse, keine eigenen Mini-Spiele
 
 ## 14. Offene Punkte (noch zu klären)
 
-- [x] Progressions-Kurve: Level 1–10 (XP-Schwellen in `GameData.LEVEL_XP`), Lagerhalle bei
-  Level 4 / 4.500 €; per `tests/balance_sim.gd` geprüft (Lagerhalle ca. Tag 12 bei
+- [x] Progressions-Kurve: Level 1–10 (XP-Schwellen in `GameData.LevelXp`), Lagerhalle bei
+  Level 4 / 4.500 €; per `BalanceTests.cs` geprüft (Lagerhalle ca. Tag 12 bei
   menschlichem Tempo, danach Wachstum mit Personal)
 - [x] Event-Häufigkeit: 0–2 Ereignisse pro Tag ab Tag 2, gewichtete Auswahl mit Abklingzeit
-- [x] Pitch Day: Entscheidungsdialog, Erfolgschance hängt von Bewertung bzw. Level ab
+- [x] Pitch Day: Minispiel mit drei Juroren; Antworten stützen sich auf echte Kennzahlen
 - [x] Social Media: TikTok-Handy-Minispiel + Praktikant:in, der täglich postet
 - [ ] Koop: Rollenverteilung und Netzwerk-Synchronisation
 
