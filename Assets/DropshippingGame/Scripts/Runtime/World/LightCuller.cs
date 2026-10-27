@@ -69,6 +69,7 @@ namespace DropshippingGame
             var cam = Camera.main;
             if (cam == null) return;
             Vector3 cp = cam.transform.position;
+            float baseDist = Settings.Quality == 0 ? Mathf.Min(28f, CullDistance) : CullDistance;
             int active = 0;
             for (int i = _lights.Count - 1; i >= 0; i--)
             {
@@ -78,7 +79,7 @@ namespace DropshippingGame
                     _lights.RemoveAt(i);
                     continue;
                 }
-                float reach = CullDistance + Mathf.Max(0f, l.range);
+                float reach = baseDist + Mathf.Max(0f, l.range);
                 bool on = (l.transform.position - cp).sqrMagnitude < reach * reach;
                 var go = l.gameObject;
                 if (go.activeSelf != on) go.SetActive(on);

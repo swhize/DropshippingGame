@@ -1081,7 +1081,7 @@ namespace DropshippingGame
             try
             {
                 var life = gameObject.AddComponent<StreetLife>();
-                life.Setup(_dynamic, transform, _pedestrians, MenuMode ? 9 : 24);
+                life.Setup(_dynamic, transform, _pedestrians, MenuMode ? 9 : (Settings.Quality == 0 ? 14 : 24)); // Grafik „Niedrig“: weniger Passanten
             }
             catch (System.Exception e)
             {

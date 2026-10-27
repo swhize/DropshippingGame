@@ -45,6 +45,9 @@ namespace DropshippingGame
         };
 
         private readonly List<Vehicle> _cars = new List<Vehicle>();
+
+        /// <summary>Höchstzahl gleichzeitiger Fahrzeuge (Grafik „Niedrig“: weniger).</summary>
+        private static int MaxCars => Settings.Quality == 0 ? 8 : 14;
         private Transform _root;
         private float _acc, _resAcc;
 
@@ -71,13 +74,13 @@ namespace DropshippingGame
             if (_acc <= 0f)
             {
                 _acc = Random.Range(2.5f, 6f);
-                if (!StreetFestival.BlocksTraffic && _cars.Count < 14) Spawn(Random.value < 0.5f ? 0 : 1, null);
+                if (!StreetFestival.BlocksTraffic && _cars.Count < MaxCars) Spawn(Random.value < 0.5f ? 0 : 1, null);
             }
             _resAcc -= dt;
             if (_resAcc <= 0f)
             {
                 _resAcc = Random.Range(14f, 30f);
-                if (_cars.Count < 14) Spawn(Random.value < 0.5f ? 2 : 3, null);
+                if (_cars.Count < MaxCars) Spawn(Random.value < 0.5f ? 2 : 3, null);
             }
             Count = _cars.Count;
             Vector3 pp = Game.Player != null ? Game.Player.transform.position : new Vector3(9999, 0, 9999);
