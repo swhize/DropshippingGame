@@ -232,10 +232,11 @@ namespace DropshippingGame.Tests
             Assert.IsNotNull(_summary, Ctx("Feierabend ohne DayEnded"));
             Assert.AreEqual(Sim.Day, _summary.Day, Ctx("DaySummary.Day"));
             var s = _summary;
-            // Manchmal mitten im Feierabend speichern/laden (erlaubter Unterschied: Uhrzeit → Tag wird neu abgerechnet).
+            // Manchmal mitten im Feierabend speichern wollen: wird abgelehnt.
             if (_r.Next(25) == 0)
             {
-                Do("save_dayover", () => FileRoundtrip(true));
+                // Nach Feierabend wird bewusst nicht gespeichert (sonst Doppel-Abrechnung beim Laden).
+                Do("save_dayover", () => Assert.IsFalse(Sim.SaveGame(true), Ctx("Speichern nach Feierabend muss abgelehnt werden")));
                 if (!Sim.DayOver)
                 {
                     // Der geladene Stand liegt eine Minute vor Feierabend: den Tag sauber zu Ende spielen.

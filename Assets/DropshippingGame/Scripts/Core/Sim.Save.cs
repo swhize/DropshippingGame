@@ -233,6 +233,13 @@ namespace DropshippingGame.Core
         public bool SaveGame(bool silent = false)
         {
             if (StoryStage == "diner" || string.IsNullOrEmpty(SaveDir)) return false;
+            // Nach Feierabend nicht speichern: beim Laden würde der Tag sonst ein zweites Mal abgerechnet
+            // (Statistiken doppelt). Gespeichert wird automatisch beim Start des nächsten Tages.
+            if (DayOver)
+            {
+                if (!silent) Notify("Nach Feierabend wird nicht gespeichert – das passiert automatisch zum Tagesstart.", "info");
+                return false;
+            }
             try
             {
                 CollectWorldState?.Invoke();
