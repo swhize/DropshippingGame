@@ -43,6 +43,14 @@ namespace DropshippingGame.Tests
         }
 
         [Test]
+        public void MainMenuVersionPanel()
+        {
+            Assert.AreEqual("NEW IN VERSION 1.0", Lang.T("NEU IN VERSION 1.0"));
+            Assert.AreEqual("Phone (Tab) & tablet", Lang.T("Handy (Tab) & Tablet"));
+            Assert.AreEqual("German & English", Lang.T("Deutsch & Englisch"));
+        }
+
+        [Test]
         public void GermanStaysUntouched()
         {
             Lang.Set("de");

@@ -25,8 +25,10 @@ namespace DropshippingGame.EditorTools
     /// Scripting-Backend: IL2CPP braucht das Unity-Modul „Windows Build Support (IL2CPP)“ und Visual Studio mit
     /// „Desktop development with C++“ – und baut nur für das eigene Betriebssystem. Fehlt das Modul, wird mit Warnung
     /// auf Mono umgeschaltet. Linux/macOS bauen standardmäßig mit Mono (geht von Windows aus).
-    /// Version: Datei <c>VERSION</c> im Repo-Wurzelordner (z. B. 0.9.0) + Build-Nummer (Git-Commits oder BUILD_NUMBER)
-    /// → <c>Application.version</c> = „0.9.0.412“, Details in Resources/build_info.txt (nur während des Builds).
+    /// Version: Datei <c>VERSION</c> im Repo-Wurzelordner (z. B. 1.0.0 oder mit Vorabkennung 1.0.0-rc1) + Build-Nummer
+    /// (Git-Commits oder BUILD_NUMBER) → <c>Application.version</c> = „1.0.0-rc1.412“ (macOS nur Ziffern: „1.0.0.412“,
+    /// weil CFBundleShortVersionString keine Buchstaben erlaubt). Menüs und Fehlerbericht zeigen über
+    /// Resources/build_info.txt (nur während des Builds) immer die volle Version samt Kennung.
     /// </summary>
     public static class BuildTools
     {
@@ -216,7 +218,7 @@ namespace DropshippingGame.EditorTools
                 SetDefines(defs);
                 PlayerSettings.SetScriptingBackend(named, be);
                 PlayerSettings.productName = productName;
-                PlayerSettings.bundleVersion = version + "." + build;
+                PlayerSettings.bundleVersion = (target == Target.MacOS ? NumericVersion(version) : version) + "." + build;
                 PlayerSettings.macOS.buildNumber = build;
                 WriteBuildInfo(version, build, date, commit, config);
                 Debug.Log("[Build] Starte " + target + " " + config + " · v" + PlayerSettings.bundleVersion + " · " + be +
@@ -378,6 +380,15 @@ namespace DropshippingGame.EditorTools
                 Debug.LogWarning("[Build] VERSION nicht lesbar: " + e.Message);
             }
             return "0.0.0";
+        }
+
+        /// <summary>Nur der Zahlenteil einer Version: „1.0.0-rc1“ → „1.0.0“ (Vorab-/Build-Kennung nach '-' oder '+' entfällt).</summary>
+        public static string NumericVersion(string version)
+        {
+            if (string.IsNullOrEmpty(version)) return "0.0.0";
+            int cut = version.IndexOfAny(new[] { '-', '+' });
+            string v = cut > 0 ? version.Substring(0, cut) : version;
+            return v.Length > 0 ? v : "0.0.0";
         }
 
         private static string GitBuildNumber()

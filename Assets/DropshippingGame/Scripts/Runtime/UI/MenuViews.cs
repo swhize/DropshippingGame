@@ -444,7 +444,7 @@ namespace DropshippingGame.UI
     /// <summary>
     /// Hauptmenü: die Spielwelt in der Abenddämmerung als Kulisse, links Logo und Menü
     /// (Fortsetzen, Neues Spiel mit Spielstand-Karten, Laden, Einstellungen, Hilfe, Credits,
-    /// Beenden), rechts das „Was ist neu in v3.0“-Panel.
+    /// Beenden), rechts das Versions-Panel („Neu in Version 1.0“).
     /// </summary>
     public sealed class MainMenuView
     {
@@ -496,7 +496,7 @@ namespace DropshippingGame.UI
         {
             _whatsNew.Clear();
             var h = UIX.Col(_whatsNew, 0f, "wn-head");
-            UIX.Text(h, "WAS IST NEU", "eyebrow").style.color = Theme.Accent;
+            UIX.Text(h, WhatsNew.Eyebrow, "eyebrow").style.color = Theme.Accent;
             UIX.Text(h, WhatsNew.Title, "wn-title", "display");
             var sv = UIX.Scroll(_whatsNew);
             sv.style.flexShrink = 1;

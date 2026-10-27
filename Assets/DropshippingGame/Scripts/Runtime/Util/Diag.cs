@@ -146,7 +146,7 @@ namespace DropshippingGame
                 _written = 0;
                 _capped = false;
                 Line("Dropshipping Simulator – Sitzungsprotokoll");
-                Line("Start: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " · Version " + Application.version + " · Unity " + Application.unityVersion);
+                Line("Start: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " · Version " + BuildInfo.Short + " · Unity " + Application.unityVersion);
                 Line("System: " + SystemInfo.operatingSystem + " · CPU " + SystemInfo.processorType + " (" + SystemInfo.processorCount + " Kerne) · RAM " +
                      SystemInfo.systemMemorySize + " MB");
                 Line("Grafik: " + SystemInfo.graphicsDeviceName + " · " + SystemInfo.graphicsDeviceType + " · VRAM " + SystemInfo.graphicsMemorySize + " MB · " +

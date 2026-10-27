@@ -207,25 +207,24 @@ namespace DropshippingGame.UI
         }
     }
 
-    /// <summary>Inhalt des „Was ist neu“-Panels im Hauptmenü (Platzhalter, Text finalisiert die Koordination).</summary>
+    /// <summary>Inhalt des Versions-Panels im Hauptmenü: was in Version 1.0 steckt (Symbol, Titel, Text).</summary>
     public static class WhatsNew
     {
-        public const string Version = "3.0";
-        public const string Title = "Das große Update";
+        public const string Eyebrow = "NEU IN VERSION 1.0";
+        public const string Title = "Das steckt drin";
 
         public static readonly string[][] Items =
         {
-            new[] { "phone", "Dein Handy ({phone})", "Bestellzettel mit Kundschaft und Frist, Nachrichten mit Entscheidungen und Großauftrags-Angeboten, Schnell-Nachbestellen, Wochenziele und Status." },
-            new[] { "paper", "Bestellzettel & Express", "Jede Bestellung hat Nummer, Kundschaft, Notiz und Countdown – oben rechts im HUD. Express ab Level 2: schneller, teurer, strenger bewertet." },
-            new[] { "return", "Retouren", "Manche Pakete kommen zurück (Grund steht drauf). Am Retourenplatz als B-Ware einlagern oder entsorgen. Billig-Ware und zu große Kartons erhöhen die Quote." },
-            new[] { "fire", "Trends & Hype", "Produkte werden heiß – und wieder kalt. Trendradar mit Verlauf und Prognose-Band in „Markt & Trends“." },
-            new[] { "pallet", "Großaufträge (B2B)", "Ab Level 3 bestellen Firmen palettenweise. Annehmen, am Palettenplatz liefern, Frist halten – sonst Vertragsstrafe." },
-            new[] { "sparkle", "Hustle-Skills", "Ein Skillpunkt pro Level: Logistik, Vertrieb, Marketing – je 4 Stufen. Umschulung jederzeit gegen Gebühr." },
-            new[] { "flag", "Wochenziele", "Jeden Montag drei neue Ziele mit Geld und XP. Eines pro Woche darfst du tauschen." },
-            new[] { "bulb", "Engpass-Assistent", "„Warum läuft's nicht?“ – Übersicht und Handy nennen, was gerade am meisten bremst, samt Lösung." },
-            new[] { "receipt", "Kassenbon & Wochentage", "Tagesabrechnung als Bon mit Retouren, Strafen und Aufträgen. Tag 1 ist Montag; samstags wird mehr bestellt." },
-            new[] { "screen", "HustleOS neu", "Weniger, dafür stärkere Apps mit Reitern, Design „Hype“, Controller-Steuerung, UI-Skalierung." },
-            new[] { "coin", "Balance", "Premium-Lieferant 1× pro Produkt und Tag, Tageskampagnen, max. 3 TikToks pro Tag, fairere Trading-Kurse." },
+            new[] { "phone", "Handy ({phone}) & Tablet", "Bestellzettel, Nachrichten und Status immer dabei; am Schreibtisch das Tablet mit AllesExpress, Mein Shop, TikTak, Fakebook, Gugel, Bank und Börse." },
+            new[] { "package", "Jedes Paket von Hand", "Einkaufen, einräumen, kommissionieren, Karton falten, packen, etikettieren und ab zur Packstation – mit Express, Retouren und Großaufträgen auf Paletten." },
+            new[] { "music", "TikToks selbst drehen", "Ringlicht an, Format wählen und in der Ego-Sicht filmen: Licht, Hook und Bildaufbau entscheiden über den Hype." },
+            new[] { "fire", "Trends & Werbung", "Produkte werden heiß und wieder kalt. Trendradar, Flyer, Influencer, Fakebook- und Gugel-Anzeigen – und für Mutige Fake-Profile." },
+            new[] { "building", "Eine ganze Stadt", "Mit dem Moped durch Wohn-, Einkaufs- und Finanzviertel: MediaMarkd, Fressnix mit Haustieren, Post, Bank und Börse." },
+            new[] { "trend", "Börse, Krypto, Kredite", "Aktien, ETFs und Krypto mit Live-Kursen, Sparkonto und Kredite – nur Spielgeld, aber echte Nerven." },
+            new[] { "stand", "Straßenfest & Pitch Day", "Eigener Stand beim Straßenfest, Verkaufsstand vor der Garage und ein Pitch vor drei Juroren." },
+            new[] { "sparkle", "Wachsen bis zum Börsengang", "Firmenlevel, Skills, Perks, Personal, Lagerhalle und Außenlager – 100.000 € Umsatz sind erst der Anfang." },
+            new[] { "trophy", "40 Erfolge & 3 Schwierigkeiten", "Wochenziele, Ereignisse, Erfolge und Statistik; Entspannt, Normal oder Hart – mit Mamas Notkredit als Rettungsanker." },
+            new[] { "globe", "Deutsch & Englisch", "Sprache jederzeit umschaltbar, komplett mit Controller spielbar, Streamer-Modus und viele Optionen für Barrierefreiheit." },
         };
     }
 }

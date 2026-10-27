@@ -13,7 +13,7 @@ namespace DropshippingGame
         private static bool _loaded;
         private static string _version, _build, _date, _commit, _config;
 
-        /// <summary>Spielversion aus der VERSION-Datei, z. B. „0.9.0“.</summary>
+        /// <summary>Spielversion aus der VERSION-Datei, z. B. „1.0.0-rc1“.</summary>
         public static string Version { get { Load(); return _version; } }
         /// <summary>Fortlaufende Build-Nummer (Anzahl Git-Commits oder BUILD_NUMBER), „0“ im Editor.</summary>
         public static string Build { get { Load(); return _build; } }
@@ -24,7 +24,7 @@ namespace DropshippingGame
         /// <summary>„Release“, „Development“ oder „Editor“.</summary>
         public static string Config { get { Load(); return _config; } }
 
-        /// <summary>Kurzform für Menüs und Fehlerberichte, z. B. „0.9.0 (Build 412, Release)“.</summary>
+        /// <summary>Kurzform für Menüs und Fehlerberichte, z. B. „1.0.0-rc1 (Build 412, Release)“.</summary>
         public static string Short => Version + " (Build " + Build + ", " + Config + ")";
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

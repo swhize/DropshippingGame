@@ -383,7 +383,6 @@ namespace DropshippingGame.Core
             A("SIMULATOR", "SIMULATOR");
             A("Vom Imbiss zum Imperium.", "From diner to empire.");
             A("Version {0} · Asset-Quellen unter Credits", "Version {0} · asset sources under Credits");
-            A("WAS IST NEU", "WHAT'S NEW");
             A("Imbiss-Schicht · noch kein Business", "Diner shift · no business yet");
             A("{0} · Level {1} · {2}", "{0} · Level {1} · {2}");
             A("Spielstand {0}", "Save slot {0}");
@@ -418,40 +417,39 @@ namespace DropshippingGame.Core
             A("Spielstand {0} löschen?", "Delete save slot {0}?");
             A("{0} ist danach weg. Das lässt sich nicht rückgängig machen.", "{0} will be gone. This can't be undone.");
             A("Endgültig löschen", "Delete for good");
-            // Was ist neu (UiFmt.WhatsNew)
-            A("Das große Update", "The big update");
-            A("Dein Handy ({0})", "Your phone ({0})");
-            A("Bestellzettel mit Kundschaft und Frist, Nachrichten mit Entscheidungen und Großauftrags-Angeboten, Schnell-Nachbestellen, Wochenziele und Status.",
-              "Order slips with customer and deadline, messages with decisions and bulk-order offers, quick reorder, weekly goals and status.");
-            A("Bestellzettel & Express", "Order slips & express");
-            A("Jede Bestellung hat Nummer, Kundschaft, Notiz und Countdown – oben rechts im HUD. Express ab Level 2: schneller, teurer, strenger bewertet.",
-              "Every order has a number, customer, note and countdown – top right in the HUD. Express from level 2: faster, pricier, judged harder.");
-            A("Retouren", "Returns");
-            A("Manche Pakete kommen zurück (Grund steht drauf). Am Retourenplatz als B-Ware einlagern oder entsorgen. Billig-Ware und zu große Kartons erhöhen die Quote.",
-              "Some parcels come back (the reason is on them). At the returns bay, restock as B-stock or bin them. Cheap goods and oversized boxes raise the rate.");
-            A("Trends & Hype", "Trends & hype");
-            A("Produkte werden heiß – und wieder kalt. Trendradar mit Verlauf und Prognose-Band in „Markt & Trends“.",
-              "Products get hot – and cold again. Trend radar with history and forecast band in “Market & Trends”.");
-            A("Großaufträge (B2B)", "Bulk orders (B2B)");
-            A("Ab Level 3 bestellen Firmen palettenweise. Annehmen, am Palettenplatz liefern, Frist halten – sonst Vertragsstrafe.",
-              "From level 3, companies order by the pallet. Accept, deliver at the pallet spot, meet the deadline – or pay the penalty.");
-            A("Hustle-Skills", "Hustle skills");
-            A("Ein Skillpunkt pro Level: Logistik, Vertrieb, Marketing – je 4 Stufen. Umschulung jederzeit gegen Gebühr.",
-              "One skill point per level: logistics, sales, marketing – 4 tiers each. Respec any time for a fee.");
-            A("Jeden Montag drei neue Ziele mit Geld und XP. Eines pro Woche darfst du tauschen.",
-              "Three new goals with cash and XP every Monday. You may swap one per week.");
-            A("Engpass-Assistent", "Bottleneck assistant");
-            A("„Warum läuft's nicht?“ – Übersicht und Handy nennen, was gerade am meisten bremst, samt Lösung.",
-              "“Why isn't it working?” – the overview and your phone name the biggest bottleneck, fix included.");
-            A("Kassenbon & Wochentage", "Receipt & weekdays");
-            A("Tagesabrechnung als Bon mit Retouren, Strafen und Aufträgen. Tag 1 ist Montag; samstags wird mehr bestellt.",
-              "Daily summary as a receipt with returns, penalties and bulk orders. Day 1 is a Monday; people order more on Saturdays.");
-            A("HustleOS neu", "HustleOS reborn");
-            A("Weniger, dafür stärkere Apps mit Reitern, Design „Hype“, Controller-Steuerung, UI-Skalierung.",
-              "Fewer but stronger apps with tabs, “Hype” design, controller support, UI scaling.");
-            A("Balance", "Balance");
-            A("Premium-Lieferant 1× pro Produkt und Tag, Tageskampagnen, max. 3 TikToks pro Tag, fairere Trading-Kurse.",
-              "Premium supplier once per product per day, daily campaigns, max. 3 TikToks a day, fairer trading prices.");
+            // Versions-Panel im Hauptmenü (UiFmt.WhatsNew)
+            A("NEU IN VERSION 1.0", "NEW IN VERSION 1.0");
+            A("Das steckt drin", "What's inside");
+            A("Handy ({0}) & Tablet", "Phone ({0}) & tablet");
+            A("Bestellzettel, Nachrichten und Status immer dabei; am Schreibtisch das Tablet mit AllesExpress, Mein Shop, TikTak, Fakebook, Gugel, Bank und Börse.",
+              "Order slips, messages and status always at hand; at your desk the tablet with EverythingXpress, My Shop, TikTak, Fakebook, Gugel, bank and stock exchange.");
+            A("Jedes Paket von Hand", "Every parcel by hand");
+            A("Einkaufen, einräumen, kommissionieren, Karton falten, packen, etikettieren und ab zur Packstation – mit Express, Retouren und Großaufträgen auf Paletten.",
+              "Buy, shelve, pick, fold the box, pack, label and off to the parcel locker – with express orders, returns and bulk contracts by the pallet.");
+            A("TikToks selbst drehen", "Film your own TikToks");
+            A("Ringlicht an, Format wählen und in der Ego-Sicht filmen: Licht, Hook und Bildaufbau entscheiden über den Hype.",
+              "Switch on the ring light, pick a format and film in first person: light, hook and framing decide the hype.");
+            A("Trends & Werbung", "Trends & ads");
+            A("Produkte werden heiß und wieder kalt. Trendradar, Flyer, Influencer, Fakebook- und Gugel-Anzeigen – und für Mutige Fake-Profile.",
+              "Products get hot and go cold. Trend radar, flyers, influencers, Fakebook and Gugel ads – and fake profiles for the bold.");
+            A("Eine ganze Stadt", "A whole town");
+            A("Mit dem Moped durch Wohn-, Einkaufs- und Finanzviertel: MediaMarkd, Fressnix mit Haustieren, Post, Bank und Börse.",
+              "Ride your moped through the residential, shopping and finance districts: MediaMarkd, Fressnix with pets, post office, bank and stock exchange.");
+            A("Börse, Krypto, Kredite", "Stocks, crypto, loans");
+            A("Aktien, ETFs und Krypto mit Live-Kursen, Sparkonto und Kredite – nur Spielgeld, aber echte Nerven.",
+              "Shares, ETFs and crypto with live prices, a savings account and loans – play money only, real nerves.");
+            A("Straßenfest & Pitch Day", "Street festival & pitch day");
+            A("Eigener Stand beim Straßenfest, Verkaufsstand vor der Garage und ein Pitch vor drei Juroren.",
+              "Your own stall at the street festival, a sales stand outside the garage and a pitch in front of three judges.");
+            A("Wachsen bis zum Börsengang", "Grow all the way to an IPO");
+            A("Firmenlevel, Skills, Perks, Personal, Lagerhalle und Außenlager – 100.000 € Umsatz sind erst der Anfang.",
+              "Company levels, skills, perks, staff, a warehouse and an outstation – €100,000 in revenue is just the beginning.");
+            A("40 Erfolge & 3 Schwierigkeiten", "40 achievements & 3 difficulties");
+            A("Wochenziele, Ereignisse, Erfolge und Statistik; Entspannt, Normal oder Hart – mit Mamas Notkredit als Rettungsanker.",
+              "Weekly goals, events, achievements and stats; Relaxed, Normal or Hard – with Mum's emergency loan as a safety net.");
+            A("Deutsch & Englisch", "German & English");
+            A("Sprache jederzeit umschaltbar, komplett mit Controller spielbar, Streamer-Modus und viele Optionen für Barrierefreiheit.",
+              "Switch language any time, full controller support, streamer mode and plenty of accessibility options.");
             // Tipps (UiFmt.Tips, Ladebildschirm)
             A("TIPP", "TIP");
             A("Knapp unter dem Marktpreis verkaufst du viel – und behältst eine gute Marge.", "Just below market price you sell a lot – and keep a decent margin.");
