@@ -4,7 +4,9 @@
 R=$(cd ${1:-$(dirname $0)/../..} && pwd)
 W=${CC_WORK:-/tmp/claude-0}
 U=$W/u63/opt/unity/Editor/Data
-OUT=$W/uc/out; mkdir -p $OUT
+PKG=$W/uc/pkg; mkdir -p $PKG
+# eigener Ausgabeordner pro Repo/Worktree, damit parallele Prüfungen sich nicht stören
+OUT=$W/uc/out-$(echo $R | md5sum | cut -c1-8); mkdir -p $OUT
 SDK=$(ls -d /usr/lib/dotnet/sdk/*/ | head -1)
 CSC="dotnet ${SDK}Roslyn/bincore/csc.dll"
 NS="-r:$U/NetStandard/ref/2.1.0/netstandard.dll"
@@ -13,15 +15,15 @@ DEF="-define:UNITY_6000_3_OR_NEWER;UNITY_6000_0_OR_NEWER;UNITY_2023_3_OR_NEWER;U
 NOWARN="-nowarn:1701,1702,0436,0618,0649,0169,0414,0067,0219,0162,0168"
 common="-nologo -nostdlib -noconfig -target:library -langversion:9 $NOWARN -unsafe $NS $DEF"
 UGUI=$U/Resources/PackageManager/BuiltInPackages/com.unity.ugui/Runtime/UGUI
-[ -f $OUT/UnityEngine.UI.dll ] || $CSC $common $ENG -out:$OUT/UnityEngine.UI.dll -recurse:"$UGUI/*.cs" >$OUT/ugui.log 2>&1 || { echo "UGUI FAIL"; grep -m10 error $OUT/ugui.log; }
+[ -f $PKG/UnityEngine.UI.dll ] || $CSC $common $ENG -out:$PKG/UnityEngine.UI.dll -recurse:"$UGUI/*.cs" >$PKG/ugui.log 2>&1 || { echo "UGUI FAIL"; grep -m10 error $PKG/ugui.log; }
 IS=$W/isys/Packages/com.unity.inputsystem/InputSystem
-if [ ! -f $OUT/Unity.InputSystem.dll ]; then
+if [ ! -f $PKG/Unity.InputSystem.dll ]; then
   files=$(find $IS -name "*.cs" -not -path "*/Editor/*" -not -path "*/Plugins/InputForUI/*" -not -path "*/Tests/*")
-  $CSC $common $ENG -r:$OUT/UnityEngine.UI.dll -out:$OUT/Unity.InputSystem.dll $files >$OUT/is.log 2>&1 || { echo "INPUTSYSTEM FAIL"; grep -m10 error $OUT/is.log; }
+  $CSC $common $ENG -r:$PKG/UnityEngine.UI.dll -out:$PKG/Unity.InputSystem.dll $files >$PKG/is.log 2>&1 || { echo "INPUTSYSTEM FAIL"; grep -m10 error $PKG/is.log; }
 fi
-$CSC $common $ENG -out:$OUT/URPStub.dll $(dirname $0)/URPStub.cs > $OUT/urp.log 2>&1 || { echo "URPSTUB FAIL"; head $OUT/urp.log; }
+[ -f $PKG/URPStub.dll ] && [ $PKG/URPStub.dll -nt $(dirname $0)/URPStub.cs ] || $CSC $common $ENG -out:$PKG/URPStub.dll $(dirname $0)/URPStub.cs > $PKG/urp.log 2>&1 || { echo "URPSTUB FAIL"; head $PKG/urp.log; }
 S=$R/Assets/DropshippingGame/Scripts
 $CSC $common $ENG -out:$OUT/Core.dll -recurse:"$S/Core/*.cs" > $OUT/core.log 2>&1 && echo "CORE OK" || { echo "CORE FAIL"; grep error $OUT/core.log | sed "s|$R/||" | head -40; }
-$CSC $common $ENG -r:$OUT/Core.dll -r:$OUT/UnityEngine.UI.dll -r:$OUT/Unity.InputSystem.dll -r:$OUT/URPStub.dll -out:$OUT/Runtime.dll -recurse:"$S/Runtime/*.cs" > $OUT/rt.log 2>&1 && echo "RUNTIME OK" || { echo "RUNTIME FAIL"; grep error $OUT/rt.log | sed "s|$R/||" | head -80; }
+$CSC $common $ENG -r:$OUT/Core.dll -r:$PKG/UnityEngine.UI.dll -r:$PKG/Unity.InputSystem.dll -r:$PKG/URPStub.dll -out:$OUT/Runtime.dll -recurse:"$S/Runtime/*.cs" > $OUT/rt.log 2>&1 && echo "RUNTIME OK" || { echo "RUNTIME FAIL"; grep error $OUT/rt.log | sed "s|$R/||" | head -80; }
 ED=""; for f in $U/Managed/UnityEngine/*.dll; do ED="$ED -r:$f"; done
-$CSC $common $ED -r:$OUT/Core.dll -r:$OUT/Runtime.dll -r:$OUT/UnityEngine.UI.dll -r:$OUT/URPStub.dll -out:$OUT/Editor.dll -recurse:"$S/Editor/*.cs" > $OUT/ed.log 2>&1 && echo "EDITOR OK" || { echo "EDITOR FAIL"; grep error $OUT/ed.log | sed "s|$R/||" | head -40; }
+$CSC $common $ED -r:$OUT/Core.dll -r:$OUT/Runtime.dll -r:$PKG/UnityEngine.UI.dll -r:$PKG/URPStub.dll -out:$OUT/Editor.dll -recurse:"$S/Editor/*.cs" > $OUT/ed.log 2>&1 && echo "EDITOR OK" || { echo "EDITOR FAIL"; grep error $OUT/ed.log | sed "s|$R/||" | head -40; }
