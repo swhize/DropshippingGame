@@ -185,6 +185,9 @@ namespace DropshippingGame.Core
             state["shops"] = ShopsToJson();
         }
 
+        /// <summary>Spielstand erfolgreich geschrieben (Slot) – z. B. für das Vorschaubild im Hauptmenü.</summary>
+        public event Action<int> GameSaved;
+
         /// <summary>Speichert in den aktuellen Slot. Das Imbiss-Intro wird nicht gespeichert.</summary>
         public bool SaveGame(bool silent = false)
         {
@@ -207,6 +210,14 @@ namespace DropshippingGame.Core
             }
             LastSavedUnix = (long)state["saved_unix"];
             if (!silent) Notify("Spiel gespeichert (Spielstand " + Slot + ").", "good");
+            try
+            {
+                GameSaved?.Invoke(Slot);
+            }
+            catch (Exception)
+            {
+                // Vorschaubild ist nicht kritisch
+            }
             return true;
         }
 

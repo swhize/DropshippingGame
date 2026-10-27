@@ -391,16 +391,16 @@ namespace DropshippingGame.Core
         /// </summary>
         public static readonly TutorialStep[] Tutorial =
         {
-            new TutorialStep { Title = "Willkommen in deiner Garage", Text = "Geh zum Laptop auf der Werkbank und klapp ihn mit {key:interact} auf. Dort läuft HustleOS – dein ganzes Business." },
-            new TutorialStep { Title = "Ware einkaufen", Text = "Öffne im Laptop den Tab 'AllesExpress', klick die Handyhülle an und bestell 20 Stück beim Standard-Großhändler." },
-            new TutorialStep { Title = "Lieferung annehmen", Text = "Der Lieferwagen ist unterwegs. Nimm die Kiste am Wareneingang neben dem Tor." },
-            new TutorialStep { Title = "Einlagern", Text = "Bring die Kiste zum Regal 'Handyhülle' und räum sie ein." },
-            new TutorialStep { Title = "Online gehen", Text = "Stell am Laptop im Tab 'Mein Shop' die Handyhülle online." },
-            new TutorialStep { Title = "Erste Bestellung", Text = "Gleich kommt deine erste Bestellung – als Bestellzettel oben rechts, mit Countdown. Mit {key:phone} öffnest du dein Handy mit allen Bestellungen." },
-            new TutorialStep { Title = "Kommissionieren", Text = "Nimm am Regal eine Handyhülle für den Bestellzettel." },
-            new TutorialStep { Title = "Verpacken", Text = "Verpack die Hülle am Packtisch – sie kommt automatisch in den passenden Karton (S)." },
-            new TutorialStep { Title = "Etikettieren", Text = "Druck am Labeldrucker das Versandlabel mit der Adresse der Kundschaft." },
-            new TutorialStep { Title = "Versenden", Text = "Bring das Paket zur gelben PaketBlitz-Box vor der Garage – bevor der Countdown abläuft!" },
+            new TutorialStep { Title = "Willkommen in deiner Garage", Text = "Geh zum Laptop auf der Werkbank (gelber Marker) und öffne ihn mit {key:interact}. Darauf läuft dein ganzes Business." },
+            new TutorialStep { Title = "Ware einkaufen", Text = "AllesExpress ist schon offen: Handyhülle, Menge und Händler wählen, dann „Kaufen“. Mit {key:back} klappst du den Laptop zu." },
+            new TutorialStep { Title = "Lieferung annehmen", Text = "Der Lieferwagen bringt die Kiste zum Wareneingang am Tor. Heb sie dort mit {key:interact} auf." },
+            new TutorialStep { Title = "Einlagern", Text = "Trag die Kiste zum Regal mit dem passenden Schild und räum sie mit {key:interact} ein." },
+            new TutorialStep { Title = "Online stellen", Text = "Zurück an den Laptop: In „Mein Shop“ das Produkt auf „Online“ schalten. Ein fairer Preis ist schon eingetragen." },
+            new TutorialStep { Title = "Erste Bestellung", Text = "Gleich kommt deine erste Bestellung – als Zettel oben rechts mit Countdown. Mit {key:phone} siehst du alle Bestellungen im Handy." },
+            new TutorialStep { Title = "Artikel holen", Text = "Nimm am Regal einen Artikel für den Bestellzettel ({key:interact})." },
+            new TutorialStep { Title = "Verpacken", Text = "Am Packtisch verpacken – der passende Karton wird automatisch genommen." },
+            new TutorialStep { Title = "Etikettieren", Text = "Nimm das Paket vom Packtisch und druck am Labeldrucker das Versandlabel." },
+            new TutorialStep { Title = "Versenden", Text = "Gib das Paket an der gelben PaketBlitz-Abholbox am Garagentor ab – im Tutorial gratis. Später: Packstation in der Stadt gratis, Abholung 3 € pro Paket." },
         };
 
         public static readonly string[] KalleIdle =

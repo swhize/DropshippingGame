@@ -201,6 +201,7 @@ namespace DropshippingGame.Core
             if (StoryStage != "business") return false;
             Explained.Add(key);
             Events.AddMail(GameData.CoachName, mail[0], mail[1], icon);
+            Notify(GameData.FillKeys("Neue Nachricht: „" + mail[0] + "“ · Handy ({key:phone})"), "info");
             return true;
         }
 
@@ -414,6 +415,7 @@ namespace DropshippingGame.Core
             UpdateContractOffers();
             FestivalUpdate();
             ProgressUpdate(m);
+            OnboardingUpdate();
             if (TimeMinutes >= GameData.DayEnd)
             {
                 TimeMinutes = GameData.DayEnd;
@@ -669,7 +671,7 @@ namespace DropshippingGame.Core
             if (_tutorialOrderAt >= 0f && BClock() >= _tutorialOrderAt)
             {
                 _tutorialOrderAt = -1f;
-                SpawnOrder("huelle", false);
+                SpawnOrder(TutorialOrderProduct(), false);
             }
             UpdateLaunchOrders();
             if (BClock() < ShopOfflineUntil) return;
@@ -1255,6 +1257,7 @@ namespace DropshippingGame.Core
         // =====================================================================================
         private void TutorialCheck()
         {
+            OnboardingAfterAction();
             if (TutorialStep < 0) return;
             bool advanced = false;
             while (TutorialStep >= 0 && TutorialStep < GameData.Tutorial.Length && TutorialDone(TutorialStep))
@@ -1266,9 +1269,8 @@ namespace DropshippingGame.Core
             if (TutorialStep >= GameData.Tutorial.Length)
             {
                 TutorialStep = -1;
-                Notify(GameData.FillKeys("Tutorial geschafft! Ab jetzt läuft dein Shop. Bestellzettel siehst du oben rechts, alles Weitere im Handy ({key:phone}) und am Laptop."), "good");
-                Sound("levelup");
-                Explain("week", GameData.MailWeek, "trophy");
+                Notify(GameData.FillKeys("Tutorial geschafft! Ab jetzt läuft dein Shop. Neue Funktionen erklärt dir Marvin per Nachricht (Handy: {key:phone})."), "good");
+                OnboardingTutorialFinished();
             }
             if (advanced) ObjectiveChanged?.Invoke();
         }
@@ -1281,7 +1283,7 @@ namespace DropshippingGame.Core
                 case 1: return TravelingDeliveries.Count > 0 || DockCrates.Count > 0 || StockTotal() > 0 || TutFlags.Contains("crate_picked");
                 case 2: return TutFlags.Contains("crate_picked") || StockTotal() > 0;
                 case 3: return StockTotal() > 0 || TotalShipped > 0;
-                case 4: return IsListed("huelle");
+                case 4: return AnyListedInStock() || TotalShipped > 0;
                 case 5: return OrderQueue.Count > 0 || TutFlags.Contains("item_picked") || TotalShipped > 0;
                 case 6: return TutFlags.Contains("item_picked") || TotalShipped > 0;
                 case 7: return TutFlags.Contains("wrapped") || TotalShipped > 0;

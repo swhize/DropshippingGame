@@ -592,6 +592,12 @@ Balancing-Konstanten der neuen Systeme (siehe Datei, jeweils kommentiert).
   der Resolver nichts oder den Aktionsnamen selbst, gilt `GameData.DefaultKey` (`interact`→E,
   `drop`→G, `phone`→Tab, `laptop`→Tab, …). `GameData.Key(action)`, `GameData.FillKeys(text)`.
 * Texte: Bestellzettel „oben rechts“, **Handy mit {key:phone}**, HustleOS-Laptop an der Werkbank.
+* Onboarding (`Sim.Onboarding.cs`, Texte in `GameData.Onboarding.cs`): nach dem Tutorial erklärt Marvin
+  Systeme per Nachricht, sobald sie relevant werden (`OnboardingDue(key)`, `NextOnboardingTip()`,
+  `OnboardingStep(ignoreGap)`), höchstens eine je `GameData.OnboardingGapMinutes`. Nie im Tutorial.
+  `event FirstParcelShipped` = allererstes Paket (große Feier im HUD). Tutorial-Schritt 4 akzeptiert jedes
+  gelistete Produkt mit Bestand (`AnyListedInStock()`), die garantierte erste Bestellung nimmt dieses Produkt.
+* `event Action<int> GameSaved` (Slot) nach erfolgreichem Speichern – die UI nimmt dabei das Vorschaubild auf.
 
 ### Ziele
 

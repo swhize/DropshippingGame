@@ -63,6 +63,10 @@ namespace DropshippingGame.Core
                 case "phone": return "Tab";
                 case "laptop": return "Tab";
                 case "pause": return "Esc";
+                case "back": return "Esc";
+                case "build": return "B";
+                case "emote": return "T";
+                case "rec_action": return "E";
                 case "help": return "F1";
                 case "jump": return "Leertaste";
             }
