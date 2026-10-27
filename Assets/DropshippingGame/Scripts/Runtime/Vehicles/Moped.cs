@@ -765,7 +765,8 @@ namespace DropshippingGame.Vehicles
                 var eye = Parts.Body.TransformPoint(MopedModel.EyeLocal);
                 _rider.transform.SetPositionAndRotation(eye - Vector3.up * MopedModel.EyeLocal.y, Quaternion.Euler(0f, _yaw + _lookYaw, 0f));
                 cam.transform.localPosition = new Vector3(0f, MopedModel.EyeLocal.y, 0f) + sh;
-                cam.transform.localRotation = Quaternion.Euler(_lookPitch + _pitch, 0f, -_lean * 0.55f);
+                // „Weniger Bewegung“/Streamer-Modus: Kamera kaum mitneigen, kein Tempo-FOV (siehe unten).
+                cam.transform.localRotation = Quaternion.Euler(_lookPitch + _pitch, 0f, -_lean * (Settings.ReducedMotion ? 0.15f : 0.55f));
                 if (Parts.GripL != null) MopedModel.AimArm(Parts.ArmL, Parts.Body, MopedModel.ShoulderL, Parts.GripL.position);
                 if (Parts.GripR != null) MopedModel.AimArm(Parts.ArmR, Parts.Body, MopedModel.ShoulderR, Parts.GripR.position);
             }
@@ -798,7 +799,7 @@ namespace DropshippingGame.Vehicles
                 var to = pivot - _tpCam;
                 if (to.sqrMagnitude > 1e-4f) cam.transform.rotation = Quaternion.LookRotation(to.normalized, Vector3.up);
             }
-            cam.fieldOfView = Settings.Fov + 7f * Mathf.Clamp01(Mathf.Abs(_speed) / vmax);
+            cam.fieldOfView = Settings.Fov + (Settings.ReducedMotion ? 0f : 7f * Mathf.Clamp01(Mathf.Abs(_speed) / vmax));
         }
 
         // =====================================================================================

@@ -42,9 +42,11 @@
     --field: #0B0E13;
     --focus: #FFFFFF;
     --glow: rgba(255, 189, 66, 0.30);
+    /* UI Toolkit begrenzt Radien je Achse auf die halbe Breite/Höhe: zu große Werte (z. B. 999px)
+       ergeben Ellipsen statt Pillen. Daher höchstens halbe Mindesthöhe (.btn-sm 28px → 14px, Chip ~22px → 10px). */
     --radius-card: 16px;
     --radius-btn: 10px;
-    --radius-chip: 999px;
+    --radius-chip: 10px;
     --border-card: 1px;
     /* Marken-Tokens (docs/ART_DIRECTION.md): gemeinsam für HUD, Menüs, Handy, Laptop-Browser (Web.uss)
        und Tablet (Tablet.uss). Werden von den HustleOS-Themen NICHT überschrieben.
@@ -2725,8 +2727,8 @@ Label {
     --focus: #FFB347;
     --glow: rgba(255, 122, 69, 0.26);
     --radius-card: 20px;
-    --radius-btn: 999px;
-    --radius-chip: 999px;
+    --radius-btn: 14px;
+    --radius-chip: 10px;
     --border-card: 1px;
     --bezel: #03050A;
 }
@@ -2757,8 +2759,8 @@ Label {
     --focus: #121726;
     --glow: rgba(232, 93, 36, 0.14);
     --radius-card: 20px;
-    --radius-btn: 999px;
-    --radius-chip: 999px;
+    --radius-btn: 14px;
+    --radius-chip: 10px;
     --border-card: 1px;
     --bezel: #1B2030;
 }

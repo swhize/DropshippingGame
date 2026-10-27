@@ -314,6 +314,10 @@ namespace DropshippingGame.Vehicles
                 }
                 p.FromAsset = true;
                 model.name = "MopedModel";
+                // Front = lokal +Z (Fahrphysik, Licht, Ego-Sicht): liegt das Vorderrad hinten (FBX-Achsen beim Export
+                // vertauscht, forwardRotY im Manifest falsch), das Modell um 180° drehen statt rückwärts zu fahren.
+                if (p.Body.InverseTransformPoint(front.position).z < p.Body.InverseTransformPoint(rear.position).z)
+                    model.transform.localRotation *= Quaternion.Euler(0f, 180f, 0f);
                 // Mitte zwischen den Achsen auf z = 0 (wie das prozedurale Modell und die Fahrphysik)
                 float mid = (p.Body.InverseTransformPoint(rear.position).z + p.Body.InverseTransformPoint(front.position).z) * 0.5f;
                 if (Mathf.Abs(mid) < 0.5f) model.transform.localPosition -= new Vector3(0f, 0f, mid);

@@ -719,9 +719,12 @@ namespace DropshippingGame
             var t = n.transform;
             Box(t, new Vector3(size.x, size.y, 0.06f), Mats.Std(bg, 0.5f), Vector3.zero, default, 0.01f);
             float fontSize = Mathf.Min(110f, size.y * 0.7f / 0.004f);
-            Label3D.Create(t, text, fontSize, fg, new Vector3(0, 0, 0.035f), false, 0f, false, 1f, 0, font);
+            // Schriftgröße folgt der Höhe; zu lange Texte (Übersetzung, Großschrift) passt MaxWidth in die Breite ein.
+            var front = Label3D.Create(t, text, fontSize, fg, new Vector3(0, 0, 0.035f), false, 0f, false, 1f, 0, font);
+            if (front != null) front.MaxWidth = size.x * 0.9f;
             var back = Node(t, "Back", new Vector3(0, 0, -0.035f), 180f);
-            Label3D.Create(back.transform, text, fontSize, fg, Vector3.zero, false, 0f, false, 1f, 0, font);
+            var rear = Label3D.Create(back.transform, text, fontSize, fg, Vector3.zero, false, 0f, false, 1f, 0, font);
+            if (rear != null) rear.MaxWidth = size.x * 0.9f;
             return n;
         }
 
@@ -748,6 +751,9 @@ namespace DropshippingGame
             panel = Box(t, new Vector3(size.x, size.y, 0.04f), Mats.Std(Color.white, 0.6f), new Vector3(0, h0 + size.y / 2f, 0.04f), default, 0f).GetComponent<Renderer>();
             title = Label3D.Create(t, "", 300f, Color.white, new Vector3(0, h0 + size.y * 0.62f, 0.08f), false, 0f, false, 1.4f);
             sub = Label3D.Create(t, "", 110f, Color.white, new Vector3(0, h0 + size.y * 0.25f, 0.08f), false, 0f, false, 1.2f);
+            // Lange Markennamen/Sprüche (und Englisch) bleiben auf der Plakatfläche
+            title.MaxWidth = size.x * 0.92f;
+            sub.MaxWidth = size.x * 0.92f;
             foreach (float sx in new[] { -size.x * 0.33f, 0f, size.x * 0.33f })
             {
                 Box(t, new Vector3(0.3f, 0.12f, 0.2f), pole, new Vector3(sx, h0 + size.y + 0.25f, 0.25f), new Vector3(30, 0, 0), 0f, false);

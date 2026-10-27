@@ -139,6 +139,7 @@ namespace DropshippingGame
                 Mesh.font = f;
                 _material = StyledMaterial(f, _glow, _onTop);
                 _renderer.sharedMaterial = _material;
+                FitWidth();
             }
             catch (System.Exception) { }
             return this;
@@ -235,6 +236,62 @@ namespace DropshippingGame
             string shown = _verbatim ? _raw : DropshippingGame.Core.Lang.T(_raw);
             if (_upper) shown = shown.ToUpperInvariant().Replace("ß", "SS");
             Mesh.text = Wrap > 0 ? WordWrap(shown, Wrap) : shown;
+            FitWidth();
+        }
+
+        private float _maxWidth;
+
+        /// <summary>
+        /// Höchstbreite in Metern (0 = frei). Längere Texte – Übersetzung, Großschrift, lange Markennamen – werden
+        /// gleichmäßig verkleinert, statt über das Schild hinauszuragen. Steuert dann die Skalierung des Labels.
+        /// </summary>
+        public float MaxWidth
+        {
+            get => _maxWidth;
+            set
+            {
+                _maxWidth = Mathf.Max(0f, value);
+                FitWidth();
+            }
+        }
+
+        private void FitWidth()
+        {
+            if (_maxWidth <= 0f || !Alive) return;
+            float w = MeasureWidth(Mesh.text);
+            float k = w > _maxWidth ? _maxWidth / w : 1f;
+            var s = new Vector3(k, k, k);
+            if (transform.localScale != s) transform.localScale = s;
+        }
+
+        /// <summary>Breite der längsten Zeile in Metern (gleiche Größenannahme wie <see cref="Create"/>: Schriftgröße × 4 mm).</summary>
+        private float MeasureWidth(string text)
+        {
+            var f = Mesh.font;
+            if (f == null || string.IsNullOrEmpty(text)) return 0f;
+            try
+            {
+                int size = Mesh.fontSize > 0 ? Mesh.fontSize : FontResolution;
+                var style = Mesh.fontStyle;
+                f.RequestCharactersInTexture(text, size, style);
+                float best = 0f, line = 0f;
+                foreach (char c in text)
+                {
+                    if (c == '\n')
+                    {
+                        best = Mathf.Max(best, line);
+                        line = 0f;
+                        continue;
+                    }
+                    if (f.GetCharacterInfo(c, out CharacterInfo ci, size, style)) line += ci.advance;
+                }
+                best = Mathf.Max(best, line);
+                return best * Mesh.characterSize * 0.1f;
+            }
+            catch (System.Exception)
+            {
+                return 0f;
+            }
         }
 
         private bool _upper;

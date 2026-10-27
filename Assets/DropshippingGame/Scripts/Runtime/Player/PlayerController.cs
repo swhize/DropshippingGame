@@ -417,7 +417,8 @@ namespace DropshippingGame
             if (grounded)
             {
                 if (_velocity.y < 0f) _velocity.y = -2f;
-                if (!locked && GameInput.JumpDown) _velocity.y = JumpVelocity;
+                // Verschiebe-Modus: A am Controller stellt ab (BuildConfirmDown) – nicht zusätzlich springen.
+                if (!locked && !Mover.Active && GameInput.JumpDown) _velocity.y = JumpVelocity;
             }
             else _velocity.y -= Gravity * dt;
             var flags = _cc.Move(_velocity * dt);

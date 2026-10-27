@@ -28,7 +28,7 @@ namespace DropshippingGame.EditorTools
         private const string DoneKey = "DropshippingGame.SetupVersion";
         private const int SetupVersion = 1;
         /// <summary>Erhöhen, wenn sich <see cref="ApplyPlayerSettings"/> ändert – wird dann einmal still nachgezogen.</summary>
-        private const int PlayerSettingsVersion = 2;
+        private const int PlayerSettingsVersion = 3;
         private const string PlayerKey = "DropshippingGame.PlayerSettingsVersion";
 
         static ProjectSetup()
@@ -286,6 +286,25 @@ namespace DropshippingGame.EditorTools
                 m.EnableKeyword("_EMISSION");
                 m.SetColor("_EmissionColor", Color.white);
             });
+            // PBR-Oberflächen (AssetLib.Surface): Normal-, Glanz- (Metallic-Alpha) und AO-Map je nach vorhandenen
+            // Texturen – ohne passende Vorlage würde der Build diese Shader-Varianten wegstreichen
+            // (Straßen/Gehwege dann im Build ohne Rauheit/AO, im Editor aber korrekt).
+            MakeMaterial("LitSurfaceGlossAo", lit, m =>
+            {
+                m.EnableKeyword("_NORMALMAP");
+                m.EnableKeyword("_METALLICSPECGLOSSMAP");
+                m.EnableKeyword("_OCCLUSIONMAP");
+            });
+            MakeMaterial("LitSurfaceGloss", lit, m =>
+            {
+                m.EnableKeyword("_NORMALMAP");
+                m.EnableKeyword("_METALLICSPECGLOSSMAP");
+            });
+            MakeMaterial("LitSurfaceAo", lit, m =>
+            {
+                m.EnableKeyword("_NORMALMAP");
+                m.EnableKeyword("_OCCLUSIONMAP");
+            });
             MakeMaterial("LitTransparent", lit, m =>
             {
                 m.SetFloat("_Surface", 1f);
@@ -378,6 +397,10 @@ namespace DropshippingGame.EditorTools
                 }
 
                 SetupInputHandling();
+                // Vor jedem Build: Shader-Vorlagen (fehlende werden ergänzt) und Nebel-Varianten sicherstellen.
+                EnsureFolder(MaterialDir);
+                SetupMaterials();
+                SetupShaderStripping();
                 Branding.Apply();
                 EditorPrefs.SetInt(PlayerKey + "." + Application.dataPath, PlayerSettingsVersion);
                 AssetDatabase.SaveAssets();
@@ -385,6 +408,30 @@ namespace DropshippingGame.EditorTools
             catch (Exception e)
             {
                 Debug.LogError("[Dropshipping] Player-Einstellungen unvollständig: " + e);
+            }
+        }
+
+        /// <summary>
+        /// Nebel-Varianten behalten: Atmosphere schaltet den Nebel (exponentiell) erst zur Laufzeit ein, die Spielszene
+        /// selbst hat keinen. Mit „Fog Modes: Automatic“ würde der Build die Nebel-Varianten aller Shader wegstreichen
+        /// (im Editor Dunst über der Skyline, im Build keiner).
+        /// </summary>
+        private static void SetupShaderStripping()
+        {
+            try
+            {
+                var all = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");
+                if (all == null || all.Length == 0 || all[0] == null) return;
+                var so = new SerializedObject(all[0]);
+                SetInt(so, "m_FogStripping", 1); // 1 = Custom
+                SetBool(so, "m_FogKeepLinear", true);
+                SetBool(so, "m_FogKeepExp", true);
+                SetBool(so, "m_FogKeepExp2", true);
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("[Dropshipping] Nebel-Shader-Varianten nicht eingestellt (Graphics › Fog Modes = Custom von Hand): " + e.Message);
             }
         }
 

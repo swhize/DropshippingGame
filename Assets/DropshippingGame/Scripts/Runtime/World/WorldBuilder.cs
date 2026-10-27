@@ -29,20 +29,22 @@ namespace DropshippingGame
             (1, new Vector3(-42f, 0, -9.8f)), (2, new Vector3(-38.8f, 0, -9.8f)), (3, new Vector3(-31.3f, 0, -9.8f)), (4, new Vector3(-31.3f, 0, -12.6f)),
         };
 
-        /// <summary>Deko/Lifestyle-Plätze je Standort: (Stufe, Position, Drehung). Stufe -1 = draußen, immer sichtbar.</summary>
+        /// <summary>Deko/Lifestyle-Plätze je Standort: (Stufe, Position, Drehung). Stufe -1 = draußen, immer sichtbar.
+        /// Wandbilder 2 cm vor der Wand-Innenseite: Wände sind 0,3 m dick und liegen INNERHALB der Rects
+        /// (Garage: Innenseiten x −21,7 / −10,3, z −16,7 / −7,3; Halle: x −1,7, z −30,7).</summary>
         private static readonly Dictionary<string, (int stage, Vector3 pos, float rot)[]> DecorSlots = new Dictionary<string, (int, Vector3, float)[]>
         {
             { "pflanze", new[] { (0, new Vector3(-21.4f, 0, -16.4f), 0f), (1, new Vector3(-1.4f, 0, -15.5f), 0f) } },
-            { "poster", new[] { (0, new Vector3(-21.83f, 1.8f, -14.6f), 90f), (1, new Vector3(-1.8f, 1.8f, -11.5f), 90f) } },
+            { "poster", new[] { (0, new Vector3(-21.68f, 1.8f, -14.6f), 90f), (1, new Vector3(-1.65f, 1.8f, -11.5f), 90f) } },
             { "stehlampe", new[] { (0, new Vector3(-13.6f, 0, -16.4f), 0f), (1, new Vector3(4.3f, 0, -15.4f), 0f) } },
             { "teppich", new[] { (0, new Vector3(-16f, 0, -11.2f), 0f), (1, new Vector3(1.8f, 0, -10.2f), 0f) } },
             { "billy", new[] { (0, new Vector3(-21.62f, 0, -10.8f), 90f), (1, new Vector3(-1.62f, 0, -8.6f), 90f) } },
-            { "whiteboard", new[] { (0, new Vector3(-14.4f, 1.6f, -16.83f), 0f), (1, new Vector3(1.6f, 1.8f, -15.84f), 0f) } },
+            { "whiteboard", new[] { (0, new Vector3(-14.4f, 1.6f, -16.68f), 0f), (1, new Vector3(1.6f, 1.8f, -15.84f), 0f) } },
             { "kaffee", new[] { (0, new Vector3(-16.3f, 0, -16.45f), 0f), (1, new Vector3(33.3f, 0, -22f), -90f) } },
             { "sofa", new[] { (1, new Vector3(30f, 0, -13.2f), 180f) } },
             { "sneaker", new[] { (0, new Vector3(-18.62f, 0, -16.5f), 0f), (1, new Vector3(-1.4f, 0, -12.6f), 90f) } },
             { "gamingstuhl", new[] { (0, new Vector3(-19.9f, 0, -15.5f), 180f) } },
-            { "neon", new[] { (0, new Vector3(-12.9f, 2.4f, -16.83f), 0f), (1, new Vector3(15.3f, 5.8f, -30.75f), 0f) } },
+            { "neon", new[] { (0, new Vector3(-12.9f, 2.4f, -16.68f), 0f), (1, new Vector3(15.3f, 5.8f, -30.6f), 0f) } },
             { "auto", new[] { (-1, new Vector3(-6f, 0, -10.5f), 90f) } },
             { "sportwagen", new[] { (-1, new Vector3(-6f, 0, -16f), 90f) } },
         };
@@ -290,8 +292,9 @@ namespace DropshippingGame
             Label3D.Create(transform, "KALLES IMBISS", 220f, new Color(1f, 0.32f, 0.22f), new Vector3(-36, 3.75f, z1 + 0.05f), false, 0f, false, 3.2f, 0, SignFont.Script);
             Props.PointLight(transform, new Vector3(-36, 3.6f, z1 + 1.2f), new Color(1f, 0.35f, 0.25f), 3f, 7f);
             var aboard = Props.Node(transform, "ABoard", new Vector3(-33f, 0, -5.8f), 20f);
-            Props.Box(aboard.transform, new Vector3(0.7f, 1f, 0.05f), Mats.Std(new Color(0.12f, 0.12f, 0.12f), 0.7f), new Vector3(0, 0.5f, 0.18f), new Vector3(-10, 0, 0));
-            Label3D.Create(aboard.transform, "DÖNER 5,50\nPOMMES 3,-\nCURRYWURST 4,-", 40f, Color.white, new Vector3(0, 0.55f, 0.21f), false, 0f, false, 1f, 0, SignFont.Condensed);
+            var aboardFace = Props.Box(aboard.transform, new Vector3(0.7f, 1f, 0.05f), Mats.Std(new Color(0.12f, 0.12f, 0.12f), 0.7f), new Vector3(0, 0.5f, 0.18f), new Vector3(-10, 0, 0));
+            // Text an der geneigten Tafel ausgerichtet (senkrecht steckte die untere Zeile in der Tafel); Größe 30 passt auf 0,7 m Breite
+            Label3D.Create(aboardFace.transform, "DÖNER 5,50\nPOMMES 3,-\nCURRYWURST 4,-", 30f, Color.white, new Vector3(0, 0.08f, 0.032f), false, 0f, false, 1f, 0, SignFont.Condensed);
             // Theke
             Props.Solid(S, new Vector3(10.5f, 1f, 0.8f), Mats.Std(new Color(0.75f, 0.16f, 0.18f), 0.5f), new Vector3(-38.25f, 0.5f, -15.2f));
             Props.Box(S, new Vector3(10.7f, 0.06f, 0.95f), Mats.Std(new Color(0.85f, 0.86f, 0.88f), 0.25f, 0.8f), new Vector3(-38.25f, 1.03f, -15.2f));
@@ -447,7 +450,7 @@ namespace DropshippingGame
             if (Props.AssetAt(S, "logistics.pallet_small_decorated_a", new Vector3(31.5f, 0, -25.8f), 0f) != null)
                 Props.Collider(transform, new Vector3(1.2f, 0.9f, 1.2f), new Vector3(31.5f, 0.45f, -25.8f));
             WarehouseDressing();
-            Props.Cyl(S, 0.1f, 0.1f, 0.5f, Mats.Std(new Color(0.85f, 0.1f, 0.1f), 0.4f), new Vector3(-1.72f, 1f, -20f));
+            Props.Cyl(S, 0.1f, 0.1f, 0.5f, Mats.Std(new Color(0.85f, 0.1f, 0.1f), 0.4f), new Vector3(-1.55f, 1f, -20f)); // Feuerlöscher vor dem Sockel (Innenseite x −1,675)
         }
 
         /// <summary>Spinde, Werkbank, Kartons und Warnleuchten an freien Wänden der Halle.</summary>
@@ -457,12 +460,13 @@ namespace DropshippingGame
             for (int i = 0; i < 3; i++)
                 Props.AssetAt(S, i == 1 ? "logistics.locker_decorated" : "logistics.locker", new Vector3(33.35f, 0, -24.9f + i * 0.62f), -90f, 1.8f);
             Props.Collider(transform, new Vector3(0.66f, 1.8f, 1.9f), new Vector3(33.35f, 0.9f, -24.28f));
-            // Werkbank an der Westwand im Lagerbereich (Front nach Osten)
-            if (Props.AssetAt(S, "logistics.workbench_decorated", new Vector3(-1.2f, 0, -23.5f), 90f, 1.8f) != null)
-                Props.Collider(transform, new Vector3(0.9f, 1f, 1.8f), new Vector3(-1.2f, 0.5f, -23.5f));
-            // Kartons in der Ecke
-            Props.AssetAt(S, "logistics.box_large", new Vector3(-1.1f, 0, -29.9f), 6f);
-            Props.AssetAt(S, "logistics.box_wide", new Vector3(-1.2f, 0.55f, -29.9f), -8f);
+            // Werkbank an der Westwand im Lagerbereich (Front nach Osten) – zwischen Wandregalen (ShelfLayout.WestWallZ,
+            // bis z −21,9) und Büro (z −16); vorher stand sie mitten in den Regalen der Produkte 13/14.
+            if (Props.AssetAt(S, "logistics.workbench_decorated", new Vector3(-1.2f, 0, -18.6f), 90f, 1.8f) != null)
+                Props.Collider(transform, new Vector3(0.9f, 1f, 1.8f), new Vector3(-1.2f, 0.5f, -18.6f));
+            // Kartons neben der Werkbank (in der Ecke z −29,9 versperrten sie das Wandregal von Produkt 11)
+            Props.AssetAt(S, "logistics.box_large", new Vector3(-1.05f, 0, -21.2f), 6f);
+            Props.AssetAt(S, "logistics.box_wide", new Vector3(-1.15f, 0.55f, -21.2f), -8f);
             Props.AssetAt(S, "logistics.box_small", new Vector3(0.1f, 0, -30.2f), 20f);
             Props.AssetAt(S, "logistics.warning_orange", new Vector3(20.6f, 0, -6.9f), 0f, 1.1f);
             Props.AssetAt(S, "logistics.warning_orange", new Vector3(13.4f, 0, -6.9f), 0f, 1.1f);
@@ -681,17 +685,17 @@ namespace DropshippingGame
                 defs.Add(D(StationType.Fold, new Vector3(-21.3f, 0, -12.6f), 90f));
                 defs.Add(D(StationType.Dock, new Vector3(-20.4f, 0, -9f), 90f));
                 defs.Add(D(StationType.Ship, new Vector3(-11.2f, 0, -5.4f), -90f));
-                defs.Add(D(StationType.EndDay, new Vector3(-12.4f, 0, -15.8f), 0f));
+                defs.Add(D(StationType.EndDay, new Vector3(-12.4f, 0, -15.55f), 0f)); // Wecker am Kopfende nicht in der Rückwand (Innenseite z −16,7)
                 // v3.0: Retouren (Fach neben dem Wareneingang, Prüftisch + Container am Tor), B2B-Palettenplatz
                 // im Hof zwischen Imbiss und Garage, Bestell-Monitor an der Rückwand, Zonenschilder.
                 defs.Add(D(StationType.ReturnTray, new Vector3(-20.4f, 0, -10.6f), 90f));
                 defs.Add(D(StationType.ReturnDesk, new Vector3(-12.1f, 0, -7.75f), 180f));
                 defs.Add(D(StationType.ReturnBin, new Vector3(-11.05f, 0, -7.78f), 180f));
                 defs.Add(D(StationType.Pallet, new Vector3(-25f, 0, -12.6f), 90f));
-                defs.Add(D(StationType.Monitor, new Vector3(-17.3f, 2.3f, -16.8f), 0f));
-                defs.Add(Sign("LAGER", new Vector3(-10.22f, 2.75f, -11.9f), -90f, SignBlue, 0));
+                defs.Add(D(StationType.Monitor, new Vector3(-17.3f, 2.3f, -16.65f), 0f));
+                defs.Add(Sign("LAGER", new Vector3(-10.37f, 2.75f, -11.9f), -90f, SignBlue, 0));
                 defs.Add(Sign("PACKEN", new Vector3(-15.2f, 2.8f, -13.3f), 0f, SignGreen, 0));
-                defs.Add(Sign("RETOUREN", new Vector3(-11.6f, 2.5f, -7.22f), 180f, SignRed, 0));
+                defs.Add(Sign("RETOUREN", new Vector3(-11.6f, 2.5f, -7.37f), 180f, SignRed, 0));
             }
             else
             {

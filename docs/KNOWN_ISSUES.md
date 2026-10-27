@@ -15,6 +15,10 @@ Vogelperspektive). Damit lassen sich späte Spielphasen schnell erreichen.
 Code-Kommentare mit TODO/FIXME/HACK: **keine** (Stand rc1). Offene Aufgaben stehen nur in dieser Datei und in
 [`ROADMAP.md`](ROADMAP.md).
 
+Punkte mit **(LP)** stammen aus dem „Playtest durch Lesen“ vom 27.10.2026: Der Code wurde Bereich für Bereich
+nachverfolgt (Geometrie, USS, Shader, Eingabe, Lebenszyklus). Behobenes ist zum Nachprüfen aufgeführt, Unsicheres als
+konkrete „Schau dir X an: sollte Y sein“-Prüfung.
+
 ---
 
 ## 0. Erster Start im Editor
@@ -23,6 +27,12 @@ Code-Kommentare mit TODO/FIXME/HACK: **keine** (Stand rc1). Offene Aufgaben steh
       Nach diesem Aufräum-Commit meldet Unity evtl. einmalig verwaiste `.meta`-Dateien gelöschter Skripte
       (`AppsFinance.cs`) – das ist normal, Unity räumt sie selbst weg.
 - [ ] Menü **Dropshipping › Projekt einrichten** läuft ohne Fehler durch (URP-Asset, Renderer, SSAO, Szene, Player-Einstellungen).
+- [ ] **(LP)** Danach liegen in `Resources/DSMaterials` zusätzlich `LitSurfaceGlossAo`, `LitSurfaceGloss`, `LitSurfaceAo`.
+      Schau dir diese und `LitNormal`/`LitEmission` im Inspector (Debug-Modus, „Shader Keywords“) an: sollten
+      `_NORMALMAP`/`_METALLICSPECGLOSSMAP`/`_OCCLUSIONMAP` bzw. `_EMISSION` enthalten. Sind sie leer (URP setzt Keywords
+      bei Materialien ohne Texturen evtl. zurück), fehlen die Varianten im Build → Vorlagen dann mit Dummy-Texturen anlegen.
+- [ ] **(LP)** Project Settings › Graphics › Shader Stripping › **Fog Modes = Custom** mit Linear/Exponential/Exp2 an
+      (setzt „Projekt einrichten“/jeder Build automatisch). Sonst fehlt im Build der Dunst über der Skyline.
 - [ ] ▶ Play: Hauptmenü erscheint mit Abendkulisse, rechts das Panel **„Neu in Version 1.0 – Das steckt drin“**,
       unten links „Version 1.0.0-rc1 (Build …)“ bzw. im Editor „… Editor“.
 - [ ] URP-Nachbearbeitung wirkt wirklich (Bloom, Tonemapping, Vignette, Weißabgleich/Farbkorrektur je Tageszeit).
@@ -40,6 +50,9 @@ Code-Kommentare mit TODO/FIXME/HACK: **keine** (Stand rc1). Offene Aufgaben steh
 - [ ] Firma › **Statistik** zeigt die neue Statistik-Seite (die alte „Analytics“-Seite wurde entfernt – gleiche Stelle im Reiter).
 - [ ] Einstellungen › Design „Hype“/„Frachtbrief“ und hell/dunkel umschalten: HustleOS-Seiten (Markt, Aufträge, Firma)
       und Handy wechseln sauber; nach dem Aufräumen ungenutzter USS-Regeln darf nichts „nackt“ (ohne Stil) aussehen.
+- [ ] **(LP, behoben)** Design „Hype“: Buttons und Chips (Handy, HustleOS) sind Pillen mit halbrunden Enden – vorher
+      `--radius-btn/--radius-chip: 999px`, was UI Toolkit als flache Ellipse zeichnet. Schau dir einen breiten Button
+      (z. B. Handy › Status) an: sollte gerade Ober-/Unterkante mit runden Enden haben.
 - [ ] Branding: Markenname tippen – während des Tippens lösen E/G/Tab/F10 nichts aus; Enter/Esc beendet das Tippen.
 - [ ] Controller: LB/RB wechseln Apps/Reiter, A wählt, B schließt, rechter Stick scrollt.
 - [ ] Tutorial-Leiste im Laptop während der ersten Stunde, Badges (Mail, PaketBlitz, Aufträge, Skillpunkte) aktualisieren sich.
@@ -54,6 +67,7 @@ Code-Kommentare mit TODO/FIXME/HACK: **keine** (Stand rc1). Offene Aufgaben steh
 - [ ] Tagesabrechnung als Kassenbon um 20 Uhr, „Weiter“ startet den nächsten Tag.
 - [ ] UI-Größe 80 % / 140 % (Einstellungen › Barrierefreiheit): nichts überlappt oder verschwindet.
 - [ ] Farbenblind-Modus: Gut/Schlecht in Blau/Orange.
+- [ ] **(LP, behoben)** Möbel verschieben mit Controller: **A** stellt ab, ohne dass die Figur dabei hochspringt.
 
 ## 3. Moped
 
@@ -64,6 +78,9 @@ Code-Kommentare mit TODO/FIXME/HACK: **keine** (Stand rc1). Offene Aufgaben steh
 - [ ] **V** wechselt Ego-Sicht (Lenker, Arme, Tacho) / Verfolgerkamera; **H** Hupe; Motorklang folgt dem Tempo; Licht nachts.
 - [ ] Heckbox: 4 Pakete oder 1 Kiste einladen/herausnehmen; Abgabe an Packstation/Filiale direkt aus der Box.
 - [ ] Modell: Vespa (CC0) richtig herum (Front nach vorn), Räder/Lenker drehen, Lack in Markenfarbe; ohne Modell prozeduraler Ersatz.
+      **(LP)** Liegt das Vorderrad des importierten Modells hinten, dreht der Code es jetzt selbst um 180°. Schau dir an:
+      Scheinwerferlicht vorn, Heckbox sitzt auf dem Gepäckträger hinter dem Sitz (nicht auf dem Beinschild), Kennzeichen hinten.
+- [ ] **(LP, behoben)** „Weniger Bewegung“/Streamer-Modus: Ego-Sicht neigt sich in Kurven kaum noch mit, kein Tempo-Zoom (FOV).
 - [ ] Speichern auf dem Moped / mit vollen Boxen → Laden: Position und Inhalt stimmen.
 
 ## 4. Stadt / Karte
@@ -73,6 +90,22 @@ Code-Kommentare mit TODO/FIXME/HACK: **keine** (Stand rc1). Offene Aufgaben steh
 - [ ] Passanten laufen auf Gehwegen, weichen aus, kommen nicht in Wänden fest.
 - [ ] Vogelperspektive (Admin › Welt & Zeit): keine Ampeln/Leitkegel/Schilder auf Fahrbahnen, Zebrastreifen außerhalb der Kreuzungen.
 - [ ] Modelle aus den CC0-Paketen (Kenney, KayKit, Quaternius, Tiny Treats, Bus): Ausrichtung und Größe plausibel, nichts schwebt.
+- [ ] **(LP, behoben)** Garage: Poster (Westwand), Whiteboard, Neon „HUSTLE“, Bestell-Monitor (Rückwand) und die Schilder
+      **LAGER** (Ostwand) / **RETOUREN** (über dem Tor innen) steckten komplett in der 30 cm dicken Wand (Koordinaten aus dem
+      Godot-Original bezogen sich auf die Wandmitte). Jetzt 2 cm vor der Innenseite: alle sichtbar, nichts flackert (Z-Fighting)?
+      Matratze 25 cm nach vorn: der rote Wecker am Kopfende ist sichtbar.
+- [ ] **(LP, behoben)** Lagerhalle: Werkbank und Kartons standen mitten in den Wandregalen der Produkte 11–14 (Westwand) und
+      blockierten das Anvisieren. Jetzt an der Westwand zwischen Regalen und Büro (z −21,7 … −17,7). Alle vier Wandregale
+      erreichbar? Feuerlöscher sichtbar (steckte im Sockel), Poster/Neon an der Wand sichtbar.
+- [ ] **(LP, behoben)** Kalles Aufsteller vor dem Imbiss: Text liegt jetzt auf der geneigten Tafel (die untere Zeile steckte darin)
+      und ist kleiner (passt auf 0,7 m).
+- [ ] **(LP, neu)** Schilder (`Props.SignBoard`, Plakatwand) verkleinern zu lange Texte automatisch auf die Schildbreite
+      (`Label3D.MaxWidth`). Schau dir „WARENEINGANG“, „B2B · SPEDITION“, „TIERHEIM-ECKE · ADOPTIEREN“, „AUDIO, VIDEO & DROHNEN“,
+      „ZU VERKAUFEN · 4.500 €“, die Ladenschilder der Stadt und einen langen Markennamen auf der Plakatwand an – auch auf Englisch:
+      Text bleibt auf dem Schild. Sind dagegen ALLE Schrift-Höhen deutlich zu groß/klein für ihre Schilder, stimmt die Größenannahme
+      in `Label3D.Create` (Schriftgröße × 4 mm über `TextMesh.characterSize`) nicht – dann dort korrigieren, nicht an jedem Schild.
+- [ ] **(LP)** Börse: Die 20-cm-Stufe vor den Säulen (x 84–108, z 9,6–12) hat keinen Collider – schau dir Spieler, Moped und
+      Passanten dort an: Füße sollten nicht sichtbar in der Stufe versinken (sonst Stufe flacher machen).
 - [ ] Figuren-Animationen (Gehen, Idle; „sit“-Clip war unsicher) – Gäste im Imbiss sitzen glaubwürdig.
 - [ ] Leistung: Perf-Overlay (F10) – 60 FPS auf Mittel/Hoch in der Innenstadt, Grafik „Niedrig“ reduziert Passanten/Verkehr/Lichter.
 
@@ -132,6 +165,8 @@ Code-Kommentare mit TODO/FIXME/HACK: **keine** (Stand rc1). Offene Aufgaben steh
 ## 12. Speichern / Laden
 
 - [ ] 3 Spielstände mit Vorschaubild (PNG) und Markenkarte; Auto-Save alle 90 s, morgens und beim Beenden.
+- [ ] **(LP)** Vorschaubild entsteht über `Camera.Render()` in eine RenderTexture (URP): schau dir ein Bild im Hauptmenü an –
+      sollte das Spielbild mit Farbkorrektur zeigen, nicht schwarz, nicht flau (Gamma) und ohne HUD.
 - [ ] Speichern während Feierabend wird abgelehnt (verhindert Doppel-Abrechnung) – Hinweis erscheint.
 - [ ] Beenden mitten in Aktionen (Paket in der Hand, Moped, Möbel verschieben, TikTok-Aufnahme) → Laden ohne Fehler.
 - [ ] Kaputte Datei simulieren (Spielstand-Datei leeren): Laden aus `.bak` mit Hinweis.
@@ -149,6 +184,11 @@ Code-Kommentare mit TODO/FIXME/HACK: **keine** (Stand rc1). Offene Aufgaben steh
 - [ ] Demo-Build: endet nach Tag 5 mit „Auf die Wunschliste!“, eigener Spielstand-Ordner.
 - [ ] Optional macOS-Build: `Application.version` ist dort bewusst nur numerisch (`1.0.0.<Build>`), Menüs zeigen trotzdem `1.0.0-rc1`.
 - [ ] Alt-Tab, Auflösungs- und Fenstermoduswechsel, Controller ab-/anstecken im Build.
+- [ ] **(LP)** Build gegen Editor vergleichen (gleicher Spielstand, gleiche Uhrzeit): Straßen/Gehwege mit gleicher Rauheit und
+      Fugen-Schatten (PBR-Varianten), Nebel/Dunst über der Skyline, leuchtende Schilder nachts. Unterschiede = fehlende Shader-Varianten.
+- [ ] **(LP)** `PostFX.ApplyQuality` schreibt Schatten/MSAA/Render-Scale ins URP-Asset: nach einer Play-Session im Editor zeigt die
+      Versionsverwaltung evtl. Änderungen an `Settings/DS_URP.asset` – nicht mit einchecken. Grafik „Hoch“ = MSAA 4× **und** SMAA:
+      Leistung prüfen.
 
 ---
 
