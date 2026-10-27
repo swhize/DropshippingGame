@@ -389,6 +389,20 @@ namespace DropshippingGame.UI
                 if (Game.Player != null) Game.Player.SetNoclip(!PlayerController.Noclip);
             }, PlayerController.Noclip ? Accent : Card));
             _body.Add(tp);
+            _body.Add(Section("Wetter (Test)"));
+            var wr = Row();
+            wr.style.flexWrap = Wrap.Wrap;
+            string[] wn = { "Automatisch", "Sonnig", "Bewölkt", "Regen" };
+            for (int wi = 0; wi < wn.Length; wi++)
+            {
+                int k = wi - 1;
+                wr.Add(Btn(wn[wi], () =>
+                {
+                    Weather.ForceKind = k;
+                    Rebuild();
+                }, Weather.ForceKind == k ? Accent : Card));
+            }
+            _body.Add(wr);
             _body.Add(Info("Tipp: Die Lagerhalle steht erst nach „Alle Upgrades“ bzw. „Alles freischalten“."));
             _body.Add(Section("Stadt, Post & Emotes"));
             var city = Row();

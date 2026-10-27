@@ -32,6 +32,12 @@ namespace DropshippingGame
             new Rect(62f, -25f, 23f, 16f), new Rect(62f, 12f, 18f, 16f), new Rect(84f, 12f, 24f, 24f),
         };
 
+        /// <summary>Test/Admin: Wetter erzwingen (-1 = automatisch, sonst (int)Kind; Regen dann den ganzen Tag).</summary>
+        public static int ForceKind = -1;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => ForceKind = -1;
+
         public Kind Today { get; private set; } = Kind.Clear;
         /// <summary>Bewölkung 0..1.</summary>
         public float Overcast { get; private set; }
@@ -46,6 +52,7 @@ namespace DropshippingGame
         private Plan _plan;
         private int _planDay = -1, _planSeed;
         private bool _planEnabled;
+        private int _planForce = -1;
         private bool _menu;
         private ParticleSystem _rainPs;
         private Transform _rainTf;
@@ -99,12 +106,19 @@ namespace DropshippingGame
             bool enabled = Settings.Weather && !_menu && sim != null && sim.InGame;
             int day = sim != null ? sim.Day : 1;
             int seed = sim != null ? sim.CitySeed : 0;
-            if (day != _planDay || seed != _planSeed || enabled != _planEnabled)
+            if (day != _planDay || seed != _planSeed || enabled != _planEnabled || ForceKind != _planForce)
             {
                 _planDay = day;
                 _planSeed = seed;
                 _planEnabled = enabled;
+                _planForce = ForceKind;
                 _plan = enabled ? MakePlan(seed, day) : new Plan { Kind = Kind.Clear, Overcast = 0f };
+                if (enabled && ForceKind >= 0)
+                {
+                    var k = (Kind)Mathf.Clamp(ForceKind, 0, 2);
+                    _plan = new Plan { Kind = k, Overcast = k == Kind.Clear ? 0.05f : 0.7f };
+                    if (k == Kind.Rain) { _plan.RainStart = 0f; _plan.RainEnd = 24f; _plan.RainStrength = 0.7f; }
+                }
                 Today = _plan.Kind;
             }
 
