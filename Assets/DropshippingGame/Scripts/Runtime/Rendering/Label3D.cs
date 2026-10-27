@@ -221,7 +221,8 @@ namespace DropshippingGame
             text = text ?? "";
             if (_raw != null && string.Equals(_raw, text, System.StringComparison.Ordinal)) return;
             _raw = text;
-            Mesh.text = Wrap > 0 ? WordWrap(text, Wrap) : text;
+            string shown = DropshippingGame.Core.Lang.T(text);
+            Mesh.text = Wrap > 0 ? WordWrap(shown, Wrap) : shown;
         }
 
         public string Text => Alive ? Mesh.text : "";

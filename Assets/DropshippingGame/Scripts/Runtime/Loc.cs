@@ -16,6 +16,9 @@ namespace DropshippingGame
         /// <summary>Text in der aktuellen Sprache (ohne englische Fassung: Deutsch).</summary>
         public static string T(string de, string en = null) => English && !string.IsNullOrEmpty(en) ? en : de;
 
+        /// <summary>Deutschen Text über die Wörterbücher übersetzen (siehe <see cref="DropshippingGame.Core.Lang"/>).</summary>
+        public static string Tr(string de) => DropshippingGame.Core.Lang.T(de);
+
         /// <summary>Sprache gewechselt (neuer Sprachcode).</summary>
         public static event Action<string> Changed
         {

@@ -178,6 +178,7 @@ namespace DropshippingGame
             }
             if (LaptopDesign != "hype" && LaptopDesign != "frachtbrief") LaptopDesign = "hype";
             if (Array.IndexOf(LanguageCodes, Language) < 0) Language = "de";
+            DropshippingGame.Core.Lang.Set(Language);
             // Kaputte/fremde Registry-Werte (NaN, Extremwerte) würden Kamera und Audio unbrauchbar machen.
             MasterVolume = Sane(MasterVolume, 0f, 1f, 0.85f);
             MusicVolume = Sane(MusicVolume, 0f, 1f, 0.5f);
@@ -283,6 +284,7 @@ namespace DropshippingGame
         {
             if (Array.IndexOf(LanguageCodes, code) < 0 || code == Language) return;
             Language = code;
+            DropshippingGame.Core.Lang.Set(code);
             Apply();
             try
             {

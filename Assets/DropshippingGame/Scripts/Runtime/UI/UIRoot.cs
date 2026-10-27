@@ -44,6 +44,7 @@ namespace DropshippingGame.UI
             go.SetActive(true);
             ui.Build();
             EnsureEventSystem(parent);
+            try { var sweep = go.AddComponent<LocSweeper>(); sweep.Root = ui.Root; } catch (Exception e) { Debug.LogWarning("LocSweeper: " + e.Message); }
             Settings.Changed += ui.ApplyScale;
             ui.ApplyScale();
             return ui;
