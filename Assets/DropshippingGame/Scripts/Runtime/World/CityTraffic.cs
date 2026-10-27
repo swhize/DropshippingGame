@@ -51,12 +51,32 @@ namespace DropshippingGame
         private Transform _root;
         private float _acc, _resAcc;
 
-        private void OnEnable() => Active = true;
+        private static CityTraffic _inst;
+
+        private void OnEnable()
+        {
+            Active = true;
+            _inst = this;
+        }
 
         private void OnDisable()
         {
             Active = false;
             Count = 0;
+            if (_inst == this) _inst = null;
+        }
+
+        /// <summary>Steht/fährt an p (± pad) gerade ein Fahrzeug? (Moped-Kollision, Autos haben keine Kollider.)</summary>
+        public static bool CarAt(Vector3 p, float pad)
+        {
+            var t = _inst;
+            if (t == null) return false;
+            foreach (var v in t._cars)
+            {
+                if (v.Tr == null) continue;
+                if (Mathf.Abs(p.x - v.X) < v.Length * 0.5f + pad && Mathf.Abs(p.z - v.Z) < 1.0f + pad) return true;
+            }
+            return false;
         }
 
         public void Setup(Transform root)
@@ -84,6 +104,7 @@ namespace DropshippingGame
             }
             Count = _cars.Count;
             Vector3 pp = Game.Player != null ? Game.Player.transform.position : new Vector3(9999, 0, 9999);
+            bool hasMoped = Vehicles.Moped.ParkedObstacle(out Vector3 mp);
             for (int i = _cars.Count - 1; i >= 0; i--)
             {
                 var v = _cars[i];
@@ -99,6 +120,12 @@ namespace DropshippingGame
                 // Spieler auf der Fahrbahn vor dem Auto
                 float ahead = (pp.x - v.X) * v.Dir;
                 bool blocked = Mathf.Abs(pp.z - v.Z) < 2.2f && ahead > 0f && ahead < v.Length * 0.5f + 7f;
+                // abgestelltes Moped auf der Fahrbahn (fährt der Spieler, gilt die Spielerposition oben)
+                if (!blocked && hasMoped)
+                {
+                    float mAhead = (mp.x - v.X) * v.Dir;
+                    blocked = Mathf.Abs(mp.z - v.Z) < 2f && mAhead > 0f && mAhead < v.Length * 0.5f + 6f;
+                }
                 if (blocked)
                 {
                     target = 0f;

@@ -66,7 +66,7 @@ namespace DropshippingGame
             if (_wheelUi != null) _wheelUi.RemoveFromHierarchy();
         }
 
-        private bool Locked => Game.Root != null && Game.Root.InputLocked || (_player != null && _player.Mover.Active);
+        private bool Locked => Game.Root != null && Game.Root.InputLocked || (_player != null && (_player.Mover.Active || _player.Riding != null));
 
         private void Update()
         {

@@ -24,6 +24,7 @@ namespace DropshippingGame
                 yield return ("Verkehr: " + kind, true, () => Traffic()?.Spawn(UnityEngine.Random.value < 0.5f ? 0 : 1, kind));
             }
             yield return ("+3 etikettierte Pakete in die Hand", true, GivePackages);
+            yield return ("Moped zu mir", true, Vehicles.Moped.AdminBring);
             for (int i = 0; i < 6; i++)
             {
                 var e = (EmoteController.Emote)i;

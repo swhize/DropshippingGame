@@ -65,6 +65,7 @@ namespace DropshippingGame.UI
             AddMark("Börse", "trend", new Color(0.55f, 0.75f, 1f), () => new Vector3(96f, 0, 12f), false, 6f);
             AddMark("MediaMarkd", "screen", new Color(1f, 0.45f, 0.4f), () => new Vector3(-78.5f, 0, -9f), false, 6f);
             AddMark("Fressnix", "heart", new Color(0.45f, 0.85f, 0.55f), () => new Vector3(-107.5f, 0, -9f), false, 6f);
+            AddMark("Moped", "bolt", new Color(1f, 0.6f, 0.25f), Vehicles.Moped.CompassPos, false, 8f);
             _goal = AddMark("Ziel", "flag", new Color(1f, 0.85f, 0.3f), () => null, true, 2.5f);
             _goal.El.AddToClassList("compass-goal");
 

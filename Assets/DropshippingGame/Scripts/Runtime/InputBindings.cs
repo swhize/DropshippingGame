@@ -35,6 +35,8 @@ namespace DropshippingGame
             new ActionDef { Id = "build", Name = "Möbel verschieben", Key = "B", Pad = "DpadDown" },
             new ActionDef { Id = "emote", Name = "Emote-Rad (halten)", Key = "T", Pad = "DpadLeft" },
             new ActionDef { Id = "help", Name = "Hilfe", Key = "F1", Pad = "Select" },
+            new ActionDef { Id = "horn", Name = "Moped: Hupe", Key = "H", Pad = "DpadUp" },
+            new ActionDef { Id = "vehcam", Name = "Moped: Ansicht wechseln", Key = "V", Pad = "DpadRight" },
         };
 
         private static readonly Dictionary<string, string> _kb = new Dictionary<string, string>();

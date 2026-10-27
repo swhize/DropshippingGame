@@ -168,6 +168,7 @@ namespace DropshippingGame.Core
             };
             AddV4State(state);
             AddCityState(state);
+            AddVehicleState(state);
             AddProgressState(state);
             return state;
         }
@@ -510,6 +511,7 @@ namespace DropshippingGame.Core
             ReadCityState(s);
             ShopsFromJson(J.O(s, "shops"));
             ReadProgressState(s);
+            ReadVehicleState(s);
 
             FixupLegacyOrders();
             ReconcileOrdersInWork();

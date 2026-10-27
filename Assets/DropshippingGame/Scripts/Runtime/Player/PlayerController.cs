@@ -40,6 +40,8 @@ namespace DropshippingGame
         /// <summary>Echte TikTok-Aufnahme in Ego-Sicht (Handy › TikTak, Laptop oder Ringlicht).</summary>
         public readonly TikTokRecorder Recorder = new TikTokRecorder();
         public string PromptText = "";
+        /// <summary>Fahrzeug, auf dem der Spieler sitzt (null = zu Fuß). Es steuert dann Kamera, Bewegung und Eingabe.</summary>
+        public Vehicles.Moped Riding;
 
         private CharacterController _cc;
         private Transform _handAnchor;
@@ -122,6 +124,7 @@ namespace DropshippingGame
 
         public void Teleport(Vector3 pos, float yaw)
         {
+            if (Riding != null) Riding.ForceExit(); // Teleport (Admin, neuer Tag …) holt den Spieler vom Moped
             _cc.enabled = false;
             transform.position = pos;
             Yaw = yaw;
@@ -367,6 +370,7 @@ namespace DropshippingGame
         {
             float dt = Time.deltaTime;
             if (dt <= 0f) return;
+            if (Riding != null) return; // auf dem Moped: Vehicles/Moped steuert alles
             bool locked = Game.Root != null && Game.Root.InputLocked;
             if (!locked && !EmoteController.WheelOpen)
             {

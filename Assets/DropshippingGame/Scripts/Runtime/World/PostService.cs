@@ -55,9 +55,12 @@ namespace DropshippingGame
             }
         }
 
-        private static int Value(PlayerController player)
+        /// <summary>Etikettierte Pakete in der Heckbox des Mopeds, das in der Nähe steht (nur an Gratis-Stellen, nicht bei der Abholung).</summary>
+        private static int BoxLabeled(Station st) => IsFreeDrop(st) ? Vehicles.Moped.LabeledNear(st.transform.position) : 0;
+
+        private static int Value(PlayerController player, Station st)
         {
-            int sum = 0;
+            int sum = IsFreeDrop(st) ? Vehicles.Moped.LabeledValueNear(st.transform.position) : 0; // + Heckbox des Mopeds in der Nähe
             foreach (var it in player.Carried()) if (it.Kind == ItemKind.Labeled) sum += it.Price;
             return sum;
         }
@@ -66,13 +69,13 @@ namespace DropshippingGame
         {
             var gm = Game.Sim;
             if (gm == null || player == null) return "";
-            int nl = player.CountCarried(ItemKind.Labeled);
+            int nl = player.CountCarried(ItemKind.Labeled) + BoxLabeled(st);
             bool pickup = st.Opts.Stage < StagePackstation;
             if (nl > 0)
             {
                 int fee = pickup ? PostRules.PickupFee(nl, st.Opts.Stage, PostRules.TutorialActive(gm)) : 0;
                 string what = nl > 1 ? nl + " Pakete abgeben" : "Paket abgeben";
-                return what + " (+" + Fmt.Money(Value(player)) + (fee > 0 ? " · Abholung −" + Fmt.Money(fee) : " · gratis") + ")";
+                return what + " (+" + Fmt.Money(Value(player, st)) + (fee > 0 ? " · Abholung −" + Fmt.Money(fee) : " · gratis") + ")";
             }
             if ((player.Held?.Kind ?? ItemKind.None) == ItemKind.Package) return "Erst ein Versandlabel drucken!";
             return pickup ? "Abholung: " + Fmt.Money(PostRules.PickupFeePerParcel(st.Opts.Stage)) + "/Paket · Packstation gratis" : "Etikettierte Pakete gratis abgeben";
@@ -82,7 +85,7 @@ namespace DropshippingGame
         {
             var gm = Game.Sim;
             if (gm == null || player == null) return;
-            int nl = player.CountCarried(ItemKind.Labeled);
+            int nl = player.CountCarried(ItemKind.Labeled) + BoxLabeled(st);
             if (nl <= 0)
             {
                 if ((player.Held?.Kind ?? ItemKind.None) == ItemKind.Package)
@@ -107,6 +110,15 @@ namespace DropshippingGame
                 if (it.Kind != ItemKind.Labeled) { keep.Add(it); continue; }
                 gm.ShipPackage(it, (st.transform.position + new Vector3(0, 1.8f + shipped * 0.35f, 0)).ToV3());
                 shipped++;
+            }
+            // Moped in der Nähe: etikettierte Pakete direkt aus der Heckbox abgeben
+            if (IsFreeDrop(st))
+            {
+                foreach (var it in Vehicles.Moped.TakeLabeledNear(st.transform.position))
+                {
+                    gm.ShipPackage(it, (st.transform.position + new Vector3(0, 1.8f + shipped * 0.35f, 0)).ToV3());
+                    shipped++;
+                }
             }
             player.SetCarried(keep);
             if (keep.Count > 0) gm.Notify("Pakete ohne Versandlabel bleiben in der Hand.", "info");

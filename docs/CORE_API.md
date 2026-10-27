@@ -778,3 +778,16 @@ Besucher; Autos pausieren über `StreetFestival.BlocksTraffic`). Gespeichert unt
   `MamaDebt`, automatische Rückzahlung, Notiz in der Tagesabrechnung, Mail).
 * **Balance-Regeln:** `StaffMax(role)` (zweite Kraft je Rolle ab Level 10), `PricePremium/PriceStarPenalty`
   (Wucher), `DemandRateNoPrice/DemandPriceFactor`, `CompressedDemand`, `FestivalPriceAppeal(price)`.
+
+## 17. Moped (Vehicles.cs, VehicleSynth.cs; Unity: Runtime/Vehicles/)
+
+* **Daten/Regeln:** `VehicleRules.Defs` (bisher nur `"moped"`: 35 km/h, 4 Pakete oder 1 Kiste), `Def(id)`,
+  `CanLoad(box, item, def)`, `FreeParcelSlots`, `StepSpeed(v, gas, bremse, dt, def)`, `SteerLimitDeg`, `YawRateDeg`,
+  `LeanDeg`, `EnginePitch`. Spätere Fahrzeuge (E-Bike, Lastenrad, Lieferwagen) = neue `VehicleDef`-Einträge.
+* **Zustand:** `sim.Moped` (`VehicleState`: `Placed`, `Pos`, `RotY`, `Box`, `HintSent`), gespeichert als `"moped"`
+  (alte Spielstände: Moped am Stammplatz, Box leer). `LoadIntoMoped(item)`, `TakeFromMoped()`, `CountInMoped(kind)`,
+  `TakeLabeledFromMoped()`. Pakete in der Box zählen beim Aufräumen verwaister Bestellzettel mit.
+* **Hinweis:** `MopedHintDue` / `SendMopedHint(taste)` – einmalige Mail nach dem Tutorial.
+* **Klang:** `VehicleSynth.Render("moped_engine" | "moped_horn" | "moped_bump")` (Motor-Loop nahtlos, Tonhöhe per AudioSource).
+* **Runtime:** `Vehicles.Moped` (Fahren, Kamera, Heckbox, `CollectState`, `AdminBring`, `LabeledNear`), `MopedSpawner`
+  (an der Welt), `MopedModel` (CC0-Modell `vehicle.moped`, sonst prozedural), `RideZones` (Innenräume, Bordsteine), `MopedHud`.

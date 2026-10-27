@@ -218,6 +218,7 @@ namespace DropshippingGame.Core
             DayOver = false;
             Furniture.Clear();
             ResetCityState();
+            ResetVehicleState();
             StoryStage = "business";
             IntroStep = 0;
             IntroServed.Clear();

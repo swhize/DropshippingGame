@@ -329,6 +329,7 @@ namespace DropshippingGame.Core
                 if (p != null) ids.Add(p.OrderId);
             foreach (var c in ConveyorQueue)
                 if (c != null && c.Pkg != null) ids.Add(c.Pkg.OrderId);
+            AddMopedOrderIds(ids);
             var suspects = new HashSet<int>();
             int removed = 0;
             for (int i = OrdersInWork.Count - 1; i >= 0; i--)
@@ -417,6 +418,7 @@ namespace DropshippingGame.Core
             foreach (var w in WorldItems)
                 if (w.Item != null) ids.Add(w.Item.OrderId);
             if (PlayerState != null && PlayerState.Held != null) ids.Add(PlayerState.Held.OrderId);
+            AddMopedOrderIds(ids);
             OrdersInWork.RemoveAll(o => !ids.Contains(o.Id));
         }
 

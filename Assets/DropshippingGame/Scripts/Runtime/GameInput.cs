@@ -206,6 +206,10 @@ namespace DropshippingGame
         public static bool RecordStopDown => Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.RightShoulder);
         /// <summary>Aktion während der TikTok-Aufnahme (Hook, Auspacken, Zeigen): E / X.</summary>
         public static bool RecordActionDown => InteractDown;
+        /// <summary>Moped: Hupe (H / Steuerkreuz hoch), siehe Vehicles/Moped.</summary>
+        public static bool HornDown => Bound("horn");
+        /// <summary>Moped: Ego-Sicht / Verfolgerkamera umschalten (V / Steuerkreuz rechts).</summary>
+        public static bool VehicleCamDown => Bound("vehcam");
         /// <summary>Emote-Rad: gedrückt halten (T / Steuerkreuz links), siehe EmoteController.</summary>
         public static bool EmoteHeld => BoundHeld("emote");
 
@@ -323,6 +327,10 @@ namespace DropshippingGame
                     new[] { "TikTok aufnehmen (Handy › TikTak, Laptop, Ringlicht am Schreibtisch)", "–", "–" },
                     new[] { "Aufnahme: Aktion / Hook", K("interact"), P("interact") },
                     new[] { "Aufnahme: Stopp / abbrechen", "Enter / Linksklick · Esc", "RB · B" },
+                    new[] { "Moped: auf-/absteigen", K("interact"), P("interact") },
+                    new[] { "Moped: Gas / Bremse / Lenken", "W / S / A D", "RT / LT / Linker Stick" },
+                    new[] { "Moped: Hupe · Ansicht", K("horn") + " · " + K("vehcam"), P("horn") + " · " + P("vehcam") },
+                    new[] { "Moped: Heckbox beladen (Pakete in der Hand) / entladen", K("interact"), P("interact") },
                     new[] { "Emote-Rad (halten, zielen, loslassen)", K("emote") + " · Maus / 1–6", P("emote") + " · Rechter Stick" },
                     new[] { "Handy öffnen / schließen", K("phone"), P("phone") },
                     new[] { "Handy-App wechseln", "1 2 3 4", "LB / RB" },

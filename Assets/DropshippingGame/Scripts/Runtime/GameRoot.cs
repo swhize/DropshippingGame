@@ -580,6 +580,7 @@ namespace DropshippingGame
                 _sim.WorldItems.Add(new WorldItemSave { Item = d.Data.Clone(), Pos = d.transform.position.ToV3(), RotY = d.transform.eulerAngles.y });
             }
             _sim.PlayerState = _player != null ? _player.ToSave() : null;
+            Vehicles.Moped.CollectState(_sim);
         }
 
         private bool CanAutosave() => _sim.StoryStage == "business" && !_sim.DayOver && _player != null;

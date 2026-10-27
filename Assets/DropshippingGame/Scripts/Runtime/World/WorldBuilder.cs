@@ -96,6 +96,7 @@ namespace DropshippingGame
             gameObject.AddComponent<CityTraffic>().Setup(_dynamic);
             if (!menuMode) gameObject.AddComponent<GarbageTruck>().Setup(_dynamic);
             if (!menuMode) gameObject.AddComponent<StreetFestival>().Setup();
+            if (!menuMode) gameObject.AddComponent<Vehicles.MopedSpawner>(); // eigenes Moped (Vehicles/)
             try { gameObject.AddComponent<FinanceDistrict>().Setup(menuMode); } catch (System.Exception e) { Debug.LogWarning("Finanzviertel: " + e.Message); }
             gameObject.AddComponent<ShoppingDistrict>().Build(menuMode);
             gameObject.AddComponent<LightCuller>();
