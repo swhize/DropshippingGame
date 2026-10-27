@@ -27,6 +27,8 @@ namespace DropshippingGame.Core
         private static readonly List<Template> Templates = new List<Template>(1024);
         private static readonly Dictionary<string, string> Cache = new Dictionary<string, string>(4096);
         private static readonly HashSet<string> MissingSet = new HashSet<string>();
+        // Bereits englische Texte (Ziel-Werte der Tabellen) gelten nicht als fehlend.
+        private static readonly HashSet<string> EnglishValues = new HashSet<string>();
         private static bool _loaded;
         private static bool _sorted;
         private static readonly object Gate = new object();
@@ -69,6 +71,7 @@ namespace DropshippingGame.Core
                 return;
             }
             Exact[de] = en;
+            EnglishValues.Add(en);
         }
 
         /// <summary>Übersetzt <paramref name="de"/> in die aktuelle Sprache (Deutsch: unverändert).</summary>
@@ -158,7 +161,7 @@ namespace DropshippingGame.Core
             }
 
             // Reine Zahlen/Symbole brauchen keine Übersetzung
-            if (depth == 0 && HasLetters(s)) MissingSet.Add(s);
+            if (depth == 0 && HasLetters(s) && !EnglishValues.Contains(s)) MissingSet.Add(s);
             return s;
         }
 
@@ -230,6 +233,7 @@ namespace DropshippingGame.Core
                 Templates.Clear();
                 Cache.Clear();
                 MissingSet.Clear();
+                EnglishValues.Clear();
                 _loaded = false;
                 _sorted = false;
                 Current = "de";
