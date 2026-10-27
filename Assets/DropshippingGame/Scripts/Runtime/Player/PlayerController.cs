@@ -240,6 +240,7 @@ namespace DropshippingGame
         private void HeldChanged()
         {
             RebuildHeldVisual();
+            HandFeel.OnHeldChanged(this, _heldVisual);
             Game.Root?.OnHeldChanged();
         }
 

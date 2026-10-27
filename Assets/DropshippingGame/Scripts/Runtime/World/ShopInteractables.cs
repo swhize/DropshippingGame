@@ -66,7 +66,7 @@ namespace DropshippingGame
                 Game.Notify("Ohne Einkaufswagen geht hier nichts. Die stehen am Eingang.", "info");
                 return;
             }
-            sim.CartAdd(it.Id);
+            if (sim.CartAdd(it.Id)) FeelDirector.CartAdded(this, sim.ShopPrice(it.Id), it.Store == ShopData.Electro);
         }
 
         public void SetHighlighted(bool on)

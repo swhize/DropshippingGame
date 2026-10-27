@@ -34,6 +34,8 @@ namespace DropshippingGame
         public static float UiScale = 1f;
         /// <summary>Tastenhinweise im HUD anzeigen.</summary>
         public static bool ShowHints = true;
+        /// <summary>Weniger Bewegung: keine Kamera-Wackler/FOV-Kicks, ruhigere Feedback-Effekte (Barrierefreiheit).</summary>
+        public static bool ReducedMotion;
 
         public static event Action Changed;
         private static bool _loaded;
@@ -66,6 +68,7 @@ namespace DropshippingGame
             LaptopDark = PlayerPrefs.GetInt("ds.laptopdark", LaptopDark ? 1 : 0) == 1;
             UiScale = Mathf.Clamp(PlayerPrefs.GetFloat("ds.uiscale", UiScale), UiScaleMin, UiScaleMax);
             ShowHints = PlayerPrefs.GetInt("ds.hints", ShowHints ? 1 : 0) == 1;
+            ReducedMotion = PlayerPrefs.GetInt("ds.reducedmotion", ReducedMotion ? 1 : 0) == 1;
             if (LaptopDesign != "hype" && LaptopDesign != "frachtbrief") LaptopDesign = "hype";
 
             // v3.0: Das neue Standard-Design ist „Hype“ (dunkel). Ältere Einstellungen wurden bei
@@ -96,6 +99,7 @@ namespace DropshippingGame
             PlayerPrefs.SetInt("ds.laptopdark", LaptopDark ? 1 : 0);
             PlayerPrefs.SetFloat("ds.uiscale", UiScale);
             PlayerPrefs.SetInt("ds.hints", ShowHints ? 1 : 0);
+            PlayerPrefs.SetInt("ds.reducedmotion", ReducedMotion ? 1 : 0);
             PlayerPrefs.SetInt("ds.prefsver", PrefsVersion);
             PlayerPrefs.Save();
         }

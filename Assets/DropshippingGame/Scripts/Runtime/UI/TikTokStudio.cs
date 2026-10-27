@@ -179,6 +179,7 @@ namespace DropshippingGame.UI
             }
             _draft = null;
             Game.Sound("levelup", 0.05f, -6f);
+            FeelDirector.TikTokPosted();
             var ui = Game.UI;
             if (ui != null)
             {

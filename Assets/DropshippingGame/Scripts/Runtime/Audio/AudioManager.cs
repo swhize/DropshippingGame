@@ -168,6 +168,19 @@ namespace DropshippingGame
             s.Play();
         }
 
+        /// <summary>Effekt mit fester Grund-Tonhöhe (Feedback-Serien, siehe FeelAudio) plus kleiner Streuung.</summary>
+        public void PlayPitched(string name, float pitch, float pitchVar = 0.03f, float volumeDb = 0f)
+        {
+            var clip = SfxClip(name, null);
+            if (clip == null) return;
+            var s = FreeSource();
+            s.spatialBlend = 0f;
+            s.pitch = Mathf.Clamp(pitch, 0.3f, 3f) * (1f + Random.Range(-pitchVar, pitchVar));
+            s.volume = Settings.SfxVolume * Mathf.Pow(10f, volumeDb / 20f);
+            s.clip = clip;
+            s.Play();
+        }
+
         /// <summary>Räumlicher Klang an einer Position (Lieferwagen, Tor).</summary>
         public void PlayAt(string name, Vector3 pos, float volumeDb = 0f)
         {

@@ -249,6 +249,13 @@ namespace DropshippingGame
         // ---- Aktion -----------------------------------------------------------------------------
         public void Interact(PlayerController player)
         {
+            var feel = StationFeel.Before(this, player);
+            InteractCore(player);
+            StationFeel.After(this, player, feel);
+        }
+
+        private void InteractCore(PlayerController player)
+        {
             var gm = S;
             if (gm == null) return;
             var held = player.Held;
@@ -296,7 +303,7 @@ namespace DropshippingGame
                         if (gm.WrapItem(held))
                         {
                             player.ClearHands();
-                            Game.Sound("tape");
+                            if (!StationFeel.Enabled) Game.Sound("tape");
                         }
                     }
                     else if ((kind == ItemKind.Package || kind == ItemKind.Labeled) && RoomForMorePackages(player) && gm.PackedCount() > 0)
