@@ -34,7 +34,8 @@ namespace DropshippingGame.UI
         protected void Go(string target) => View?.OpenApp(target);
 
         // ---- Bausteine ---------------------------------------------------------------------------
-        protected static Label Section(VisualElement parent, string text) => UIX.Text(parent, text.ToUpperInvariant(), "section");
+        // Erst übersetzen, dann groß schreiben (sonst findet die Übersetzung den Text nicht).
+        protected static Label Section(VisualElement parent, string text) => UIX.Text(parent, Lang.T(text).ToUpperInvariant(), "section");
 
         protected static Label P(VisualElement parent, string text, string cls = "muted")
         {
@@ -47,7 +48,7 @@ namespace DropshippingGame.UI
         protected static VisualElement Card(VisualElement parent, string title = null, string right = null, string extraClass = null)
         {
             var c = UIX.Card(parent, null, extraClass);
-            if (!string.IsNullOrEmpty(title)) UIX.CardHead(c, title.ToUpperInvariant(), right);
+            if (!string.IsNullOrEmpty(title)) UIX.CardHead(c, Lang.T(title).ToUpperInvariant(), right);
             return c;
         }
 

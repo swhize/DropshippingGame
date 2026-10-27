@@ -18,7 +18,7 @@ namespace DropshippingGame.UI
         public override string AppId => "allesexpress";
         public override string SkinClass => "ae";
         public override WebSkin Skin => WebSkin.Round;
-        protected override string Domain => "allesexpress.cn";
+        protected override string Domain => Lang.Pick("allesexpress.cn", "everythingxpress.cn");
 
         public override string Url
         {
@@ -293,7 +293,7 @@ namespace DropshippingGame.UI
                     _supplier = si;
                     Rebuild();
                 }, "pp-var", i == _supplier ? "on" : "");
-                b.tooltip = sup.Desc;
+                b.tooltip = Lang.T(sup.Desc);
             }
             
 

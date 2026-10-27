@@ -17,7 +17,7 @@ namespace DropshippingGame.UI
         public override string AppId => "paket";
         public override string SkinClass => "pb";
         public override WebSkin Skin => WebSkin.Comic;
-        protected override string Domain => "paketblitz.de/geschaeftskunden";
+        protected override string Domain => Lang.Pick("paketblitz.de/geschaeftskunden", "parcelbolt.com/business");
 
         private static readonly string[] Steps = { "Bestellt", "Entnommen", "Verpackt", "Label drauf", "Auf dem Band" };
 

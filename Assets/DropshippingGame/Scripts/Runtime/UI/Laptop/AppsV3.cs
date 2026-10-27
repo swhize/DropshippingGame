@@ -93,7 +93,7 @@ namespace DropshippingGame.UI
                 var acc = Btn(br, "Annehmen", () => S.AcceptContract(id), "accent", !ok, "check");
                 if (!ok && !string.IsNullOrEmpty(reason))
                 {
-                    acc.tooltip = reason;
+                    acc.tooltip = Lang.T(reason);
                     P(card, reason, "bad-text");
                 }
             }

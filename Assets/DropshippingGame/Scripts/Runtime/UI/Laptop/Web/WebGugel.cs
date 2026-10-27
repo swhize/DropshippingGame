@@ -17,7 +17,7 @@ namespace DropshippingGame.UI
         public override string AppId => "gugel";
         public override string SkinClass => "gg";
         public override WebSkin Skin => WebSkin.Neo;
-        protected override string Domain => "gugel.de";
+        protected override string Domain => Lang.Pick("gugel.de", "gugel.com");
 
         private static string _pid = "";
         private static int _kw, _bid = 40, _budget = 1;
@@ -315,7 +315,7 @@ namespace DropshippingGame.UI
                 string why = s.CanCreateFakeSite(id);
                 var t = Col(grid, 4f, "gg-pick");
                 Wd(MK.Photo(t, id, 56f), 56f);
-                B(t, MK.Short(id) + " (" + s.FakeSiteCount(id) + ")", "gg-small");
+                B(t, Lang.T(MK.Short(id)) + " (" + s.FakeSiteCount(id) + ")", "gg-small");
                 BtnIf(t, why == "", "+ " + Fmt.Money(GameData.FakeSiteCost), () => S.CreateFakeSite(id), "gg-chip");
             }
             var list = Col(body, 6f, "gg-card");

@@ -423,20 +423,20 @@ namespace DropshippingGame.UI
             var close = UIX.Pressable(tabRow, () => Game.Sim?.ClosePc(), "br-close");
             UIX.Icon(close, "close", 14f, null, "br-icon");
             UIX.PassThrough(close);
-            close.tooltip = "Schließen (Esc)";
+            close.tooltip = Lang.T("Schließen (Esc)");
 
             _bar = UIX.Row(_chrome, 8f, "br-bar");
             _backBtn = UIX.Pressable(_bar, Back, "br-nb");
             UIX.Icon(_backBtn, "chevron_left", 14f, null, "br-icon");
             UIX.PassThrough(_backBtn);
-            _backBtn.tooltip = "Zurück";
+            _backBtn.tooltip = Lang.T("Zurück");
             var homeBtn = UIX.Pressable(_bar, GoHome, "br-nb");
             UIX.Icon(homeBtn, "home", 14f, null, "br-icon");
             UIX.PassThrough(homeBtn);
-            homeBtn.tooltip = "Startseite der App";
+            homeBtn.tooltip = Lang.T("Startseite der App");
             var reload = UIX.Pressable(_bar, () => Rebuild(), "br-nb");
             UIX.Icon(reload, "refresh", 14f, null, "br-icon");
-            reload.tooltip = "Neu laden";
+            reload.tooltip = Lang.T("Neu laden");
             UIX.PassThrough(reload);
             var urlBox = UIX.Row(_bar, 6f, "br-url");
             urlBox.style.flexGrow = 1;
@@ -533,6 +533,8 @@ namespace DropshippingGame.UI
                 url = "hustleos://" + (def != null && !string.IsNullOrEmpty(def.Url) ? def.Url.Replace("hustle.os/", "") : _current) +
                       (string.IsNullOrEmpty(_currentTab) ? "" : "/" + _currentTab);
                 secure = false;
+                if (Lang.English)
+                    url = url.Replace("/markt", "/market").Replace("/grossauftraege", "/contracts").Replace("/retouren", "/returns").Replace("/firma", "/company");
             }
             _url.text = url;
             _lock?.EnableInClassList("off", !secure);

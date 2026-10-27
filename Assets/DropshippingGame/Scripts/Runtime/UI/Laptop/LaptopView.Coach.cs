@@ -21,7 +21,7 @@ namespace DropshippingGame.UI
             var sim = Game.Sim;
             int step = sim != null ? sim.TutorialStep : -1;
             bool show = sim != null && sim.StoryStage == "business" && step >= 0 && step < GameData.Tutorial.Length;
-            string sig = show ? step + "|" + GameInput.UsingGamepad : "";
+            string sig = show ? step + "|" + GameInput.UsingGamepad + "|" + Lang.Current : "";
             if (sig == _coachSig && (_coach == null || _coach.parent == _screen)) return;
             _coachSig = sig;
             try
@@ -65,7 +65,7 @@ namespace DropshippingGame.UI
                 if (!show) return;
                 _coach.BringToFront();
                 var t = GameData.Tutorial[step];
-                _coachEyebrow.text = "TUTORIAL · SCHRITT " + (step + 1) + "/" + GameData.Tutorial.Length + " · " + t.Title.ToUpperInvariant();
+                _coachEyebrow.text = "TUTORIAL · SCHRITT " + (step + 1) + "/" + GameData.Tutorial.Length + " · " + Lang.T(t.Title).ToUpperInvariant();
                 bool laptopStep = step == 0 || step == 1 || step == 4;
                 string close = GameInput.UsingGamepad ? "B" : GameInput.KeyboardLabel("back");
                 _coachText.text = laptopStep ? GameData.TutorialText(step) : "Klapp den Laptop zu (" + close + ") – " + GameData.TutorialText(step);
