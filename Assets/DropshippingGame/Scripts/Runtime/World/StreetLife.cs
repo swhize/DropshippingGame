@@ -267,6 +267,8 @@ namespace DropshippingGame
             int exitZone = Chance(0.7f) ? zone : PickZone();
             bool east = Chance(0.75f) ? headingEast : !headingEast;
             float ex = east ? EdgeEast[exitZone] + 2f : EdgeWest[exitZone] - 2f;
+            // Hauptstraße: bis ins dunkle Tunnelinnere laufen (CityEdges), damit das Verschwinden nicht sichtbar ist
+            if (Mathf.Abs(ex) > 150f) ex += Mathf.Sign(ex) * 5f;
             Travel(w, ref zone, ref x, exitZone, ex);
         }
 

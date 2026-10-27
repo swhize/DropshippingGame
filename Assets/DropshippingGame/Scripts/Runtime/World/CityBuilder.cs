@@ -184,13 +184,8 @@ namespace DropshippingGame
             fs.transform.localPosition = new Vector3(0, 0, WorldLots.CityMinZ - 1.5f);
             var fn = Props.Fence(_s, 300f);
             fn.transform.localPosition = new Vector3(0, 0, WorldLots.CityMaxZ + 1.5f);
-            // Umleitungsschilder
-            foreach (float side in new[] { -1f, 1f })
-            {
-                var sign = Props.SignBoard(_signs, "ENDE GELÄNDE\nUmleitung", new Color(0.95f, 0.8f, 0.1f), new Color(0.1f, 0.1f, 0.1f), new Vector2(2.6f, 1f));
-                sign.transform.localPosition = new Vector3(side * (WorldLots.CityMaxX + 0.6f), 1.8f, 8.4f);
-                sign.transform.localRotation = Quaternion.Euler(0, side > 0 ? -90f : 90f, 0);
-            }
+            // Tunnelportale an den Enden der Hauptstraße (Spawn/Despawn von Autos und Passanten unsichtbar)
+            CityEdges.Build(_s, _signs);
         }
 
         // =====================================================================================
