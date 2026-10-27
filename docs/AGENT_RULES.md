@@ -13,3 +13,5 @@
 - Commits: deutsche Nachricht, endet mit
   `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` und `Claude-Session: https://claude.ai/code/session_012JKQQ9oUzF3akk9boUr5S8`. Nicht pushen, wenn man als Sub-Agent arbeitet (der Haupt-Agent führt zusammen).
 - Ziel jetzt: fertiges, professionelles, verkaufbares Spiel. Qualität vor Menge: reparieren, polieren, vereinfachen; keine halbfertigen Features.
+- Arbeit sparen: Wenn es auf GitHub oder anderswo kostenlose, passend lizenzierte Assets, Shader oder Code (CC0/CC-BY/OFL/MIT) gibt, die eine Aufgabe besser lösen als Eigenbau, diese nutzen und in den Credits eintragen.
+- Assets, die nur für privaten/nicht-kommerziellen Gebrauch frei sind, nur nach Absprache und mit Eintrag `"license_class": "personal_only"` in `Resources/credits.json` sowie in `docs/ASSET_LIZENZEN.md` (Budget für spätere Lizenzkäufe: 500 €). Release-Builds sind gesperrt, solange solche Assets enthalten sind.
