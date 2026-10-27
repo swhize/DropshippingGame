@@ -10,7 +10,8 @@
    "url": "https://github.com/rsms/inter/releases/tag/v4.1",
    "files": "Fonts/UI-Regular.ttf, Fonts/UI-Bold.ttf",
    "modifications": "umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_inter.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_inter.txt",
+   "license_class": "free"
   },
   {
    "id": "font_bricolage",
@@ -22,7 +23,8 @@
    "url": "https://github.com/ateliertriay/bricolage",
    "files": "Fonts/Display-Bold.ttf (ExtraBold)",
    "modifications": "umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bricolage.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bricolage.txt",
+   "license_class": "free"
   },
   {
    "id": "font_jetbrains",
@@ -34,7 +36,8 @@
    "url": "https://github.com/JetBrains/JetBrainsMono/releases/tag/v2.304",
    "files": "Fonts/Mono-Regular.ttf, Fonts/Mono-Bold.ttf",
    "modifications": "umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_jetbrains.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_jetbrains.txt",
+   "license_class": "free"
   },
   {
    "id": "font_comicneue",
@@ -46,7 +49,8 @@
    "url": "https://github.com/crozynski/comicneue (via github.com/google/fonts ofl/comicneue)",
    "files": "Fonts/Web-Comic-Regular.ttf, Fonts/Web-Comic-Bold.ttf",
    "modifications": "umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_comicneue.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_comicneue.txt",
+   "license_class": "free"
   },
   {
    "id": "font_fredoka",
@@ -58,7 +62,8 @@
    "url": "https://github.com/hafontia/Fredoka-One (via github.com/google/fonts ofl/fredoka)",
    "files": "Fonts/Web-Round-Regular.ttf (wght 400), Fonts/Web-Round-Bold.ttf (wght 600)",
    "modifications": "statische Instanzen aus der variablen Schrift erzeugt (fontTools instancer), umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_fredoka.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_fredoka.txt",
+   "license_class": "free"
   },
   {
    "id": "font_bangers",
@@ -70,7 +75,8 @@
    "url": "https://github.com/googlefonts/bangers (via github.com/google/fonts ofl/bangers)",
    "files": "Fonts/Web-Comic-Title.ttf",
    "modifications": "umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bangers.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bangers.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_interface",
@@ -82,7 +88,8 @@
    "url": "https://kenney.nl/assets/interface-sounds ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Audio/SFX (click, hover, notify, order, error, bad, phone_*, scanner)",
    "modifications": "normalisiert (Peak -1 dBFS), Vorbis",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_interface.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_interface.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_impact",
@@ -94,7 +101,8 @@
    "url": "https://kenney.nl/assets/impact-sounds ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Audio/SFX (drop, place, plate, pallet, metal_clank, step*)",
    "modifications": "normalisiert, Vorbis",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_impact.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_impact.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_rpg",
@@ -106,7 +114,8 @@
    "url": "https://kenney.nl/assets/rpg-audio ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Audio/SFX (pickup, cash, coin, fold, door*, box_close, stamp, latch, step_tile/asphalt)",
    "modifications": "normalisiert, Vorbis",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_rpg.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_rpg.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_foley",
@@ -118,7 +127,8 @@
    "url": "https://kenney.nl/assets/foley-sounds ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Audio/SFX (whoosh*)",
    "modifications": "normalisiert, Vorbis",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_foley.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_foley.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_casino",
@@ -130,7 +140,8 @@
    "url": "https://kenney.nl/assets/casino-audio ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Audio/SFX (box_open*, coin_2)",
    "modifications": "normalisiert, Vorbis",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_casino.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_casino.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_jingles",
@@ -142,7 +153,8 @@
    "url": "https://kenney.nl/assets/music-jingles ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Audio/SFX (levelup*, jingle_*)",
    "modifications": "normalisiert, Vorbis",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_jingles.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_jingles.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_music_loops",
@@ -154,7 +166,8 @@
    "url": "https://kenney.nl/assets/music-loops ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Audio/Music/diner.ogg (Swinging Pants)",
    "modifications": "-16 LUFS, Vorbis",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_music_loops.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_music_loops.txt",
+   "license_class": "free"
   },
   {
    "id": "tape_rip",
@@ -166,7 +179,8 @@
    "url": "https://freesound.org/s/788639/",
    "files": "Audio/SFX/tape.ogg",
    "modifications": "normalisiert, Vorbis",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/tape_rip.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/tape_rip.txt",
+   "license_class": "free"
   },
   {
    "id": "printer",
@@ -178,7 +192,8 @@
    "url": "https://freesound.org/s/232728/",
    "files": "Audio/SFX/printer.ogg",
    "modifications": "Ausschnitt, normalisiert",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/printer.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/printer.txt",
+   "license_class": "free"
   },
   {
    "id": "typing",
@@ -190,7 +205,8 @@
    "url": "https://freesound.org/s/331656/",
    "files": "Audio/SFX/typing*.ogg",
    "modifications": "3 Ausschnitte à 1.4 s",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/typing.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/typing.txt",
+   "license_class": "free"
   },
   {
    "id": "register",
@@ -202,7 +218,8 @@
    "url": "https://freesound.org/s/209578/",
    "files": "Audio/SFX/register.ogg",
    "modifications": "normalisiert",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/register.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/register.txt",
+   "license_class": "free"
   },
   {
    "id": "amb_street",
@@ -214,7 +231,8 @@
    "url": "https://freesound.org/s/44796/",
    "files": "Audio/Ambience/street.ogg",
    "modifications": "Loop-Schnitt (Blankie), -24 LUFS",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/amb_street.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/amb_street.txt",
+   "license_class": "free"
   },
   {
    "id": "amb_diner",
@@ -226,7 +244,8 @@
    "url": "https://soundbible.com/1664-Restaurant-Ambiance.html",
    "files": "Audio/Ambience/diner.ogg",
    "modifications": "Loop-Schnitt (Blankie), -24 LUFS",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/amb_diner.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/amb_diner.txt",
+   "license_class": "free"
   },
   {
    "id": "amb_warehouse",
@@ -238,7 +257,8 @@
    "url": "https://freesound.org/s/515859/",
    "files": "Audio/Ambience/warehouse.ogg",
    "modifications": "-24 LUFS",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/amb_warehouse.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/amb_warehouse.txt",
+   "license_class": "free"
   },
   {
    "id": "amb_night",
@@ -250,7 +270,8 @@
    "url": "https://soundbible.com/2083-Crickets-Chirping-At-Night.html",
    "files": "Audio/Ambience/night.ogg",
    "modifications": "-24 LUFS",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/amb_night.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/amb_night.txt",
+   "license_class": "free"
   },
   {
    "id": "amb_park",
@@ -262,7 +283,8 @@
    "url": "https://freesound.org/s/156826/",
    "files": "Audio/Ambience/park.ogg",
    "modifications": "-24 LUFS",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/amb_park.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/amb_park.txt",
+   "license_class": "free"
   },
   {
    "id": "holizna_lofi",
@@ -274,7 +296,8 @@
    "url": "https://freemusicarchive.org/music/holiznacc0/",
    "files": "Audio/Music/menu.ogg",
    "modifications": "Loop 120 s (Blankie), -16 LUFS",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/holizna_lofi.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/holizna_lofi.txt",
+   "license_class": "free"
   },
   {
    "id": "holizna_winter",
@@ -286,7 +309,8 @@
    "url": "https://freemusicarchive.org/music/holiznacc0/winter-lofi",
    "files": "Audio/Music/work_1..3.ogg, diner_2.ogg",
    "modifications": "Kanäle zu Stereo, -16 LUFS, Fade-in",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/holizna_winter.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/holizna_winter.txt",
+   "license_class": "free"
   },
   {
    "id": "warm_piano",
@@ -298,7 +322,8 @@
    "url": "https://freesound.org/s/859607/",
    "files": "Audio/Music/evening.ogg",
    "modifications": "-16 LUFS",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/warm_piano.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/warm_piano.txt",
+   "license_class": "free"
   },
   {
    "id": "polyhaven",
@@ -310,7 +335,8 @@
    "url": "https://polyhaven.com/textures",
    "files": "Textures/Surfaces/{asphalt,sidewalk,concrete_floor,shutter}",
    "modifications": "Roughness -> RGBA-Smoothness (halbe Auflösung), PNG->JPG",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/polyhaven.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/polyhaven.txt",
+   "license_class": "free"
   },
   {
    "id": "ambientcg",
@@ -322,7 +348,8 @@
    "url": "https://ambientcg.com",
    "files": "Textures/Surfaces/<übrige>",
    "modifications": "Roughness -> RGBA-Smoothness, flache AO weggelassen",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/ambientcg.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/ambientcg.txt",
+   "license_class": "free"
   },
   {
    "id": "polyhaven_hdri",
@@ -334,7 +361,8 @@
    "url": "https://polyhaven.com/hdris",
    "files": "HDRI/day.hdr, sunset.hdr, night.hdr",
    "modifications": "umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/polyhaven_hdri.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/polyhaven_hdri.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_car_kit",
@@ -346,7 +374,8 @@
    "url": "https://kenney.nl/assets/car-kit ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kenney_car_kit",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_car_kit.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_car_kit.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_mini_characters",
@@ -358,7 +387,8 @@
    "url": "https://kenney.nl/assets/mini-characters ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kenney_mini_characters",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_mini_characters.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_mini_characters.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_factory_kit",
@@ -370,7 +400,8 @@
    "url": "https://kenney.nl/assets/factory-kit ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kenney_factory",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_factory_kit.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_factory_kit.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_mini_market",
@@ -382,7 +413,8 @@
    "url": "https://kenney.nl/assets/mini-market ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kenney_mini_market",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_mini_market.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_mini_market.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_food_kit",
@@ -394,7 +426,8 @@
    "url": "https://kenney.nl/assets/food-kit ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kenney_food",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_food_kit.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_food_kit.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_city_commercial",
@@ -406,7 +439,8 @@
    "url": "https://kenney.nl/assets/city-kit-commercial ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kenney_city_commercial",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_city_commercial.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_city_commercial.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_city_suburban",
@@ -418,7 +452,8 @@
    "url": "https://kenney.nl/assets/city-kit-suburban ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kenney_city_suburban",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_city_suburban.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_city_suburban.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_city_roads",
@@ -430,7 +465,8 @@
    "url": "https://kenney.nl/assets/city-kit-roads ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kenney_city_roads",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_city_roads.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_city_roads.txt",
+   "license_class": "free"
   },
   {
    "id": "kaykit_city_builder",
@@ -442,7 +478,8 @@
    "url": "https://kaylousberg.itch.io/city-builder-bits ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kaykit_city",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kaykit_city_builder.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kaykit_city_builder.txt",
+   "license_class": "free"
   },
   {
    "id": "kaykit_furniture",
@@ -454,7 +491,8 @@
    "url": "https://kaylousberg.itch.io/furniture-bits ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kaykit_furniture",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kaykit_furniture.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kaykit_furniture.txt",
+   "license_class": "free"
   },
   {
    "id": "kaykit_restaurant",
@@ -466,7 +504,8 @@
    "url": "https://kaylousberg.itch.io/restaurant-bits ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kaykit_restaurant",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kaykit_restaurant.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kaykit_restaurant.txt",
+   "license_class": "free"
   },
   {
    "id": "kaykit_prototype",
@@ -478,7 +517,8 @@
    "url": "https://kaylousberg.itch.io/prototype-bits ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)",
    "files": "Models/kaykit_prototype",
    "modifications": "keine",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kaykit_prototype.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kaykit_prototype.txt",
+   "license_class": "free"
   },
   {
    "id": "font_bebasneue",
@@ -490,7 +530,8 @@
    "licenseUrl": "https://openfontlicense.org/",
    "files": "Fonts/Sign-Condensed.ttf",
    "modifications": "umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bebasneue.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bebasneue.txt",
+   "license_class": "free"
   },
   {
    "id": "font_pacifico",
@@ -502,7 +543,8 @@
    "licenseUrl": "https://openfontlicense.org/",
    "files": "Fonts/Sign-Script.ttf",
    "modifications": "umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_pacifico.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_pacifico.txt",
+   "license_class": "free"
   },
   {
    "id": "font_sairastencil",
@@ -514,7 +556,8 @@
    "licenseUrl": "https://openfontlicense.org/",
    "files": "Fonts/Sign-Stencil.ttf",
    "modifications": "umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_sairastencil.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_sairastencil.txt",
+   "license_class": "free"
   },
   {
    "id": "font_bungee",
@@ -526,7 +569,8 @@
    "licenseUrl": "https://openfontlicense.org/",
    "files": "Fonts/Sign-Retro.ttf",
    "modifications": "umbenannt",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bungee.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/font_bungee.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_city_industrial",
@@ -538,7 +582,8 @@
    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
    "files": "Models/kenney_city_industrial",
    "modifications": "GLB -> FBX (Blender 4.2)",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_city_industrial.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_city_industrial.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_mini_arcade",
@@ -550,7 +595,8 @@
    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
    "files": "Models/kenney_mini_arcade",
    "modifications": "GLB -> FBX (Blender 4.2)",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_mini_arcade.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_mini_arcade.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_furniture_kit",
@@ -562,7 +608,8 @@
    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
    "files": "Models/kenney_furniture_kit",
    "modifications": "GLB -> FBX (Blender 4.2)",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_furniture_kit.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_furniture_kit.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_cube_pets",
@@ -574,7 +621,8 @@
    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
    "files": "Models/kenney_cube_pets",
    "modifications": "GLB -> FBX (Blender 4.2), Animationen in Armature gebacken",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_cube_pets.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_cube_pets.txt",
+   "license_class": "free"
   },
   {
    "id": "kenney_modular_buildings",
@@ -586,7 +634,48 @@
    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
    "files": "Models/kenney_modular_buildings",
    "modifications": "GLB -> FBX (Blender 4.2)",
-   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_modular_buildings.txt"
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/kenney_modular_buildings.txt",
+   "license_class": "free"
+  },
+  {
+   "id": "tiny_treats",
+   "category": "model",
+   "name": "Tiny Treats - Collection 1 (1.0): Homely House, Playful Bedroom, Lovely Living Room, Charming Kitchen, Bakery Interior, Bakery Building, Pretty Park, House Plants, Pleasant Picnic, Bubbly Bathroom, Fun Playground",
+   "author": "Isa Lousberg (isalousberg.com)",
+   "url": "https://www.isalousberg.com ; https://tinytreats.itch.io ; https://github.com/series-ai/jam-ready-assets (Mirror tiny-treats/, Dateien via GCS-Mirror run-asset-library)",
+   "license": "CC0 1.0",
+   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "files": "Models/tiny_treats (42 Modelle, Textures/tt_main.png, Textures/tt_outdoor.png)",
+   "modifications": "glTF -> FBX (Blender 5.2 bpy), Paletten-Texturen umbenannt",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/tiny_treats.txt",
+   "license_class": "free"
+  },
+  {
+   "id": "rgsdev_vehicles",
+   "category": "model",
+   "name": "Free Low Poly Vehicles Pack (Bus)",
+   "author": "Raphael Gonçalves (Rgsdev)",
+   "url": "https://rgsdev.itch.io/free-low-poly-vehicles-pack ; Datei aus GitHub-Spiegel github.com/P3ntest/autobahn-simulator (assets/Free Low Poly Vehicles Pack by Rgsdev/Bus/Bus.fbx)",
+   "license": "CC0 1.0",
+   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "files": "Models/rgsdev_vehicles/bus.fbx",
+   "modifications": "FBX -> FBX neu exportiert (Blender 5.2 bpy), keine Geometrieänderung",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/rgsdev_vehicles.txt",
+   "license_class": "free"
+  },
+  {
+   "id": "poki3d_vespa",
+   "category": "model",
+   "name": "Low Poly Vespa",
+   "author": "poki3d",
+   "url": "https://poki3d.itch.io/low-poly-vespa ; Datei aus GitHub-Spiegel github.com/Upstander1234/proximate (public/models/vehicles/scooter.glb)",
+   "license": "CC0 1.0",
+   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "files": "Models/cc0_vespa/scooter_vespa.fbx",
+   "modifications": "GLB -> FBX (Blender 5.2 bpy)",
+   "licenseFile": "Assets/DropshippingGame/ThirdParty/Licenses/poki3d_vespa.txt",
+   "license_class": "free",
+   "verify": "Lizenzangabe (CC0) stammt aus der Seite des Autors laut Spiegel-README; Originalseite war aus der Build-Umgebung nicht erreichbar - vor Release prüfen."
   }
  ]
 }

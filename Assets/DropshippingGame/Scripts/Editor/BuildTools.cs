@@ -156,6 +156,9 @@ namespace DropshippingGame.EditorTools
                 return null;
             }
 
+            // Lizenzen: Release/Demo gesperrt, solange "personal_only"-Assets enthalten sind (docs/ASSET_LIZENZEN.md)
+            if (!LicenseGuard.AllowBuild(config == Config.Development, true, config.ToString())) return null;
+
             // Projekt sicher eingerichtet (Szene, Pipeline, Player-Einstellungen, Icon)
             if (!File.Exists(ScenePath)) ProjectSetup.Run(false);
             ProjectSetup.ApplyPlayerSettings();

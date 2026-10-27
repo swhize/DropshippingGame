@@ -11455,6 +11455,996 @@
     "street"
    ],
    "desc": "Alias von street.bench"
+  },
+  {
+   "id": "street.mailbox",
+   "category": "street",
+   "path": "Models/tiny_treats/mailbox",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_outdoor",
+   "size": [
+    0.5527,
+    2.1,
+    1.2533
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "street",
+    "v3.2"
+   ],
+   "meters": 1.25,
+   "fitAxis": "y",
+   "desc": "Briefkasten am Pfosten"
+  },
+  {
+   "id": "logistics.parcel",
+   "category": "logistics",
+   "path": "Models/tiny_treats/package",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_outdoor",
+   "size": [
+    1.0,
+    0.5,
+    0.8
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "logistics",
+    "v3.2"
+   ],
+   "meters": 0.4,
+   "fitAxis": "max",
+   "desc": "Paket (verschnürt)"
+  },
+  {
+   "id": "decor.letter",
+   "category": "decor",
+   "path": "Models/tiny_treats/letter",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_outdoor",
+   "size": [
+    0.5,
+    0.35,
+    0.15
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.22,
+   "fitAxis": "max",
+   "desc": "Brief"
+  },
+  {
+   "id": "street.fountain",
+   "category": "street",
+   "path": "Models/tiny_treats/fountain",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_outdoor",
+   "size": [
+    4.0,
+    1.6,
+    4.0
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "street",
+    "v3.2"
+   ],
+   "meters": 3.0,
+   "fitAxis": "max",
+   "desc": "Brunnen"
+  },
+  {
+   "id": "street.bench_tt",
+   "category": "street",
+   "path": "Models/tiny_treats/bench",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_outdoor",
+   "size": [
+    2.0,
+    1.4059,
+    1.3166
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "street",
+    "v3.2"
+   ],
+   "meters": 1.8,
+   "fitAxis": "max",
+   "desc": "Parkbank (Tiny Treats)"
+  },
+  {
+   "id": "electronics.computer_retro",
+   "category": "electronics",
+   "path": "Models/tiny_treats/computer",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.0,
+    1.15,
+    0.8
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "electronics",
+    "v3.2"
+   ],
+   "meters": 0.45,
+   "fitAxis": "max",
+   "desc": "Retro-Computer (Röhre)"
+  },
+  {
+   "id": "decor.alarm_clock",
+   "category": "decor",
+   "path": "Models/tiny_treats/alarm_clock",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.65,
+    0.6,
+    0.35
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.15,
+   "fitAxis": "max",
+   "desc": "Wecker"
+  },
+  {
+   "id": "decor.piggybank",
+   "category": "decor",
+   "path": "Models/tiny_treats/piggybank",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.6,
+    0.6,
+    0.8
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.25,
+   "fitAxis": "max",
+   "desc": "Sparschwein"
+  },
+  {
+   "id": "decor.aquarium",
+   "category": "decor",
+   "path": "Models/tiny_treats/aquarium",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    2.0,
+    1.02,
+    0.9
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.8,
+   "fitAxis": "max",
+   "desc": "Aquarium"
+  },
+  {
+   "id": "decor.calendar",
+   "category": "decor",
+   "path": "Models/tiny_treats/calendar",
+   "forwardRotY": 0,
+   "anchor": "wall",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.0,
+    0.8204,
+    0.216
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.4,
+   "fitAxis": "max",
+   "desc": "Wandkalender"
+  },
+  {
+   "id": "decor.clock_wall",
+   "category": "decor",
+   "path": "Models/tiny_treats/clock_wall_A",
+   "forwardRotY": 0,
+   "anchor": "wall",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.0125,
+    1.0125,
+    0.225
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.35,
+   "fitAxis": "max",
+   "desc": "Wanduhr"
+  },
+  {
+   "id": "interior.radiator",
+   "category": "interior",
+   "path": "Models/tiny_treats/radiator_A",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.9535,
+    1.4239,
+    0.2784
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "interior",
+    "v3.2"
+   ],
+   "meters": 0.9,
+   "fitAxis": "max",
+   "desc": "Heizkörper"
+  },
+  {
+   "id": "electronics.record_player",
+   "category": "electronics",
+   "path": "Models/tiny_treats/record_player_red",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.17,
+    0.4217,
+    1.04
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "electronics",
+    "v3.2"
+   ],
+   "meters": 0.45,
+   "fitAxis": "max",
+   "desc": "Plattenspieler"
+  },
+  {
+   "id": "electronics.radio_retro",
+   "category": "electronics",
+   "path": "Models/tiny_treats/radio_red",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.936,
+    0.6435,
+    0.5031
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "electronics",
+    "v3.2"
+   ],
+   "meters": 0.35,
+   "fitAxis": "max",
+   "desc": "Retro-Radio"
+  },
+  {
+   "id": "electronics.tv_retro",
+   "category": "electronics",
+   "path": "Models/tiny_treats/tv_C_red",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.495,
+    1.7431,
+    1.0144
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "electronics",
+    "v3.2"
+   ],
+   "meters": 0.6,
+   "fitAxis": "max",
+   "desc": "Retro-Fernseher"
+  },
+  {
+   "id": "logistics.box_tt_a",
+   "category": "logistics",
+   "path": "Models/tiny_treats/box_A_brown",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.4,
+    0.25,
+    0.5
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "logistics",
+    "v3.2"
+   ],
+   "meters": 0.5,
+   "fitAxis": "max",
+   "desc": "Pappkarton"
+  },
+  {
+   "id": "logistics.box_tt_b",
+   "category": "logistics",
+   "path": "Models/tiny_treats/box_B_brown",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.5,
+    0.3,
+    0.6
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "logistics",
+    "v3.2"
+   ],
+   "meters": 0.45,
+   "fitAxis": "max",
+   "desc": "Pappkarton flach"
+  },
+  {
+   "id": "electronics.kettle",
+   "category": "electronics",
+   "path": "Models/tiny_treats/kettle",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.8126,
+    0.5952,
+    0.6
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "electronics",
+    "v3.2"
+   ],
+   "meters": 0.25,
+   "fitAxis": "max",
+   "desc": "Wasserkocher"
+  },
+  {
+   "id": "electronics.toaster_retro",
+   "category": "electronics",
+   "path": "Models/tiny_treats/toaster",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.9161,
+    0.6,
+    0.5
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "electronics",
+    "v3.2"
+   ],
+   "meters": 0.3,
+   "fitAxis": "max",
+   "desc": "Toaster (retro)"
+  },
+  {
+   "id": "shop.scale",
+   "category": "shop",
+   "path": "Models/tiny_treats/scale",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.6,
+    0.8375,
+    0.6763
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "shop",
+    "v3.2"
+   ],
+   "meters": 0.35,
+   "fitAxis": "max",
+   "desc": "Waage (Paketwaage)"
+  },
+  {
+   "id": "logistics.sack",
+   "category": "logistics",
+   "path": "Models/tiny_treats/flour_sack_closed",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.5338,
+    0.5485,
+    0.3359
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "logistics",
+    "v3.2"
+   ],
+   "meters": 0.6,
+   "fitAxis": "max",
+   "desc": "Sack"
+  },
+  {
+   "id": "shop.price_card",
+   "category": "shop",
+   "path": "Models/tiny_treats/pricing_card",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.2473,
+    0.2331,
+    0.2916
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "shop",
+    "v3.2"
+   ],
+   "meters": 0.12,
+   "fitAxis": "max",
+   "desc": "Preisschild"
+  },
+  {
+   "id": "food.coffee_to_go",
+   "category": "food",
+   "path": "Models/tiny_treats/coffee_cup_takeaway",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.3419,
+    0.41,
+    0.3419
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "food",
+    "v3.2"
+   ],
+   "meters": 0.14,
+   "fitAxis": "max",
+   "desc": "Kaffee to go"
+  },
+  {
+   "id": "shop.register_retro",
+   "category": "shop",
+   "path": "Models/tiny_treats/cash_register",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.9498,
+    1.2046,
+    0.8694
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "shop",
+    "v3.2"
+   ],
+   "meters": 0.45,
+   "fitAxis": "max",
+   "desc": "Registrierkasse (retro)"
+  },
+  {
+   "id": "logistics.carton",
+   "category": "logistics",
+   "path": "Models/tiny_treats/carton_box",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.0,
+    0.5,
+    0.8
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "logistics",
+    "v3.2"
+   ],
+   "meters": 0.5,
+   "fitAxis": "max",
+   "desc": "Karton offen"
+  },
+  {
+   "id": "street.newspaper_stack",
+   "category": "street",
+   "path": "Models/tiny_treats/newspaper_stacked",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.0,
+    0.34,
+    0.8
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "street",
+    "v3.2"
+   ],
+   "meters": 0.4,
+   "fitAxis": "max",
+   "desc": "Zeitungsstapel"
+  },
+  {
+   "id": "shop.open_sign",
+   "category": "shop",
+   "path": "Models/tiny_treats/open_close_sign",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.6,
+    0.5306,
+    0.11
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "shop",
+    "v3.2"
+   ],
+   "meters": 0.45,
+   "fitAxis": "max",
+   "desc": "Offen/Geschlossen-Schild"
+  },
+  {
+   "id": "street.sign_ground",
+   "category": "street",
+   "path": "Models/tiny_treats/sign_ground",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.0,
+    1.4924,
+    1.3489
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "street",
+    "v3.2"
+   ],
+   "meters": 1.0,
+   "fitAxis": "max",
+   "desc": "Kundenstopper (A-Schild)"
+  },
+  {
+   "id": "street.trash_can",
+   "category": "street",
+   "path": "Models/tiny_treats/trash_can",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.0524,
+    1.4903,
+    1.0524
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "street",
+    "v3.2"
+   ],
+   "meters": 1.0,
+   "fitAxis": "y",
+   "desc": "Mülleimer (Straße)"
+  },
+  {
+   "id": "decor.monstera_large",
+   "category": "decor",
+   "path": "Models/tiny_treats/monstera_plant_large_potted",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    2.5924,
+    3.6802,
+    2.7902
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 1.5,
+   "fitAxis": "y",
+   "desc": "Monstera groß"
+  },
+  {
+   "id": "decor.monstera",
+   "category": "decor",
+   "path": "Models/tiny_treats/monstera_plant_medium_potted",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    2.0235,
+    2.0384,
+    2.2238
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 1.0,
+   "fitAxis": "y",
+   "desc": "Monstera"
+  },
+  {
+   "id": "decor.pothos",
+   "category": "decor",
+   "path": "Models/tiny_treats/pothos_plant_medium_potted",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.623,
+    2.054,
+    1.3696
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.6,
+   "fitAxis": "max",
+   "desc": "Efeutute"
+  },
+  {
+   "id": "decor.sansevieria",
+   "category": "decor",
+   "path": "Models/tiny_treats/sansevieria_plant_large_potted",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.5,
+    3.3638,
+    1.7118
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.9,
+   "fitAxis": "y",
+   "desc": "Bogenhanf"
+  },
+  {
+   "id": "decor.yucca",
+   "category": "decor",
+   "path": "Models/tiny_treats/yucca_plant_large_potted",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    2.0304,
+    2.9973,
+    1.71
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 1.6,
+   "fitAxis": "y",
+   "desc": "Yucca-Palme"
+  },
+  {
+   "id": "decor.zzplant",
+   "category": "decor",
+   "path": "Models/tiny_treats/zzplant_plant_medium_potted",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.1766,
+    1.9843,
+    1.0028
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.7,
+   "fitAxis": "y",
+   "desc": "Zamioculcas"
+  },
+  {
+   "id": "decor.succulent",
+   "category": "decor",
+   "path": "Models/tiny_treats/succulent_plant_pot_small",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.9904,
+    0.5025,
+    0.9904
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.2,
+   "fitAxis": "max",
+   "desc": "Sukkulente"
+  },
+  {
+   "id": "decor.watering_can",
+   "category": "decor",
+   "path": "Models/tiny_treats/watering_can_A",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.9,
+    0.75,
+    0.6
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.35,
+   "fitAxis": "max",
+   "desc": "Gießkanne"
+  },
+  {
+   "id": "pet.bowl",
+   "category": "pet",
+   "path": "Models/tiny_treats/bowl",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.4,
+    0.2058,
+    0.4
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "pet",
+    "v3.2"
+   ],
+   "meters": 0.22,
+   "fitAxis": "max",
+   "desc": "Napf"
+  },
+  {
+   "id": "logistics.cooler",
+   "category": "logistics",
+   "path": "Models/tiny_treats/cooler",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    1.6301,
+    0.9041,
+    1.0771
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "logistics",
+    "v3.2"
+   ],
+   "meters": 0.55,
+   "fitAxis": "max",
+   "desc": "Kühlbox"
+  },
+  {
+   "id": "decor.rubber_duck",
+   "category": "decor",
+   "path": "Models/tiny_treats/ducky",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.2983,
+    0.403,
+    0.4209
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.12,
+   "fitAxis": "max",
+   "desc": "Quietscheente"
+  },
+  {
+   "id": "decor.toilet_roll_stack",
+   "category": "decor",
+   "path": "Models/tiny_treats/toilet_roll_stack",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    0.6,
+    0.6,
+    0.3
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "decor",
+    "v3.2"
+   ],
+   "meters": 0.4,
+   "fitAxis": "max",
+   "desc": "Klopapier-Vorrat"
+  },
+  {
+   "id": "street.picnic_table",
+   "category": "street",
+   "path": "Models/tiny_treats/picnic_table",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "texture": "Models/tiny_treats/Textures/tt_main",
+   "size": [
+    2.0,
+    1.0,
+    2.0
+   ],
+   "credit": "tiny_treats",
+   "tags": [
+    "tiny_treats",
+    "street",
+    "v3.2"
+   ],
+   "meters": 2.0,
+   "fitAxis": "max",
+   "desc": "Picknicktisch"
+  },
+  {
+   "id": "vehicle.moped",
+   "category": "vehicle",
+   "path": "Models/cc0_vespa/scooter_vespa",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "size": [
+    0.8972,
+    1.2716,
+    1.7791
+   ],
+   "credit": "poki3d_vespa",
+   "tags": [
+    "poki3d_vespa",
+    "vehicle",
+    "v3.2"
+   ],
+   "meters": 1.8,
+   "fitAxis": "max",
+   "desc": "Motorroller/Moped (Vespa-Stil)",
+   "smoothness": 0.35
+  },
+  {
+   "id": "vehicle.scooter",
+   "category": "vehicle",
+   "path": "Models/cc0_vespa/scooter_vespa",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "size": [
+    0.8972,
+    1.2716,
+    1.7791
+   ],
+   "credit": "poki3d_vespa",
+   "tags": [
+    "poki3d_vespa",
+    "vehicle",
+    "v3.2"
+   ],
+   "meters": 1.8,
+   "fitAxis": "max",
+   "desc": "Alias von vehicle.moped",
+   "smoothness": 0.35
+  },
+  {
+   "id": "vehicle.bus",
+   "category": "vehicle",
+   "path": "Models/rgsdev_vehicles/bus",
+   "forwardRotY": 0,
+   "anchor": "bottom",
+   "size": [
+    3.8138,
+    4.2741,
+    13.6985
+   ],
+   "credit": "rgsdev_vehicles",
+   "tags": [
+    "rgsdev_vehicles",
+    "vehicle",
+    "v3.2"
+   ],
+   "meters": 11.0,
+   "fitAxis": "max",
+   "desc": "Linienbus",
+   "smoothness": 0.35
   }
  ],
  "surfaces": [

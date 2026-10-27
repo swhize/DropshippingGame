@@ -1,0 +1,19 @@
+Low Poly Vespa
+Autor: poki3d
+Quelle: https://poki3d.itch.io/low-poly-vespa
+Datei: GitHub-Spiegel github.com/Upstander1234/proximate, public/models/vehicles/scooter.glb
+Lizenz: CC0 1.0 (Public Domain Dedication) - https://creativecommons.org/publicdomain/zero/1.0/
+Dateien: Models/cc0_vespa/scooter_vespa.fbx (Keys vehicle.moped, vehicle.scooter)
+Änderungen: GLB -> FBX konvertiert (Blender 5.2 bpy), keine Geometrieänderung
+
+Herkunftsnachweis: Die README des Spiegels (public/models/vehicles/README.md) zitiert die Seite des
+Autors: "Feel free to use it for anything (CC0)". Die itch.io-Seite selbst war aus der
+Build-Umgebung nicht erreichbar. VOR EINEM RELEASE die Lizenzangabe direkt auf
+https://poki3d.itch.io/low-poly-vespa prüfen (Screenshot in docs/ ablegen). Falls die Seite
+etwas anderes sagt: Eintrag in Resources/credits.json auf "license_class": "personal_only"
+setzen bzw. Modell ersetzen - der Release-Build sperrt dann automatisch.
+
+CC0 1.0 Universal (Kurzfassung): Der Urheber hat auf alle Urheber- und verwandten Schutzrechte
+verzichtet, soweit gesetzlich möglich. Das Werk darf ohne Erlaubnis kopiert, verändert,
+verbreitet und - auch kommerziell - genutzt werden. Volltext:
+https://creativecommons.org/publicdomain/zero/1.0/legalcode

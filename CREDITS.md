@@ -1,6 +1,6 @@
 # Credits / Quellen
 
-Alle Drittanbieter-Assets in diesem Projekt stehen unter freien Lizenzen (CC0/Public Domain, CC BY 3.0, SIL OFL 1.1). Pro Pack/Autor liegt ein Lizenztext in `Assets/DropshippingGame/ThirdParty/Licenses/`, eine maschinenlesbare Liste in `Assets/DropshippingGame/Resources/credits.json` (u. a. für den Credits-Bildschirm im Spiel).
+Alle Drittanbieter-Assets in diesem Projekt stehen unter freien Lizenzen (CC0/Public Domain, CC BY 3.0, SIL OFL 1.1). Pro Pack/Autor liegt ein Lizenztext in `Assets/DropshippingGame/ThirdParty/Licenses/`, eine maschinenlesbare Liste in `Assets/DropshippingGame/Resources/credits.json` (u. a. für den Credits-Bildschirm im Spiel). Jeder Eintrag dort trägt `"license_class": "free"` (kommerziell erlaubt) oder `"personal_only"` (nur privat frei, Lizenz noch nicht gekauft → Release-Build gesperrt); Übersicht, Preise und Kaufliste: `docs/ASSET_LIZENZEN.md`.
 
 **Pflicht-Namensnennung (CC BY 3.0):** „NYC_street leve02l.wav“ von gezortenplotz (freesound.org/s/44796), CC BY 3.0, geschnitten und lautheitsnormalisiert.
 
@@ -62,5 +62,15 @@ Alle Drittanbieter-Assets in diesem Projekt stehen unter freien Lizenzen (CC0/Pu
 | kenney_furniture_kit | Furniture Kit | Kenney | https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/kenney_furniture_kit` | GLB -> FBX (Blender 4.2) |
 | kenney_cube_pets | Cube Pets 2.0 | Kenney | https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/kenney_cube_pets` | GLB -> FBX (Blender 4.2), Animationen in Armature gebacken |
 | kenney_modular_buildings | Modular Buildings | Kenney | https://kenney.nl ; https://github.com/series-ai/jam-ready-assets (Mirror; Dateien via GCS-Mirror run-asset-library, GLB -> FBX konvertiert) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/kenney_modular_buildings` | GLB -> FBX (Blender 4.2) |
+
+**v3.2-Ergänzungen** (alle `license_class: free`, Details und Budget-Übersicht in `docs/ASSET_LIZENZEN.md`):
+
+| ID | Asset / Pack | Autor | Quelle | Lizenz | Dateien | Änderungen |
+|---|---|---|---|---|---|---|
+| tiny_treats | Tiny Treats – Collection 1 (1.0), 42 Modelle aus 11 Sets | Isa Lousberg (isalousberg.com) | https://tinytreats.itch.io ; https://github.com/series-ai/jam-ready-assets (Mirror `tiny-treats/`, Dateien via GCS-Mirror run-asset-library) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/tiny_treats` | glTF -> FBX (Blender 5.2 bpy), Paletten-Texturen umbenannt (`tt_main`, `tt_outdoor`) |
+| rgsdev_vehicles | Free Low Poly Vehicles Pack (nur Bus) | Raphael Gonçalves (Rgsdev) | https://rgsdev.itch.io/free-low-poly-vehicles-pack ; Datei aus github.com/P3ntest/autobahn-simulator | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `Models/rgsdev_vehicles/bus.fbx` | neu als FBX exportiert (Blender 5.2) |
+| poki3d_vespa | Low Poly Vespa | poki3d | https://poki3d.itch.io/low-poly-vespa ; Datei aus github.com/Upstander1234/proximate | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) – **vor Release auf der Originalseite bestätigen** (Seite war nicht erreichbar) | `Models/cc0_vespa/scooter_vespa.fbx` | GLB -> FBX (Blender 5.2) |
+
+Freiwillige Nennung (nicht Pflicht, CC0): „3D-Modelle u. a. von Kenney, Kay Lousberg (KayKit) und Isa Lousberg (Tiny Treats)“.
 
 Spielcode und eigene Inhalte: siehe README. Blankie (codybrom/Blankie, MIT) diente nur als Quelle der geschnittenen CC0/PD/CC-BY-Aufnahmen; kein Code übernommen.

@@ -1,0 +1,40 @@
+Tiny Treats - Collection 1 (1.0)
+Autor: Isa Lousberg (www.isalousberg.com)
+Quelle: https://tinytreats.itch.io ; Spiegel series-ai/jam-ready-assets (tiny-treats/, GCS-Mirror run-asset-library)
+Lizenz: CC0 1.0
+Dateien: Models/tiny_treats (42 Modelle aus 11 Sets), Textures/tt_main.png, Textures/tt_outdoor.png
+Änderungen: glTF -> FBX konvertiert (Blender 5.2 bpy), Texturen umbenannt
+
+--- Original-Lizenzdatei des Packs ---
+
+	Tiny Treats - Collection 1 (1.0)
+
+	Created/distributed by Isa Lousberg (www.isalousberg.com)
+	Creation date: 28/10/2025 12:00
+
+			------------------------------
+
+	License: (Creative Commons Zero, CC0)
+	http://creativecommons.org/publicdomain/zero/1.0/
+
+	This content is free to use in personal, educational and commercial projects.
+
+	Support me by crediting Isa Lousberg, www.isalousberg.com (this is not mandatory)
+
+			------------------------------
+
+	This asset set is all thanks to the wonderful people who support Tiny Treats on Patreon and those who buy the Source upgrade or paid packs on itch.io and Patreon.
+
+	And a big, special thank you to my Super Fans:
+
+	- Neil Blakey-Milner
+	- Martyn Rushton
+	- AngyZinn
+	- Mimi B
+
+			------------------------------
+
+	Patreon:  http://patreon.com/tinytreats
+
+	Follow on Twitter for updates:
+	http://twitter.com/IsaLousberg

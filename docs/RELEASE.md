@@ -260,6 +260,10 @@ Krypto-Millionär (Spielgeld), Pitch Day gewonnen, 100.000 € Umsatz, Pleite ge
   liest `credits.json` (Quelle/Lizenz verlinkt). Pflicht-Nennung CC BY 3.0 (Straßen-Ambiente) ist enthalten.
   Vor Release: Stichprobe der Originalseiten (siehe Hinweis in CREDITS.md), Steamworks.NET ergänzen, wenn genutzt.
   Eigene Schrift-Nutzung im Logo (Bricolage Grotesque, Inter – OFL) ist erlaubt.
+- **Lizenz-Sperre:** Jeder Credits-Eintrag hat `"license_class": "free"` oder `"personal_only"`. Release- und
+  Demo-Builds brechen mit Dialog/Konsolenfehler ab, solange ein `personal_only`-Asset enthalten ist
+  (`Editor/LicenseGuard.cs`, Regeln in `Core/AssetLicenses.cs`, Menü Dropshipping › Build › Lizenzen prüfen).
+  Kaufliste und Budget: `docs/ASSET_LIZENZEN.md`. Offene Prüfpunkte dort (z. B. Low Poly Vespa) vor Release abhaken.
 - **Engine:** Unity-Lizenz prüfen (Personal bis 200.000 $ Umsatz/Jahr). Ob der „Made with Unity“-Splash
   abschaltbar ist, hängt von Lizenz und Version ab – im Editor unter Player › Splash Image nachsehen.
   Die Build-Werkzeuge lassen die Unity-Logo-Einstellung unverändert.
