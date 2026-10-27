@@ -133,10 +133,19 @@ namespace DropshippingGame.Core
         }
     }
 
-    /// <summary>Deutsche Formatierung für Geld, Uhrzeit, Prozent, Bewertung.</summary>
+    /// <summary>
+    /// Formatierung für Geld, Uhrzeit, Prozent, Bewertung. Deutsch: "1.234 €", "4,5"; bei Englisch
+    /// (<see cref="Lang.English"/>): "1,234 €", "4.5" (Währung bleibt €, Uhrzeit 24 h).
+    /// </summary>
     public static class Fmt
     {
         private static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
+
+        /// <summary>Tausender-Trenner der aktuellen Sprache.</summary>
+        private static char Group => Lang.English ? ',' : '.';
+
+        /// <summary>Invariante Zahl ("4.5") ins Dezimalformat der aktuellen Sprache.</summary>
+        private static string Local(string invariant) => Lang.English ? invariant : invariant.Replace('.', ',');
 
         public static string Money(int v)
         {
@@ -148,15 +157,15 @@ namespace DropshippingGame.Core
             {
                 sb.Insert(0, s[i]);
                 count++;
-                if (count % 3 == 0 && i > 0) sb.Insert(0, '.');
+                if (count % 3 == 0 && i > 0) sb.Insert(0, Group);
             }
             return (neg ? "−" : "") + sb + " €";
         }
 
         public static string Money(float v) => Money(Mathx.RoundToInt(v));
         public static string SignedMoney(int v) => (v > 0 ? "+" : "") + Money(v);
-        public static string Eur(float v) => v.ToString("0.00", Inv).Replace('.', ',') + " €";
-        public static string Dec(float v, int decimals = 1) => v.ToString("F" + decimals, Inv).Replace('.', ',');
+        public static string Eur(float v) => Local(v.ToString("0.00", Inv)) + " €";
+        public static string Dec(float v, int decimals = 1) => Local(v.ToString("F" + decimals, Inv));
         public static string Rating(float r) => Dec(r, 1);
 
         public static string Stars(float r)
@@ -173,7 +182,7 @@ namespace DropshippingGame.Core
             return ((m / 60) % 24).ToString("00", Inv) + ":" + (m % 60).ToString("00", Inv);
         }
 
-        public static string Pct(float v) => (v >= 0 ? "+" : "−") + Math.Abs(v * 100f).ToString("0.0", Inv).Replace('.', ',') + " %";
+        public static string Pct(float v) => (v >= 0 ? "+" : "−") + Local(Math.Abs(v * 100f).ToString("0.0", Inv)) + " %";
 
         /// <summary>Spieldauer in Minuten: "45 min" oder "1:05 h".</summary>
         public static string Duration(float minutes)
@@ -185,8 +194,8 @@ namespace DropshippingGame.Core
 
         public static string Thousands(int v)
         {
-            if (v >= 1000000) return Dec(v / 1000000f, 1) + " Mio.";
-            if (v >= 1000) return (v / 1000) + " Tsd.";
+            if (v >= 1000000) return Dec(v / 1000000f, 1) + (Lang.English ? "M" : " Mio.");
+            if (v >= 1000) return (v / 1000) + (Lang.English ? "k" : " Tsd.");
             return v.ToString(Inv);
         }
     }
