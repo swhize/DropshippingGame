@@ -15,7 +15,9 @@
 
 ## Stil
 - Englisch locker, frech, satirisch – wie das deutsche Original (Hustle-Kultur-Satire). Keine wörtliche Übersetzung von Witzen: lieber einen gleichwertigen englischen Witz.
-- Parodie-Marken bleiben (AllesExpress → **AllesExpress** bleibt als „deutsche Marke“? Nein: international verständlich machen): AllesExpress → AllExpress? → **AliBiBi**? – Entscheidung: Marken mit deutschem Wortwitz bekommen englische Parodienamen, sonst bleiben sie:
-  - AllesExpress → **EverythingXpress**, Mein Shop → **My Shop**, iWolke → **iCloudy**, PaketBlitz → **ParcelBolt**, TradingViech → **TradingBeast**, Revoluut (bleibt), TikTak (bleibt), Fakebook (bleibt), Gugel (bleibt), Kramkiste → **JunkBox**, MediaMarkd → **MediaMarkt-parody: „MegaMarked“**, Fressnix → **Chewnothing**, Kalles Imbiss → **Kalle's Diner**, Stadtblatt → **City Gazette**, Kiezbank → **Block Bank**, Spedition/Firmen nach Gefühl.
+- Parodie-Marken: Namen mit deutschem Wortwitz bekommen einen englischen Parodienamen, die übrigen bleiben:
+  - AllesExpress → **EverythingXpress**, Mein Shop → **My Shop**, iWolke → **iCloudy**, PaketBlitz → **ParcelBolt**, TradingViech → **TradingBeast**, Kramkiste → **JunkBox**, MediaMarkd → **MegaMarked**, Fressnix → **Chewnothing**, Kalles Imbiss → **Kalle's Diner**, Stadtblatt → **City Gazette**, Kiezbank → **Block Bank**.
+  - Bleiben: Revoluut, TikTak, Fakebook, Gugel, shopifly, Hustle-Begriffe.
+  - Firmen-, Personen- und Ladennamen nach Gefühl (deutsche Personennamen dürfen bleiben – das Spiel spielt in Deutschland).
 - Währung bleibt €. Zahlenformat in Englisch: `1,234.50 €` (Fmt passt das an).
 - Wochentage, Uhrzeit: 24-h-Format bleibt.
