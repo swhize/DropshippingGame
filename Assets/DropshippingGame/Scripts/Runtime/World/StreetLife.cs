@@ -217,6 +217,7 @@ namespace DropshippingGame
             int zone = PickZone();
             bool fromWest = Chance(0.5f);
             float x = anywhere ? R(EdgeWest[zone] + 8f, EdgeEast[zone] - 8f) : (fromWest ? EdgeWest[zone] : EdgeEast[zone]);
+            if (!anywhere && Mathf.Abs(x) > 150f) x += Mathf.Sign(x) * 5f; // aus dem Tunnel kommen (CityEdges)
             Vector3 start = new Vector3(x, 0, R(LaneMin[zone], LaneMax[zone]));
             if (NpcNav.Blocked(start)) start.z = zone == South ? -4.6f : (LaneMin[zone] + LaneMax[zone]) * 0.5f;
             go.transform.localPosition = start;
