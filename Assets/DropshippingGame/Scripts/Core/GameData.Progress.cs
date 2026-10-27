@@ -123,7 +123,7 @@ namespace DropshippingGame.Core
                 Desc = "Die Spedition kennt deinen Namen und fährt schneller." },
             new PerkDef { Id = "p_porto", Name = "Versandrabatt", Icon = "send", Effect = "−6 % Porto",
                 Desc = "Du verhandelst mit dem Paketdienst. Mit Kuchen." },
-            new PerkDef { Id = "p_team", Name = "Schnelleres Personal", Icon = "gear", Effect = "+8 % Arbeitstempo", Level = 5,
+            new PerkDef { Id = "p_team", Name = "Schnelleres Personal", Icon = "gear", Effect = "+5 % Arbeitstempo", Level = 5,
                 Desc = "Motivationsposter, Obstkorb, Bluetooth-Box: Dein Team packt schneller." },
             new PerkDef { Id = "p_lager", Name = "Mehr Lagerplatz", Icon = "rack", Effect = "+10 % Lagerplatz", MaxRank = 3,
                 Desc = "Stapeln bis unter die Decke. Statiker sind überbewertet." },
@@ -220,7 +220,7 @@ namespace DropshippingGame.Core
         /// <summary>Faltmaschine: so viele Geschäftsminuten pro gefaltetem Karton.</summary>
         public const float FoldMachineMinutes = 5f;
         /// <summary>Zusätzliche Packtische/Labeldrucker: Tempo-Bonus fürs passende Personal je Station.</summary>
-        public const float ExtraStationStaffBonus = 0.15f;
+        public const float ExtraStationStaffBonus = 0.1f;
 
         public static readonly EquipmentDef[] Equipment =
         {
@@ -229,9 +229,9 @@ namespace DropshippingGame.Core
             new EquipmentDef { Id = "labelgun", Name = "Hand-Labelgerät", Icon = "tag", Cost = 220, Level = 2,
                 Effect = "Etikettiert beim Aufnehmen · +1 Paket tragen", Desc = "Pakete, die du am Packtisch nimmst, bekommen sofort ihr Label – alle auf einmal." },
             new EquipmentDef { Id = "packtisch", Name = "Zusätzlicher Packtisch", Icon = "package", Cost = 300, Level = 3, MaxGarage = 1, MaxWarehouse = 2,
-                Effect = "Kürzere Wege · Packer:innen +15 % je Tisch", Desc = "Stell ihn hin, wo er passt (Taste B im Lager)." },
+                Effect = "Kürzere Wege · Packer:innen +10 % je Tisch", Desc = "Stell ihn hin, wo er passt (Taste B im Lager)." },
             new EquipmentDef { Id = "labeldrucker", Name = "Zusätzlicher Labeldrucker", Icon = "receipt", Cost = 200, Level = 3, MaxGarage = 1, MaxWarehouse = 2,
-                Effect = "Kürzere Wege · Versandkräfte +15 % je Drucker", Desc = "Noch ein Drucker, noch mehr Papierstau – aber kürzere Wege." },
+                Effect = "Kürzere Wege · Versandkräfte +10 % je Drucker", Desc = "Noch ein Drucker, noch mehr Papierstau – aber kürzere Wege." },
             new EquipmentDef { Id = "container", Name = "Großcontainer für Müll", Icon = "boxes", Cost = 250, Level = 1,
                 Effect = "+150 Platz für Verpackungsmüll", Desc = "Ein grüner Riese neben den Tonnen. Nie wieder überquellender Müll." },
         };
@@ -358,9 +358,9 @@ namespace DropshippingGame.Core
         public const int WholesaleLevel = 4;
         /// <summary>So oft muss ein Produkt schon verkauft worden sein, damit Großhändler es als Markenware wollen.</summary>
         public const int WholesaleMinSold = 15;
-        public const float WholesalePayMin = 0.34f;
-        public const float WholesalePayMax = 0.4f;
-        public const float WholesaleQtyMult = 2f;
+        public const float WholesalePayMin = 0.28f;
+        public const float WholesalePayMax = 0.33f;
+        public const float WholesaleQtyMult = 1.5f;
         public const float WholesaleReorderBonus = 1.1f;
         /// <summary>Bis zu +20 % Preisaufschlag bei voller Markenstärke.</summary>
         public const float BrandMaxPremium = 0.2f;

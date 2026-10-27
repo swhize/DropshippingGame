@@ -759,3 +759,22 @@ Besucher; Autos pausieren über `StreetFestival.BlocksTraffic`). Gespeichert unt
 * **Müll:** `Waste`, `WasteCapacity()`, `WasteFull`, `AddWaste(n)`, **`CollectGarbage()`** (vom Müllwagen aufrufen), Ereignis **`GarbagePickupDue(bool special)`** (Mo/Mi/Fr 10:00 oder Sonderabholung `OrderGarbagePickup()`); ohne Abonnent leert der Kern sofort, sonst Fallback nach 90 min. `GarbageCollected(int)`, `WasteChanged`. Tonnen-Position: `EquipmentWorld.BinPosition(stage)`.
 * **Großhändler & Marke:** `Contract.Wholesale`, `GenerateWholesaleOffer()`, `WholesaleUnlocked` (Level 4 + Markenname), `BrandStrength()`, `BrandPriceMult()`, `SuggestedPrice(pid)`; bis zum Markenpreis kostet ein Aufpreis keine Nachfrage.
 * **HUD:** `StatusChips()` → {Text, Icon, Ton}.
+
+## 16. Endspiel, Erfolge, Schwierigkeit, Balance (Difficulty.cs, Achievements.cs, Sim.Endgame.cs, Sim.Balance.cs)
+
+* **Schwierigkeit:** `sim.NextDifficulty = "entspannt" | "normal" | "hart"` vor `NewGame(mode)` (Menü-Seite
+  „Schwierigkeit“). `sim.Difficulty`, `sim.DifficultyInfo` (Name, Desc, Faktoren). Wirkt auf Nachfrage,
+  Miete/Löhne/Einkauf, Gewicht schlechter Bewertungen, Startgeld, Mama-Notkredite. Gespeichert (`difficulty`).
+* **Erfolge:** `AchievementData.All` (40, `Id` = Steam-API-Name `ACH_…`, `Hidden`, `Progress`).
+  `sim.Achievements` (Id → Tag), `HasAchievement`, `AchievementProgress(def)`, `CheckAchievements()`,
+  Ereignisse `AchievementUnlocked(def)` und `AchievementsLoaded(ids)` (nach dem Laden → erneut an Steam).
+  Runtime: `UI.AchievementBridge.Attach(sim)` leitet an `Platform.UnlockAchievement`/`SetStat` weiter.
+* **Statistik:** `sim.Stats` (`LifetimeStats`: TikToks, Feste, Großhändler, Rückrufe, Werbung, Spielzeit …),
+  `sim.StatsLines()` → {Bereich, Bezeichnung, Wert} für Firma › Statistik.
+* **Endlos-Modus:** Ziele nach `rev100k`: `rev250k`, `outpost` (Upgrade `GameData.OutpostId`, Level 10),
+  `rev500k`, `ipo` (1 Mio. → `MilestoneReached(title, text)`), danach `EndlessGoal()` (2/4/8 … Mio.,
+  `EndlessTier`). `CurrentObjective()` zeigt das Endlos-Ziel.
+* **Mama-Notkredit:** droht abends die Pleite und `MamaRescuesLeft > 0`, rettet Mama (`MamaRescued(betrag)`,
+  `MamaDebt`, automatische Rückzahlung, Notiz in der Tagesabrechnung, Mail).
+* **Balance-Regeln:** `StaffMax(role)` (zweite Kraft je Rolle ab Level 10), `PricePremium/PriceStarPenalty`
+  (Wucher), `DemandRateNoPrice/DemandPriceFactor`, `CompressedDemand`, `FestivalPriceAppeal(price)`.

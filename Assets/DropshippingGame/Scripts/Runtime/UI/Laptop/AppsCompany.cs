@@ -29,10 +29,10 @@ namespace DropshippingGame.UI
                 var v = Grow(UIX.Col(ch, 2f));
                 UIX.Text(v, r.Name, "h3");
                 int count = s.StaffCount(r.Id);
-                UIX.Text(v, Fmt.Money(r.Wage) + " pro Tag · " + count + "/" + r.Max + " besetzt", "small");
+                UIX.Text(v, Fmt.Money(r.Wage) + " pro Tag · " + count + "/" + s.StaffMax(r.Id) + " besetzt" + (s.StaffMax(r.Id) < r.Max ? " (2. Kraft ab Level " + GameData.StaffSecondSlotLevel(r.Id) + ")" : ""), "small");
                 P(c, r.Desc);
                 string id = r.Id;
-                Btn(c, count >= r.Max ? "Voll besetzt" : "Einstellen", () => S.Hire(id), "accent", count >= r.Max, "plus").style.alignSelf = Align.FlexStart;
+                Btn(c, count >= s.StaffMax(r.Id) ? "Voll besetzt" : "Einstellen", () => S.Hire(id), "accent", count >= s.StaffMax(r.Id), "plus").style.alignSelf = Align.FlexStart;
             }
 
             var lc = Card(Root, "Dein Team", s.Staff.Count > 0 ? s.Staff.Count + " Personen" : null);

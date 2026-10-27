@@ -32,7 +32,7 @@ namespace DropshippingGame.Core
     public static partial class GameData
     {
         // ---- Fakebook ---------------------------------------------------------------------------
-        public const int FakebookLevel = 2;
+        public const int FakebookLevel = 3;
         public const int MaxAdsPerPlatform = 3;
         /// <summary>Laufzeit einer Kampagne in Geschäftsminuten (ein Geschäftstag).</summary>
         public const float AdCampaignMinutes = 720f;
@@ -65,7 +65,7 @@ namespace DropshippingGame.Core
         };
 
         // ---- Gugel ------------------------------------------------------------------------------
-        public const int GugelLevel = 3;
+        public const int GugelLevel = 5;
         public static readonly int[] GugelBudgets = { 30, 60, 120, 250 };
         /// <summary>Klickanteil je Anzeigenplatz 1–4.</summary>
         public static readonly float[] GugelPosShare = { 0.32f, 0.17f, 0.10f, 0.06f };
@@ -91,7 +91,7 @@ namespace DropshippingGame.Core
         public const float FakeProfileRepBase = 0.08f;
         public const float FakeProfileRepEach = 0.015f;
 
-        public const int FakeSiteLevel = 2;
+        public const int FakeSiteLevel = 5;
         public const int FakeSiteCost = 15;
         public const int MaxFakeSites = 12;
         public const int MaxFakeSitesPerProduct = 3;

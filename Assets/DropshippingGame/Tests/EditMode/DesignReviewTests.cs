@@ -44,7 +44,7 @@ namespace DropshippingGame.Tests
         public void Premium_OnlyOneOrderPerProductAndDay()
         {
             var gm = TestUtil.Fresh();
-            gm.Level = 2;
+            gm.Level = GameData.Suppliers[2].Level;
             gm.Money = 5000;
             Assert.IsTrue(gm.PremiumQuotaLeft("huelle"));
             Assert.IsTrue(gm.BuyBulk(0, 0, 2), "Erste Premium-Bestellung");

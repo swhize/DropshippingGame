@@ -106,7 +106,7 @@ namespace DropshippingGame.Core
             {
                 TotalLostOrders++;
                 Daily.Lost++;
-                if (Rng.Value() < 0.6f) AddReview(id, 1, "Shop überlastet – Bestellung ging nicht durch");
+                if (Rng.Value() < 0.3f) AddReview(id, 2, "Shop überlastet – Bestellung ging nicht durch");
                 if (RealTime - _lastLostToast > 20f)
                 {
                     _lastLostToast = RealTime;

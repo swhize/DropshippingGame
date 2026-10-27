@@ -115,7 +115,7 @@ namespace DropshippingGame.Tests
             for (int i = 0; i < 10; i++) gm.SpawnOrder("huelle");
             Assert.AreEqual(lost + 10, gm.TotalLostOrders, "Verlorene Bestellungen gezählt");
             int newReviews = gm.ReviewCount - reviews;
-            Assert.IsTrue(newReviews >= 1 && newReviews <= 10 && gm.Reviews[0].Stars == 1, "Verlorene Bestellungen erzeugen 1-Stern-Bewertungen");
+            Assert.IsTrue(newReviews >= 1 && newReviews <= 10 && gm.Reviews[0].Stars <= 2, "Verlorene Bestellungen erzeugen schlechte Bewertungen (gedämpft: höchstens 2 Sterne)");
         }
 
         [Test]
@@ -215,6 +215,7 @@ namespace DropshippingGame.Tests
             var gm = Fresh();
             var over = new List<string>();
             gm.GameOver += r => over.Add(r);
+            gm.MamaRescuesLeft = 0; // Mamas Notgroschen ist aufgebraucht
             gm.Money = -600;
             gm.EndDayNow();
             gm.StartNextDay();
@@ -255,7 +256,7 @@ namespace DropshippingGame.Tests
             Assert.IsTrue(gm.ProductAvailable("massage") && gm.ProductAvailable("bartglitzer"), "Level 2 schaltet Massagepistole und Bart-Glitzer frei");
             Assert.AreEqual("level", gm.UpgradeState("warehouse"), "Lagerhalle erst ab Level 4");
             gm.Level = 4;
-            gm.Money = 6000;
+            gm.Money = GameData.Upgrade("warehouse").Cost;
             Assert.IsTrue(gm.BuyUpgrade("warehouse"), "Lagerhalle gekauft");
             Assert.IsTrue(gm.LocationStage == 1 && gm.Capacity() == 3000, "Lagerhalle: 3.000 Lagerplätze");
             Assert.IsTrue(gm.GoalsDone.Contains("warehouse"), "Ziel 'Raus aus der Garage'");
@@ -291,19 +292,19 @@ namespace DropshippingGame.Tests
             gm.Upgrades.Add("warehouse");
             gm.Level = 5;
             Assert.IsTrue(gm.Hire("packer"), "Packer:in eingestellt");
-            Assert.AreEqual(70, gm.WagesPerDay(), "Lohn 70 €/Tag");
+            Assert.AreEqual(GameData.StaffRole("packer").Wage, gm.WagesPerDay(), "Lohn laut Rolle");
             gm.Stock["huelle"].Qty = 5;
             gm.Listed["huelle"] = true;
             gm.SpawnOrder("huelle");
-            gm.UpdateStaff(13f);
+            gm.UpdateStaff(GameData.StaffRole("packer").Interval + 1f);
             Assert.IsTrue(gm.PackedCount() == 1 && gm.PendingCount() == 0, "Packer:in verpackt automatisch");
             Assert.IsTrue(gm.Hire("versand"), "Versandkraft eingestellt");
             int shipped = gm.TotalShipped;
-            gm.UpdateStaff(11f);
+            gm.UpdateStaff(GameData.StaffRole("versand").Interval + 1f);
             Assert.AreEqual(shipped + 1, gm.TotalShipped, "Versandkraft verschickt automatisch");
             Assert.IsTrue(gm.Hire("lager"), "Lagerist:in eingestellt");
             gm.DockCrates.Add(ItemData.Crate("huelle", 20, 1f));
-            gm.UpdateStaff(17f);
+            gm.UpdateStaff(GameData.StaffRole("lager").Interval + 1f);
             Assert.IsTrue(gm.DockCrates.Count == 0 && gm.StockQty("huelle") >= 20, "Lagerist:in räumt Kisten ein");
             gm.Fire(0);
             Assert.AreEqual(2, gm.Staff.Count, "Entlassen");

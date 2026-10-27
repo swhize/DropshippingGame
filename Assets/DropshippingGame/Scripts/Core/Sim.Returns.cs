@@ -93,7 +93,7 @@ namespace DropshippingGame.Core
         // =====================================================================================
         private void MaybeScheduleReturn(ItemData pkg, bool late)
         {
-            float chance = ReturnChance(pkg, late) * Rng.Range(0.8f, 1.2f);
+            float chance = ReturnChance(pkg, late) * Rng.Range(0.8f, 1.2f) * (PriceStarPenalty(pkg) > 0 ? GameData.PriceGougeReturnMult : 1f);
             if (Rng.Value() >= chance) return;
             ScheduleReturn(pkg, Rng.Range(GameData.ReturnDelayMin, GameData.ReturnDelayMax), PickReturnReason(pkg, late));
         }

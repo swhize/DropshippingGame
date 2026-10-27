@@ -144,13 +144,13 @@ namespace DropshippingGame.Core
         public float LeadTimeMult() => (HasSkill("l_wege") ? 0.7f : 1f) * ProgressLeadMult();
 
         /// <summary>Arbeitstempo des Personals ("Prozess-Flow").</summary>
-        public float StaffSpeedMult() => (HasSkill("l_flow") ? 1.25f : 1f) * ProgressStaffMult();
+        public float StaffSpeedMult() => (HasSkill("l_flow") ? 1.25f : 1f) * ProgressStaffMult() * OutpostStaffMult();
 
         /// <summary>Laufzeit eines Pakets auf dem Förderband in Minuten.</summary>
         public float ConveyorMinutes() => HasSkill("l_flow") ? 3f : 6f;
 
         /// <summary>Einkaufspreis-Faktor ("Feilschen").</summary>
-        public float PurchasePriceMult() => (HasSkill("v_feilschen") ? 0.9f : 1f) * ProgressPurchaseMult();
+        public float PurchasePriceMult() => (HasSkill("v_feilschen") ? 0.9f : 1f) * ProgressPurchaseMult() * DifficultyCostMult();
 
         /// <summary>Retourenquoten-Faktor ("Kundenflüsterer").</summary>
         public float ReturnRateMult() => HasSkill("v_kulanz") ? 0.65f : 1f;

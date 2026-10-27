@@ -273,18 +273,18 @@ namespace DropshippingGame.Tests
             Assert.IsTrue(gm.Hire("packer"));
             var normal = gm.SpawnOrder("huelle", false);
             var express = gm.SpawnOrder("huelle", true);
-            gm.UpdateStaff(13f);
+            gm.UpdateStaff(GameData.StaffRole("packer").Interval + 1f);
             Assert.AreEqual(1, gm.PackedCount(), "Ein Paket gepackt");
             Assert.AreEqual(express.Id, gm.PackedPackages[0].OrderId, "Express zuerst");
             Assert.AreEqual(OrderStage.Packed, express.Stage, "Zettel in Arbeit (verpackt)");
-            gm.UpdateStaff(13f);
+            gm.UpdateStaff(GameData.StaffRole("packer").Interval + 1f);
             Assert.IsTrue(gm.Hire("versand"));
             int shippedExpress = -1;
             gm.OrderShipped += (o, r, t) =>
             {
                 if (shippedExpress < 0) shippedExpress = o.Id;
             };
-            gm.UpdateStaff(11f);
+            gm.UpdateStaff(GameData.StaffRole("versand").Interval + 1f);
             Assert.AreEqual(express.Id, shippedExpress, "Versandkraft verschickt das dringendste Paket zuerst");
             Assert.AreEqual(OrderStage.Packed, normal.Stage, "Normaler Zettel wartet noch verpackt");
         }

@@ -195,6 +195,8 @@ namespace DropshippingGame
             s.EndDayRequested += ConfirmEndDay;
             s.GameOver += ShowGameOver;
             s.GameWon += ShowEnding;
+            s.MilestoneReached += ShowMilestone;
+            DropshippingGame.UI.AchievementBridge.Attach(s);
             s.WorldChanged += () =>
             {
                 if (_world != null) _world.RefreshWorld(true);
@@ -1003,7 +1005,20 @@ namespace DropshippingGame
             }, true, "ending", null, "trophy");
             _ui.BigModal.Text(body, "Vor " + _sim.Day + " Tagen hast du noch Teller bei Kalle getragen. Heute gehört dir eine Marke mit " +
                                     Fmt.Rating(_sim.Reputation) + " Sternen, " + Fmt.Thousands(_sim.TotalShipped) + " verschickten Paketen und einem Team, das für dich arbeitet.");
-            _ui.BigModal.Text(body, "Das Spiel ist hier nicht zu Ende – bau dein Imperium weiter aus, so lange du willst.", "muted");
+            _ui.BigModal.Text(body, "Das Spiel ist hier nicht zu Ende: Im Endlos-Modus warten Viertelmillion, Außenlager, Börsengang und immer größere Ziele – " +
+                                    "dazu zweite Kräfte für dein Team ab Level 10 und " + _sim.AchievementCount() + " von " + AchievementData.All.Length + " Erfolgen (Firma › Erfolge).", "muted");
+        }
+
+        /// <summary>Großer Moment im Endlos-Modus (Börsengang).</summary>
+        private void ShowMilestone(string title, string text)
+        {
+            Game.Sound("levelup");
+            var body = _ui.BigModal.Open(title, "Endlos-Modus", 580, new[]
+            {
+                new ModalButton("Weiter hustlen", null, "accent", "play"),
+            }, true, "milestone", null, "rocket");
+            _ui.BigModal.Text(body, text);
+            _ui.BigModal.Text(body, "Nächstes Ziel: " + Fmt.Thousands((int)_sim.EndlessGoal().Target) + " € Umsatz. Und dann das Doppelte. Und dann …", "muted");
         }
 
         private void ShowCredits()

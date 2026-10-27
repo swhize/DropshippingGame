@@ -343,6 +343,7 @@ namespace DropshippingGame.Core
                     ScheduleLaunchOrder("huelle");
                     break;
             }
+            ApplyDifficultyOnNewGame(mode);
             if (mode != "intro")
             {
                 Events.AddMail("Mama", "Viel Erfolg, Schatz!", "Ich hab gehört, du machst jetzt was mit Internet. Iss was Ordentliches und vergiss nicht zu schlafen. Hab dich lieb!", "heart");
@@ -354,7 +355,7 @@ namespace DropshippingGame.Core
         public void FinishIntro()
         {
             StoryStage = "business";
-            Money = GameData.StartCapital;
+            Money = StartMoneyForDifficulty();
             Day = 1;
             TimeMinutes = GameData.DayStart;
             IntroStep = 3;
@@ -443,13 +444,13 @@ namespace DropshippingGame.Core
             RaiseEconomyChanged();
         }
 
-        public int RentPerDay() => GameData.StageRent[LocationStage];
+        public int RentPerDay() => Mathx.RoundToInt((GameData.StageRent[LocationStage] + OutpostRent()) * DifficultyCostMult());
 
         public int WagesPerDay()
         {
             int w = 0;
             foreach (var s in Staff) w += GameData.StaffRole(s.Role).Wage;
-            return w;
+            return Mathx.RoundToInt(w * DifficultyCostMult());
         }
 
         public int UpkeepPerDay() => Upgrades.Contains("conveyor") ? 10 : 0;
@@ -561,8 +562,8 @@ namespace DropshippingGame.Core
             return n;
         }
 
-        public int Capacity() => Mathx.RoundToInt((GameData.StageCapacity[LocationStage] + (Upgrades.Contains("highrack") ? 3000 : 0)) * CapacityMult());
-        public int QueueCapacity() => GameData.StageQueue[LocationStage] + (Upgrades.Contains("server") ? 6 : 0) + QueueBonus();
+        public int Capacity() => Mathx.RoundToInt((GameData.StageCapacity[LocationStage] + (Upgrades.Contains("highrack") ? 3000 : 0) + OutpostCapacityBonus()) * CapacityMult());
+        public int QueueCapacity() => GameData.StageQueue[LocationStage] + (Upgrades.Contains("server") ? 6 : 0) + QueueBonus() + OutpostQueueBonus();
         public int PendingCount() => OrderQueue.Count;
 
         public int PendingCountFor(string id)
@@ -621,16 +622,29 @@ namespace DropshippingGame.Core
         /// <summary>Trend-Phase als Text: "stabil", "steigend", "Hype!", "fallend", "tot".</summary>
         public string TrendLabel(string id) => Trends.Label(id);
 
-        public float DemandRate(string id)
+        public float DemandRate(string id) => DemandRateNoPrice(id) * DemandPriceFactor(id);
+
+        /// <summary>Nachfrage ohne den Preis-Faktor (Beliebtheit, Bewertung, Bekanntheit, Boosts, Trend …).</summary>
+        public float DemandRateNoPrice(string id)
         {
             if (!IsListed(id) || !ProductAvailable(id)) return 0f;
             var p = GameData.Product(id);
-            float market = Market.MarketPrice(id);
-            float price = CurrentSalePrice(id);
-            float refPrice = DemandReferencePrice(id, market, price);
-            float priceFactor = Mathx.Clamp((float)Math.Pow(refPrice / Math.Max(price, 1f), 1.6), 0.08f, 2.6f);
             float repMult = Mathx.Lerp(0.35f, 1.6f, Mathx.Clamp01(Reputation / 5f));
-            return p.Popularity * priceFactor * repMult * (0.6f + Awareness) * BoostMult(id) * TrendMult(id) * WeekdayDemand() * DemandPerkMult();
+            return p.Popularity * repMult * (0.6f + Awareness) * BoostMult(id) * TrendMult(id) * WeekdayDemand() * DemandPerkMult() * DifficultyDemandMult();
+        }
+
+        /// <summary>
+        /// Preis-Faktor der Nachfrage: unter dem Marktpreis mehr Bestellungen (Exponent 1,6), bis zum Markenpreis
+        /// keine Einbuße, darüber fällt die Nachfrage steil (<see cref="GameData.PriceElasticityAboveBrand"/>).
+        /// </summary>
+        public float DemandPriceFactor(string id)
+        {
+            float market = Market.MarketPrice(id);
+            float price = Math.Max(CurrentSalePrice(id), 1f);
+            float refPrice = DemandReferencePrice(id, market, price);
+            float r = refPrice / price;
+            double exp = r < 1f ? GameData.PriceElasticityAboveBrand : 1.6;
+            return Mathx.Clamp((float)Math.Pow(r, exp), 0.04f, 2.6f);
         }
 
         public string DemandLabel(string id)
@@ -646,10 +660,16 @@ namespace DropshippingGame.Core
 
         public float OrderIntervalMinutes()
         {
-            float total = 0f;
-            foreach (var p in GameData.Products) total += DemandRate(p.Id);
+            float total = 0f, noPrice = 0f;
+            foreach (var p in GameData.Products)
+            {
+                total += DemandRate(p.Id);
+                noPrice += DemandRateNoPrice(p.Id);
+            }
             if (total <= 0f) return 0f;
-            float interval = GameData.BaseOrderMinutes / total;
+            // Dämpfung nur auf die Menge (Produkte, Boosts), nicht auf den Preis: Preise wirken voll.
+            float damp = noPrice > 0f ? CompressedDemand(noPrice) / noPrice : 1f;
+            float interval = GameData.BaseOrderMinutes / (total * damp);
             if (PromoActive) interval *= 0.85f;
             return Math.Max(interval, 2.5f);
         }
@@ -1098,6 +1118,7 @@ namespace DropshippingGame.Core
             if (q < 0.8f) stars -= 1;
             else if (q >= 1.3f) stars += 1;
             stars += ConsumeStarBonus();
+            stars -= PriceStarPenalty(pkg);
             if (Rng.Value() < 0.25f) stars += Rng.RangeInt(-1, 1);
             stars = Mathx.Clamp(stars, 1, 5);
             string text = "";
@@ -1150,7 +1171,7 @@ namespace DropshippingGame.Core
             if (Reviews.Count > 25) Reviews.RemoveAt(Reviews.Count - 1);
             ReviewCount++;
             float weight = (ReviewCount < 10 ? 0.12f : 0.05f) * weightMult;
-            if (stars < Reputation) weight *= BadReviewWeightMult();
+            if (stars < Reputation) weight *= BadReviewWeightMult() * DifficultyReviewHarshness();
             weight = Math.Min(weight, 0.3f);
             Reputation = Mathx.Clamp(Reputation + (stars - Reputation) * weight, 0.5f, 5f);
             if (stars == 5) ChallengeProgress("stars5", 1f);
@@ -1219,7 +1240,7 @@ namespace DropshippingGame.Core
                 case "contracts": return TotalContractsDone;
                 case "challenges": return TotalChallengesDone;
             }
-            return 0f;
+            return MetaGoalValue(g);
         }
 
         public void CheckGoals()
@@ -1245,6 +1266,7 @@ namespace DropshippingGame.Core
                     ObjectiveChanged?.Invoke();
                 }
             }
+            CheckEndlessGoals();
         }
 
         public GoalDef NextGoal()
@@ -1323,8 +1345,7 @@ namespace DropshippingGame.Core
                 };
             }
             var g = NextGoal();
-            if (g == null)
-                return new Objective { Title = "Imperium aufgebaut", Text = "Alle Ziele erreicht. Genieß den Ruhm – oder mach einfach weiter.", Progress = 1f };
+            if (g == null) g = EndlessGoal();
             return new Objective { Title = "Ziel: " + g.Title, Text = g.Desc, Progress = Mathx.Clamp01(GoalValue(g) / Math.Max(g.Target, 0.001f)) };
         }
 
@@ -1593,9 +1614,9 @@ namespace DropshippingGame.Core
                 Notify("Personal gibt es erst mit Lagerhalle und Level " + GameData.StaffLevel + ".", "bad");
                 return false;
             }
-            if (StaffCount(roleId) >= role.Max)
+            if (StaffCount(roleId) >= StaffMax(roleId))
             {
-                Notify("Mehr " + role.Name + " brauchst du nicht.", "info");
+                Notify(StaffMax(roleId) < role.Max ? "Eine zweite Kraft als " + role.Name + " gibt es ab Firmenlevel " + GameData.StaffSecondSlotLevel(roleId) + "." : "Mehr " + role.Name + " brauchst du nicht.", "info");
                 return false;
             }
             var used = new HashSet<string>();
@@ -1908,7 +1929,7 @@ namespace DropshippingGame.Core
             if (pid == "") return false;
             price = StandPrice(pid);
             float market = Market.MarketPrice(pid);
-            float willing = Mathx.Clamp01(1.25f - price / Math.Max(1f, market) * 0.55f) * Mathx.Lerp(0.6f, 1.1f, Reputation / 5f);
+            float willing = Mathx.Clamp01(1.25f - price / Math.Max(1f, market) * 0.55f) * Mathx.Lerp(0.6f, 1.1f, Reputation / 5f) * FestivalPriceAppeal(price);
             // Gehypte Produkte gehen auch auf der Straße besser ("Hab ich auf TikTok gesehen!").
             willing = Mathx.Clamp01(willing * Mathx.Lerp(0.85f, 1.15f, (TrendMult(pid) - GameData.TrendMin) / (GameData.TrendMax - GameData.TrendMin)));
             if (Rng.Value() > willing)

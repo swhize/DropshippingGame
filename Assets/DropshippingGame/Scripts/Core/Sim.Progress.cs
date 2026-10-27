@@ -91,6 +91,7 @@ namespace DropshippingGame.Core
             _tiredWarned = _wasteWarned = _delayToastDay = false;
             _lastGarbageDay = 0;
             _perkPointsSeen = -1;
+            MetaReset();
         }
 
         private void RaiseProgress()
@@ -256,7 +257,7 @@ namespace DropshippingGame.Core
         private float ProgressLeadMult() => (1f - 0.06f * PerkRank("p_liefer")) * HomeLeadMult();
         private float ProgressPurchaseMult() => (1f - 0.03f * PerkRank("p_einkauf")) * HomePurchaseMult();
         private int ProgressQueueBonus() => 2 * PerkRank("p_queue") + HomeQueueBonus();
-        private float ProgressStaffMult() => (1f + 0.08f * PerkRank("p_team")) * (WasteFull ? GameData.WasteFullStaffMult : 1f);
+        private float ProgressStaffMult() => (1f + 0.05f * PerkRank("p_team")) * (WasteFull ? GameData.WasteFullStaffMult : 1f);
 
         /// <summary>Zusätzlich tragbare Pakete (Perk "Packesel", Hand-Labelgerät).</summary>
         public int CarryBonus() => PerkRank("p_tragen") + (HasEquipment("labelgun") ? 1 : 0);
@@ -527,6 +528,7 @@ namespace DropshippingGame.Core
                 if (c.Quantity <= 0) DockCrates.RemoveAt(i);
             }
             DefectUnits.Remove(pid);
+            if (removed > 0) Stats.Recalled++;
             int refund = Mathx.RoundToInt(removed * GameData.Product(pid).UnitCost * GameData.DefectRefundShare);
             if (refund > 0)
             {
@@ -737,7 +739,7 @@ namespace DropshippingGame.Core
         public float DemandReferencePrice(string pid, float market, float price) =>
             price <= market ? market : Math.Min(price, market * BrandPriceMult());
 
-        public bool WholesaleUnlocked => Level >= GameData.WholesaleLevel && BrandNamed;
+        public bool WholesaleUnlocked => Level >= GameData.WholesaleLevel && BrandNamed && LocationStage >= 1;
 
         private List<string> WholesaleProducts()
         {
@@ -794,6 +796,7 @@ namespace DropshippingGame.Core
             UpdateFoldingMachine(m);
             UpdateGarbage();
             CheckPerkPoints();
+            MetaUpdate();
             if (WholesaleOfferAt >= 0f && TimeMinutes >= WholesaleOfferAt)
             {
                 WholesaleOfferAt = -1f;
@@ -806,12 +809,13 @@ namespace DropshippingGame.Core
             Energy = MorningEnergy();
             _tiredWarned = false;
             ClampDefects();
+            MetaNewDay();
             if (DisruptionId != "" && Day > DisruptionUntilDay) EndDisruption();
             if (StoryStage != "business") return;
             if (DisruptionId == "" && Day >= GameData.DisruptionMinDay && TutorialStep < 0 && Rng.Value() < GameData.DisruptionDailyChance)
                 StartDisruption(Rng.Pick(GameData.Disruptions).Id, Rng.Value() < 0.35f ? 2 : 1);
             WholesaleOfferAt = -1f;
-            if (WholesaleUnlocked && Weekday < 6 && Rng.Value() < 0.2f + 0.2f * BrandStrength()) WholesaleOfferAt = Rng.Range(540f, 840f);
+            if (WholesaleUnlocked && Weekday < 6 && Rng.Value() < 0.12f + 0.15f * BrandStrength()) WholesaleOfferAt = Rng.Range(540f, 840f);
             if (ReorderDay > 0 && Day >= ReorderDay)
             {
                 ReorderDay = 0;
@@ -822,6 +826,7 @@ namespace DropshippingGame.Core
         private void ProgressEndDay(DaySummary s)
         {
             s.Shipping = Daily.Shipping;
+            MetaEndDay(s);
             if (WasteFull && StoryStage == "business")
             {
                 float pen = GameData.WasteFullRepPenalty * (WasteFill >= 1.25f ? 2f : 1f);
@@ -887,6 +892,7 @@ namespace DropshippingGame.Core
             state["reorder_company"] = ReorderCompany ?? "";
             state["reorder_product"] = ReorderProduct ?? "";
             state["reorder_day"] = ReorderDay;
+            AddMetaState(state);
         }
 
         /// <summary>Fehlen die Felder (älterer Spielstand), gelten die Startwerte.</summary>
@@ -921,6 +927,7 @@ namespace DropshippingGame.Core
             ReorderProduct = J.S(s, "reorder_product", "");
             ReorderDay = J.I(s, "reorder_day");
             _perkPointsSeen = PerkPointsTotal();
+            ReadMetaState(s);
         }
     }
 }

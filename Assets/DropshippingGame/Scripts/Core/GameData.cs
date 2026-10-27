@@ -115,7 +115,7 @@ namespace DropshippingGame.Core
         public const int GarageProducts = 5;
 
         // ---- Nachfrage & Lieferung -----------------------------------------------------------
-        public const float BaseOrderMinutes = 72f;
+        public const float BaseOrderMinutes = 90f;
         public const float OrderExpireMinutes = 360f;      // Frist (240) + 2 h Kulanz, dann storniert
         public const float PromoDiscount = 0.2f;
         public const float BaseLeadMinutes = 45f;
@@ -146,7 +146,7 @@ namespace DropshippingGame.Core
         {
             new BulkOption { Name = "Klein", Quantity = 20, Discount = 1.0f, Level = 1, Stage = 0 },
             new BulkOption { Name = "Mittel", Quantity = 50, Discount = 0.85f, Level = 1, Stage = 0 },
-            new BulkOption { Name = "Groß", Quantity = 200, Discount = 0.68f, Level = 2, Stage = 0 },
+            new BulkOption { Name = "Groß", Quantity = 200, Discount = 0.68f, Level = 3, Stage = 0 },
             new BulkOption { Name = "Palette", Quantity = 500, Discount = 0.55f, Level = 5, Stage = 1 },
         };
 
@@ -154,7 +154,7 @@ namespace DropshippingGame.Core
         {
             new SupplierDef { Name = "Billig-Fabrik", Quality = 0.6f, PriceMult = 0.65f, LeadMult = 1.8f, Level = 1, Desc = "Spottbillig, aber langsam und die Ware ist... naja." },
             new SupplierDef { Name = "Standard-Großhändler", Quality = 1.0f, PriceMult = 1.0f, LeadMult = 1.0f, Level = 1, Desc = "Solide Qualität, normale Lieferzeit." },
-            new SupplierDef { Name = "Premium-Hersteller", Quality = 1.6f, PriceMult = 2.0f, LeadMult = 0.55f, Level = 2, Desc = "Manufaktur: teuer, blitzschnell, Kunden lieben es – nur eine Bestellung pro Produkt und Tag." },
+            new SupplierDef { Name = "Premium-Hersteller", Quality = 1.6f, PriceMult = 2.0f, LeadMult = 0.55f, Level = 3, Desc = "Manufaktur: teuer, blitzschnell, Kunden lieben es – nur eine Bestellung pro Produkt und Tag." },
         };
 
         // ---- Verpackung -------------------------------------------------------------------------
@@ -177,7 +177,7 @@ namespace DropshippingGame.Core
         public static readonly AdTier[] AdTiers =
         {
             new AdTier { Id = "flyer", Name = "Flyer & Plakate", Cost = 25, Mult = 1.15f, Minutes = 720f, Awareness = 0.02f, Level = 1, Icon = "paper" },
-            new AdTier { Id = "facebook", Name = "Facebook-Ads", Cost = 80, Mult = 1.35f, Minutes = 720f, Awareness = 0.05f, Level = 2, Icon = "thumb" },
+            new AdTier { Id = "facebook", Name = "Facebook-Ads", Cost = 80, Mult = 1.35f, Minutes = 720f, Awareness = 0.05f, Level = 3, Icon = "thumb" },
             new AdTier { Id = "google", Name = "Google-Ads", Cost = 200, Mult = 1.6f, Minutes = 720f, Awareness = 0.08f, Level = 6, Icon = "search" },
             new AdTier { Id = "influencer", Name = "Influencer-Kampagne", Cost = 700, Mult = 2.0f, Minutes = 1440f, Awareness = 0.15f, Level = 7, Icon = "star" },
         };
@@ -193,7 +193,7 @@ namespace DropshippingGame.Core
         /// <summary>v3.0: Hype ab diesem Wert macht ein TikTok zum Produkt ×1,25 stärker.</summary>
         public const float TikTokTrendBonus = 1.25f;
         /// <summary>v3.0: Deckel für den Gesamt-Multiplikator aller Boosts.</summary>
-        public const float MaxBoostMult = 4f;
+        public const float MaxBoostMult = 2.5f;
 
         // ---- Branding --------------------------------------------------------------------------------
         public static readonly RGBA[] BrandPalette =
@@ -210,23 +210,23 @@ namespace DropshippingGame.Core
         /// XP-Schwellen je Level. v3.0: ab Level 3 gestreckt, weil Express, Großaufträge, Wochenziele
         /// und Ziel-XP deutlich mehr Erfahrung bringen (Level 2 bleibt am ersten Tag erreichbar).
         /// </summary>
-        public static readonly int[] LevelXp = { 0, 150, 800, 1700, 3000, 5000, 8000, 13000, 20000, 30000 };
+        public static readonly int[] LevelXp = { 0, 150, 700, 1600, 3200, 6000, 12000, 24000, 38000, 56000 };
         public const int MaxLevel = 10;
 
         public static readonly Dictionary<int, string> LevelUnlocks = new Dictionary<int, string>
         {
-            { 2, "Massagepistole · Bart-Glitzer · Express-Bestellungen · Premium-Hersteller · Facebook-Ads · TikTok · Großbestellung · Verkaufsstand" },
-            { 3, "Großaufträge (B2B) · Skill-Stufe 2 · Trading-App · Shop-Server-Upgrade · größerer Kredit" },
-            { 4, "Lagerhalle kaufbar · Bluetooth-Kopfhörer · Ringlicht · Großhändler" },
-            { 5, "Katzen-Trinkbrunnen · Smarte Gießkanne · Personal · Palettenbestellung · eigener Lieferwagen · Skill-Stufe 3 · 2 Großaufträge gleichzeitig" },
-            { 6, "Haltungskorrektor · Wackeldackel · Google-Ads · Förderband" },
+            { 2, "Massagepistole · Bart-Glitzer · Express-Bestellungen · TikTok · Verkaufsstand" },
+            { 3, "Großaufträge (B2B) · Fakebook-Werbung · Premium-Hersteller · Großbestellung · Shop-Server-Upgrade · Skill-Stufe 2" },
+            { 4, "Lagerhalle kaufbar · Bluetooth-Kopfhörer · Ringlicht · Straßenfeste · Börse & Trading · größerer Kredit · Großhändler (mit Lagerhalle)" },
+            { 5, "Katzen-Trinkbrunnen · Smarte Gießkanne · Personal · Palettenbestellung · eigener Lieferwagen · Gugel-Anzeigen · KI-Ratgeberseiten · Skill-Stufe 3" },
+            { 6, "Haltungskorrektor · Wackeldackel · Google-Ads · Förderband · 2 Großaufträge gleichzeitig" },
             { 7, "Smartwatch · Influencer-Kampagnen · Großkredit · Skill-Stufe 4" },
-            { 8, "Mini-Beamer · Hochregal-Erweiterung · 3 Großaufträge gleichzeitig" },
-            { 9, "Kamera-Drohne" },
-            { 10, "Legendenstatus" },
+            { 8, "Mini-Beamer · Hochregal-Erweiterung" },
+            { 9, "Kamera-Drohne · 3 Großaufträge gleichzeitig" },
+            { 10, "Legendenstatus · zweite Kraft je Rolle im Team · Außenlager (Ausbau)" },
         };
 
-        public const int TradingLevel = 3;
+        public const int TradingLevel = 4;
         public const int StaffLevel = 5;
 
         public static readonly UpgradeDef[] Upgrades =
@@ -235,7 +235,7 @@ namespace DropshippingGame.Core
                 Desc = "Ein Stand vor der Garage. Stell eine Kiste drauf – Passanten kaufen direkt, ganz ohne Karton und Versand." },
             new UpgradeDef { Id = "server", Name = "Shop-Server-Upgrade", Icon = "server", Cost = 800, Level = 3, Requires = "",
                 Desc = "+6 Plätze in der Bestell-Warteschlange. Weniger verlorene Bestellungen." },
-            new UpgradeDef { Id = "warehouse", Name = "Lagerhalle kaufen", Icon = "building", Cost = 6000, Level = 4, Requires = "",
+            new UpgradeDef { Id = "warehouse", Name = "Lagerhalle kaufen", Icon = "building", Cost = 7000, Level = 4, Requires = "",
                 Desc = "Endlich raus aus der Garage: 3.000 Lagerplätze, 10 Regale, Platz für Personal. Miete 140 €/Tag." },
             new UpgradeDef { Id = "van", Name = "Eigener Lieferwagen", Icon = "truck", Cost = 3500, Level = 5, Requires = "",
                 Desc = "Alle Einkäufe kommen 25 % schneller an." },
@@ -243,6 +243,8 @@ namespace DropshippingGame.Core
                 Desc = "Etikettierte Pakete aufs Band legen - sie werden automatisch verschickt. 10 €/Tag Strom." },
             new UpgradeDef { Id = "highrack", Name = "Hochregal-Erweiterung", Icon = "rack", Cost = 2500, Level = 8, Requires = "warehouse",
                 Desc = "+3.000 Lagerplätze." },
+            new UpgradeDef { Id = OutpostId, Name = "Außenlager (zweite Halle)", Icon = "building", Cost = 40000, Level = 10, Requires = "warehouse",
+                Desc = "Endlos-Modus: eine zweite Halle am Stadtrand. +3.000 Lagerplätze, +6 Warteschlange, Personal 20 % schneller (kürzere Wege). Miete +150 €/Tag." },
         };
 
         public static readonly ShopItemDef[] Decor =
@@ -285,17 +287,22 @@ namespace DropshippingGame.Core
             new GoalDef { Id = "level7", Title = "Volles Sortiment", Desc = "Erreiche Firmenlevel 7.", Type = "level", Target = 7, Reward = 1500 },
             new GoalDef { Id = "staff4", Title = "Kleines Team", Desc = "Beschäftige 4 Mitarbeiter gleichzeitig.", Type = "staff", Target = 4, Reward = 1000, Xp = 100 },
             new GoalDef { Id = "rev100k", Title = "Imperium", Desc = "Erreiche 100.000 € Umsatz. Kalle wird staunen.", Type = "revenue", Target = 100000, Reward = 10000, Final = true },
+            // ---- Endlos-Modus (nach dem Abspann) ----
+            new GoalDef { Id = "rev250k", Title = "Viertelmillion", Desc = "Endlos-Modus: erreiche 250.000 € Umsatz.", Type = "revenue", Target = 250000, Reward = 5000 },
+            new GoalDef { Id = "outpost", Title = "Zweites Standbein", Desc = "Kaufe das Außenlager (Ausbau-App, ab Level 10).", Type = "outpost", Target = 1, Reward = 5000 },
+            new GoalDef { Id = "rev500k", Title = "Halbe Million", Desc = "Erreiche 500.000 € Umsatz.", Type = "revenue", Target = 500000, Reward = 10000 },
+            new GoalDef { Id = "ipo", Title = "Börsengang", Desc = "Erreiche 1.000.000 € Umsatz – dann geht deine Firma an die Börse.", Type = "revenue", Target = 1000000, Reward = 25000 },
         };
 
         public static readonly StaffRoleDef[] StaffRoles =
         {
-            new StaffRoleDef { Id = "lager", Name = "Lagerist:in", Icon = "box", Wage = 60, Interval = 16f, Max = 2,
+            new StaffRoleDef { Id = "lager", Name = "Lagerist:in", Icon = "box", Wage = 75, Interval = 24f, Max = 2,
                 Desc = "Räumt Kisten vom Wareneingang ein, bestückt Großauftrags-Paletten aus dem Lager und bearbeitet Retouren.", Shirt = new RGBA(0.25f, 0.45f, 0.8f) },
-            new StaffRoleDef { Id = "packer", Name = "Packer:in", Icon = "package", Wage = 70, Interval = 12f, Max = 2,
+            new StaffRoleDef { Id = "packer", Name = "Packer:in", Icon = "package", Wage = 90, Interval = 48f, Max = 2,
                 Desc = "Kommissioniert offene Bestellungen und verpackt sie (braucht Kartons!).", Shirt = new RGBA(0.3f, 0.65f, 0.4f) },
-            new StaffRoleDef { Id = "versand", Name = "Versandkraft", Icon = "truck", Wage = 65, Interval = 10f, Max = 2,
+            new StaffRoleDef { Id = "versand", Name = "Versandkraft", Icon = "truck", Wage = 80, Interval = 22f, Max = 2,
                 Desc = "Etikettiert fertige Pakete und verschickt sie.", Shirt = new RGBA(0.85f, 0.5f, 0.2f) },
-            new StaffRoleDef { Id = "social", Name = "Social-Media-Praktikant:in", Icon = "phone", Wage = 45, Interval = 0f, Max = 1,
+            new StaffRoleDef { Id = "social", Name = "Social-Media-Praktikant:in", Icon = "phone", Wage = 55, Interval = 0f, Max = 1,
                 Desc = "Postet jeden Vormittag ein TikTok. Mal viral, mal peinlich.", Shirt = new RGBA(0.75f, 0.35f, 0.75f) },
         };
 

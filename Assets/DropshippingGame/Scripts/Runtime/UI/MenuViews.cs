@@ -718,10 +718,28 @@ namespace DropshippingGame.UI
         {
             SetPage("newgame");
             PageTitle("Neues Spiel", "Wie willst du starten?");
-            MenuButton("Mit Story starten (empfohlen)", () => PickSlot("intro"), "accent", "Beginne als Aushilfe in Kalles Imbiss. Inklusive Tutorial.", "fire");
-            MenuButton("Direkt in die Garage", () => PickSlot("tutorial"), "", "Ohne Imbiss-Intro, mit Tutorial.", "home");
-            MenuButton("Profi-Start", () => PickSlot("skip"), "", "Kein Intro, kein Tutorial. Du weißt, was du tust.", "bolt");
+            MenuButton("Mit Story starten (empfohlen)", () => PickDifficulty("intro"), "accent", "Beginne als Aushilfe in Kalles Imbiss. Inklusive Tutorial.", "fire");
+            MenuButton("Direkt in die Garage", () => PickDifficulty("tutorial"), "", "Ohne Imbiss-Intro, mit Tutorial.", "home");
+            MenuButton("Profi-Start", () => PickDifficulty("skip"), "", "Kein Intro, kein Tutorial. Du weißt, was du tust.", "bolt");
             MenuButton("Zurück", ShowMain, "ghost", null, "arrow_left");
+        }
+
+        /// <summary>Schwierigkeit wählen (Entspannt / Normal / Hart) – gilt für das nächste neue Spiel.</summary>
+        private void PickDifficulty(string mode)
+        {
+            _pendingMode = mode;
+            SetPage("difficulty");
+            PageTitle("Schwierigkeit", "Wie hart soll das Hustler-Leben werden? Gilt für diesen Spielstand.");
+            foreach (var d in GameData.Difficulties)
+            {
+                string id = d.Id;
+                MenuButton(d.Name + (id == GameData.DefaultDifficulty ? " (empfohlen)" : ""), () =>
+                {
+                    if (Game.Sim != null) Game.Sim.NextDifficulty = id;
+                    PickSlot(mode);
+                }, id == GameData.DefaultDifficulty ? "accent" : "", d.Desc, d.Icon);
+            }
+            MenuButton("Zurück", ShowNewGame, "ghost", null, "arrow_left");
         }
 
         private void PickSlot(string mode)
@@ -767,7 +785,7 @@ namespace DropshippingGame.UI
                 }
                 UIX.PassThrough(card);
             }
-            MenuButton("Zurück", ShowNewGame, "ghost", null, "arrow_left");
+            MenuButton("Zurück", () => PickDifficulty(_pendingMode), "ghost", null, "arrow_left");
         }
 
         private static void SlotBadge(VisualElement card, int slot, bool empty)

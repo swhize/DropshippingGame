@@ -9,7 +9,7 @@ namespace DropshippingGame.Tests
     {
         private const string Pid = "huelle";
 
-        private static Sim Ready(int level = 3, int money = 5000)
+        private static Sim Ready(int level = GameData.GugelLevel, int money = 5000)
         {
             var sim = TestUtil.Fresh();
             sim.AddXp(GameData.LevelThreshold(level));

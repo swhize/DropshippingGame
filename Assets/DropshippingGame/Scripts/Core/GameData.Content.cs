@@ -292,12 +292,12 @@ namespace DropshippingGame.Core
         // =====================================================================================
         public const int ContractLevel = 3;
         /// <summary>Grundwert eines Auftrags in €: (Basis + je Level) × Faktor in der Lagerhalle × Zufall 0,85-1,25.</summary>
-        public const float ContractValueBase = 60f;
-        public const float ContractValuePerLevel = 55f;
-        public const float ContractWarehouseMult = 1.25f;
+        public const float ContractValueBase = 50f;
+        public const float ContractValuePerLevel = 32f;
+        public const float ContractWarehouseMult = 1.1f;
         /// <summary>Vergütung je Stück als Anteil am Richtpreis (B2B = Großhandelspreis).</summary>
-        public const float ContractPayMin = 0.3f;
-        public const float ContractPayMax = 0.4f;
+        public const float ContractPayMin = 0.27f;
+        public const float ContractPayMax = 0.36f;
         public const float ContractPenaltyFactor = 0.25f;
         public const float ContractXpFactor = 0.2f;
         /// <summary>So viele Stück lässt die Lagerist:in beim Bestücken von Paletten im Regal (für Kundenbestellungen).</summary>
@@ -309,7 +309,7 @@ namespace DropshippingGame.Core
         /// <summary>So viele abgeschlossene/abgelehnte Aufträge bleiben für die Anzeige gespeichert.</summary>
         public const int ContractHistory = 12;
 
-        public static int MaxActiveContracts(int level) => level < ContractLevel ? 0 : (level >= 8 ? 3 : (level >= 5 ? 2 : 1));
+        public static int MaxActiveContracts(int level) => level < ContractLevel ? 0 : (level >= 9 ? 3 : (level >= 6 ? 2 : 1));
 
         public static readonly string[] Companies =
         {

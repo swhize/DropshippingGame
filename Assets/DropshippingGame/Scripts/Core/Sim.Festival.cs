@@ -75,7 +75,7 @@ namespace DropshippingGame.Core
     public static partial class GameData
     {
         /// <summary>Ab diesem Firmenlevel kommen Einladungen zu Straßenfesten.</summary>
-        public const int FestivalMinLevel = 2;
+        public const int FestivalMinLevel = 4;
         /// <summary>Chance pro Tageswechsel auf eine Einladung (wenn keins geplant ist).</summary>
         public const float FestivalChancePerDay = 0.14f;
         /// <summary>Mindestabstand in Tagen zwischen zwei Festen.</summary>
@@ -365,8 +365,8 @@ namespace DropshippingGame.Core
             float refPrice = Math.Max(1f, Market.MarketPrice(pid));
             float hype = Mathx.Clamp01((TrendMult(pid) - GameData.TrendMin) / Math.Max(0.01f, GameData.TrendMax - GameData.TrendMin));
 
-            float interest = 0.5f + hype * 0.3f + (Reputation - 3f) * 0.05f + Math.Min(0.12f, Awareness * 0.1f);
-            if (FestRng.Value() > Mathx.Clamp(interest, 0.2f, 0.92f))
+            float interest = (0.5f + hype * 0.3f + (Reputation - 3f) * 0.05f + Math.Min(0.12f, Awareness * 0.1f)) * FestivalPriceAppeal(price);
+            if (FestRng.Value() > Mathx.Clamp(interest, 0.08f, 0.92f))
             {
                 v.Outcome = FestivalOutcome.NoInterest;
                 return v;
