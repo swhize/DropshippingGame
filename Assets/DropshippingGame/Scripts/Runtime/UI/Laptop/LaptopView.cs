@@ -328,6 +328,8 @@ namespace DropshippingGame.UI
         public VisualElement Screen => _screen;
         /// <summary>Bereich für die Controller-Fokus-Steuerung (Seite ohne Browser-Leisten).</summary>
         public VisualElement FocusRoot => _pageHost;
+        /// <summary>Inhaltsbereich der gerade offenen App (Selbsttest prüft, ob die Seite Inhalt hat).</summary>
+        public VisualElement AppRoot => _appRoot;
         public bool Booting => _boot != null && UIX.IsShown(_boot);
 
         public LaptopView(VisualElement layer)

@@ -26,10 +26,21 @@ namespace DropshippingGame
         /// <summary>true, wenn zuletzt ein Controller benutzt wurde (für die Tastenhinweise).</summary>
         public static bool UsingGamepad { get; private set; }
 
+        // ---- Selbsttest (Testing/SelfTest.cs): simulierte Eingaben, nur der Selbsttest setzt sie ----
+        /// <summary>true = Laufen/Umsehen kommen nur vom Selbsttest (echte Maus/Tastatur werden dafür ignoriert).</summary>
+        public static bool TestActive;
+        /// <summary>Simuliertes Laufen bzw. Gas/Lenken (Moped); null = keine Bewegung.</summary>
+        public static Vector2? TestMove;
+        /// <summary>Aktionen (z. B. "interact", "build"), die gerade als „in diesem Frame gedrückt“ gelten.</summary>
+        public static readonly System.Collections.Generic.HashSet<string> TestPressed = new System.Collections.Generic.HashSet<string>();
+        /// <summary>Aktionen (z. B. "emote"), die gerade als gehalten gelten.</summary>
+        public static readonly System.Collections.Generic.HashSet<string> TestHeld = new System.Collections.Generic.HashSet<string>();
+
         public static Vector2 Move
         {
             get
             {
+                if (TestActive) return Vector2.ClampMagnitude(TestMove ?? Vector2.zero, 1f);
                 Vector2 v = Vector2.zero;
 #if ENABLE_INPUT_SYSTEM
                 var kb = Keyboard.current;
@@ -66,6 +77,7 @@ namespace DropshippingGame
         {
             get
             {
+                if (TestActive) return Vector2.zero;
                 Vector2 d = Vector2.zero;
 #if ENABLE_INPUT_SYSTEM
                 var mouse = Mouse.current;
@@ -347,8 +359,8 @@ namespace DropshippingGame
             }
         }
 
-        private static bool Bound(string action) => InputBindings.Down(action);
-        private static bool BoundHeld(string action) => InputBindings.Held(action);
+        private static bool Bound(string action) => TestPressed.Contains(action) || InputBindings.Down(action);
+        private static bool BoundHeld(string action) => TestHeld.Contains(action) || InputBindings.Held(action);
 
         // ---- Intern -----------------------------------------------------------------------------------
         private enum KeyId

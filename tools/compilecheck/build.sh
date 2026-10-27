@@ -27,3 +27,11 @@ $CSC $common $ENG -out:$OUT/Core.dll -recurse:"$S/Core/*.cs" > $OUT/core.log 2>&
 $CSC $common $ENG -r:$OUT/Core.dll -r:$PKG/UnityEngine.UI.dll -r:$PKG/Unity.InputSystem.dll -r:$OUT/URPStub.dll -out:$OUT/Runtime.dll -recurse:"$S/Runtime/*.cs" > $OUT/rt.log 2>&1 && echo "RUNTIME OK" || { echo "RUNTIME FAIL"; grep error $OUT/rt.log | sed "s|$R/||" | head -80; }
 ED=""; for f in $U/Managed/UnityEngine/*.dll; do ED="$ED -r:$f"; done
 $CSC $common $ED -r:$OUT/Core.dll -r:$OUT/Runtime.dll -r:$PKG/UnityEngine.UI.dll -r:$OUT/URPStub.dll -out:$OUT/Editor.dll -recurse:"$S/Editor/*.cs" > $OUT/ed.log 2>&1 && echo "EDITOR OK" || { echo "EDITOR FAIL"; grep error $OUT/ed.log | sed "s|$R/||" | head -40; }
+# PlayMode-Tests (Selbsttest im Test Runner): Test-Framework nachgebildet (TestFrameworkStub.cs), NUnit aus dem NuGet-Cache
+PM=$R/Assets/DropshippingGame/Tests/PlayMode
+NUNIT=$(ls $HOME/.nuget/packages/nunit/3.*/lib/netstandard2.0/nunit.framework.dll 2>/dev/null | tail -1)
+if [ -d $PM ]; then
+  if [ -n "$NUNIT" ]; then
+    $CSC $common $ENG -r:$OUT/Core.dll -r:$OUT/Runtime.dll -r:$NUNIT -out:$OUT/PlayModeTests.dll $(dirname $0)/TestFrameworkStub.cs -recurse:"$PM/*.cs" > $OUT/pm.log 2>&1 && echo "PLAYMODE OK" || { echo "PLAYMODE FAIL"; grep error $OUT/pm.log | sed "s|$R/||" | head -40; }
+  else echo "PLAYMODE übersprungen (NUnit fehlt – einmal: dotnet test tools/compilecheck/Tests.csproj)"; fi
+fi

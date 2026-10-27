@@ -69,6 +69,8 @@ namespace DropshippingGame.UI
         public bool IsOpen { get; private set; }
         /// <summary>Bildschirm des Handys (für die Fokus-Steuerung).</summary>
         public VisualElement Screen => _screen;
+        /// <summary>Inhaltsbereich der gerade offenen Handy-App (Selbsttest).</summary>
+        public VisualElement Content => _content;
 
         public PhoneView(VisualElement layer)
         {

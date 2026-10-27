@@ -433,6 +433,19 @@ namespace DropshippingGame.UI
             Game.Root?.SetPaused("pause", false);
         }
 
+        /// <summary>Unterseite direkt öffnen ("menu", "settings", "help", "feedback") – für den Selbsttest.</summary>
+        public void ShowPage(string page)
+        {
+            if (!IsOpen) Open();
+            switch (page)
+            {
+                case "settings": ShowSettings(); break;
+                case "help": ShowHelp(); break;
+                case "feedback": ShowFeedback(); break;
+                default: ShowMenu(); break;
+            }
+        }
+
         /// <summary>Esc im Pausemenü: aus Unterseiten zurück, sonst schließen.</summary>
         public void Back()
         {
