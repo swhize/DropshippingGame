@@ -44,6 +44,8 @@ namespace DropshippingGame
         public static float RenderScale = 1f;
         public static float Fov = 75f;
         public static bool MotionBlur;
+        /// <summary>Wechselndes Wetter (Wolken, leichter Regen, nasse Straßen). Aus = immer sonnig.</summary>
+        public static bool Weather = true;
         public static bool HeadBob = true;
         public static bool CameraShake = true;
         public static bool ShowFps;
@@ -150,6 +152,7 @@ namespace DropshippingGame
                 HeadBob = PlayerPrefs.GetInt("ds.headbob", HeadBob ? 1 : 0) == 1;
                 CameraShake = PlayerPrefs.GetInt("ds.shake", CameraShake ? 1 : 0) == 1;
                 MotionBlur = PlayerPrefs.GetInt("ds.motionblur", MotionBlur ? 1 : 0) == 1;
+                Weather = PlayerPrefs.GetInt("ds.weather", Weather ? 1 : 0) == 1;
                 InvertY = PlayerPrefs.GetInt("ds.inverty", InvertY ? 1 : 0) == 1;
                 Quality = Mathf.Clamp(PlayerPrefs.GetInt("ds.quality", Quality), 0, 2);
                 RenderScale = Mathf.Clamp(PlayerPrefs.GetFloat("ds.renderscale", RenderScale), RenderScaleMin, 1f);
@@ -205,6 +208,7 @@ namespace DropshippingGame
                 PlayerPrefs.SetInt("ds.headbob", HeadBob ? 1 : 0);
                 PlayerPrefs.SetInt("ds.shake", CameraShake ? 1 : 0);
                 PlayerPrefs.SetInt("ds.motionblur", MotionBlur ? 1 : 0);
+                PlayerPrefs.SetInt("ds.weather", Weather ? 1 : 0);
                 PlayerPrefs.SetInt("ds.inverty", InvertY ? 1 : 0);
                 PlayerPrefs.SetInt("ds.quality", Quality);
                 PlayerPrefs.SetFloat("ds.renderscale", RenderScale);

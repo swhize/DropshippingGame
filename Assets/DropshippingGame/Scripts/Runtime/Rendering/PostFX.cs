@@ -5,8 +5,9 @@ using UnityEngine.Rendering.Universal;
 namespace DropshippingGame
 {
     /// <summary>
-    /// Post-Processing (URP): filmisches Tonemapping, Bloom für Neon/Lampen, leichte Farbkorrektur
-    /// und Vignette. Außerdem Kantenglättung pro Kamera und die Grafikstufen (Niedrig/Mittel/Hoch).
+    /// Post-Processing (URP): filmisches Tonemapping, Bloom für Neon/Lampen, Farbkorrektur nach Tageszeit
+    /// (Weißabgleich, kühle Schatten/warme Lichter, Sättigung – siehe <see cref="ArtStyle.Mood"/>) und Vignette.
+    /// Außerdem Kantenglättung pro Kamera und die Grafikstufen (Niedrig/Mittel/Hoch).
     /// Ohne URP (Standard-Pipeline) passiert hier einfach nichts.
     /// </summary>
     public static class PostFX
@@ -16,6 +17,10 @@ namespace DropshippingGame
         private static Vignette _vignette;
         private static ColorAdjustments _color;
         private static MotionBlur _motion;
+        private static WhiteBalance _white;
+        private static ShadowsMidtonesHighlights _smh;
+        // Stimmung (Atmosphere) und Abdunkeln (Laptop/Pause) werden kombiniert.
+        private static float _moodSat = 10f, _moodContrast = 8f, _dim;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
@@ -25,6 +30,11 @@ namespace DropshippingGame
             _vignette = null;
             _color = null;
             _motion = null;
+            _white = null;
+            _smh = null;
+            _moodSat = 10f;
+            _moodContrast = 8f;
+            _dim = 0f;
         }
 
         public static void Create(Transform parent)
@@ -52,6 +62,20 @@ namespace DropshippingGame
             _color.postExposure.Override(0.35f);
             _color.contrast.Override(8f);
             _color.saturation.Override(10f);
+            // Bloom mit einem Hauch Wärme: Lampen und Neon glühen nicht klinisch weiß.
+            if (_bloom.tint != null) _bloom.tint.Override(new Color(1f, 0.93f, 0.84f));
+
+            // Farbkorrektur nach Tageszeit (Werte setzt Atmosphere über SetMood).
+            _white = profile.Add<WhiteBalance>(true);
+            _smh = profile.Add<ShadowsMidtonesHighlights>(true);
+            if (_smh != null)
+            {
+                _smh.shadowsStart.Override(0f);
+                _smh.shadowsEnd.Override(0.32f);
+                _smh.highlightsStart.Override(0.55f);
+                _smh.highlightsEnd.Override(1f);
+                _smh.midtones.Override(new Vector4(1f, 1f, 1f, 0f));
+            }
 
             _vignette = profile.Add<Vignette>(true);
             _vignette.intensity.Override(0.2f);
@@ -77,7 +101,29 @@ namespace DropshippingGame
         /// <summary>Dämpft das Bild (z.B. hinter dem Laptop oder im Pausemenü).</summary>
         public static void SetDimmed(float amount)
         {
-            if (_color != null) _color.saturation.Override(Mathf.Lerp(10f, -35f, amount));
+            _dim = Mathf.Clamp01(amount);
+            ApplyColor();
+        }
+
+        /// <summary>Farbkorrektur der aktuellen Lichtstimmung (von <see cref="Atmosphere"/>, alle 0,2 s).</summary>
+        public static void SetMood(ArtStyle.Mood m)
+        {
+            _moodSat = m.Saturation;
+            _moodContrast = m.Contrast;
+            if (_white != null) _white.temperature.Override(Mathf.Clamp(m.Temperature, -100f, 100f));
+            if (_smh != null)
+            {
+                _smh.shadows.Override(m.Shadows);
+                _smh.highlights.Override(m.Highlights);
+            }
+            ApplyColor();
+        }
+
+        private static void ApplyColor()
+        {
+            if (_color == null) return;
+            _color.saturation.Override(Mathf.Lerp(_moodSat, -35f, _dim));
+            _color.contrast.Override(_moodContrast);
         }
 
         public static void SetupCamera(Camera cam)
@@ -104,6 +150,9 @@ namespace DropshippingGame
             }
             if (_bloom != null) _bloom.active = q > 0;
             if (_vignette != null) _vignette.active = q > 0;
+            // Farbkorrektur kostet praktisch nichts (steckt in der LUT), auf „Niedrig“ ist Post-Processing ohnehin aus.
+            if (_white != null) _white.active = q > 0;
+            if (_smh != null) _smh.active = q > 0;
             QualitySettings.shadowDistance = q == 0 ? 30f : (q == 1 ? 55f : 85f);
             if (_motion != null) _motion.active = Settings.MotionBlur && q > 0 && !Settings.CalmEffects;
             Settings.ApplyFrameRate();

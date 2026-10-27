@@ -197,6 +197,7 @@ namespace DropshippingGame.UI
             });
             Note(q, "Unter 100 % läuft das Spiel flüssiger, wird aber etwas unschärfer.");
             UIX.Toggle(q, "FPS anzeigen", Settings.ShowFps, on => { Settings.ShowFps = on; Settings.Apply(); });
+            UIX.Toggle(q, "Wechselndes Wetter (Wolken, Regen)", Settings.Weather, on => { Settings.Weather = on; Settings.Apply(); });
 
             var cam = Section(p, "KAMERA", "eye");
             UIX.Slider(cam, "Sichtfeld (FOV)", 60f, 100f, Settings.Fov, 1f, v => Mathf.RoundToInt(v) + "°", v => { Settings.Fov = v; Settings.ApplyLive(); }, Commit);

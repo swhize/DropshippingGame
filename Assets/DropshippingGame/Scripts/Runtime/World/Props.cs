@@ -372,8 +372,9 @@ namespace DropshippingGame
             {
                 // Laterne mit Lampenkopf oben mittig: Leuchtkörper + Licht dort.
                 Sphere(a.transform, 0.13f, Mats.Lamp(new Color(1f, 0.85f, 0.6f)), new Vector3(0, 3.78f, 0), 8, 5).GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
-                light = PointLight(a.transform, new Vector3(0, 3.55f, 0), new Color(1f, 0.82f, 0.6f), 0f, 12f);
+                light = PointLight(a.transform, new Vector3(0, 3.55f, 0), ArtStyle.LightStreet, 0f, 12f);
                 light.enabled = false;
+                LightPool(a.transform, new Vector3(0, 0, 0), 7f);
                 return a;
             }
             var n = Node(parent, "LampPost");
@@ -383,9 +384,29 @@ namespace DropshippingGame
             Box(t, new Vector3(0.08f, 0.08f, 1.1f), pole, new Vector3(0, 4.15f, 0.5f));
             Box(t, new Vector3(0.34f, 0.12f, 0.5f), pole, new Vector3(0, 4.08f, 1f));
             Box(t, new Vector3(0.28f, 0.03f, 0.42f), Mats.Lamp(new Color(1f, 0.85f, 0.6f)), new Vector3(0, 4.01f, 1f), default, 0f, false);
-            light = PointLight(t, new Vector3(0, 3.8f, 1f), new Color(1f, 0.82f, 0.6f), 0f, 11f);
+            light = PointLight(t, new Vector3(0, 3.8f, 1f), ArtStyle.LightStreet, 0f, 11f);
             light.enabled = false;
+            LightPool(t, new Vector3(0, 0, 1f), 7f);
             return n;
+        }
+
+        /// <summary>
+        /// Nächtlicher Lichtkreis am Boden unter einer Lampe (additive Fläche statt echtem Licht): so wirken auch
+        /// weit entfernte Laternen beleuchtet, deren Punktlicht aus Leistungsgründen aus ist.
+        /// </summary>
+        public static void LightPool(Transform parent, Vector3 localFoot, float diameter)
+        {
+            var mat = Mats.LightPool(ArtStyle.LightStreet);
+            if (mat == null) return;
+            var go = new GameObject("LightPool");
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = localFoot + new Vector3(0, 0.06f, 0);
+            go.transform.localScale = new Vector3(diameter, 1f, diameter);
+            go.AddComponent<MeshFilter>().sharedMesh = MeshKit.QuadUp();
+            var r = go.AddComponent<MeshRenderer>();
+            r.sharedMaterial = mat;
+            r.shadowCastingMode = ShadowCastingMode.Off;
+            r.receiveShadows = false;
         }
 
         public static GameObject Bench(Transform parent)
@@ -688,7 +709,7 @@ namespace DropshippingGame
             var n = Node(parent, "CeilingLight");
             var t = n.transform;
             Box(t, new Vector3(length, 0.08f, 0.2f), Mats.DarkMetal(), Vector3.zero, default, -1f, false);
-            Box(t, new Vector3(length - 0.1f, 0.03f, 0.14f), Mats.Lamp(new Color(0.9f, 0.95f, 1f), true), new Vector3(0, -0.05f, 0), default, 0f, false);
+            Box(t, new Vector3(length - 0.1f, 0.03f, 0.14f), Mats.Lamp(new Color(1f, 0.94f, 0.84f), true), new Vector3(0, -0.05f, 0), default, 0f, false);
             return n;
         }
 

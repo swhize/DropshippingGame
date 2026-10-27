@@ -321,7 +321,7 @@ namespace DropshippingGame
             camGo.transform.SetParent(_world.transform, false);
             camGo.tag = "MainCamera";
             _menuCam = camGo.AddComponent<Camera>();
-            _menuCam.fieldOfView = 58f;
+            _menuCam.fieldOfView = 52f;
             _menuCam.nearClipPlane = 0.1f;
             _menuCam.farClipPlane = 400f;
             camGo.AddComponent<AudioListener>();
@@ -330,7 +330,9 @@ namespace DropshippingGame
             PostFX.SetDimmed(0f);
             _menuT = 0f;
             UpdateMenuCamera(0f);
-            _world.Atmos.SetTimeOfDay(19.35f);
+            // Goldene Stunde, Sonne im Rücken der Kamera: Streiflicht auf die Plakatwand (docs/ART_DIRECTION.md)
+            _world.Atmos.SunYawOverride = 28f;
+            _world.Atmos.SetTimeOfDay(18.1f);
             _world.Atmos.RenderReflections();
             _ui.Hud.SetVisible(false);
             _ui.Menu.Open();
@@ -341,9 +343,12 @@ namespace DropshippingGame
         {
             if (_menuCam == null) return;
             _menuT += dt;
-            float x = -18f + Mathf.Sin(_menuT * 0.045f) * 20f;
-            _menuCam.transform.position = new Vector3(x, 2.9f + Mathf.Sin(_menuT * 0.11f) * 0.25f, 12.3f);
-            _menuCam.transform.LookAt(new Vector3(x * 0.7f - 6f, 2.7f, -9f));
+            // Langsame Fahrt auf dem südlichen Gehweg, Blick über die Straße auf die Plakatwand (x 20, z 8,4)
+            // mit der Skyline dahinter; die Wand steht im rechten Bilddrittel, links liegt das Menü.
+            float s = Mathf.Sin(_menuT * 0.05f);
+            var pos = new Vector3(9f + s * 2.2f, 1.75f + Mathf.Sin(_menuT * 0.13f) * 0.06f, -5.2f);
+            var look = Quaternion.LookRotation(new Vector3(20f, 3.7f, 8.4f) - pos);
+            _menuCam.transform.SetPositionAndRotation(pos, Quaternion.Euler(0f, -13f + s * 1.5f, 0f) * look);
         }
 
         private void StartNewGame(string mode, int slot)

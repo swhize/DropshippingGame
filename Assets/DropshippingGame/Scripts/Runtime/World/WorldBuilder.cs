@@ -309,7 +309,7 @@ namespace DropshippingGame
             var menu = Props.SignBoard(transform, "KALLES KARTE", new Color(0.1f, 0.1f, 0.1f), new Color(1f, 0.85f, 0.3f), new Vector2(3.4f, 0.5f), SignFont.Retro);
             menu.transform.localPosition = new Vector3(-38, 2.6f, z0 + 0.32f);
             Label3D.Create(transform, "Döner ....... 5,50\nCurrywurst .. 4,00\nPommes ...... 3,00\nSchnitzel ... 8,90", 48f, new Color(0.95f, 0.95f, 0.9f), new Vector3(-38, 1.95f, z0 + 0.33f), false, 0f, false, 1f, 0, SignFont.Condensed);
-            foreach (float lx in new[] { -41f, -36f, -31f }) CeilingLamp(new Vector3(lx, h - 0.1f, -12f), 1.2f, new Color(1f, 0.85f, 0.65f), 1.4f, 8f);
+            foreach (float lx in new[] { -41f, -36f, -31f }) CeilingLamp(new Vector3(lx, h - 0.1f, -12f), 1.2f, ArtStyle.LightWarm, 1.4f, 8f);
             CeilingLamp(new Vector3(-38.5f, h - 0.1f, -17.2f), 2f, new Color(1f, 0.95f, 0.85f), 1.1f, 6f);
         }
 
@@ -350,7 +350,7 @@ namespace DropshippingGame
             Props.Cyl(S, 0.25f, 0.25f, 7.2f, Mats.Std(new Color(0.55f, 0.57f, 0.6f), 0.5f, 0.6f), new Vector3(-16, 3.25f, z1 - 0.45f), new Vector3(0, 0, 90));
             Props.Box(S, new Vector3(7.2f, 0.35f, 0.05f), Mats.Shutter(new Color(0.7f, 0.72f, 0.75f)), new Vector3(-16, 2.85f, z1 - 0.2f), default, 0f);
             Window(new Vector3(x0 + 0.15f, 1.9f, -13f), new Vector2(1.6f, 1f), Vector3.left);
-            foreach (float lx in new[] { -18f, -13.8f }) CeilingLamp(new Vector3(lx, h - 0.08f, -12f), 1.4f, new Color(0.92f, 0.96f, 1f), 1.5f, 8f);
+            foreach (float lx in new[] { -18f, -13.8f }) CeilingLamp(new Vector3(lx, h - 0.08f, -12f), 1.4f, ArtStyle.LightWork, 1.5f, 8f);
             var brand = Label3D.Create(transform, "GARAGE", 170f, Color.white, new Vector3(-16, 3.3f, z1 + 0.03f), false, 0f, false, 1f, 0, SignFont.Stencil);
             _brandLabels.Add(brand);
             var spot = new GameObject("Spot").AddComponent<Light>();
@@ -402,7 +402,7 @@ namespace DropshippingGame
             Props.Box(S, new Vector3(0.1f, 0.012f, 16f), yellow, new Vector3(12f, 0.035f, -15f), default, 0f, false);
             foreach (float lx in new[] { 4f, 16f, 28f })
             foreach (float lz in new[] { -12f, -24f })
-                CeilingLamp(new Vector3(lx, h - 0.2f, lz), 2.4f, new Color(0.95f, 0.97f, 1f), 1.7f, 15f);
+                CeilingLamp(new Vector3(lx, h - 0.2f, lz), 2.4f, ArtStyle.LightWork, 1.7f, 15f);
             // Tor (Rolltor)
             _gate = Props.Node(transform, "Gate", new Vector3(17f, 2.3f, z1 - 0.15f)).transform;
             Props.Box(_gate, new Vector3(6f, 4.6f, 0.12f), Mats.Shutter(new Color(0.72f, 0.74f, 0.76f)), Vector3.zero, default, 0f);
@@ -837,7 +837,19 @@ namespace DropshippingGame
         private void RefreshBillboard()
         {
             var sim = Game.Sim;
-            if (sim == null || _boardTitle == null || _boardSub == null) return;
+            if (_boardTitle == null || _boardSub == null) return;
+            if (MenuMode)
+            {
+                // Hauptmenü: Plakat im Hustle-Gold mit dem Spieltitel (Art Direction, Menü-Einstellung)
+                if (_boardPanel != null) _boardPanel.sharedMaterial = Mats.Std(ArtStyle.BrandGold, 0.6f);
+                _boardTitle.SetText("DROPSHIPPING");
+                _boardTitle.transform.localScale = Vector3.one * 0.7f; // 12 Zeichen auf 7 m Plakatbreite
+                _boardTitle.SetColor(ArtStyle.Ink);
+                _boardSub.SetText("Vom Imbiss zum Imperium.");
+                _boardSub.SetColor(ArtStyle.Ink);
+                return;
+            }
+            if (sim == null) return;
             Color brand = sim.BrandColor.ToColor();
             if (_boardPanel != null) _boardPanel.sharedMaterial = Mats.Std(brand, 0.6f);
             float lum = brand.r * 0.3f + brand.g * 0.59f + brand.b * 0.11f;

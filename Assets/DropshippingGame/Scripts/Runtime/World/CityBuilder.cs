@@ -73,23 +73,13 @@ namespace DropshippingGame
             "Socken-Paradies", "Dönerwetter", "Schreibwaren Klecks",
         };
 
-        private static readonly Color[] WallColors =
-        {
-            new Color(0.86f, 0.78f, 0.62f), new Color(0.78f, 0.55f, 0.45f), new Color(0.62f, 0.7f, 0.78f), new Color(0.84f, 0.84f, 0.8f),
-            new Color(0.7f, 0.78f, 0.6f), new Color(0.9f, 0.72f, 0.5f), new Color(0.72f, 0.62f, 0.75f), new Color(0.95f, 0.88f, 0.7f),
-            new Color(0.6f, 0.6f, 0.62f), new Color(0.85f, 0.6f, 0.58f),
-        };
+        // Farben aus der Art Direction (ArtStyle / docs/ART_DIRECTION.md): Wandfarben je Viertel.
+        private static Color[] WallColors => _zone == CityLayout.ZoneResNorth || _zone == CityLayout.ZoneResSouth
+            ? ArtStyle.WallsResidential : ArtStyle.WallsMainStreet;
 
-        private static readonly Color[] SignColors =
-        {
-            new Color(0.85f, 0.18f, 0.2f), new Color(0.15f, 0.35f, 0.7f), new Color(0.12f, 0.55f, 0.35f), new Color(0.95f, 0.75f, 0.1f),
-            new Color(0.55f, 0.25f, 0.7f), new Color(0.1f, 0.1f, 0.12f), new Color(0.95f, 0.45f, 0.15f), new Color(0.1f, 0.6f, 0.7f),
-        };
-
-        private static readonly Color[] RoofColors =
-        {
-            new Color(0.62f, 0.25f, 0.18f), new Color(0.35f, 0.33f, 0.33f), new Color(0.45f, 0.28f, 0.2f), new Color(0.25f, 0.3f, 0.38f),
-        };
+        private static readonly Color[] SignColors = ArtStyle.SignColors;
+        private static readonly Color[] RoofColors = ArtStyle.RoofColors;
+        private static int _zone = -1;
 
         private static readonly Color[] CarColors =
         {
@@ -407,6 +397,7 @@ namespace DropshippingGame
 
         private static void Building(float cx, float w, float frontZ, float rotY, float depth, bool commercial, int zone)
         {
+            _zone = zone;
             var node = Props.Node(_s, commercial ? "Shop" : "House", new Vector3(cx, 0, frontZ), rotY);
             var t = node.transform;
             bool shop = commercial ? Chance(0.8f) : Chance(0.08f);
@@ -590,6 +581,13 @@ namespace DropshippingGame
                 new Vector2(Mathf.Min(w - 1f, 0.5f + name.Length * 0.32f), 0.62f));
             sign.transform.position = t.TransformPoint(new Vector3(0, 3.75f, 0.12f));
             sign.transform.rotation = t.rotation;
+            // Nachts hinterleuchtet (Art Direction: Läden sind die Lichtinseln der Straße)
+            if (sign.transform.childCount > 0)
+            {
+                var face = sign.transform.GetChild(0).GetComponent<MeshRenderer>();
+                var glow = Mats.SignGlow(sc);
+                if (face != null && glow != null) face.sharedMaterial = glow;
+            }
             // Kleinkram vor dem Laden
             if (Chance(0.35f))
             {
