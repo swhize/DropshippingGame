@@ -25,6 +25,7 @@ namespace DropshippingGame.Core
 
         private static readonly Dictionary<string, string> Exact = new Dictionary<string, string>(4096);
         private static readonly List<Template> Templates = new List<Template>(1024);
+        private static readonly HashSet<string> TemplateKeys = new HashSet<string>();
         private static readonly Dictionary<string, string> Cache = new Dictionary<string, string>(4096);
         private static readonly HashSet<string> MissingSet = new HashSet<string>();
         // Bereits englische Texte (Ziel-Werte der Tabellen) gelten nicht als fehlend.
@@ -61,6 +62,7 @@ namespace DropshippingGame.Core
             if (string.IsNullOrEmpty(de) || en == null) return;
             if (de.IndexOf('{') >= 0 && Regex.IsMatch(de, @"\{\d+\}"))
             {
+                if (!TemplateKeys.Add(de)) return; // erster Eintrag gewinnt (siehe Ladereihenfolge)
                 try
                 {
                     var t = new Template { De = de, En = en, Rx = BuildRegex(de, out int lit), LiteralLength = lit };
@@ -70,6 +72,7 @@ namespace DropshippingGame.Core
                 catch (ArgumentException) { }
                 return;
             }
+            if (Exact.ContainsKey(de)) return; // erster Eintrag gewinnt (siehe Ladereihenfolge)
             Exact[de] = en;
             EnglishValues.Add(en);
         }
@@ -208,13 +211,15 @@ namespace DropshippingGame.Core
                 if (_loaded) return;
                 _loaded = true;
                 // Feste Liste (keine Reflexion – IL2CPP-sicher). Jede Datei gehört einem Bereich.
-                Safe(EnCore.Register);
+                // Bei doppelten Schlüsseln gewinnt der ERSTE Eintrag: Nachträge/Korrekturen (EnSystems) zuerst,
+                // dann die Spielinhalte als maßgebliche Begriffe, danach Meldungen, Oberfläche, Laptop, Welt.
+                Safe(EnSystems.Register);
                 Safe(EnContent.Register);
                 Safe(EnEvents.Register);
+                Safe(EnCore.Register);
                 Safe(EnUi.Register);
                 Safe(EnLaptop.Register);
                 Safe(EnWorld.Register);
-                Safe(EnSystems.Register);
             }
         }
 
@@ -234,6 +239,7 @@ namespace DropshippingGame.Core
                 Cache.Clear();
                 MissingSet.Clear();
                 EnglishValues.Clear();
+                TemplateKeys.Clear();
                 _loaded = false;
                 _sorted = false;
                 Current = "de";

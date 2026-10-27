@@ -12,6 +12,7 @@
   - Vorlagen müssen den deutschen Text **exakt** treffen (Leerzeichen, Satzzeichen, „×“, „€“). Bei Verkettungen im Code (`"A " + x + " B"`) die Vorlage `"A {0} B"` eintragen.
   - Wenn ein Text aus vielen dynamischen Stücken zusammengesetzt wird und keine sinnvolle Vorlage möglich ist, darf der Code minimal umgebaut werden (z. B. `string.Format` mit fester Vorlage) – Verhalten im Deutschen unverändert.
 - Fehlende Texte sammelt `Lang.Missing` (bei aktivem Englisch).
+- Doppelte Schlüssel: der **erste** Eintrag gewinnt. Ladereihenfolge: EnSystems (Korrekturen) → EnContent (maßgebliche Begriffe) → EnEvents → EnCore → EnUi → EnLaptop → EnWorld.
 
 ## Stil
 - Englisch locker, frech, satirisch – wie das deutsche Original (Hustle-Kultur-Satire). Keine wörtliche Übersetzung von Witzen: lieber einen gleichwertigen englischen Witz.
