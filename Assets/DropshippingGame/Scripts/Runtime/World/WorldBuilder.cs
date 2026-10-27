@@ -98,6 +98,7 @@ namespace DropshippingGame
             if (!menuMode) gameObject.AddComponent<StreetFestival>().Setup();
             try { gameObject.AddComponent<FinanceDistrict>().Setup(menuMode); } catch (System.Exception e) { Debug.LogWarning("Finanzviertel: " + e.Message); }
             gameObject.AddComponent<ShoppingDistrict>().Build(menuMode);
+            gameObject.AddComponent<LightCuller>();
             // Statische Geometrie zusammenfassen: deutlich weniger Draw Calls.
             // Nur lesbare (prozedurale) Meshes: importierte Modelle sind nicht lesbar und würden Fehler werfen.
             var batch = new List<GameObject>();

@@ -53,6 +53,8 @@ namespace DropshippingGame.UI
         private string _boostSig = "", _hintSig = "", _toastPlace = "";
         private float _fpsAcc;
         private int _fpsFrames;
+        private float _ticketAcc;
+        private string _rawPrompt = "", _safePrompt = "";
         private float _slowAcc;
         private float _hudAlpha = 1f;
         private int _lastMore = -1;
@@ -231,7 +233,14 @@ namespace DropshippingGame.UI
             bool locked = root != null && root.InputLocked;
             UIX.Show(_crosshair, !locked);
             var player = Game.Player;
-            string p = player != null && !locked ? UiFmt.Safe(player.PromptText ?? "") : "";
+            string raw = player != null && !locked ? player.PromptText ?? "" : "";
+            // Bereinigen (String-Ersetzungen) nur, wenn sich der Rohtext geändert hat – nicht jeden Frame.
+            if (!ReferenceEquals(raw, _rawPrompt))
+            {
+                _rawPrompt = raw;
+                _safePrompt = UiFmt.Safe(raw);
+            }
+            string p = _safePrompt;
             UIX.Show(_prompt, p != "");
             _crosshair.EnableInClassList("active", p != "");
             UIX.Show(_ring, p != "");
@@ -254,7 +263,13 @@ namespace DropshippingGame.UI
                 if (p != "") UIX.FadeSlideIn(_prompt, 6f, 0.12f);
             }
 
-            TickTickets(sim);
+            _ticketAcc += dt;
+            if (_ticketAcc >= 0.1f)
+            {
+                // Countdown-Texte/Balken 10× pro Sekunde reichen (spart Strings pro Frame).
+                _ticketAcc = 0f;
+                TickTickets(sim);
+            }
             try
             {
                 _compass?.Tick(dt);
@@ -262,7 +277,7 @@ namespace DropshippingGame.UI
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                SafeLog.Warn("hud.compass", e);
             }
             _slowAcc += dt;
             if (_slowAcc >= 0.25f)
@@ -273,7 +288,7 @@ namespace DropshippingGame.UI
                 RefreshHints(sim, locked);
             }
 
-            if (Settings.ShowFps)
+            if (Settings.ShowFps && !PerfOverlay.Visible) // Perf-Overlay zeigt FPS selbst – keine doppelte Anzeige
             {
                 _fpsAcc += dt;
                 _fpsFrames++;
@@ -373,8 +388,14 @@ namespace DropshippingGame.UI
             foreach (var el in _hints.Query<VisualElement>().ToList()) el.pickingMode = PickingMode.Ignore;
         }
 
-        /// <summary>Nach jeder Wirtschaftsänderung: Geld, Tag, Bewertung, Level, Zettel, Ziel.</summary>
+        /// <summary>Nach jeder Wirtschaftsänderung: Geld, Tag, Bewertung, Level, Zettel, Ziel (abgesichert – läuft in Sim-Ereignissen).</summary>
         public void Refresh()
+        {
+            try { RefreshInner(); }
+            catch (Exception e) { SafeLog.Warn("hud.refresh", e); }
+        }
+
+        private void RefreshInner()
         {
             var sim = Game.Sim;
             if (sim == null) return;

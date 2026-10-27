@@ -67,10 +67,10 @@ namespace DropshippingGame
             if (batch.Count > 0) StaticBatchingUtility.Combine(batch.ToArray(), _static.gameObject);
             if (_sim != null && !menuMode)
             {
-                _sim.ShopChanged += OnShopChanged;
-                _sim.PetsChanged += SyncPets;
-                _sim.DayStarted += OnDayStarted;
-                SyncPets();
+                _sim.ShopChanged += OnShopChangedSafe;
+                _sim.PetsChanged += SyncPetsSafe;
+                _sim.DayStarted += OnDayStartedSafe;
+                SyncPetsSafe();
                 if (PetCorner.Instance == null) PetCorner.Create(Game.World != null ? Game.World.transform : transform);
             }
             RefreshTags();
@@ -81,9 +81,28 @@ namespace DropshippingGame
             if (Instance == this) Instance = null;
             if (_scannerHeld != null) Destroy(_scannerHeld);
             if (_sim == null) return;
-            _sim.ShopChanged -= OnShopChanged;
-            _sim.PetsChanged -= SyncPets;
-            _sim.DayStarted -= OnDayStarted;
+            _sim.ShopChanged -= OnShopChangedSafe;
+            _sim.PetsChanged -= SyncPetsSafe;
+            _sim.DayStarted -= OnDayStartedSafe;
+        }
+
+        // Sim-Ereignisse abgesichert: ein Fehler in der Darstellung darf den Kauf/Tageswechsel nicht abbrechen.
+        private void OnShopChangedSafe()
+        {
+            try { if (this != null) OnShopChanged(); }
+            catch (System.Exception e) { SafeLog.Warn("shops.changed", e); }
+        }
+
+        private void SyncPetsSafe()
+        {
+            try { if (this != null) SyncPets(); }
+            catch (System.Exception e) { SafeLog.Warn("shops.pets", e); }
+        }
+
+        private void OnDayStartedSafe(int day)
+        {
+            try { if (this != null) OnDayStarted(day); }
+            catch (System.Exception e) { SafeLog.Warn("shops.day", e); }
         }
 
         // =====================================================================================

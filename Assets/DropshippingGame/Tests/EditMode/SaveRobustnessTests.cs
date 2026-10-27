@@ -343,6 +343,34 @@ namespace DropshippingGame.Tests
             }
         }
 
+        /// <summary>Ein fehlerhafter Anzeige-Handler (Unity-Schicht) bricht weder Spiellogik noch andere Handler ab.</summary>
+        [Test]
+        public void ThrowingHandler_DoesNotBreakSimulation()
+        {
+            var sim = TestUtil.Fresh();
+            int seen = 0, errors = 0, toasts = 0;
+            var old = SafeEvents.OnHandlerError;
+            SafeEvents.OnHandlerError = (n, e) => errors++;
+            try
+            {
+                sim.EconomyChanged += () => throw new InvalidOperationException("Anzeige kaputt");
+                sim.EconomyChanged += () => seen++;
+                sim.Toast += (t, k) => throw new InvalidOperationException("Toast kaputt");
+                sim.Toast += (t, k) => toasts++;
+                int before = sim.Money;
+                Assert.DoesNotThrow(() => sim.AdjustMoney(100, "other"));
+                Assert.AreEqual(before + 100, sim.Money);
+                Assert.AreEqual(1, seen, "zweiter Handler lief trotzdem");
+                Assert.DoesNotThrow(() => sim.Notify("Hallo"));
+                Assert.AreEqual(1, toasts);
+                Assert.AreEqual(2, errors, "Fehler wurden gemeldet");
+            }
+            finally
+            {
+                SafeEvents.OnHandlerError = old;
+            }
+        }
+
         [Test]
         public void ReadSummary_SurvivesWrongTypes()
         {

@@ -225,7 +225,26 @@ namespace DropshippingGame
             _walk = Mathf.MoveTowards(_walk, moving ? 1f : 0f, dt * 4f);
             _phase += dt * Speed * 4.2f * _walk;
             if (Model != null) AnimateModel(moving);
-            else CharacterKit.Animate(Rig, _phase, _walk, _t);
+            else if (AnimateThisFrame(dt)) CharacterKit.Animate(Rig, _phase, _walk, _t);
+        }
+
+        // ---- Detailstufe: ferne Figuren animieren seltener bzw. gar nicht (Bewegung läuft weiter) ----
+        private float _lodT;
+        private int _lod;
+
+        private bool AnimateThisFrame(float dt)
+        {
+            _lodT -= dt;
+            if (_lodT <= 0f)
+            {
+                _lodT = 0.4f + Random.value * 0.3f;
+                var cam = Camera.main;
+                float d2 = cam != null ? (cam.transform.position - transform.position).sqrMagnitude : 0f;
+                _lod = d2 < 30f * 30f ? 0 : (d2 < 75f * 75f ? 1 : 2);
+            }
+            if (_lod == 0) return true;
+            if (_lod == 1) return ((Time.frameCount + GetInstanceID()) & 1) == 0;
+            return false;
         }
 
         private void AnimateModel(bool moving)

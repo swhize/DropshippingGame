@@ -89,6 +89,7 @@ namespace DropshippingGame
             _ui.Fader.SetBlack();
             EnterMenu();
             _ui.Fader.FadeIn(1.2f);
+            PerfOverlay.RestoreFromPrefs();
         }
 
         private void OnDestroy()
@@ -117,6 +118,7 @@ namespace DropshippingGame
         private void HookSim()
         {
             var s = _sim;
+            SafeEvents.OnHandlerError = (name, e) => SafeLog.Warn("event." + name, e);
             GameData.KeyLabel = GameInput.KeyLabel;
             s.EconomyChanged += OnEconomyChanged;
             s.Toast += (text, kind) => _ui.Hud.AddToast(text, kind);
@@ -227,7 +229,8 @@ namespace DropshippingGame
             if (_ui.Laptop.IsOpen)
             {
                 _ui.Laptop.MarkDirty();
-                _ui.Laptop.UpdateBadges();
+                try { _ui.Laptop.UpdateBadges(); }
+                catch (Exception e) { SafeLog.Warn("laptop.badges", e); }
             }
             if (_ui.Phone.IsOpen) _ui.Phone.MarkDirty();
         }
@@ -235,12 +238,7 @@ namespace DropshippingGame
         private void OnEconomyChanged()
         {
             _ui.Hud.Refresh();
-            if (_ui.Laptop.IsOpen)
-            {
-                _ui.Laptop.MarkDirty();
-                _ui.Laptop.UpdateBadges();
-            }
-            if (_ui.Phone.IsOpen) _ui.Phone.MarkDirty();
+            RefreshPanels();
         }
 
         private string DayTagline()
@@ -516,10 +514,14 @@ namespace DropshippingGame
         private void PlacePlayer(bool useSaved)
         {
             var ps = _sim.PlayerState;
-            if (useSaved && ps != null && _sim.StoryStage == "business" && !ps.Pos.IsZero)
+            if (useSaved && ps != null && _sim.StoryStage == "business" && !ps.Pos.IsZero && IsFinite(ps.Pos.ToVector3()))
             {
                 _player.Teleport(ps.Pos.ToVector3() + new Vector3(0, 0.05f, 0), ps.RotY);
-                if (ps.Held != null) _player.Hold(ps.Held);
+                if (ps.Held != null)
+                {
+                    try { _player.Hold(ps.Held); }
+                    catch (Exception e) { SafeLog.Warn("restore.held", e); }
+                }
             }
             else _player.Teleport(_world.SpawnPoint(), _world.SpawnYaw());
             _sim.PlayerState = null;
@@ -528,9 +530,19 @@ namespace DropshippingGame
         private void RestoreWorldItems()
         {
             foreach (var w in _sim.WorldItems)
-                if (w.Item != null) _player.SpawnDropped(w.Item, w.Pos.ToVector3(), w.RotY);
+            {
+                if (w == null || w.Item == null) continue;
+                var pos = w.Pos.ToVector3();
+                // Kaputte Position (NaN, aus der Welt gefallen): neben den Spieler legen statt verlieren.
+                if (!IsFinite(pos) || pos.y < -20f) pos = _player.transform.position + _player.transform.forward * 0.8f + Vector3.up * 0.4f;
+                try { _player.SpawnDropped(w.Item, pos, w.RotY); }
+                catch (Exception e) { SafeLog.Warn("restore.item", e); }
+            }
             _sim.WorldItems.Clear();
         }
+
+        private static bool IsFinite(Vector3 v) =>
+            !(float.IsNaN(v.x) || float.IsNaN(v.y) || float.IsNaN(v.z) || float.IsInfinity(v.x) || float.IsInfinity(v.y) || float.IsInfinity(v.z));
 
         private void PruneOrphanOrders()
         {
@@ -929,7 +941,21 @@ namespace DropshippingGame
             _ui.Phone.Close(true);
             _ui.Modal.Close();
             Game.Sound("notify");
-            SummaryView.Show(_ui.BigModal, _sim, s, NextDay);
+            try
+            {
+                SummaryView.Show(_ui.BigModal, _sim, s, NextDay);
+            }
+            catch (Exception e)
+            {
+                // Ohne Tagesübersicht gäbe es keinen Weg zum nächsten Tag – einfache Ersatzansicht.
+                SafeLog.Warn("summary", e);
+                _ui.BigModal.Close();
+                var body = _ui.BigModal.Open("Feierabend – Tag " + s.Day, "Gewinn heute: " + Fmt.Money(s.Profit), 520, new[]
+                {
+                    new ModalButton("Nächster Tag", NextDay, "accent", "moon"),
+                }, true, "summary", null, "moon");
+                _ui.BigModal.Text(body, "Kontostand nach Fixkosten: " + Fmt.Money(s.MoneyAfter), "muted");
+            }
         }
 
         private void NextDay()

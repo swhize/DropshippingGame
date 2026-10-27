@@ -79,6 +79,31 @@ namespace DropshippingGame
         private float _navTimer;
         private float _chatTimer;
         private Transform _navRoot;
+        private int _navSig;
+        private float _navAge;
+
+        /// <summary>Billige Prüfsumme über alles, was Hindernisse verändert (Stationen, Möbel, Gegenstände, Fest).</summary>
+        private static int NavSignature()
+        {
+            unchecked
+            {
+                int h = Station.All.Count * 31 + Movable.All.Count * 17 + DroppedItem.All.Count * 7 + (StreetFestival.BlocksTraffic ? 1 : 0);
+                foreach (var m in Movable.All)
+                {
+                    if (m == null) continue;
+                    var t = m.transform;
+                    var p = t.position;
+                    h = h * 31 + Mathf.RoundToInt(p.x * 4f) * 7 + Mathf.RoundToInt(p.z * 4f) + Mathf.RoundToInt(t.eulerAngles.y);
+                }
+                foreach (var d in DroppedItem.All)
+                {
+                    if (d == null) continue;
+                    var p = d.transform.position;
+                    h = h * 31 + Mathf.RoundToInt(p.x) * 7 + Mathf.RoundToInt(p.z);
+                }
+                return h;
+            }
+        }
 
         /// <summary>Startet die Passanten. <paramref name="registry"/> wird mit den aktiven NPCs gepflegt (Verkaufsstand-Logik).</summary>
         public void Setup(Transform parent, Transform navRoot, List<NPC> registry, int count)
@@ -136,9 +161,17 @@ namespace DropshippingGame
             _navTimer -= dt;
             if (_navTimer <= 0f)
             {
-                // Stationen/Deko können sich ändern (Umzug, Upgrades) -> Hindernisse regelmäßig auffrischen.
-                _navTimer = 4f;
-                RebuildNav();
+                // Stationen/Deko können sich ändern (Umzug, Upgrades, Möbel verschieben, Fest). Das komplette
+                // Einsammeln der Hindernisse ist teuer (ganze Stadt) – daher nur bei Änderung, sonst alle 30 s.
+                _navTimer = 2f;
+                _navAge += 2f;
+                int sig = NavSignature();
+                if (sig != _navSig || _navAge >= 30f)
+                {
+                    _navSig = sig;
+                    _navAge = 0f;
+                    RebuildNav();
+                }
             }
             for (int i = _walkers.Count - 1; i >= 0; i--)
             {

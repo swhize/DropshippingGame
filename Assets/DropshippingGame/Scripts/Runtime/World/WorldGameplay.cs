@@ -55,6 +55,12 @@ namespace DropshippingGame
 
         private void Redraw()
         {
+            try { RedrawInner(); }
+            catch (System.Exception e) { SafeLog.Warn("monitor", e); }
+        }
+
+        private void RedrawInner()
+        {
             if (this == null || _content == null) return;
             var sim = Game.Sim;
             if (sim == null) return;
@@ -132,6 +138,7 @@ namespace DropshippingGame
         private Label3D _dist;
         private Station _target;
         private float _retarget, _t;
+        private int _shownMeters = -1;
 
         public static ObjectiveMarker Create(Transform parent, PlayerController player)
         {
@@ -191,7 +198,12 @@ namespace DropshippingGame
             _visual.position = basePos + new Vector3(0, Mathf.Sin(_t * 2.4f) * 0.08f * scale, 0);
             _visual.localScale = Vector3.one * scale;
             _gem.localRotation = Quaternion.Euler(0, _t * 90f, 0);
-            _dist.SetText(Mathf.RoundToInt(d) + " m");
+            int meters = Mathf.RoundToInt(d);
+            if (meters != _shownMeters)
+            {
+                _shownMeters = meters;
+                _dist.SetText(meters + " m");
+            }
         }
 
         // ---- Welche Station ist gerade gefragt? --------------------------------------------------------

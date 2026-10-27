@@ -108,9 +108,8 @@ namespace DropshippingGame
                 var kb = Keyboard.current;
                 if (kb != null)
                 {
-                    var keys = new[] { kb.digit1Key, kb.digit2Key, kb.digit3Key, kb.digit4Key, kb.digit5Key, kb.digit6Key };
-                    for (int i = 0; i < keys.Length; i++)
-                        if (keys[i].wasPressedThisFrame)
+                    for (int i = 0; i < 6; i++)
+                        if (kb[Key.Digit1 + i].wasPressedThisFrame)
                         {
                             CloseWheel();
                             Play((Emote)i);
@@ -303,6 +302,7 @@ namespace DropshippingGame
         private void ShowWheel(bool on)
         {
             WheelOpen = on;
+            _shownHover = -2;
             if (on && _wheelUi == null) BuildWheel();
             if (_wheelUi != null) _wheelUi.style.display = on ? DisplayStyle.Flex : DisplayStyle.None;
         }
@@ -353,8 +353,12 @@ namespace DropshippingGame
             root.Add(_wheelUi);
         }
 
+        private int _shownHover = -2;
+
         private void UpdateHover()
         {
+            if (_hover == _shownHover) return;
+            _shownHover = _hover;
             for (int i = 0; i < _slots.Count; i++)
                 _slots[i].style.backgroundColor = i == _hover ? new Color(1f, 0.55f, 0.2f, 0.85f) : new Color(1f, 1f, 1f, 0.08f);
         }

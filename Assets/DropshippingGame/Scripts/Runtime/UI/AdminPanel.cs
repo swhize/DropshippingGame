@@ -178,6 +178,7 @@ namespace DropshippingGame.UI
             big.style.height = 54;
             big.style.fontSize = 20;
             _body.Add(big);
+            _body.Add(ToggleRow("Perf-Overlay (FPS, Draw Calls, GC/Frame, NPCs, Lichter)", PerfOverlay.Visible, PerfOverlay.SetVisible));
 
             _body.Add(Section("Geld"));
             var money = Row();

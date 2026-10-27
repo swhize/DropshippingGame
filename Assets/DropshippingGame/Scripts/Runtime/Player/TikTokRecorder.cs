@@ -24,6 +24,7 @@ namespace DropshippingGame
         private const float HopDuration = 0.6f;
         private const float ActionCooldown = 0.7f;
         private const float StandHeight = 0.42f;
+        private static readonly RaycastHit[] HitBuf = new RaycastHit[16];
         private static readonly Vector3 StandSize = new Vector3(0.5f, StandHeight, 0.42f);
 
         private enum Phase
@@ -305,11 +306,10 @@ namespace DropshippingGame
             var dir = (c - camPos) / dist;
             float len = dist - 0.15f * SetScale;
             if (len <= 0.05f) return false;
-            var hits = Physics.RaycastAll(camPos, dir, len, RayMask, QueryTriggerInteraction.Ignore);
-            if (hits == null) return false;
-            for (int i = 0; i < hits.Length; i++)
+            int count = Physics.RaycastNonAlloc(camPos, dir, HitBuf, len, RayMask, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
             {
-                var col = hits[i].collider;
+                var col = HitBuf[i].collider;
                 if (col == null) continue;
                 if (col.GetComponentInParent<CharacterController>() != null) continue;
                 var b = col.bounds;

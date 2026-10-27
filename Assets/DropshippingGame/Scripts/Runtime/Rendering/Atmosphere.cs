@@ -151,6 +151,16 @@ namespace DropshippingGame
             if (Mathf.Abs(hours - _lastProbeHour) > 1f) RenderReflections();
         }
 
+        private void OnDestroy()
+        {
+            // Himmel-Material gehört dieser Welt (wird bei jedem Neuaufbau neu erzeugt).
+            if (_sky != null)
+            {
+                if (RenderSettings.skybox == _sky) RenderSettings.skybox = null;
+                Destroy(_sky);
+            }
+        }
+
         private void LateUpdate()
         {
             if (Sun == null || !_sunInit) return;

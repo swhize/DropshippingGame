@@ -79,16 +79,42 @@ namespace DropshippingGame
         {
             _sim = sim;
             _sim.EquipmentChanged += OnEquipment;
+            _current = this;
         }
+
+        /// <summary>Das zuletzt gebaute Objekt – nur dieses baut bei Käufen neu.</summary>
+        private static EquipmentWorld _current;
 
         private void OnEquipment()
         {
-            if (Game.World != null) Game.World.RebuildStations();
+            // Ein schon ersetztes (beim Neuaufbau zerstörtes, aber im selben Frame noch lebendes) Objekt
+            // meldet sich nur ab – sonst würden die Stationen mehrfach neu gebaut.
+            if (this != _current)
+            {
+                Unhook();
+                return;
+            }
+            try
+            {
+                if (Game.World != null) Game.World.RebuildStations();
+            }
+            catch (System.Exception e)
+            {
+                SafeLog.Warn("equipment.rebuild", e);
+            }
+            if (_current != this) Unhook();
+        }
+
+        private void Unhook()
+        {
+            if (_sim != null) _sim.EquipmentChanged -= OnEquipment;
+            _sim = null;
         }
 
         private void OnDestroy()
         {
-            if (_sim != null) _sim.EquipmentChanged -= OnEquipment;
+            Unhook();
+            if (_current == this) _current = null;
         }
     }
 
@@ -169,7 +195,7 @@ namespace DropshippingGame
 
         private void RefreshFill()
         {
-            if (_fill == null || Game.Sim == null) return;
+            if (this == null || _fill == null || Game.Sim == null) return;
             float f = Game.Sim.WasteFill;
             float s = Mathf.Clamp01((f - 0.6f) / 0.6f);
             _fill.gameObject.SetActive(s > 0.01f);

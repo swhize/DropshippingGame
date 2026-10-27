@@ -16,6 +16,7 @@ namespace DropshippingGame
         private static Vignette _vignette;
         private static ColorAdjustments _color;
         private static MotionBlur _motion;
+        private static VolumeProfile _profile;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
@@ -25,6 +26,7 @@ namespace DropshippingGame
             _vignette = null;
             _color = null;
             _motion = null;
+            _profile = null;
         }
 
         public static void Create(Transform parent)
@@ -35,7 +37,10 @@ namespace DropshippingGame
             _volume = go.AddComponent<Volume>();
             _volume.isGlobal = true;
             _volume.priority = 1f;
+            // Profil der vorigen Welt freigeben (sonst wächst der Speicher mit jedem Menü-/Spielwechsel).
+            if (_profile != null) Object.Destroy(_profile);
             var profile = ScriptableObject.CreateInstance<VolumeProfile>();
+            _profile = profile;
             _volume.sharedProfile = profile;
 
             var tone = profile.Add<Tonemapping>(true);

@@ -634,7 +634,18 @@ namespace DropshippingGame
             return Mathf.Clamp(Mathf.CeilToInt(qty / 25f), 1, 36);
         }
 
+        /// <summary>Inhalt neu aufbauen (abgesichert: läuft in Sim-Ereignissen, ein Fehler darf die Logik nicht abbrechen).</summary>
         public void Refresh()
+        {
+            try { RefreshInner(); }
+            catch (System.Exception e)
+            {
+                _sig = "-"; // beim nächsten Mal erneut versuchen
+                SafeLog.Warn("station.refresh." + Type, e);
+            }
+        }
+
+        private void RefreshInner()
         {
             if (this == null || Kit == null || Kit.Content == null || S == null) return;
             string sig = Signature();

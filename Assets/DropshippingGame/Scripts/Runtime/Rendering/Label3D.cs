@@ -202,17 +202,25 @@ namespace DropshippingGame
             l.Wrap = wrapChars;
             l.SetText(text);
             if (font != SignFont.Default) l.UseFont(font);
+            // Feste Schilder brauchen kein LateUpdate (spart hunderte Aufrufe pro Frame in der Stadt).
+            l.enabled = billboard || maxDistance > 0f;
             return l;
         }
+
+        private string _raw;
 
         public int Wrap;
 
         /// <summary>False, wenn Label oder TextMesh schon zerstört wurden (z. B. Welt neu gebaut).</summary>
         public bool Alive => this != null && Mesh != null;
 
+        /// <summary>Setzt den Text – nur bei echter Änderung (TextMesh baut sonst jedes Mal sein Mesh neu).</summary>
         public void SetText(string text)
         {
             if (!Alive) return;
+            text = text ?? "";
+            if (_raw != null && string.Equals(_raw, text, System.StringComparison.Ordinal)) return;
+            _raw = text;
             Mesh.text = Wrap > 0 ? WordWrap(text, Wrap) : text;
         }
 
@@ -220,7 +228,7 @@ namespace DropshippingGame
 
         public void SetColor(Color c)
         {
-            if (Alive) Mesh.color = c;
+            if (Alive && Mesh.color != c) Mesh.color = c;
         }
 
         public void SetAlpha(float a)

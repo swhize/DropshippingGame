@@ -173,6 +173,15 @@ namespace DropshippingGame
             }
             if (LaptopDesign != "hype" && LaptopDesign != "frachtbrief") LaptopDesign = "hype";
             if (Array.IndexOf(LanguageCodes, Language) < 0) Language = "de";
+            // Kaputte/fremde Registry-Werte (NaN, Extremwerte) würden Kamera und Audio unbrauchbar machen.
+            MasterVolume = Sane(MasterVolume, 0f, 1f, 0.85f);
+            MusicVolume = Sane(MusicVolume, 0f, 1f, 0.5f);
+            SfxVolume = Sane(SfxVolume, 0f, 1f, 0.8f);
+            MouseSensitivity = Sane(MouseSensitivity, 0.1f, 5f, 1f);
+            PadSensitivity = Sane(PadSensitivity, 0.1f, 5f, 1f);
+            Fov = Sane(Fov, 55f, 110f, 75f);
+            RenderScale = Sane(RenderScale, RenderScaleMin, 1f, 1f);
+            UiScale = Sane(UiScale, UiScaleMin, UiScaleMax, 1f);
 
             // v3.0: Das neue Standard-Design ist „Hype“ (dunkel). Ältere Einstellungen wurden bei
             // jeder Änderung komplett gespeichert – deshalb einmalig auf den neuen Standard setzen.
@@ -185,6 +194,9 @@ namespace DropshippingGame
             }
             InputBindings.Load();
         }
+
+        private static float Sane(float v, float min, float max, float fallback) =>
+            float.IsNaN(v) || float.IsInfinity(v) ? fallback : Mathf.Clamp(v, min, max);
 
         public static void Save()
         {

@@ -12,6 +12,9 @@ namespace DropshippingGame
     {
         public static bool Active;
 
+        /// <summary>Fahrzeuge gerade unterwegs (Perf-Overlay).</summary>
+        public static int Count { get; private set; }
+
         private sealed class Vehicle
         {
             public Transform Tr;
@@ -34,12 +37,24 @@ namespace DropshippingGame
             "vehicle.car_hatchback", "vehicle.car_stationwagon", "vehicle.taxi", "vehicle.suv", "vehicle.sedan_sports", "vehicle.suv_luxury",
         };
 
+        private static readonly Color[] Paints =
+        {
+            new Color(0.8f, 0.1f, 0.1f), new Color(0.15f, 0.3f, 0.6f), new Color(0.9f, 0.9f, 0.9f), new Color(0.1f, 0.1f, 0.12f),
+            new Color(0.55f, 0.57f, 0.6f), new Color(0.9f, 0.7f, 0.1f), new Color(0.2f, 0.5f, 0.3f), new Color(0.45f, 0.2f, 0.55f),
+            new Color(0.95f, 0.45f, 0.1f), new Color(0.3f, 0.65f, 0.85f),
+        };
+
         private readonly List<Vehicle> _cars = new List<Vehicle>();
         private Transform _root;
         private float _acc, _resAcc;
 
         private void OnEnable() => Active = true;
-        private void OnDisable() => Active = false;
+
+        private void OnDisable()
+        {
+            Active = false;
+            Count = 0;
+        }
 
         public void Setup(Transform root)
         {
@@ -64,6 +79,7 @@ namespace DropshippingGame
                 _resAcc = Random.Range(14f, 30f);
                 if (_cars.Count < 14) Spawn(Random.value < 0.5f ? 2 : 3, null);
             }
+            Count = _cars.Count;
             Vector3 pp = Game.Player != null ? Game.Player.transform.position : new Vector3(9999, 0, 9999);
             for (int i = _cars.Count - 1; i >= 0; i--)
             {
@@ -138,7 +154,8 @@ namespace DropshippingGame
                     break;
                 default:
                     string id = CarIds[Random.Range(0, CarIds.Length)];
-                    go = Props.Car(_root, Random.ColorHSV(0f, 1f, 0.3f, 0.9f, 0.3f, 0.95f), false, AssetLib.HasModel(id) ? id : null);
+                    // Feste Lackfarben: zufällige Farben würden je Auto ein neues (nie freigegebenes) Material erzeugen.
+                    go = Props.Car(_root, Paints[Random.Range(0, Paints.Length)], false, AssetLib.HasModel(id) ? id : null);
                     break;
             }
             if (lane >= 2) cruise *= 0.55f;

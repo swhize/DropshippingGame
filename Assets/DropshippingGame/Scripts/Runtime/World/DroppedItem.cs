@@ -50,16 +50,18 @@ namespace DropshippingGame
         /// <summary>Aus der Welt gefallen: Gegenstand ist verloren (Bestellzettel wird storniert).</summary>
         private void FixedUpdate()
         {
-            if (transform.position.y > -25f) return;
-            if (Game.Sim != null && Data != null) Game.Sim.DiscardItem(Data);
+            if (transform.position.y > -25f || Data == null) return;
+            if (Game.Sim != null) Game.Sim.DiscardItem(Data);
             Data = null;
+            All.Remove(this);
             Destroy(gameObject);
         }
 
-        public string Title => Data.Describe();
+        public string Title => Data != null ? Data.Describe() : "";
 
         public string Prompt(PlayerController player)
         {
+            if (Data == null) return "";
             if (player.Held == null) return "Aufheben: " + Data.Describe();
             if (player.CanStack(Data)) return "Auf den Stapel legen (" + (player.CarryCount + 1) + "/" + player.PackageCapacity + ")";
             return "Hände voll";
@@ -67,19 +69,25 @@ namespace DropshippingGame
 
         public void Interact(PlayerController player)
         {
+            if (Data == null) return;
             if (player.Held != null && !player.CanStack(Data))
             {
                 Game.Notify("Hände sind schon voll.", "info");
                 return;
             }
-            if (player.Held != null) player.Push(Data);
-            else player.Hold(Data);
+            var data = Data;
+            // Sofort aus der Liste und „leer“: ein Speichern im selben Frame darf den Gegenstand nicht doppelt
+            // (in der Hand UND am Boden) erfassen, ein zweites Benutzen nichts mehr aufheben.
+            Data = null;
+            All.Remove(this);
+            if (player.Held != null) player.Push(data);
+            else player.Hold(data);
             Game.Sound("pickup");
             Destroy(gameObject);
         }
 
         public void SetHighlighted(bool on) => _hl.Set(on);
 
-        public WorldItemSave ToSave() => new WorldItemSave { Item = Data.Clone(), Pos = transform.position.ToV3(), RotY = transform.eulerAngles.y };
+        public WorldItemSave ToSave() => Data == null ? null : new WorldItemSave { Item = Data.Clone(), Pos = transform.position.ToV3(), RotY = transform.eulerAngles.y };
     }
 }

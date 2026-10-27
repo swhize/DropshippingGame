@@ -328,6 +328,12 @@ namespace DropshippingGame
         /// <summary>Flugmodus ohne Kollision: WASD in Blickrichtung, Leertaste hoch, Strg/C runter, Shift schnell.</summary>
         public static bool Noclip { get; private set; }
 
+        /// <summary>
+        /// Darf Alt den Flugmodus schalten? Nur mit Entwickler-Werkzeugen (DevTools) und erst, nachdem das
+        /// Admin-Panel in dieser Sitzung geöffnet wurde (Editor: immer) – sonst schaltet schon Alt+Tab um.
+        /// </summary>
+        public static bool NoclipAllowed => DevTools.Enabled && (Application.isEditor || UI.AdminPanel.ToggleFrame >= 0);
+
         public void SetNoclip(bool on)
         {
             if (on && !DevTools.Enabled) return;
@@ -370,7 +376,9 @@ namespace DropshippingGame
                 _sway += new Vector2(look.x, look.y) * 0.004f;
             }
 
-            if (!locked && GameInput.NoclipDown) SetNoclip(!Noclip);
+            // Noclip ist ein Testwerkzeug: nur im Editor/Entwickler-Build oder nach Öffnen des Admin-Panels
+            // (sonst schaltet schon Alt+Tab den Flugmodus ein).
+            if (!locked && GameInput.NoclipDown && (Noclip || NoclipAllowed)) SetNoclip(!Noclip);
             if (Noclip)
             {
                 UpdateNoclip(locked, dt);
@@ -466,8 +474,17 @@ namespace DropshippingGame
                 PromptText = Mover.Prompt;
                 return;
             }
-            if (GameInput.InteractDown && Focus != null) Focus.Interact(this);
-            if (GameInput.DropDown) DropHeldItem();
+            if (GameInput.InteractDown && Focus != null)
+            {
+                try { Focus.Interact(this); }
+                catch (System.Exception e) { SafeLog.Warn("interact", e); }
+                RefreshPrompt();
+            }
+            if (GameInput.DropDown)
+            {
+                DropHeldItem();
+                RefreshPrompt();
+            }
             if (transform.position.y < -20f && Game.World != null) Teleport(Game.World.SpawnPoint(), Game.World.SpawnYaw());
         }
 
@@ -477,24 +494,68 @@ namespace DropshippingGame
             Focus = null;
         }
 
+        // Zwischenspeicher fürs Anvisieren: GetComponentInParent nur bei neuem Collider, Hinweistext
+        // (baut Strings, fragt die Sim ab) nur bei Änderung oder alle PromptInterval Sekunden.
+        private const float PromptInterval = 0.15f;
+        private Collider _focusCol;
+        private IInteractable _focusColTarget;
+        private float _promptT;
+        private ItemData _promptHeld;
+        private int _promptCarry = -1;
+        private bool _promptLocked, _promptCrouch;
+
+        /// <summary>Hinweistext beim nächsten Frame neu berechnen (z. B. nach Benutzen).</summary>
+        public void RefreshPrompt() => _promptT = 0f;
+
         private void UpdateFocus(bool locked)
         {
             IInteractable target = null;
             if (!locked && Physics.Raycast(Cam.transform.position, Cam.transform.forward, out var hit, Reach, ~(1 << IgnoreRaycastLayer), QueryTriggerInteraction.Collide))
-                target = hit.collider.GetComponentInParent<IInteractable>();
+            {
+                var col = hit.collider;
+                if (col != _focusCol || (_focusColTarget is Object fo && fo == null))
+                {
+                    _focusCol = col;
+                    _focusColTarget = col != null ? col.GetComponentInParent<IInteractable>() : null;
+                }
+                target = _focusColTarget;
+            }
+            if (target is Object to && to == null) target = null;
+            bool changed = false;
             if (!ReferenceEquals(target, Focus))
             {
                 if (Focus != null && !(Focus is Object o && o == null)) Focus.SetHighlighted(false);
                 Focus = target;
                 Focus?.SetHighlighted(true);
+                changed = true;
             }
             if (Focus is Object uo && uo == null) Focus = null;
-            PromptText = Focus != null ? Focus.Prompt(this) : "";
+            bool crouch = !locked && GameInput.CrouchHeld;
+            if (!changed && Held == _promptHeld && CarryCount == _promptCarry && locked == _promptLocked && crouch == _promptCrouch)
+            {
+                _promptT -= Time.unscaledDeltaTime;
+                if (_promptT > 0f) return;
+            }
+            _promptT = PromptInterval;
+            _promptHeld = Held;
+            _promptCarry = CarryCount;
+            _promptLocked = locked;
+            _promptCrouch = crouch;
+            string text = "";
+            try
+            {
+                text = Focus != null ? Focus.Prompt(this) ?? "" : "";
+            }
+            catch (System.Exception e)
+            {
+                SafeLog.Warn("prompt", e);
+            }
             if (!locked)
             {
                 string hint = FurnitureMover.HintFor(Cam);
-                if (!string.IsNullOrEmpty(hint)) PromptText = string.IsNullOrEmpty(PromptText) ? hint : PromptText + "  ·  " + hint;
+                if (!string.IsNullOrEmpty(hint)) text = string.IsNullOrEmpty(text) ? hint : text + "  ·  " + hint;
             }
+            PromptText = text;
         }
 
         /// <summary>Stößt Kisten und Pakete an, wenn man hineinläuft.</summary>

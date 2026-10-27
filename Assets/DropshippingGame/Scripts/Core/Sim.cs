@@ -166,10 +166,11 @@ namespace DropshippingGame.Core
         // =====================================================================================
         // Hilfen für Ereignisse
         // =====================================================================================
-        public void RaiseEconomyChanged() => EconomyChanged?.Invoke();
-        public void Sound(string name, float pitchVar = 0.06f, float volumeDb = 0f) => SoundRequested?.Invoke(name, pitchVar, volumeDb);
+        // Häufige Ereignisse einzeln abgesichert: ein fehlerhafter Anzeige-Handler bricht nie die Spiellogik ab.
+        public void RaiseEconomyChanged() => SafeEvents.Invoke(EconomyChanged, "EconomyChanged");
+        public void Sound(string name, float pitchVar = 0.06f, float volumeDb = 0f) => SafeEvents.Invoke(SoundRequested, name, pitchVar, volumeDb, "Sound");
 
-        public void Notify(string text, string kind = "info") => Toast?.Invoke(text, kind);
+        public void Notify(string text, string kind = "info") => SafeEvents.Invoke(Toast, text, kind, "Toast");
 
         public void RequestDialogue(string id) => DialogueRequested?.Invoke(id);
         public void RequestEndDay() => EndDayRequested?.Invoke();

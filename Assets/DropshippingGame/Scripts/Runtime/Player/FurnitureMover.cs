@@ -50,15 +50,39 @@ namespace DropshippingGame
         {
             if (!Allowed()) return "";
             var m = PickTarget(cam);
-            return m != null ? GameInput.KeyLabel("build") + ": " + (string.IsNullOrEmpty(m.Label) ? "Verschieben" : m.Label + " verschieben") : "";
+            if (m == null) return "";
+            // Text nur bei anderem Ziel/Gerät neu bauen (wird sehr oft abgefragt).
+            bool pad = GameInput.UsingGamepad;
+            if (m != _hintFor || pad != _hintPad || _hintText == null)
+            {
+                _hintFor = m;
+                _hintPad = pad;
+                _hintText = GameInput.KeyLabel("build") + ": " + (string.IsNullOrEmpty(m.Label) ? "Verschieben" : m.Label + " verschieben");
+            }
+            return _hintText;
         }
+
+        private static Movable _hintFor;
+        private static bool _hintPad;
+        private static string _hintText;
+        private static Collider _pickCol;
+        private static Movable _pickMov;
+        private static readonly Collider[] OverlapBuf = new Collider[48];
 
         private static Movable PickTarget(Camera cam)
         {
             if (cam == null) return null;
             if (!Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, PickRange, ~(1 << IgnoreRaycastLayer), QueryTriggerInteraction.Collide))
                 return null;
-            return hit.collider != null ? hit.collider.GetComponentInParent<Movable>() : null;
+            var col = hit.collider;
+            if (col == null) return null;
+            // GetComponentInParent nur für einen neuen Collider (Raycast läuft fast jeden Frame).
+            if (col != _pickCol || (!ReferenceEquals(_pickMov, null) && _pickMov == null))
+            {
+                _pickCol = col;
+                _pickMov = col.GetComponentInParent<Movable>();
+            }
+            return _pickMov != null ? _pickMov : null;
         }
 
         private static bool Allowed()
@@ -187,10 +211,10 @@ namespace DropshippingGame
             float h = Mathf.Clamp(_target.Height, 0.3f, 2.4f);
             var center = new Vector3(fp.CX, bottom + (h - bottom) / 2f + _origPos.y, fp.CZ);
             var half = new Vector3(Mathf.Max(0.05f, fp.HalfX - 0.08f), Mathf.Max(0.05f, (h - bottom) / 2f), Mathf.Max(0.05f, fp.HalfZ - 0.08f));
-            var hits = Physics.OverlapBox(center, half, Quaternion.Euler(0f, fp.RotY, 0f), ~(1 << IgnoreRaycastLayer), QueryTriggerInteraction.Ignore);
-            if (hits == null) return null;
-            foreach (var c in hits)
+            int count = Physics.OverlapBoxNonAlloc(center, half, OverlapBuf, Quaternion.Euler(0f, fp.RotY, 0f), ~(1 << IgnoreRaycastLayer), QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
             {
+                var c = OverlapBuf[i];
                 if (c == null || c.isTrigger) continue;
                 if (c.transform.IsChildOf(_target.transform)) continue;
                 if (c.attachedRigidbody != null && !c.attachedRigidbody.isKinematic) continue; // lose Kisten/Pakete werden geschoben
@@ -241,8 +265,11 @@ namespace DropshippingGame
         // ---- Vorschau -------------------------------------------------------------------------------
         private static Material _ok, _bad;
 
+        private Transform _ghostVol, _ghostPlate;
+
         private void CreateGhost()
         {
+            _ghostVol = _ghostPlate = null;
             if (_ghost != null) Object.Destroy(_ghost);
             _ghost = new GameObject("MoveGhost") { layer = IgnoreRaycastLayer };
             if (Game.World != null) _ghost.transform.SetParent(Game.World.transform, true);
@@ -272,14 +299,16 @@ namespace DropshippingGame
             float h = Mathf.Clamp(_target.Height, 0.05f, 3f);
             _ghost.transform.SetPositionAndRotation(new Vector3(fp.CX, _origPos.y, fp.CZ), Quaternion.Euler(0f, fp.RotY, 0f));
             _ghost.transform.localScale = Vector3.one;
-            var vol = _ghost.transform.Find("Volume");
+            if (_ghostVol == null) _ghostVol = _ghost.transform.Find("Volume");
+            var vol = _ghostVol;
             if (vol != null)
             {
                 vol.localPosition = new Vector3(0f, h / 2f, 0f);
                 vol.localScale = new Vector3(fp.HalfX * 2f + 0.04f, h + 0.02f, fp.HalfZ * 2f + 0.04f);
                 SetMat(vol, mat);
             }
-            var plate = _ghost.transform.Find("Plate");
+            if (_ghostPlate == null) _ghostPlate = _ghost.transform.Find("Plate");
+            var plate = _ghostPlate;
             if (plate != null)
             {
                 plate.localPosition = new Vector3(0f, 0.03f, 0f);
