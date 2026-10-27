@@ -6,6 +6,7 @@ namespace UnityEngine.Rendering
     public class MinFloatParameter : VolumeParameter<float> { }
     public class FloatParameter : VolumeParameter<float> { }
     public class ColorParameter : VolumeParameter<UnityEngine.Color> { }
+    public class Vector4Parameter : VolumeParameter<UnityEngine.Vector4> { }
     public class VolumeComponent : UnityEngine.ScriptableObject { public bool active; }
     public class VolumeProfile : UnityEngine.ScriptableObject { public T Add<T>(bool overrides = false) where T : VolumeComponent { return null; } public bool TryGet<T>(out T c) where T : VolumeComponent { c = null; return false; } }
     public class Volume : UnityEngine.MonoBehaviour { public bool isGlobal; public float priority; public float weight; public VolumeProfile profile; public VolumeProfile sharedProfile; }
@@ -20,6 +21,11 @@ namespace UnityEngine.Rendering.Universal
     public sealed class ColorAdjustments : VolumeComponent { public FloatParameter postExposure; public ClampedFloatParameter contrast, hueShift, saturation; public ColorParameter colorFilter; }
     public sealed class Vignette : VolumeComponent { public ColorParameter color; public ClampedFloatParameter intensity, smoothness; }
     public sealed class MotionBlur : VolumeComponent { public ClampedFloatParameter intensity, clamp; }
+    // Farbkorrektur wie in URP 17.3 (Runtime/Overrides/*.cs, Branch 6000.3/staging)
+    public sealed class WhiteBalance : VolumeComponent { public ClampedFloatParameter temperature, tint; }
+    public sealed class ShadowsMidtonesHighlights : VolumeComponent { public Vector4Parameter shadows, midtones, highlights; public MinFloatParameter shadowsStart, shadowsEnd, highlightsStart, highlightsEnd; }
+    public sealed class LiftGammaGain : VolumeComponent { public Vector4Parameter lift, gamma, gain; }
+    public sealed class SplitToning : VolumeComponent { public ColorParameter shadows, highlights; public ClampedFloatParameter balance; }
     public enum ShadowResolution { _256 = 256, _512 = 512, _1024 = 1024, _2048 = 2048, _4096 = 4096 }
     public enum AntialiasingMode { None, FastApproximateAntialiasing, SubpixelMorphologicalAntiAliasing, TemporalAntiAliasing }
     public enum AntialiasingQuality { Low, Medium, High }

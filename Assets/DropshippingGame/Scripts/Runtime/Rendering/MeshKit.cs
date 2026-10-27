@@ -107,6 +107,21 @@ namespace DropshippingGame
         /// Quader mit Mittelpunkt im Ursprung. bevel &gt; 0 fast die Kanten ab (fängt Licht, wirkt hochwertiger).
         /// capUvZero: Ober-/Unterseite bekommen eine feste UV (für Fassaden ohne Fenster auf dem Dach).
         /// </summary>
+        /// <summary>Waagrechte Fläche 1 × 1 m (Normale nach oben, UV 0..1) für Boden-Effekte (Lichtkreise, Pfützen, Wasserfilm).</summary>
+        public static Mesh QuadUp()
+        {
+            const string key = "quadup";
+            if (Cache.TryGetValue(key, out var cached) && cached != null) return cached;
+            var mesh = new Mesh { name = key };
+            mesh.SetVertices(new List<Vector3> { new Vector3(-0.5f, 0f, -0.5f), new Vector3(-0.5f, 0f, 0.5f), new Vector3(0.5f, 0f, 0.5f), new Vector3(0.5f, 0f, -0.5f) });
+            mesh.SetNormals(new List<Vector3> { Vector3.up, Vector3.up, Vector3.up, Vector3.up });
+            mesh.SetUVs(0, new List<Vector2> { new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(1f, 0f) });
+            mesh.SetTriangles(new[] { 0, 1, 2, 0, 2, 3 }, 0);
+            mesh.RecalculateBounds();
+            Cache[key] = mesh;
+            return mesh;
+        }
+
         public static Mesh Box(Vector3 size, float bevel = 0f, bool capUvZero = false)
         {
             float minDim = Mathf.Min(size.x, Mathf.Min(size.y, size.z));

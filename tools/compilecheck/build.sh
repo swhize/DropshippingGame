@@ -21,9 +21,9 @@ if [ ! -f $PKG/Unity.InputSystem.dll ]; then
   files=$(find $IS -name "*.cs" -not -path "*/Editor/*" -not -path "*/Plugins/InputForUI/*" -not -path "*/Tests/*")
   $CSC $common $ENG -r:$PKG/UnityEngine.UI.dll -out:$PKG/Unity.InputSystem.dll $files >$PKG/is.log 2>&1 || { echo "INPUTSYSTEM FAIL"; grep -m10 error $PKG/is.log; }
 fi
-[ -f $PKG/URPStub.dll ] && [ $PKG/URPStub.dll -nt $(dirname $0)/URPStub.cs ] || $CSC $common $ENG -out:$PKG/URPStub.dll $(dirname $0)/URPStub.cs > $PKG/urp.log 2>&1 || { echo "URPSTUB FAIL"; head $PKG/urp.log; }
+$CSC $common $ENG -out:$OUT/URPStub.dll $(dirname $0)/URPStub.cs > $OUT/urp.log 2>&1 || { echo "URPSTUB FAIL"; head $OUT/urp.log; }
 S=$R/Assets/DropshippingGame/Scripts
 $CSC $common $ENG -out:$OUT/Core.dll -recurse:"$S/Core/*.cs" > $OUT/core.log 2>&1 && echo "CORE OK" || { echo "CORE FAIL"; grep error $OUT/core.log | sed "s|$R/||" | head -40; }
-$CSC $common $ENG -r:$OUT/Core.dll -r:$PKG/UnityEngine.UI.dll -r:$PKG/Unity.InputSystem.dll -r:$PKG/URPStub.dll -out:$OUT/Runtime.dll -recurse:"$S/Runtime/*.cs" > $OUT/rt.log 2>&1 && echo "RUNTIME OK" || { echo "RUNTIME FAIL"; grep error $OUT/rt.log | sed "s|$R/||" | head -80; }
+$CSC $common $ENG -r:$OUT/Core.dll -r:$PKG/UnityEngine.UI.dll -r:$PKG/Unity.InputSystem.dll -r:$OUT/URPStub.dll -out:$OUT/Runtime.dll -recurse:"$S/Runtime/*.cs" > $OUT/rt.log 2>&1 && echo "RUNTIME OK" || { echo "RUNTIME FAIL"; grep error $OUT/rt.log | sed "s|$R/||" | head -80; }
 ED=""; for f in $U/Managed/UnityEngine/*.dll; do ED="$ED -r:$f"; done
-$CSC $common $ED -r:$OUT/Core.dll -r:$OUT/Runtime.dll -r:$PKG/UnityEngine.UI.dll -r:$PKG/URPStub.dll -out:$OUT/Editor.dll -recurse:"$S/Editor/*.cs" > $OUT/ed.log 2>&1 && echo "EDITOR OK" || { echo "EDITOR FAIL"; grep error $OUT/ed.log | sed "s|$R/||" | head -40; }
+$CSC $common $ED -r:$OUT/Core.dll -r:$OUT/Runtime.dll -r:$PKG/UnityEngine.UI.dll -r:$OUT/URPStub.dll -out:$OUT/Editor.dll -recurse:"$S/Editor/*.cs" > $OUT/ed.log 2>&1 && echo "EDITOR OK" || { echo "EDITOR FAIL"; grep error $OUT/ed.log | sed "s|$R/||" | head -40; }

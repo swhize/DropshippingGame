@@ -21,18 +21,33 @@ namespace DropshippingGame
 
         private static readonly Dictionary<string, Material> Cache = new Dictionary<string, Material>();
         private static readonly List<NightMat> NightMats = new List<NightMat>();
+        private sealed class WetMat
+        {
+            public Material Mat;
+            public Color Base;
+            public float Smoothness;
+            public bool GlossMap;
+        }
+
+        private static readonly List<WetMat> WetMats = new List<WetMat>();
         private static Shader _lit, _unlit;
-        private static Material _tplLit, _tplTransparent;
+        private static Material _tplLit, _tplTransparent, _tplUnlit;
         private static bool _init;
         private static float _night = -1f;
+        private static float _wet = -1f;
+        private static Material _sheen, _puddle;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
         {
             Cache.Clear();
             NightMats.Clear();
+            WetMats.Clear();
             _init = false;
             _night = -1f;
+            _wet = -1f;
+            _sheen = null;
+            _puddle = null;
         }
 
         public static bool Urp => GraphicsSettings.currentRenderPipeline != null;
@@ -45,6 +60,7 @@ namespace DropshippingGame
             {
                 _tplLit = Resources.Load<Material>("DSMaterials/Lit");
                 _tplTransparent = Resources.Load<Material>("DSMaterials/LitTransparent");
+                _tplUnlit = Resources.Load<Material>("DSMaterials/Unlit");
                 _lit = Shader.Find("Universal Render Pipeline/Lit");
                 _unlit = Shader.Find("Universal Render Pipeline/Unlit");
             }
@@ -118,18 +134,188 @@ namespace DropshippingGame
             kind + ":" + ColorUtility.ToHtmlStringRGBA(c) + ":" + Mathf.RoundToInt(a * 100) + ":" + Mathf.RoundToInt(b * 100);
 
         // ---- Grundmaterialien -----------------------------------------------------------------------
-        /// <summary>Einfaches PBR-Material. roughness wie in Godot (0 = glänzend, 1 = matt).</summary>
+        /// <summary>
+        /// Einfaches PBR-Material. roughness wie in Godot (0 = glänzend, 1 = matt).
+        /// Art Direction (docs/ART_DIRECTION.md): kein reines Schwarz/Weiß, Rauheit im erlaubten Bereich und eine
+        /// leichte, großflächige Farbvariation (Detailtextur in Weltmetern), damit Flächen nicht nach Unity-Standard aussehen.
+        /// </summary>
         public static Material Std(Color color, float roughness = 0.8f, float metallic = 0f)
         {
             string key = K("std", color, roughness, metallic);
             if (Cache.TryGetValue(key, out var m) && m != null) return m;
-            m = NewLit(color.a < 0.99f);
+            bool transparent = color.a < 0.99f;
+            m = NewLit(transparent);
             m.name = key;
-            SetColor(m, color);
-            SetSurface(m, 1f - roughness, metallic);
+            float rough = Mathf.Clamp(roughness, ArtStyle.RoughnessMin, ArtStyle.RoughnessMax);
+            if (!transparent)
+            {
+                Color c = ArtStyle.SafeAlbedo(color);
+                var grunge = TexGen.Grunge();
+                if (grunge != null)
+                {
+                    // Die Detailtextur dunkelt im Mittel um GrungeMean ab – die Grundfarbe gleicht das aus.
+                    float k = 1f / TexGen.GrungeMean;
+                    c = new Color(c.r * k, c.g * k, c.b * k, 1f);
+                    var scale = new Vector2(1f / TexGen.GrungeMeters, 1f / TexGen.GrungeMeters);
+                    m.SetTexture("_BaseMap", grunge);
+                    m.SetTexture("_MainTex", grunge);
+                    m.SetTextureScale("_BaseMap", scale);
+                    m.SetTextureScale("_MainTex", scale);
+                }
+                SetColor(m, c);
+            }
+            else SetColor(m, color);
+            SetSurface(m, 1f - rough, metallic);
             Cache[key] = m;
             return m;
         }
+
+        /// <summary>
+        /// Ladenschild-Fläche: tagsüber matte Farbe, nachts von hinten beleuchtet (leuchtet in der eigenen Farbe).
+        /// </summary>
+        public static Material SignGlow(Color color)
+        {
+            string key = K("signglow", color);
+            if (Cache.TryGetValue(key, out var m) && m != null) return m;
+            m = NewLit();
+            m.name = "signglow";
+            Color c = ArtStyle.SafeAlbedo(color);
+            SetColor(m, c);
+            SetSurface(m, 0.45f, 0f);
+            // Dunkle Schilder (Tafelschwarz) bekommen einen dezenten warmen Schein statt gar keinem.
+            Color glow = c.grayscale < 0.15f ? new Color(0.35f, 0.3f, 0.25f) : c * 1.25f;
+            SetEmission(m, Color.black);
+            RegisterNight(m, c, c, Color.black, glow, false);
+            Cache[key] = m;
+            return m;
+        }
+
+        // ---- Additive Effekte (Unlit, ohne zusätzliche Shader-Varianten) ------------------------------
+        /// <summary>
+        /// Additives Unlit-Material mit Maske (Lichtkreis am Boden, Regenstriche). Nutzt nur Blend-Eigenschaften
+        /// des URP-Unlit-Shaders (keine Keywords), damit im Build keine Variante fehlt.
+        /// </summary>
+        private static Material Additive(string name, Texture2D mask, Color color)
+        {
+            Init();
+            Material m = null;
+            if (_tplUnlit != null) m = new Material(_tplUnlit);
+            else if (_unlit != null) m = new Material(_unlit);
+            if (m == null) return null;
+            m.name = name;
+            if (mask != null)
+            {
+                m.SetTexture("_BaseMap", mask);
+                m.SetTexture("_MainTex", mask);
+            }
+            m.SetColor("_BaseColor", color);
+            m.SetColor("_Color", color);
+            m.SetOverrideTag("RenderType", "Transparent");
+            m.SetFloat("_Surface", 1f);
+            m.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+            m.SetFloat("_DstBlend", (float)BlendMode.One);
+            m.SetFloat("_SrcBlendAlpha", (float)BlendMode.One);
+            m.SetFloat("_DstBlendAlpha", (float)BlendMode.One);
+            m.SetFloat("_ZWrite", 0f);
+            m.SetShaderPassEnabled("DepthOnly", false);
+            m.SetShaderPassEnabled("ShadowCaster", false);
+            m.renderQueue = (int)RenderQueue.Transparent + 5;
+            return m;
+        }
+
+        /// <summary>Warmer Lichtkreis unter einer Laterne (nur nachts sichtbar, kein echtes Licht nötig).</summary>
+        public static Material LightPool(Color glow)
+        {
+            string key = K("lightpool", glow);
+            if (Cache.TryGetValue(key, out var m) && m != null) return m;
+            m = Additive("lightpool", TexGen.RadialMask(), Color.black);
+            if (m == null) return null;
+            RegisterNight(m, Color.black, glow * 0.4f, Color.black, Color.black, true);
+            Cache[key] = m;
+            return m;
+        }
+
+        /// <summary>Regenstrich für das Partikelsystem (additiv, kühl, dezent).</summary>
+        public static Material RainStreak()
+        {
+            const string key = "rainstreak";
+            if (Cache.TryGetValue(key, out var m) && m != null) return m;
+            m = Additive(key, TexGen.RainStreak(), new Color(0.62f, 0.68f, 0.78f, 0.55f));
+            if (m != null) Cache[key] = m;
+            return m;
+        }
+
+        // ---- Nässe -----------------------------------------------------------------------------------
+        /// <summary>Glänzender, dunkler Wasserfilm über Straßen und Gehwegen (Deckkraft folgt der Nässe).</summary>
+        public static Material WetSheen()
+        {
+            if (_sheen != null) return _sheen;
+            _sheen = NewLit(true);
+            _sheen.name = "wet_sheen";
+            SetColor(_sheen, new Color(0.04f, 0.05f, 0.06f, 0.38f * Wetness));
+            SetSurface(_sheen, 0.93f, 0f);
+            _sheen.renderQueue = (int)RenderQueue.Transparent + 1;
+            return _sheen;
+        }
+
+        /// <summary>Pfütze mit weichem, unregelmäßigem Rand (spiegelt Himmel und Laternen).</summary>
+        public static Material Puddle()
+        {
+            if (_puddle != null) return _puddle;
+            _puddle = NewLit(true);
+            _puddle.name = "puddle";
+            var mask = TexGen.PuddleMask();
+            if (mask != null)
+            {
+                _puddle.SetTexture("_BaseMap", mask);
+                _puddle.SetTexture("_MainTex", mask);
+            }
+            SetColor(_puddle, new Color(0.03f, 0.04f, 0.05f, PuddleAlpha(Wetness)));
+            SetSurface(_puddle, 0.97f, 0f);
+            _puddle.renderQueue = (int)RenderQueue.Transparent + 2;
+            return _puddle;
+        }
+
+        private static float PuddleAlpha(float wet) => 0.92f * Mathf.Clamp01(wet * 1.4f - 0.2f);
+
+        private static Material RegisterWet(Material m)
+        {
+            if (m == null) return null;
+            foreach (var w in WetMats)
+                if (w.Mat == m) return m;
+            WetMats.Add(new WetMat
+            {
+                Mat = m,
+                Base = m.HasProperty("_BaseColor") ? m.GetColor("_BaseColor") : Color.white,
+                Smoothness = m.HasProperty("_Smoothness") ? m.GetFloat("_Smoothness") : 0.2f,
+                GlossMap = m.IsKeywordEnabled("_METALLICSPECGLOSSMAP"),
+            });
+            if (_wet > 0f) ApplyWet(WetMats[WetMats.Count - 1], _wet);
+            return m;
+        }
+
+        private static void ApplyWet(WetMat w, float v)
+        {
+            if (w.Mat == null) return;
+            // Nasser Belag ist dunkler; ohne Glanz-Map steigt zusätzlich die Glätte (mit Map liefert der Wasserfilm den Glanz).
+            Color c = w.Base * Mathf.Lerp(1f, 0.74f, v);
+            c.a = w.Base.a;
+            SetColor(w.Mat, c);
+            if (!w.GlossMap) w.Mat.SetFloat("_Smoothness", Mathf.Lerp(w.Smoothness, 0.8f, v));
+        }
+
+        /// <summary>0 = trocken, 1 = klatschnass. Steuert Straßenbelag, Wasserfilm und Pfützen.</summary>
+        public static void SetWetness(float v)
+        {
+            v = Mathf.Clamp01(v);
+            if (Mathf.Abs(v - _wet) < 0.004f) return;
+            _wet = v;
+            foreach (var w in WetMats) ApplyWet(w, v);
+            if (_sheen != null) SetColor(_sheen, new Color(0.04f, 0.05f, 0.06f, 0.38f * v));
+            if (_puddle != null) SetColor(_puddle, new Color(0.03f, 0.04f, 0.05f, PuddleAlpha(v)));
+        }
+
+        public static float Wetness => Mathf.Max(0f, _wet);
 
         /// <summary>Selbstleuchtendes Material (Neon, Displays, Lampen). energy &gt; 1 lässt es im Bloom glühen.</summary>
         public static Material Emit(Color color, float energy = 2f)
@@ -241,11 +427,11 @@ namespace DropshippingGame
             Tex(new TexSpec { Kind = "concrete", A = a, B = b, Scale = scale, Tile = tile, Stain = stain });
 
         public static Material Concrete() => Concrete(new Color(0.56f, 0.56f, 0.54f), new Color(0.44f, 0.44f, 0.43f));
-        public static Material Asphalt() => Pbr("asphalt") ?? Tex(new TexSpec { Kind = "asphalt", A = new Color(0.17f, 0.17f, 0.18f) });
+        public static Material Asphalt() => RegisterWet(Pbr("asphalt") ?? Tex(new TexSpec { Kind = "asphalt", A = new Color(0.17f, 0.17f, 0.18f) }));
 
-        /// <summary>Gehweg-Platten (PBR), Fallback: Beton mit Fugen.</summary>
+        /// <summary>Gehweg-Platten (PBR), Fallback: Beton mit Fugen. Wird bei Regen nass.</summary>
         public static Material Sidewalk(Color a, Color b) =>
-            Pbr("sidewalk", TintFrom(a, 0.66f, 0.5f)) ?? Tex(new TexSpec { Kind = "concrete", A = a, B = b, Scale = 0.5f, Tile = 1f, Stain = 0.1f });
+            RegisterWet(Pbr("sidewalk", TintFrom(a, 0.66f, 0.5f)) ?? Tex(new TexSpec { Kind = "concrete", A = a, B = b, Scale = 0.5f, Tile = 1f, Stain = 0.1f }));
 
         /// <summary>Kräftige Farben = Ziegel, graue = Kalksandstein/Block.</summary>
         public static Material Brick(Color brick, Color mortar, Vector2 size = default)

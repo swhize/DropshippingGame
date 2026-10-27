@@ -46,6 +46,19 @@
     --radius-btn: 10px;
     --radius-chip: 999px;
     --border-card: 1px;
+    /* Marken-Tokens (docs/ART_DIRECTION.md): gemeinsam für HUD, Menüs, Handy, Laptop-Browser (Web.uss)
+       und Tablet (Tablet.uss). Werden von den HustleOS-Themen NICHT überschrieben.
+       --accent der Spiel-Oberfläche = --brand-gold. */
+    --brand-gold: #FFBD42;
+    --brand-ink: #161616;
+    --brand-ink-soft: #6B6558;
+    --brand-paper: #FFFDF6;
+    --brand-cream: #F4F1EA;
+    --brand-sand: #E9E4D6;
+    --brand-yellow: #FFD23F;
+    --brand-red: #E63312;
+    --brand-money-pos: #D8F5C8;
+    --brand-money-neg: #FFD0C8;
     position: absolute;
     left: 0;
     top: 0;

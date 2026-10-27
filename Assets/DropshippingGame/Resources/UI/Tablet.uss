@@ -1,29 +1,31 @@
 /* =====================================================================================
    Tablet-Look des Laptops (.laptop.tablet) + Start (.th), Fakebook (.fbk), Gugel (.gg),
    KI-Fake-Seiten (.slop), Shop-Admin (.sa-*) und gemeinsame Marketing-Bausteine (.mk-*).
+   Gemeinsame Farben (Comic-Tinte, Papier, Signalrot, Gelb, Geld-Chips) kommen als --brand-*
+   aus Game.uss (.ds-root), siehe docs/ART_DIRECTION.md. Eigene Seitenfarben bleiben hier.
    Wird von LaptopView.Tablet.cs nach Web.uss geladen.
    ===================================================================================== */
 
 /* ---------- Rahmen ---------- */
 .tablet .br-frame { background-color: #1B1D22; border-radius: 44px; padding: 22px; border-width: 3px; border-color: #050505; }
-.tablet .br-screen { border-radius: 26px; background-color: #F4F1EA; }
+.tablet .br-screen { border-radius: 26px; background-color: var(--brand-cream); }
 .tablet .tb-cam { top: 8px; left: 50%; margin-left: -4px; width: 8px; height: 8px; border-radius: 4px; background-color: #3A3D45; }
 .tablet .br-chrome { background-color: #FFFFFF; border-bottom-width: 1px; border-color: #E2DED4; padding: 6px 12px; }
 
 /* ---------- Statusleiste ---------- */
 .tablet .tb-status { align-items: center; }
 .tablet .tb-nb { width: 32px; height: 32px; border-radius: 16px; background-color: #F1EEE6; align-items: center; justify-content: center; }
-.tablet .tb-nb:hover { background-color: #FFD23F; }
+.tablet .tb-nb:hover { background-color: var(--brand-yellow); }
 .tablet .tb-nb:disabled { opacity: 0.35; }
 .tablet .tb-close { background-color: #FFE1DA; }
 .tablet .tb-icon { -unity-background-image-tint-color: #2A2A30; }
 .tablet .tb-url { background-color: #F1EEE6; border-radius: 16px; padding: 5px 14px; align-items: center; overflow: hidden; }
-.tablet .tb-url:hover { background-color: #E9E4D6; }
+.tablet .tb-url:hover { background-color: var(--brand-sand); }
 .tablet .tb-url-text { font-size: 13px; color: #555555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tablet .tb-chip { align-items: center; padding: 3px 10px; border-radius: 14px; background-color: #F1EEE6; }
 .tablet .tb-chip-text { font-size: 13px; color: #1E1E24; }
-.tablet .tb-chip-money { background-color: #D8F5C8; }
-.tablet .tb-chip-money.neg { background-color: #FFD0C8; }
+.tablet .tb-chip-money { background-color: var(--brand-money-pos); }
+.tablet .tb-chip-money.neg { background-color: var(--brand-money-neg); }
 
 /* ---------- Dock ---------- */
 .tablet .tb-dock { flex-shrink: 0; justify-content: center; padding: 6px 10px 8px 10px; background-color: #FFFFFF; border-top-width: 1px; border-color: #E2DED4; }
@@ -34,20 +36,20 @@
 .tablet .tb-app.locked { opacity: 0.45; }
 .tablet .tb-app-ic { width: 42px; height: 42px; border-radius: 13px; align-items: center; justify-content: center; border-bottom-width: 3px; border-color: rgba(0, 0, 0, 0.18); }
 .tablet .tb-app-label { font-size: 10px; color: #3A3A42; margin-top: 2px; -unity-text-align: middle-center; white-space: nowrap; }
-.tablet .tb-badge, .th .tb-badge { top: -6px; right: -8px; min-width: 18px; background-color: #E63312; color: #FFFFFF; font-size: 11px; border-radius: 9px; padding: 0 5px; -unity-text-align: middle-center; }
+.tablet .tb-badge, .th .tb-badge { top: -6px; right: -8px; min-width: 18px; background-color: var(--brand-red); color: #FFFFFF; font-size: 11px; border-radius: 9px; padding: 0 5px; -unity-text-align: middle-center; }
 
 /* ---------- Start ---------- */
-.th { background-color: #F4F1EA; padding: 22px 28px; }
+.th { background-color: var(--brand-cream); padding: 22px 28px; }
 .th Label { color: #1E1E24; }
 .th .th-hero { align-items: flex-end; margin-bottom: 14px; }
 .th .th-clock { font-size: 58px; letter-spacing: -2px; }
-.th .th-date { font-size: 15px; color: #6B6558; }
-.th .th-brand { font-size: 18px; color: #6B6558; }
+.th .th-date { font-size: 15px; color: var(--brand-ink-soft); }
+.th .th-brand { font-size: 18px; color: var(--brand-ink-soft); }
 .th .th-widgets { margin-bottom: 14px; }
 .th .th-widget { background-color: #FFFFFF; border-radius: 20px; padding: 12px 16px; border-bottom-width: 4px; border-color: rgba(0, 0, 0, 0.06); transition-property: translate; transition-duration: 0.12s; }
 .th .th-widget:hover { translate: 0 -2px; }
 .th .th-widget.bad .th-value { color: #D0341C; }
-.th .th-label { font-size: 12px; color: #6B6558; }
+.th .th-label { font-size: 12px; color: var(--brand-ink-soft); }
 .th .th-value { font-size: 26px; margin-top: 4px; }
 .th .th-ic { -unity-background-image-tint-color: #FF6A2A; }
 .th .th-goal { background-color: #FFF4CC; border-radius: 16px; padding: 10px 14px; margin-bottom: 16px; align-items: center; }
@@ -60,7 +62,7 @@
 
 /* ---------- gemeinsame Bausteine ---------- */
 .mk-photo { border-radius: 14px; flex-shrink: 0; }
-.mk-badge { position: absolute; left: 8px; font-size: 11px; color: #FFFFFF; background-color: #E63312; border-radius: 8px; padding: 2px 7px; rotate: -6deg; }
+.mk-badge { position: absolute; left: 8px; font-size: 11px; color: #FFFFFF; background-color: var(--brand-red); border-radius: 8px; padding: 2px 7px; rotate: -6deg; }
 .mk-badge.b { background-color: #1E1E24; rotate: 3deg; }
 .mk-kpi { background-color: rgba(0, 0, 0, 0.04); border-radius: 14px; padding: 8px 12px; }
 .mk-kpi Label.mk-kpi-label { font-size: 11px; color: #777777; }
@@ -69,29 +71,29 @@
 .mk-kpi-ic { -unity-background-image-tint-color: #777777; }
 .mk-bar { height: 8px; border-radius: 4px; background-color: rgba(0, 0, 0, 0.08); overflow: hidden; margin-top: 4px; }
 .mk-bar-fill { height: 100%; border-radius: 4px; background-color: #4C6FFF; }
-.mk-bar.risk .mk-bar-fill { background-color: #E63312; }
+.mk-bar.risk .mk-bar-fill { background-color: var(--brand-red); }
 
 /* ---------- Fakebook (.fbk) ---------- */
 .fbk { background-color: #EEF1F8; }
-.fbk Label { color: #161616; font-size: 14px; }
-.fbk .fbk-top { background-color: #3B5BDB; padding: 8px 16px; align-items: center; border-bottom-width: 4px; border-color: #161616; }
-.fbk .fbk-logo-text { font-size: 30px; color: #FFFFFF; -unity-text-outline-width: 1px; -unity-text-outline-color: #161616; }
-.fbk .fbk-search { background-color: #FFFFFF; border-radius: 16px; border-width: 2px; border-color: #161616; padding: 4px 12px; align-items: center; max-width: 320px; }
+.fbk Label { color: var(--brand-ink); font-size: 14px; }
+.fbk .fbk-top { background-color: #3B5BDB; padding: 8px 16px; align-items: center; border-bottom-width: 4px; border-color: var(--brand-ink); }
+.fbk .fbk-logo-text { font-size: 30px; color: #FFFFFF; -unity-text-outline-width: 1px; -unity-text-outline-color: var(--brand-ink); }
+.fbk .fbk-search { background-color: #FFFFFF; border-radius: 16px; border-width: 2px; border-color: var(--brand-ink); padding: 4px 12px; align-items: center; max-width: 320px; }
 .fbk .fbk-search-text { color: #888888; font-size: 13px; }
 .fbk .fbk-navbtn { width: 46px; height: 36px; border-radius: 10px; align-items: center; justify-content: center; }
 .fbk .fbk-navbtn:hover { background-color: #5574E8; }
-.fbk .fbk-navbtn.on { background-color: #FFD23F; border-width: 2px; border-color: #161616; }
+.fbk .fbk-navbtn.on { background-color: var(--brand-yellow); border-width: 2px; border-color: var(--brand-ink); }
 .fbk .fbk-top .fbk-ic { -unity-background-image-tint-color: #FFFFFF; }
-.fbk .fbk-navbtn.on .fbk-ic { -unity-background-image-tint-color: #161616; }
+.fbk .fbk-navbtn.on .fbk-ic { -unity-background-image-tint-color: var(--brand-ink); }
 .fbk .fbk-search .fbk-ic { -unity-background-image-tint-color: #888888; }
-.fbk .fbk-me { background-color: #FFFFFF; border-radius: 18px; padding: 3px 10px 3px 3px; align-items: center; border-width: 2px; border-color: #161616; }
+.fbk .fbk-me { background-color: #FFFFFF; border-radius: 18px; padding: 3px 10px 3px 3px; align-items: center; border-width: 2px; border-color: var(--brand-ink); }
 .fbk .fbk-me-name { font-size: 13px; }
 .fbk .fbk-body { padding: 14px 16px 24px 16px; }
 .fbk .fbk-side { }
 .fbk .fbk-sidelink { padding: 8px 10px; border-radius: 10px; }
 .fbk .fbk-sidelink:hover { background-color: #DDE4FF; }
 .fbk .fbk-ic { -unity-background-image-tint-color: #3B5BDB; }
-.fbk .fbk-card { background-color: #FFFFFF; border-width: 3px 6px 6px 3px; border-color: #161616; border-radius: 14px; padding: 12px; }
+.fbk .fbk-card { background-color: #FFFFFF; border-width: 3px 6px 6px 3px; border-color: var(--brand-ink); border-radius: 14px; padding: 12px; }
 .fbk .fbk-card.ad { background-color: #FFFBEA; }
 .fbk .fbk-compose { background-color: #F0F2F5; border-radius: 18px; padding: 10px 14px; justify-content: center; }
 .fbk .fbk-muted { color: #65676B; font-size: 12px; white-space: normal; }
@@ -99,15 +101,15 @@
 .fbk .fbk-text { white-space: normal; }
 .fbk .fbk-post { font-size: 16px; white-space: normal; }
 .fbk .fbk-slogan { font-size: 18px; white-space: normal; color: #3B5BDB; }
-.fbk .fbk-pic { height: 160px; border-radius: 10px; border-width: 2px; border-color: #161616; overflow: hidden; }
+.fbk .fbk-pic { height: 160px; border-radius: 10px; border-width: 2px; border-color: var(--brand-ink); overflow: hidden; }
 .fbk .fbk-reacts { border-top-width: 1px; border-color: #E4E6EB; padding-top: 6px; align-items: center; }
-.fbk .fbk-like { color: #E63312; font-size: 16px; }
+.fbk .fbk-like { color: var(--brand-red); font-size: 16px; }
 .fbk .fbk-cta { background-color: #F0F2F5; border-radius: 10px; padding: 6px 10px; align-items: center; }
 .fbk .fbk-comment { align-items: flex-start; }
 .fbk .fbk-bubble { background-color: #F0F2F5; border-radius: 14px; padding: 6px 10px; }
 .fbk .fbk-h { font-size: 16px; }
 .fbk .fbk-h1 { font-size: 24px; }
-.fbk .fbk-btn { background-color: #E4E6EB; border-width: 2px 4px 4px 2px; border-color: #161616; border-radius: 10px; }
+.fbk .fbk-btn { background-color: #E4E6EB; border-width: 2px 4px 4px 2px; border-color: var(--brand-ink); border-radius: 10px; }
 .fbk .fbk-btn.main { background-color: #3B5BDB; }
 .fbk .fbk-btn.main .w-btn-label { color: #FFFFFF; }
 .fbk .fbk-btn:hover { translate: -1px -1px; }
@@ -117,7 +119,7 @@
 .fbk .fbk-wrap { flex-wrap: wrap; }
 .fbk .fbk-pick { width: 84px; align-items: center; padding: 6px; margin-bottom: 8px; border-radius: 12px; border-width: 2px; border-color: #E4E6EB; background-color: #FFFFFF; }
 .fbk .fbk-pick:hover { border-color: #3B5BDB; }
-.fbk .fbk-pick.on { border-color: #161616; background-color: #FFD23F; }
+.fbk .fbk-pick.on { border-color: var(--brand-ink); background-color: var(--brand-yellow); }
 .fbk .fbk-fit { color: #FFB400; font-size: 12px; }
 .fbk .fbk-chip { background-color: #F0F2F5; border-radius: 16px; justify-content: flex-start; }
 .fbk .fbk-chip.on { background-color: #3B5BDB; }

@@ -38,8 +38,18 @@ namespace DropshippingGame
     {
         private static readonly Dictionary<string, TexSet> Cache = new Dictionary<string, TexSet>();
 
+        private static Texture2D _grunge, _radial, _rain, _puddle;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => Cache.Clear();
+        private static void ResetStatics()
+        {
+            Cache.Clear();
+            WearCache.Clear();
+            _grunge = null;
+            _radial = null;
+            _rain = null;
+            _puddle = null;
+        }
 
         // ---- Rauschen (kachelbar) -------------------------------------------------------------------
         private static float Hash(int x, int y, int seed)
@@ -364,6 +374,36 @@ namespace DropshippingGame
             };
         }
 
+        private static readonly Dictionary<int, float[]> WearCache = new Dictionary<int, float[]>();
+
+        /// <summary>
+        /// Helligkeits-Faktor der Fassadenwand je Pixel (hängt nur vom Seed ab, daher gecacht): feines Rauschen,
+        /// großflächige Flecken und Schmutzfahnen unter den Fensterbänken (Art Direction: nichts ist neu).
+        /// </summary>
+        private static float[] FacadeWear(int seed, int n, int cols, int rows)
+        {
+            if (WearCache.TryGetValue(seed, out var cached) && cached != null && cached.Length == n * n) return cached;
+            var wear = new float[n * n];
+            var drip = new float[n];
+            for (int x = 0; x < n; x++) drip[x] = Mathf.Clamp01(VNoise(x / (float)n * 96f, 0.5f, 96, 70 + seed) * 1.6f - 0.5f);
+            for (int y = 0; y < n; y++)
+            {
+                float v = y / (float)n * rows;
+                float fy = v - Mathf.Floor(v);
+                for (int x = 0; x < n; x++)
+                {
+                    float u = x / (float)n * cols;
+                    float fx = u - Mathf.Floor(u);
+                    float wn = VNoise(x / (float)n * 32f, y / (float)n * 32f, 32, 40 + seed);
+                    float stain = VNoise(x / (float)n * 6f, y / (float)n * 6f, 6, 60 + seed);
+                    float streak = fx > 0.22f && fx < 0.78f && fy < 0.26f ? drip[x] * (fy / 0.26f) : 0f;
+                    wear[y * n + x] = (0.85f + 0.15f * wn) * (0.94f + 0.1f * stain) * (1f - 0.12f * streak);
+                }
+            }
+            WearCache[seed] = wear;
+            return wear;
+        }
+
         private static TexSet Facade(TexSpec s)
         {
             const int n = 512;
@@ -374,6 +414,7 @@ namespace DropshippingGame
             var hgt = new float[n * n];
             int seed = Mathf.RoundToInt(s.Seed * 10f);
             float lit = s.LitRatio > 0f ? s.LitRatio : 0.45f;
+            var wear = FacadeWear(seed, n, cols, rows);
             for (int y = 0; y < n; y++)
             {
                 for (int x = 0; x < n; x++)
@@ -383,8 +424,7 @@ namespace DropshippingGame
                     float fx = u - cx, fy = v - cy;
                     bool win = fx > 0.24f && fx < 0.76f && fy > 0.3f && fy < 0.82f;
                     bool sill = fx > 0.2f && fx < 0.8f && fy > 0.26f && fy < 0.3f;
-                    float wn = VNoise(x / (float)n * 32f, y / (float)n * 32f, 32, 40 + seed);
-                    Color wall = s.A * (0.85f + 0.15f * wn);
+                    Color wall = s.A * wear[y * n + x];
                     Color c = wall;
                     Color e = Color.black;
                     float h = 0.5f;
@@ -393,11 +433,20 @@ namespace DropshippingGame
                         c = Color.Lerp(new Color(0.16f, 0.21f, 0.27f), new Color(0.34f, 0.43f, 0.52f), fy);
                         bool frame = Mathf.Abs(fx - 0.5f) < 0.012f || Mathf.Abs(fy - 0.56f) < 0.012f;
                         if (frame) c = new Color(0.85f, 0.85f, 0.82f);
+                        // Vorhänge an manchen Fenstern (seitliche Bahnen in Pastelltönen)
+                        float ch = Hash(cx, cy, 55 + seed);
+                        bool curtain = !frame && ch < 0.45f && (fx < 0.33f || fx > 0.67f);
+                        Color curtainCol = Color.Lerp(new Color(0.82f, 0.56f, 0.42f), new Color(0.5f, 0.66f, 0.7f), Hash(cx, cy, 56 + seed));
+                        if (curtain) c = Color.Lerp(c, curtainCol, 0.75f);
                         float lh = Hash(cx, cy, 77 + seed);
                         if (lh > 1f - lit && !frame)
                         {
-                            float warm = Hash(cx, cy, 99 + seed);
-                            e = Color.Lerp(new Color(1f, 0.78f, 0.45f), new Color(0.75f, 0.85f, 1f), warm * 0.4f);
+                            // Meist Glühbirnen-Warm, manchmal neutral, selten TV-Blau.
+                            float kind = Hash(cx, cy, 99 + seed);
+                            e = kind < 0.68f ? new Color(1f, 0.74f, 0.42f) : (kind < 0.9f ? new Color(1f, 0.88f, 0.7f) : new Color(0.55f, 0.7f, 1f));
+                            // Licht fällt von oben in den Raum: oben etwas heller
+                            e *= 0.75f + 0.35f * Mathf.InverseLerp(0.3f, 0.82f, fy);
+                            if (curtain) e = new Color(e.r * curtainCol.r, e.g * curtainCol.g, e.b * curtainCol.b) * 1.2f;
                         }
                         h = 0.2f;
                     }
@@ -443,6 +492,104 @@ namespace DropshippingGame
                 Albedo = ToTexture(px, n, n, "cardboard"), Normal = NormalFromHeight(hgt, n, n, 1.2f, "cardboard_n"),
                 Meters = new Vector2(1f, 1f), NormalStrength = 0.4f, Smoothness = 0.08f,
             };
+        }
+
+        // ---- Hilfstexturen für die Art Direction ----------------------------------------------------
+        /// <summary>Mittlere Helligkeit von <see cref="Grunge"/> (Mats gleicht damit die Grundfarbe aus).</summary>
+        public const float GrungeMean = 0.95f;
+        /// <summary>Kachelgröße der Detailtextur in Metern.</summary>
+        public const float GrungeMeters = 2.5f;
+
+        /// <summary>
+        /// Fast weiße, kachelbare Detailtextur (0,88–1,0) mit leichter warm/kalt-Verschiebung: gibt einfarbigen
+        /// Flächen eine subtile, großflächige Variation (Abnutzung, Sonnenbleiche, Schmutz).
+        /// </summary>
+        public static Texture2D Grunge()
+        {
+            if (_grunge != null) return _grunge;
+            const int n = 128;
+            var px = new Color[n * n];
+            for (int y = 0; y < n; y++)
+            {
+                for (int x = 0; x < n; x++)
+                {
+                    float u = x / (float)n, v = y / (float)n;
+                    float big = Fbm(u, v, 3, 201, 4);
+                    float fine = VNoise(u * 32f, v * 32f, 32, 202);
+                    float hue = VNoise(u * 4f, v * 4f, 4, 203) - 0.5f;
+                    float l = Mathf.Clamp(0.95f + (big - 0.5f) * 0.11f + (fine - 0.5f) * 0.035f, 0.86f, 1f);
+                    px[y * n + x] = new Color(Mathf.Clamp01(l * (1f + hue * 0.03f)), l, Mathf.Clamp01(l * (1f - hue * 0.03f)), 1f);
+                }
+            }
+            _grunge = ToTexture(px, n, n, "grunge");
+            return _grunge;
+        }
+
+        /// <summary>Weicher Lichtkreis (Farbe und Alpha gleich): Laternen-Lichtkegel am Boden.</summary>
+        public static Texture2D RadialMask()
+        {
+            if (_radial != null) return _radial;
+            const int n = 64;
+            var px = new Color[n * n];
+            for (int y = 0; y < n; y++)
+            {
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = (x + 0.5f) / n * 2f - 1f, dy = (y + 0.5f) / n * 2f - 1f;
+                    float d = Mathf.Sqrt(dx * dx + dy * dy);
+                    float a = Mathf.Clamp01(1f - d);
+                    a = a * a * (3f - 2f * a);
+                    a *= a;
+                    px[y * n + x] = new Color(a, a, a, a);
+                }
+            }
+            _radial = ToTexture(px, n, n, "radial");
+            _radial.wrapMode = TextureWrapMode.Clamp;
+            return _radial;
+        }
+
+        /// <summary>Regenstrich: schmal, oben ausgeblendet (für gestreckte Partikel).</summary>
+        public static Texture2D RainStreak()
+        {
+            if (_rain != null) return _rain;
+            const int w = 8, h = 64;
+            var px = new Color[w * h];
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    float across = 1f - Mathf.Abs((x + 0.5f) / w * 2f - 1f);
+                    float along = Mathf.Sin((y + 0.5f) / h * Mathf.PI);
+                    float a = Mathf.Clamp01(across * across * along);
+                    px[y * w + x] = new Color(a, a, a, a);
+                }
+            }
+            _rain = ToTexture(px, w, h, "rainstreak");
+            _rain.wrapMode = TextureWrapMode.Clamp;
+            return _rain;
+        }
+
+        /// <summary>Unregelmäßige Pfützenform mit weichem Rand (Alpha), Farbe weiß.</summary>
+        public static Texture2D PuddleMask()
+        {
+            if (_puddle != null) return _puddle;
+            const int n = 128;
+            var px = new Color[n * n];
+            for (int y = 0; y < n; y++)
+            {
+                for (int x = 0; x < n; x++)
+                {
+                    float u = (x + 0.5f) / n, v = (y + 0.5f) / n;
+                    float dx = u * 2f - 1f, dy = v * 2f - 1f;
+                    float d = Mathf.Sqrt(dx * dx + dy * dy);
+                    float wobble = (Fbm(u, v, 3, 301, 3) - 0.5f) * 0.7f;
+                    float a = Mathf.Clamp01((0.7f + wobble - d) / 0.14f) * Mathf.Clamp01((0.98f - d) / 0.12f);
+                    px[y * n + x] = new Color(1f, 1f, 1f, a);
+                }
+            }
+            _puddle = ToTexture(px, n, n, "puddle");
+            _puddle.wrapMode = TextureWrapMode.Clamp;
+            return _puddle;
         }
 
         private static TexSet Conveyor()

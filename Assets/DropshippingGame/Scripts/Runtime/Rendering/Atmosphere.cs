@@ -5,9 +5,10 @@ using UnityEngine.Rendering;
 namespace DropshippingGame
 {
     /// <summary>
-    /// Tageslicht und Stimmung: Sonnenstand und -farbe nach Uhrzeit, prozeduraler Himmel,
-    /// Umgebungslicht, Nebel, Straßenlaternen und leuchtende Fenster bei Nacht,
-    /// Reflexionen und Post-Processing.
+    /// Tageslicht und Stimmung: Sonnenstand und Lichtstimmung nach Uhrzeit (<see cref="ArtStyle.Moods"/>:
+    /// Morgen, Mittag, Goldene Stunde, Blaue Stunde, Nacht), abgewandelt durch das Tageswetter (<see cref="Weather"/>);
+    /// prozeduraler Himmel, Umgebungslicht (Trilight), Nebel, Straßenlaternen und leuchtende Fenster bei Nacht,
+    /// Reflexionen und Farbkorrektur (<see cref="PostFX.SetMood"/>).
     /// </summary>
     public sealed class Atmosphere : MonoBehaviour
     {
@@ -82,21 +83,38 @@ namespace DropshippingGame
             _probe.intensity = 0.8f;
 
             PostFX.Create(root);
+            Weather = gameObject.AddComponent<Weather>();
         }
+
+        /// <summary>
+        /// Menü-Einstellung: feste Himmelsrichtung der Sonne (Grad, Richtung des Lichts), damit die Plakatwand
+        /// im Hauptmenü im Streiflicht der Goldenen Stunde steht. null = normaler Sonnenlauf.
+        /// </summary>
+        public float? SunYawOverride;
+
+        /// <summary>Wetter des Tages (Bewölkung, Regen, nasse Straßen). Nur Optik, ohne Einfluss auf die Simulation.</summary>
+        public Weather Weather { get; private set; }
 
         /// <summary>Tageslicht: Sonnenstand, Farben, Straßenlaternen und Fensterlicht nach Uhrzeit (0-24).</summary>
         public void SetTimeOfDay(float hours)
         {
             _hours = hours;
-            float t = Mathf.Clamp01((hours - 6f) / 15f);
-            float elevation = Mathf.Sin(t * Mathf.PI) * 62f + 3f;
+            if (Weather == null)
+            {
+                Weather = GetComponent<Weather>();
+                if (Weather == null) Weather = gameObject.AddComponent<Weather>();
+            }
+            Weather.Evaluate(hours);
+            var mood = ArtStyle.ApplyWeather(ArtStyle.MoodAt(hours), Weather.Overcast, Weather.Rain);
+            float t = Mathf.Clamp01((hours - 6.2f) / 13.4f);
+            float elevation = ArtStyle.SunElevation(hours);
             float azimuth = Mathf.Lerp(-110f, 110f, t);
-            float night = Mathf.Clamp01((hours - 18.6f) / 1.4f);
-            if (hours < 6.5f) night = Mathf.Max(night, Mathf.Clamp01((6.5f - hours) / 1.2f));
+            float night = ArtStyle.NightAmount(hours);
             if (Sun != null)
             {
                 // Nachts wird die Sonne zum kühlen, hohen Mondlicht (weiche Schatten, blaue Stimmung).
-                var sunRot = Quaternion.Euler(elevation, azimuth + 180f, 0f);
+                float yaw = SunYawOverride ?? (azimuth + 180f);
+                var sunRot = Quaternion.Euler(elevation, yaw, 0f);
                 var moonRot = Quaternion.Euler(38f, 150f, 0f);
                 _sunTarget = Quaternion.Slerp(sunRot, moonRot, Mathf.SmoothStep(0f, 1f, night));
                 // Große Sprünge (Laden, Schlafen, Zeitsprung) sofort übernehmen, sonst weich nachführen.
@@ -105,31 +123,29 @@ namespace DropshippingGame
                     Sun.transform.rotation = _sunTarget;
                     _sunInit = true;
                 }
-                float warm = 1f - Mathf.Clamp01((elevation - 6f) / 30f);
-                Color sunCol = Color.Lerp(new Color(1f, 0.96f, 0.9f), new Color(1f, 0.58f, 0.32f), warm);
-                Sun.color = Color.Lerp(sunCol, new Color(0.55f, 0.66f, 1f), night);
-                Sun.intensity = Mathf.Lerp(Mathf.Lerp(0.55f, 1.45f, Mathf.Clamp01(elevation / 40f)), 0.22f, night);
-                Sun.shadowStrength = Mathf.Lerp(0.82f, 0.55f, night);
+                Sun.color = mood.Sun;
+                Sun.intensity = mood.SunIntensity;
+                Sun.shadowStrength = Mathf.Lerp(Mathf.Lerp(0.85f, 0.35f, Weather.Overcast), 0.55f, night);
 
-                Color skyTop = Color.Lerp(new Color(0.34f, 0.55f, 0.85f), new Color(0.3f, 0.32f, 0.55f), warm);
-                Color horizon = Color.Lerp(new Color(0.72f, 0.8f, 0.9f), new Color(0.98f, 0.64f, 0.42f), warm);
-                skyTop = Color.Lerp(skyTop, new Color(0.06f, 0.08f, 0.16f), night * 0.8f);
-                horizon = Color.Lerp(horizon, new Color(0.35f, 0.22f, 0.25f), night * 0.6f);
-                RenderSettings.ambientSkyColor = skyTop * Mathf.Lerp(1.05f, 0.7f, warm);
-                RenderSettings.ambientEquatorColor = horizon * Mathf.Lerp(0.9f, 0.62f, warm);
-                RenderSettings.ambientGroundColor = new Color(0.25f, 0.24f, 0.22f) * Mathf.Lerp(1f, 0.6f, warm);
+                RenderSettings.ambientSkyColor = mood.AmbientSky;
+                RenderSettings.ambientEquatorColor = mood.AmbientEquator;
+                RenderSettings.ambientGroundColor = mood.AmbientGround;
                 RenderSettings.ambientIntensity = Mathf.Lerp(1f, 0.6f, night);
-                RenderSettings.fogColor = Color.Lerp(Color.Lerp(new Color(0.72f, 0.77f, 0.84f), new Color(0.9f, 0.62f, 0.5f), warm),
-                    new Color(0.18f, 0.16f, 0.22f), night * 0.7f);
+                RenderSettings.fogColor = mood.Fog;
+                RenderSettings.fogDensity = mood.FogDensity;
                 if (_sky != null)
                 {
-                    _sky.SetColor("_SkyTint", Color.Lerp(new Color(0.5f, 0.5f, 0.52f), new Color(0.62f, 0.45f, 0.42f), warm));
-                    _sky.SetFloat("_AtmosphereThickness", Mathf.Lerp(0.9f, 1.55f, warm));
-                    _sky.SetFloat("_Exposure", Mathf.Lerp(1.25f, 0.95f, warm) * (1f - night * 0.55f));
-                    _sky.SetColor("_GroundColor", Color.Lerp(new Color(0.37f, 0.38f, 0.4f), new Color(0.25f, 0.2f, 0.2f), warm));
+                    _sky.SetColor("_SkyTint", mood.SkyTint);
+                    _sky.SetFloat("_AtmosphereThickness", mood.SkyThickness);
+                    _sky.SetFloat("_Exposure", mood.SkyExposure);
+                    _sky.SetColor("_GroundColor", Color.Lerp(new Color(0.37f, 0.38f, 0.4f), new Color(0.12f, 0.12f, 0.15f), night));
+                    // Bedeckt: Sonnenscheibe verschwindet hinter den Wolken.
+                    _sky.SetFloat("_SunSize", Mathf.Lerp(0.02f, 0.0f, Weather.Overcast));
                 }
             }
+            PostFX.SetMood(mood);
             Mats.SetNight(night);
+            Mats.SetWetness(Weather.Wetness);
             foreach (var l in StreetLights)
             {
                 if (l == null) continue;
@@ -182,7 +198,9 @@ namespace DropshippingGame
                 _currentHdri = want;
                 RenderSettings.customReflectionTexture = want;
             }
-            RenderSettings.reflectionIntensity = Mathf.Lerp(0.85f, 0.45f, night);
+            // Bedeckt: weniger Himmelsspiegelung, außer auf nassen Flächen (die glänzen sichtbar).
+            float o = Weather != null ? Weather.Overcast : 0f, wet = Weather != null ? Weather.Wetness : 0f;
+            RenderSettings.reflectionIntensity = Mathf.Lerp(0.85f, 0.45f, night) * Mathf.Lerp(1f, 0.8f, o) * Mathf.Lerp(1f, 1.15f, wet);
         }
 
         public void RenderReflections()
