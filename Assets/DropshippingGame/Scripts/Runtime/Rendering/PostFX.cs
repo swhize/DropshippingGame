@@ -15,6 +15,7 @@ namespace DropshippingGame
         private static Bloom _bloom;
         private static Vignette _vignette;
         private static ColorAdjustments _color;
+        private static MotionBlur _motion;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
@@ -23,6 +24,7 @@ namespace DropshippingGame
             _bloom = null;
             _vignette = null;
             _color = null;
+            _motion = null;
         }
 
         public static void Create(Transform parent)
@@ -54,6 +56,14 @@ namespace DropshippingGame
             _vignette = profile.Add<Vignette>(true);
             _vignette.intensity.Override(0.2f);
             _vignette.smoothness.Override(0.45f);
+
+            // Bewegungsunschärfe nur auf Wunsch (Einstellungen › Grafik), dezent.
+            _motion = profile.Add<MotionBlur>(true);
+            if (_motion != null)
+            {
+                _motion.intensity.Override(0.22f);
+                _motion.active = false;
+            }
 
             ApplyQuality();
         }
@@ -90,12 +100,13 @@ namespace DropshippingGame
                 // Mehr Kaskaden = höhere Schattenauflösung nahe der Kamera, weniger Flimmern bei drehender Sonne.
                 asset.shadowCascadeCount = q == 0 ? 1 : (q == 1 ? 2 : 4);
                 asset.msaaSampleCount = q == 2 ? 4 : (q == 1 ? 2 : 1);
-                asset.renderScale = q == 0 ? 0.8f : 1f;
+                asset.renderScale = Mathf.Clamp(Settings.RenderScale, Settings.RenderScaleMin, 1f);
             }
             if (_bloom != null) _bloom.active = q > 0;
             if (_vignette != null) _vignette.active = q > 0;
             QualitySettings.shadowDistance = q == 0 ? 30f : (q == 1 ? 55f : 85f);
-            QualitySettings.vSyncCount = 1;
+            if (_motion != null) _motion.active = Settings.MotionBlur && q > 0 && !Settings.CalmEffects;
+            Settings.ApplyFrameRate();
             SetupCamera(Camera.main);
         }
     }

@@ -213,26 +213,34 @@ namespace DropshippingGame
             int step = sim.TutorialStep;
             if (step >= 0 && step < GameData.Tutorial.Length)
             {
+                // Im Tutorial zeigt der Marker immer auf den nächsten Handgriff – auch mit leeren Händen.
+                if (kind == ItemKind.Crate) return RegalFor(p, held.Product);
                 switch (step)
                 {
                     case 0:
                     case 1:
-                    case 4:
                         return Nearest(p, s => s.Type == StationType.Pc);
                     case 2:
                     case 3:
-                        if (kind == ItemKind.Crate) return RegalFor(p, held.Product);
+                        if (sim.StockTotal() > 0 && sim.DockCrates.Count == 0 && sim.TravelingDeliveries.Count == 0) return Nearest(p, s => s.Type == StationType.Pc);
                         return Nearest(p, s => s.Type == StationType.Dock);
+                    case 4:
+                        return Nearest(p, s => s.Type == StationType.Pc);
                     case 5:
-                        return null;
-                    case 6:
-                        if (kind == ItemKind.None) return Nearest(p, s => s.Type == StationType.Regal && sim.PendingCountFor(s.ProductId) > 0 && sim.StockQty(s.ProductId) > 0);
                         return ForHeld(sim, p);
                     default:
-                        return ForHeld(sim, p);
+                        return kind == ItemKind.None ? NextHandsFree(sim, p) : ForHeld(sim, p);
                 }
             }
             return ForHeld(sim, p);
+        }
+
+        /// <summary>Leere Hände: fertiges Paket am Packtisch abholen, sonst Artikel für eine offene Bestellung.</summary>
+        private static Station NextHandsFree(Sim sim, PlayerController p)
+        {
+            if (sim.PackedCount() > 0) return Nearest(p, s => s.Type == StationType.Pack);
+            var regal = Nearest(p, s => s.Type == StationType.Regal && sim.PendingCountFor(s.ProductId) > 0 && sim.StockQty(s.ProductId) > 0);
+            return regal;
         }
 
         private static Station ForHeld(Sim sim, PlayerController p)
@@ -256,7 +264,9 @@ namespace DropshippingGame
                         var free = Nearest(p, s => PostService.IsFreeDrop(s) || s.Type == StationType.Conveyor);
                         if (free != null) return free;
                     }
-                    return Nearest(p, s => s.Type == StationType.Ship || s.Type == StationType.Conveyor);
+                    // Im Tutorial: die (dann kostenlose) Abholung an Garage bzw. Halle.
+                    return Nearest(p, s => (s.Type == StationType.Ship && s.Opts.Stage < PostService.StagePackstation) || s.Type == StationType.Conveyor)
+                           ?? Nearest(p, s => s.Type == StationType.Ship);
                 case ItemKind.Return:
                     return Nearest(p, s => s.Type == StationType.ReturnDesk);
                 case ItemKind.Plate:

@@ -228,6 +228,16 @@ namespace DropshippingGame.UI
             }, TrickleDown.TrickleDown);
             nh.Add(_name);
             Btn(nh, "Speichern", SaveName, "accent", false, "check");
+            // Controller ohne Tastatur: Namensvorschlag per Knopfdruck
+            Btn(nh, "Vorschlag", () =>
+            {
+                string[] ideas = { "HustleHub", "PaketPeak", "Glanzstück", "TrendKiste", "NextLevelShop", "Kartonkönig", "BoxBoss", "Wunderware", "ClickCraft", "Lieblingsladen" };
+                string cur = _name != null ? _name.value : "";
+                string pick = ideas[UnityEngine.Random.Range(0, ideas.Length)];
+                if (pick == cur) pick = ideas[(System.Array.IndexOf(ideas, pick) + 1) % ideas.Length];
+                if (_name != null) _name.value = pick;
+                SaveName();
+            }, "", false, "sparkle");
 
             var lc = Card(left, "Logo");
             var lw = UIX.Wrap(lc);

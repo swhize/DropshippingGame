@@ -38,6 +38,9 @@ namespace DropshippingGame.UI
         private VisualElement _fest;
         private Label _festEyebrow, _festTitle, _festText;
         private string _festSig = "";
+        private HudCompass _compass;
+        private HudSubtitles _subs;
+        private float _toastTop = -1f;
 
         private readonly List<TicketUi> _ticketUis = new List<TicketUi>();
         private readonly List<Order> _shownOrders = new List<Order>();
@@ -174,6 +177,10 @@ namespace DropshippingGame.UI
             _banner.style.opacity = 0f;
             _fps = UIX.Text(_layer, "", "fps");
 
+            // ---- Kompass (oben mittig) & Untertitel ----------------------------------------------
+            _compass = new HudCompass(_layer);
+            _subs = new HudSubtitles(_layer);
+
             // ---- Toasts (eigene Ebene über Laptop und Fenstern) --------------------------------
             _toasts = UIX.Col(_toastLayer, 0f, "toasts");
             _toastLayer.pickingMode = PickingMode.Ignore;
@@ -248,6 +255,15 @@ namespace DropshippingGame.UI
             }
 
             TickTickets(sim);
+            try
+            {
+                _compass?.Tick(dt);
+                _subs?.Tick(dt);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
             _slowAcc += dt;
             if (_slowAcc >= 0.25f)
             {
@@ -498,6 +514,16 @@ namespace DropshippingGame.UI
         /// <summary>Zeitampel auf dem hellen Zettel: grün / gelb / rot.</summary>
         private static Color TicketToneColor(int tone)
         {
+            if (Settings.ColorBlind)
+            {
+                // Blau / Gelb-Ocker / Orange-Braun – auch bei Rot-Grün-Schwäche unterscheidbar.
+                switch (tone)
+                {
+                    case 0: return new Color(0.12f, 0.42f, 0.82f);
+                    case 1: return new Color(0.62f, 0.52f, 0.02f);
+                    default: return new Color(0.80f, 0.40f, 0.0f);
+                }
+            }
             switch (tone)
             {
                 case 0: return new Color(0.12f, 0.55f, 0.31f);
@@ -774,29 +800,54 @@ namespace DropshippingGame.UI
         /// <summary>Level-Up-Feier: großes Abzeichen mit Glühen und den Freischaltungen.</summary>
         public void ShowLevelUp(int level)
         {
+            GameData.LevelUnlocks.TryGetValue(level, out string unlock);
+            var chips = new List<string>();
+            if (!string.IsNullOrEmpty(unlock))
+                foreach (var part in unlock.Split('·'))
+                    if (part.Trim() != "") chips.Add(part.Trim());
+            ShowCelebration("LEVEL UP", level.ToString(), "Firmenlevel " + level + " erreicht", chips.Count > 0 ? "NEU FREIGESCHALTET" : null, chips,
+                "+1 Skillpunkt · Laptop » Firma » Skills");
+        }
+
+        /// <summary>„Geschafft!“-Moment: das allererste Paket ist verschickt.</summary>
+        public void ShowFirstParcel(int reward)
+        {
+            Game.Sound("cash");
+            ShowCelebration("GESCHAFFT!", "1", "Dein erstes Paket ist unterwegs", reward > 0 ? "+" + Fmt.Money(reward) + " auf dem Konto" : null,
+                new List<string> { "Bestellung erledigt", "Kundschaft glücklich" }, "Das war der ganze Kreislauf – ab jetzt läuft dein Shop!", "package");
+        }
+
+        private bool _celeBusy;
+        private readonly Queue<Action> _celeQueue = new Queue<Action>();
+
+        /// <summary>Große Feier (Level-Up, erstes Paket): Abzeichen mit Glühen, Titel, Chips. Läuft nacheinander.</summary>
+        public void ShowCelebration(string eyebrow, string badgeText, string title, string sub, IList<string> chips, string footer = null, string icon = null)
+        {
             if (_celeLayer == null) return;
+            if (_celeBusy)
+            {
+                if (_celeQueue.Count < 4) _celeQueue.Enqueue(() => ShowCelebration(eyebrow, badgeText, title, sub, chips, footer, icon));
+                return;
+            }
+            _celeBusy = true;
             _celeLayer.Clear();
             UIX.Show(_celeLayer, true);
             var wrap = UIX.Div(_celeLayer, "layer", "celebrate");
             var glow = UIX.Div(wrap, "cele-glow");
             glow.style.backgroundImage = new StyleBackground(UiTex.Radial());
             var card = UIX.Col(wrap, 0f, "cele-card");
-            UIX.Text(card, "LEVEL UP", "cele-eyebrow");
+            UIX.Text(card, eyebrow ?? "", "cele-eyebrow");
             var badge = UIX.Div(card, "cele-badge");
-            UIX.Text(badge, level.ToString(), "celebrate-level");
-            UIX.Text(card, "Firmenlevel " + level + " erreicht", "cele-title", "display");
-            GameData.LevelUnlocks.TryGetValue(level, out string unlock);
-            if (!string.IsNullOrEmpty(unlock))
+            if (!string.IsNullOrEmpty(icon)) UIX.Icon(badge, icon, 64f, new Color(0.11f, 0.08f, 0.02f));
+            else UIX.Text(badge, badgeText ?? "", "celebrate-level");
+            UIX.Text(card, title ?? "", "cele-title", "display");
+            if (!string.IsNullOrEmpty(sub)) UIX.Text(card, sub, "cele-sub");
+            if (chips != null && chips.Count > 0)
             {
-                UIX.Text(card, "NEU FREIGESCHALTET", "cele-sub");
-                var chips = UIX.Div(card, "cele-unlocks");
-                foreach (var part in unlock.Split('·'))
-                {
-                    string s = part.Trim();
-                    if (s != "") UIX.Chip(chips, s, "sparkle", Theme.Accent, "cele-chip");
-                }
+                var row = UIX.Div(card, "cele-unlocks");
+                foreach (var c in chips) UIX.Chip(row, c, "sparkle", Theme.Accent, "cele-chip");
             }
-            UIX.Chip(card, "+1 Skillpunkt · Laptop » Firma » Skills", "sparkle", Theme.Accent, "cele-chip").style.marginTop = 10;
+            if (!string.IsNullOrEmpty(footer)) UIX.Chip(card, footer, "sparkle", Theme.Accent, "cele-chip").style.marginTop = 10;
             foreach (var el in _celeLayer.Query<VisualElement>().ToList()) el.pickingMode = PickingMode.Ignore;
             wrap.style.opacity = 0f;
             Anim.Run(4.2f, t =>
@@ -806,12 +857,14 @@ namespace DropshippingGame.UI
                 float bt = Mathf.Clamp01(t / 0.09f);
                 float s = Mathf.LerpUnclamped(0.55f, 1f, Anim.Apply(Ease.OutBack, bt));
                 badge.style.scale = new Scale(new Vector3(s, s, 1f));
-                float gs = 0.9f + 0.1f * Mathf.Sin(t * 9f);
+                float gs = Settings.CalmEffects ? 1f : 0.9f + 0.1f * Mathf.Sin(t * 9f);
                 glow.style.scale = new Scale(new Vector3(gs, gs, 1f));
             }, () =>
             {
                 _celeLayer.Clear();
                 UIX.Show(_celeLayer, false);
+                _celeBusy = false;
+                if (_celeQueue.Count > 0) _celeQueue.Dequeue()?.Invoke();
             }, Ease.Linear, true, _celeLayer);
         }
 
@@ -855,8 +908,16 @@ namespace DropshippingGame.UI
             if (sim == null || !sim.InGame || sim.PcOpen || (ui != null && ui.Menu != null && ui.Menu.IsOpen)) place = "bottom";
             else if (ui != null && ui.Phone != null && ui.Phone.IsOpen) place = "phone";
             else place = "right";
-            if (place == _toastPlace) return;
+            // Rechts: direkt unter den Bestellzetteln (deren Höhe hängt von Express-Zetteln und UI-Größe ab).
+            float top = 196f;
+            if (place != "bottom" && _tickets != null && UIX.IsShown(_tickets) && UIX.IsShown(_layer))
+            {
+                float bottom = _tickets.layout.yMax;
+                if (!float.IsNaN(bottom) && bottom > 40f) top = Mathf.Round(Mathf.Max(120f, bottom + 12f));
+            }
+            if (place == _toastPlace && Mathf.Abs(top - _toastTop) < 1f) return;
             _toastPlace = place;
+            _toastTop = top;
             switch (place)
             {
                 case "bottom":
@@ -867,14 +928,14 @@ namespace DropshippingGame.UI
                     _toasts.style.marginLeft = -174;
                     break;
                 case "phone":
-                    _toasts.style.top = 196;
+                    _toasts.style.top = top;
                     _toasts.style.bottom = StyleKeyword.Auto;
                     _toasts.style.left = StyleKeyword.Auto;
                     _toasts.style.right = 420;
                     _toasts.style.marginLeft = 0;
                     break;
                 default:
-                    _toasts.style.top = 196;
+                    _toasts.style.top = top;
                     _toasts.style.bottom = StyleKeyword.Auto;
                     _toasts.style.left = StyleKeyword.Auto;
                     _toasts.style.right = 24;

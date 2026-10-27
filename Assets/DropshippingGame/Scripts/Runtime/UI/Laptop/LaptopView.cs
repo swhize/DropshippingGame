@@ -553,7 +553,7 @@ namespace DropshippingGame.UI
             string tab = null;
             if (target == null && sim != null)
             {
-                if (sim.TutorialStep == 1) app = "buy/ware";
+                if (sim.TutorialStep == 1) app = "allesexpress/item/huelle"; // Tutorial: direkt die Produktseite
                 else if (sim.TutorialStep == 4) app = "shop/webshop";
                 else if (sim.Events.PendingCount() > 0) app = "mail";
                 else tab = _currentTab;
@@ -851,6 +851,7 @@ namespace DropshippingGame.UI
                 UpdateTop();
                 UpdateBadges();
                 UpdateFoot();
+                UpdateCoach();
             }
             UIX.PadScroll(_content, dt);
             _dirtyT += dt;

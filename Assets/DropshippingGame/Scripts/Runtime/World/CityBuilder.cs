@@ -741,6 +741,7 @@ namespace DropshippingGame
             clerk.Setup(look);
             if (Game.Player != null) clerk.LookAtTarget = Game.Player.transform;
             PostService.Clerk = clerk;
+            if (clerk != null) clerk.DisplayName = "Frau Blitz";
             Label3D.Create(clerkGo.transform, "Frau Blitz", 30f, new Color(1f, 0.92f, 0.6f), new Vector3(0, 2.05f, 0), true, 10f);
             // Hof mit Lieferwagen
             foreach (float vz in new[] { -15.5f, -21.5f })

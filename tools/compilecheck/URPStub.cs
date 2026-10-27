@@ -19,6 +19,7 @@ namespace UnityEngine.Rendering.Universal
     public sealed class Bloom : VolumeComponent { public MinFloatParameter threshold, intensity, clamp; public ClampedFloatParameter scatter; public ColorParameter tint; }
     public sealed class ColorAdjustments : VolumeComponent { public FloatParameter postExposure; public ClampedFloatParameter contrast, hueShift, saturation; public ColorParameter colorFilter; }
     public sealed class Vignette : VolumeComponent { public ColorParameter color; public ClampedFloatParameter intensity, smoothness; }
+    public sealed class MotionBlur : VolumeComponent { public ClampedFloatParameter intensity, clamp; }
     public enum ShadowResolution { _256 = 256, _512 = 512, _1024 = 1024, _2048 = 2048, _4096 = 4096 }
     public enum AntialiasingMode { None, FastApproximateAntialiasing, SubpixelMorphologicalAntiAliasing, TemporalAntiAliasing }
     public enum AntialiasingQuality { Low, Medium, High }

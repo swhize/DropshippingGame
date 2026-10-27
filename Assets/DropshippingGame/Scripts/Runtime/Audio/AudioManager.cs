@@ -393,6 +393,7 @@ namespace DropshippingGame
             {
                 var s = _musicSources[i];
                 float target = _musicVol[i] * Settings.MusicVolume;
+                if (!Settings.MusicAllowed(s.clip != null ? s.clip.name : null)) target = 0f; // Streamer-Modus
                 s.volume = Mathf.MoveTowards(s.volume, target, dt * 0.5f);
                 if (_musicVol[i] <= 0f && s.volume <= 0.001f && s.isPlaying) s.Stop();
             }

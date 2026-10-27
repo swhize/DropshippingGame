@@ -155,6 +155,8 @@ namespace DropshippingGame
             };
             s.TrendsUpdated += RefreshPanels;
             s.LevelUp += level => _ui.Hud.ShowLevelUp(level);
+            s.FirstParcelShipped += () => _ui.Hud.ShowFirstParcel(_sim.TotalEarned);
+            s.GameSaved += slot => SaveThumbs.OnSaved(slot);
             s.GoalCompleted += g => _ui.Hud.ShowBanner("Ziel erreicht", g.Title + " · +" + Fmt.Money(g.Reward), "MEILENSTEIN");
             s.StoryChanged += _ =>
             {
@@ -519,6 +521,7 @@ namespace DropshippingGame
             {
                 UpdateMenuCamera(udt);
                 if (!_ui.Fader.Busy && GameInput.CancelDown && _ui.Menu.IsOpen) _ui.Menu.Back();
+                if (_ui.Menu.InSettings && (GameInput.PrevTabDown || GameInput.NextTabDown)) SettingsView.CycleTab(GameInput.PrevTabDown ? -1 : 1);
                 return;
             }
             if (_player == null || _world == null) return;
@@ -593,6 +596,7 @@ namespace DropshippingGame
             if (_ui.Pause.IsOpen)
             {
                 if (cancel) _ui.Pause.Back();
+                else if (_ui.Pause.InSettings && (prevTab || nextTab)) SettingsView.CycleTab(prevTab ? -1 : 1);
                 return;
             }
             if (_sim.PcOpen)
@@ -679,6 +683,9 @@ namespace DropshippingGame
                 case "event":
                 case "tiktok_pick":
                 case "tiktok_result":
+                case "bank":
+                case "boerse":
+                case "shop_checkout":
                     m.Close();
                     break;
             }

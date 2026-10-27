@@ -30,6 +30,18 @@ namespace DropshippingGame.UI
         {
             var list = new List<Hint>();
             if (s == null || s.StoryStage != "business") return list;
+            // Im Tutorial nur der aktuelle Schritt – sonst lenken Engpass-Warnungen („Shop leer“ …) ab.
+            if (s.TutorialStep >= 0 && s.TutorialStep < GameData.Tutorial.Length)
+            {
+                int st = s.TutorialStep;
+                string target = st <= 1 ? "allesexpress/item/huelle" : (st == 4 ? "shop" : null);
+                list.Add(new Hint
+                {
+                    Id = "tutorial", Severity = 0, Icon = "flag", Laptop = target, Action = target != null ? "Los geht's" : null,
+                    Text = "Tutorial " + (st + 1) + "/" + GameData.Tutorial.Length + ": " + GameData.TutorialText(st),
+                });
+                return list;
+            }
             int order = 0;
             var orderOf = new Dictionary<Hint, int>();
 
@@ -125,7 +137,7 @@ namespace DropshippingGame.UI
                 if (s.SkillPointsAvailable() > 0)
                     Add("skills", 0, "sparkle", s.SkillPointsAvailable() == 1 ? "1 Skillpunkt frei – Firma › Skills." : s.SkillPointsAvailable() + " Skillpunkte frei – Firma › Skills.", "company/skills");
                 if (s.PackedCount() >= 3)
-                    Add("label", 0, "truck", s.PackedCount() + " Pakete warten aufs Etikett.", null);
+                    Add("label", 0, "truck", s.PackedCount() + " Pakete liegen am Packtisch – Label drucken und ab zur Packstation.", null);
                 if (s.TikTokAvailable() && s.ActiveBoost("tiktok") == null)
                     Add("tiktok", 0, "music", "Zeit für ein TikTok? (heute noch " + s.TikToksLeftToday() + ")", "shop/marketing");
                 foreach (var c in s.Challenges)

@@ -192,7 +192,10 @@ namespace DropshippingGame.UI
             "Werbung und TikToks steigern die Nachfrage für eine Weile.",
             "Ist die Warteschlange voll, gehen Bestellungen verloren.",
             "Im Laptop unter Firma » Ziele stehen Meilensteine und Wochenziele.",
-            "Den vollen Laptop „HustleOS“ gibt es nur am Schreibtisch.",
+            "Packstationen in der Stadt nehmen Pakete gratis an – die Abholung am Garagentor kostet 3 € pro Paket.",
+            "Der Kompass oben zeigt Garage, Packstation, Post, Bank, Börse und Läden.",
+            "Unter 40 Energie wirst du langsamer. Bett, Stuhl und Kaffee gibt's unter Firma » Einrichtung.",
+            "Die Müllabfuhr kommt Mo, Mi und Fr um 10 Uhr. Volle Tonnen bremsen alle.",
             "Offene Entscheidungen verfallen um 20 Uhr – dann gilt die vorsichtigste Antwort.",
             "Kalle hat immer einen Spruch parat. Ob er stimmt, ist eine andere Frage.",
         };

@@ -12,8 +12,10 @@ namespace DropshippingGame.UI
         public static readonly Color Accent = new Color(1f, 0.74f, 0.26f);
         public static readonly Color AccentDark = new Color(0.86f, 0.58f, 0.12f);
         public static readonly Color Teal = new Color(0.32f, 0.86f, 0.78f);
-        public static readonly Color Good = new Color(0.4f, 0.87f, 0.55f);
-        public static readonly Color Bad = new Color(1f, 0.42f, 0.42f);
+        /// <summary>„Gut“ – im Farbenblind-Modus Blau statt Grün.</summary>
+        public static Color Good => Settings.ColorBlind ? new Color(0.3f, 0.65f, 1f) : new Color(0.4f, 0.87f, 0.55f);
+        /// <summary>„Schlecht“ – im Farbenblind-Modus Orange statt Rot.</summary>
+        public static Color Bad => Settings.ColorBlind ? new Color(1f, 0.6f, 0.12f) : new Color(1f, 0.42f, 0.42f);
         public static readonly Color Text = new Color(0.95f, 0.96f, 0.97f);
         public static readonly Color Muted = new Color(0.62f, 0.66f, 0.74f);
         public static readonly Color Ink2 = new Color(0.79f, 0.81f, 0.85f);
@@ -21,8 +23,12 @@ namespace DropshippingGame.UI
         public static readonly Color PaperInk = new Color(0.14f, 0.13f, 0.11f);
 
         /// <summary>Gute/schlechte Farbe passend zum Laptop-Design (hell braucht dunklere Töne).</summary>
-        public static Color LaptopGood => Settings.LaptopDark ? new Color(0.24f, 0.84f, 0.69f) : new Color(0.04f, 0.6f, 0.47f);
-        public static Color LaptopBad => Settings.LaptopDark ? new Color(1f, 0.36f, 0.45f) : new Color(0.85f, 0.21f, 0.31f);
+        public static Color LaptopGood => Settings.ColorBlind
+            ? (Settings.LaptopDark ? new Color(0.3f, 0.65f, 1f) : new Color(0.12f, 0.44f, 0.85f))
+            : (Settings.LaptopDark ? new Color(0.24f, 0.84f, 0.69f) : new Color(0.04f, 0.6f, 0.47f));
+        public static Color LaptopBad => Settings.ColorBlind
+            ? (Settings.LaptopDark ? new Color(1f, 0.6f, 0.12f) : new Color(0.78f, 0.42f, 0f))
+            : (Settings.LaptopDark ? new Color(1f, 0.36f, 0.45f) : new Color(0.85f, 0.21f, 0.31f));
         public static Color LaptopAccent =>
             Settings.LaptopDesign == "hype"
                 ? (Settings.LaptopDark ? new Color(1f, 0.48f, 0.27f) : new Color(0.91f, 0.36f, 0.14f))

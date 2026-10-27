@@ -78,8 +78,25 @@ namespace DropshippingGame
             if (Waypoints.Count > 0) transform.localPosition = Waypoints[0];
         }
 
+        /// <summary>Eine Figur spricht (für Untertitel im HUD): Figur, Text, Dauer.</summary>
+        public static event System.Action<NPC, string, float> Spoke;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetSpoke() => Spoke = null;
+
+        /// <summary>Anzeigename für Untertitel (z. B. „Kalle“); leer = „Passant:in“.</summary>
+        public string DisplayName = "";
+
         public void Say(string text, float duration = 4f)
         {
+            try
+            {
+                Spoke?.Invoke(this, text, duration);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogException(e);
+            }
             if (_bubble == null) return;
             _bubble.SetText(text);
             _bubble.gameObject.SetActive(true);

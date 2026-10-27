@@ -6,78 +6,6 @@ using UnityEngine.UIElements;
 
 namespace DropshippingGame.UI
 {
-    /// <summary>Einstellungen (Hauptmenü und Pausemenü): Audio, Steuerung, Grafik, Oberfläche.</summary>
-    public static class SettingsView
-    {
-        public static void Build(VisualElement parent, Action onBack)
-        {
-            var head = UIX.Row(parent, 10f);
-            UIX.Text(head, "Einstellungen", "h1");
-            UIX.Spacer(head);
-            if (onBack != null) UIX.Button(head, "Zurück", onBack, "ghost", false, "arrow_left");
-
-            Func<float, string> pct = v => Mathf.RoundToInt(v * 100f) + " %";
-            var audio = Section(parent, "AUDIO", "music");
-            UIX.Slider(audio, "Gesamtlautstärke", 0f, 1f, Settings.MasterVolume, 0.05f, pct, v => { Settings.MasterVolume = v; Settings.ApplyLive(); }, Commit);
-            UIX.Slider(audio, "Musik", 0f, 1f, Settings.MusicVolume, 0.05f, pct, v => { Settings.MusicVolume = v; Settings.ApplyLive(); }, Commit);
-            UIX.Slider(audio, "Effekte", 0f, 1f, Settings.SfxVolume, 0.05f, pct, v => { Settings.SfxVolume = v; Settings.ApplyLive(); }, Commit);
-
-            var ctrl = Section(parent, "STEUERUNG", "gamepad");
-            UIX.Slider(ctrl, "Mausempfindlichkeit", 0.2f, 3f, Settings.MouseSensitivity, 0.1f, v => Fmt.Dec(v, 1), v => { Settings.MouseSensitivity = v; Settings.ApplyLive(); }, Commit);
-            UIX.Slider(ctrl, "Controller-Empfindlichkeit", 0.2f, 3f, Settings.PadSensitivity, 0.1f, v => Fmt.Dec(v, 1), v => { Settings.PadSensitivity = v; Settings.ApplyLive(); }, Commit);
-            UIX.Toggle(ctrl, "Y-Achse invertieren", Settings.InvertY, on => { Settings.InvertY = on; Settings.Apply(); });
-
-            var gfx = Section(parent, "GRAFIK", "sun");
-            UIX.Slider(gfx, "Sichtfeld (FOV)", 60f, 100f, Settings.Fov, 1f, v => Mathf.RoundToInt(v) + "°", v => { Settings.Fov = v; Settings.ApplyLive(); }, Commit);
-            var q = UIX.Row(gfx, 14f, "slider-row");
-            UIX.Text(q, "Grafikqualität", "slider-label");
-            UIX.Segmented(q, Settings.QualityNames, Mathf.Clamp(Settings.Quality, 0, Settings.QualityNames.Length - 1), i =>
-            {
-                Settings.Quality = i;
-                Settings.Apply();
-                PostFX.ApplyQuality();
-            });
-            UIX.Toggle(gfx, "Vollbild", Settings.Fullscreen, on => { Settings.Fullscreen = on; Settings.Apply(); });
-            UIX.Toggle(gfx, "Kopfwippen beim Laufen", Settings.HeadBob, on => { Settings.HeadBob = on; Settings.Apply(); });
-            UIX.Toggle(gfx, "FPS anzeigen", Settings.ShowFps, on => { Settings.ShowFps = on; Settings.Apply(); });
-
-            var ui = Section(parent, "OBERFLÄCHE", "screen");
-            // Beim Ziehen nur die Anzeige ändern – die Größe wird beim Loslassen übernommen,
-            // sonst würde sich der Regler unter dem Mauszeiger verschieben.
-            UIX.Slider(ui, "UI-Größe", Settings.UiScaleMin, Settings.UiScaleMax, Settings.UiScale, 0.05f, pct, null, v =>
-            {
-                if (Mathf.Abs(v - Settings.UiScale) < 0.001f) return;
-                Settings.UiScale = v;
-                Settings.Apply();
-            });
-            UIX.Toggle(ui, "Tastenhinweise im HUD", Settings.ShowHints, on => { Settings.ShowHints = on; Settings.Apply(); });
-            var d = UIX.Row(ui, 14f, "slider-row");
-            UIX.Text(d, "Design von Laptop & Handy", "slider-label");
-            string[] ids = { "hype", "frachtbrief" };
-            UIX.Segmented(d, new[] { "Hype", "Frachtbrief" }, Settings.LaptopDesign == "frachtbrief" ? 1 : 0, i =>
-            {
-                Settings.LaptopDesign = ids[i];
-                Settings.Apply();
-            });
-            UIX.Toggle(ui, "Dunkles Design (Laptop & Handy)", Settings.LaptopDark, on => { Settings.LaptopDark = on; Settings.Apply(); });
-
-            if (onBack != null) UIX.Button(parent, "Fertig", onBack, "accent", false, "check").style.alignSelf = Align.FlexStart;
-        }
-
-        /// <summary>Regler losgelassen (bzw. Tastatur/Controller): speichern.</summary>
-        private static void Commit(float _) => Settings.Apply();
-
-        private static VisualElement Section(VisualElement parent, string title, string icon)
-        {
-            var c = UIX.Col(parent, 2f, "card");
-            var h = UIX.Row(c, 8f);
-            UIX.Icon(h, icon, 15f, Theme.Accent);
-            UIX.Text(h, title, "eyebrow");
-            h.style.marginBottom = 4;
-            return c;
-        }
-    }
-
     /// <summary>Hilfe: Tastenbelegung (Tastatur &amp; Controller) und der Spielablauf.</summary>
     public static class HelpView
     {
@@ -118,13 +46,13 @@ namespace DropshippingGame.UI
             UIX.Text(lh, "SO LÄUFT DEIN BUSINESS", "eyebrow");
             string[] steps =
             {
-                "Am Laptop (Schreibtisch) bei <b>AllesExpress</b> Ware bestellen – später geht Nachbestellen auch per Handy.",
-                "Die Kiste am <b>Wareneingang</b> holen und ins passende <b>Regal</b> räumen.",
-                "Im Laptop unter <b>Shop</b> das Produkt online stellen und den Preis festlegen.",
-                "Bestellungen erscheinen <b>oben rechts als Zettel</b>. Je schneller verschickt, desto besser die Bewertung.",
+                "Am <b>Laptop</b> (Werkbank in der Garage) bei <b>AllesExpress</b> Ware bestellen – Nachbestellen geht später auch per Handy.",
+                "Die Kiste vom Lieferwagen am <b>Wareneingang</b> holen und ins passende <b>Regal</b> räumen.",
+                "Im Laptop unter <b>Mein Shop</b> das Produkt online schalten und den Preis festlegen.",
+                "Bestellungen erscheinen <b>oben rechts als Zettel</b> mit Countdown. Je schneller verschickt, desto besser die Bewertung.",
                 "Artikel aus dem Regal nehmen und am <b>Packtisch</b> verpacken.",
-                "Am <b>Labeldrucker</b> ein Versandlabel drucken.",
-                "Das Paket zur <b>PaketBlitz-Packstation</b> bringen (gratis) – oder gegen Gebühr abholen lassen. Geld kassieren!",
+                "Das Paket vom Packtisch nehmen und am <b>Labeldrucker</b> das Versandlabel drucken.",
+                "Paket abgeben: <b>Packstation</b> in der Stadt oder <b>PaketBlitz-Filiale</b> (gratis) – oder bequem an der <b>Abholbox am Garagentor</b> (3 € pro Paket). Geld kassieren!",
             };
             for (int i = 0; i < steps.Length; i++)
             {
@@ -138,9 +66,11 @@ namespace DropshippingGame.UI
             UIX.Icon(gh, "rocket", 16f, Theme.Accent);
             UIX.Text(gh, "HANDY, LAPTOP & WACHSTUM", "eyebrow");
             UIX.Text(grow, "Mit dem <b>Handy</b> (" + GameInput.KeyboardLabel("phone") + " / " + GameInput.PadLabel("phone") + ") siehst du Bestellzettel, beantwortest Nachrichten, bestellst mit einem Tipp nach und prüfst deinen Kontostand – die Welt läuft dabei weiter. " +
-                                "Den vollen Laptop <b>HustleOS</b> gibt es am Schreibtisch: AllesExpress, Mein Shop, TikTak, Revoluut, Firma.", "help-step-text");
+                                "Den Laptop gibt es an der Werkbank bzw. am Schreibtisch: AllesExpress, Mein Shop, PaketBlitz, TikTak, Revoluut, Firma und mehr. " +
+                                "Der <b>Kompass</b> oben zeigt Garage, nächste Packstation, Post, Bank, Börse, MediaMarkd und Fressnix.", "help-step-text");
             UIX.Text(grow, "Gute Preise, schneller Versand und Qualität bringen gute Bewertungen und mehr Kundschaft. Mit Erfahrung steigt dein Firmenlevel und schaltet Produkte, " +
-                           "Lagerhalle, Personal und mehr frei. Um 20 Uhr ist Feierabend – dann werden Miete, Löhne und Zinsen fällig.", "help-step-text");
+                           "Lagerhalle, Personal und mehr frei. Um 20 Uhr ist Feierabend – dann werden Miete, Löhne und Zinsen fällig. " +
+                           "Unter 40 <b>Energie</b> wirst du langsamer (Schlaf, Bett, Kaffee helfen). Neue Funktionen erklärt dir Marvin per Nachricht im Handy.", "help-step-text");
             UIX.Text(grow, "<b>TikTok</b> (ab Level " + GameData.TikTokLevel + "): Handy › TikTak, Laptop › TikTak oder das Ringlicht am Schreibtisch. Produkt und Format wählen, dann filmst du 10–20 Sekunden selbst: " +
                            "Produkt mittig im 9:16-Rahmen, nah genug, ruhig, gutes Licht, einmal herumgehen, gleich zu Beginn eine Aktion (" + GameInput.KeyboardLabel("rec_action") + " / " + GameInput.PadLabel("rec_action") +
                            ") als Hook und Deko mit ins Bild. Danach Ergebnis ansehen und posten oder neu aufnehmen.", "help-step-text");
@@ -299,16 +229,56 @@ namespace DropshippingGame.UI
         }
     }
 
-    /// <summary>Pausemenü (Esc / Start): Weiter, Speichern, Einstellungen, Hilfe, Hauptmenü, Beenden.</summary>
+    /// <summary>Versionsnummer für Menüs (echte Build-Version aus <see cref="BuildInfo"/>).</summary>
+    public static class GameVersion
+    {
+        public static string Text
+        {
+            get
+            {
+                try
+                {
+                    return "v" + BuildInfo.Version;
+                }
+                catch (Exception)
+                {
+                    return "v" + Application.version;
+                }
+            }
+        }
+
+        public static string Long
+        {
+            get
+            {
+                try
+                {
+                    return BuildInfo.Short;
+                }
+                catch (Exception)
+                {
+                    return Application.version;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Pausemenü (Esc / Start): Weiterspielen, Speichern, Einstellungen, Hilfe, Hauptmenü, Speichern &amp; Beenden.
+    /// Hauptmenü und Beenden fragen nach (mit Hinweis, ob gespeichert wird).
+    /// </summary>
     public sealed class PauseView
     {
         private readonly VisualElement _layer;
         private readonly VisualElement _card;
         private string _page = "";
+        private ScrollView _scroll;
 
         public bool IsOpen { get; private set; }
         public Action OnMainMenu, OnQuit, OnHelp;
         public VisualElement Card => _card;
+        /// <summary>Gerade die Einstellungen offen (LB/RB wechseln dann die Reiter)?</summary>
+        public bool InSettings => IsOpen && _page == "settings";
 
         public PauseView(VisualElement layer)
         {
@@ -318,9 +288,12 @@ namespace DropshippingGame.UI
             UIX.Show(_layer, false);
         }
 
+        private static bool CanSave(Sim sim) => sim != null && sim.StoryStage == "business" && !sim.DayOver;
+
         private void ShowMenu()
         {
             _page = "menu";
+            _scroll = null;
             _card.Clear();
             _card.style.width = 440;
             var sim = Game.Sim;
@@ -341,18 +314,43 @@ namespace DropshippingGame.UI
             var menu = UIX.Col(_card, 8f);
             menu.style.marginTop = 10;
             UIX.Button(menu, "Weiterspielen", Close, "accent", false, "play").AddToClassList("btn-big");
-            UIX.Button(menu, "Spiel speichern", Save, "", false, "save");
+            UIX.Button(menu, "Spiel speichern", Save, "", !CanSave(sim), "save");
             UIX.Button(menu, "Einstellungen", ShowSettings, "", false, "gear");
+            UIX.Button(menu, "Steuerung & Hilfe", ShowHelp, "", false, "help");
+            UIX.Button(menu, "Feedback & Bug melden", ShowFeedback, "", false, "chat");
             if (DevTools.Enabled)
                 UIX.Button(menu, "Admin-Panel (Test)", () =>
                 {
                     Close();
                     Game.UI?.Admin?.Open();
                 }, "", false, "bolt");
-            UIX.Button(menu, "Steuerung & Hilfe", ShowHelp, "", false, "help");
-            UIX.Button(menu, "Feedback & Bug melden", ShowFeedback, "", false, "chat");
-            UIX.Button(menu, "Zum Hauptmenü", () => OnMainMenu?.Invoke(), "", false, "home");
-            UIX.Button(menu, "Spiel beenden", () => OnQuit?.Invoke(), "danger", false, "exit");
+            UIX.Button(menu, "Zum Hauptmenü", () => Confirm("Zum Hauptmenü?", "home", OnMainMenu), "", false, "home");
+            UIX.Button(menu, CanSave(sim) ? "Speichern & Beenden" : "Spiel beenden", () => Confirm("Spiel beenden?", "exit", OnQuit), "danger", false, "exit");
+            UIX.Text(_card, "Version " + GameVersion.Long, "pause-version");
+        }
+
+        /// <summary>Rückfrage vor Hauptmenü/Beenden – mit Hinweis, ob gespeichert wird.</summary>
+        private void Confirm(string title, string icon, Action action)
+        {
+            _page = "confirm";
+            _scroll = null;
+            _card.Clear();
+            _card.style.width = 440;
+            var sim = Game.Sim;
+            var head = UIX.Col(_card, 4f, "pause-head");
+            UIX.Icon(head, icon, 28f, Theme.Accent);
+            UIX.Text(head, title, "h1").style.unityTextAlign = TextAnchor.MiddleCenter;
+            string info = CanSave(sim)
+                ? "Dein Spiel wird vorher automatisch gespeichert (Spielstand " + sim.Slot + ")."
+                : (sim != null && sim.StoryStage == "diner" ? "Die Imbiss-Schicht wird nicht gespeichert – du fängst sie beim nächsten Mal neu an." : "Der Tag ist vorbei – gespeichert wird beim nächsten Tagesstart.");
+            var l = UIX.Text(head, info, "pause-meta");
+            l.style.whiteSpace = WhiteSpace.Normal;
+            l.style.unityTextAlign = TextAnchor.MiddleCenter;
+            var menu = UIX.Col(_card, 8f);
+            menu.style.marginTop = 12;
+            UIX.Button(menu, "Abbrechen", ShowMenu, "", false, "arrow_left");
+            UIX.Button(menu, "Ja, " + (icon == "exit" ? "beenden" : "zum Hauptmenü"), () => action?.Invoke(), icon == "exit" ? "danger" : "accent", false, "check");
+            if (GameInput.UsingGamepad) _card.schedule.Execute(() => UIX.FocusFirst(_card));
         }
 
         private ScrollView Page(float width)
@@ -360,14 +358,15 @@ namespace DropshippingGame.UI
             _card.Clear();
             _card.style.width = width;
             var sv = UIX.Scroll(_card);
-            sv.style.maxHeight = 780;
+            sv.style.maxHeight = 820;
+            _scroll = sv;
             return sv;
         }
 
         private void ShowSettings()
         {
             _page = "settings";
-            var sv = Page(700);
+            var sv = Page(760);
             var col = UIX.Col(sv.contentContainer, 10f);
             SettingsView.Build(col, ShowMenu);
         }
@@ -404,6 +403,12 @@ namespace DropshippingGame.UI
             ShowMenu();
         }
 
+        /// <summary>Rechter Stick scrollt lange Seiten (Einstellungen, Hilfe).</summary>
+        public void Tick(float dt)
+        {
+            if (IsOpen && _scroll != null) UIX.PadScroll(_scroll, dt);
+        }
+
         public void Open()
         {
             if (IsOpen) return;
@@ -419,8 +424,10 @@ namespace DropshippingGame.UI
         public void Close()
         {
             if (!IsOpen) return;
+            InputBindings.CancelCapture();
             IsOpen = false;
             _page = "";
+            _scroll = null;
             UIX.Show(_layer, false);
             Game.Root?.Lock("pause", false);
             Game.Root?.SetPaused("pause", false);
@@ -429,7 +436,7 @@ namespace DropshippingGame.UI
         /// <summary>Esc im Pausemenü: aus Unterseiten zurück, sonst schließen.</summary>
         public void Back()
         {
-            if (_page == "settings" || _page == "help" || _page == "feedback") ShowMenu();
+            if (_page == "settings" || _page == "help" || _page == "feedback" || _page == "confirm") ShowMenu();
             else Close();
         }
     }
@@ -475,21 +482,21 @@ namespace DropshippingGame.UI
             var pill = UIX.Div(wr, "wordmark-pill");
             UIX.Text(pill, "SIMULATOR", "wordmark-pill-text", "display");
             var ver = UIX.Div(wr, "version-pill");
-            UIX.Text(ver, "v" + WhatsNew.Version, "version-pill-text", "bold");
+            UIX.Text(ver, GameVersion.Text, "version-pill-text", "bold");
             UIX.Text(_panel, "Vom Imbiss zum Imperium.", "menu-tagline");
             _scroll = UIX.Scroll(_panel, "menu-content");
             _content = UIX.Col(_scroll.contentContainer, 10f);
 
             _whatsNew = UIX.Col(_layer, 0f, "whatsnew");
             BuildWhatsNew();
-            UIX.Text(_layer, "v" + WhatsNew.Version + " „" + WhatsNew.Title + "“ · Unity 6 · Asset-Quellen unter Credits", "menu-version").pickingMode = PickingMode.Ignore;
+            UIX.Text(_layer, "Version " + GameVersion.Long + " · Asset-Quellen unter Credits", "menu-version").pickingMode = PickingMode.Ignore;
         }
 
         private void BuildWhatsNew()
         {
             _whatsNew.Clear();
             var h = UIX.Col(_whatsNew, 0f, "wn-head");
-            UIX.Text(h, "WAS IST NEU IN V" + WhatsNew.Version, "eyebrow").style.color = Theme.Accent;
+            UIX.Text(h, "WAS IST NEU", "eyebrow").style.color = Theme.Accent;
             UIX.Text(h, WhatsNew.Title, "wn-title", "display");
             var sv = UIX.Scroll(_whatsNew);
             sv.style.flexShrink = 1;
@@ -519,6 +526,8 @@ namespace DropshippingGame.UI
         public void Close() => UIX.Show(_layer, false);
 
         public bool IsOpen => _layer.style.display != DisplayStyle.None;
+        /// <summary>Einstellungen offen (LB/RB wechseln die Reiter)?</summary>
+        public bool InSettings => IsOpen && _page == "settings";
 
         public void Tick(float dt)
         {
@@ -548,11 +557,15 @@ namespace DropshippingGame.UI
                 case "confirm_delete":
                     ShowSlots();
                     break;
+                case "confirm_quit":
+                    ShowMain();
+                    break;
             }
         }
 
         private void SetPage(string page)
         {
+            if (_page == "settings" && page != "settings") InputBindings.CancelCapture();
             _page = page;
             _content.Clear();
             _scroll.scrollOffset = Vector2.zero;
@@ -630,7 +643,18 @@ namespace DropshippingGame.UI
             if (sum != null)
             {
                 string brand = string.IsNullOrEmpty(sum.Brand) ? "Spielstand " + recent : sum.Brand;
-                MenuButton("Fortsetzen", () => OnLoad?.Invoke(recent), "accent", brand + " · " + SlotMeta(sum), "play").AddToClassList("btn-big");
+                var card = UIX.PressRow(_content, 14f, () => OnLoad?.Invoke(recent), "slot-card", "continue-card");
+                SlotThumb(card, recent, sum);
+                var info = UIX.Col(card, 2f);
+                info.style.flexGrow = 1;
+                info.style.flexShrink = 1;
+                UIX.Text(info, "FORTSETZEN", "eyebrow").style.color = Theme.Accent;
+                UIX.Text(info, brand, "slot-title");
+                UIX.Text(info, SlotMeta(sum), "slot-meta");
+                string saved = SavedAt(sum);
+                if (saved != "") UIX.Text(info, saved, "slot-meta");
+                UIX.Icon(card, "play", 22f, Theme.Accent);
+                UIX.PassThrough(card);
             }
             MenuButton("Neues Spiel", ShowNewGame, sum != null ? "" : "accent", "Drei Wege ins Business – mit oder ohne Imbiss-Story", "sparkle");
             bool anySave = false;
@@ -646,7 +670,48 @@ namespace DropshippingGame.UI
             MenuButton("Einstellungen", ShowSettings, "", null, "gear");
             MenuButton("Steuerung & Hilfe", ShowHelp, "", null, "help");
             MenuButton("Credits & Quellen", ShowCredits, "", null, "heart");
-            MenuButton("Beenden", () => OnQuit?.Invoke(), "", null, "exit");
+            MenuButton("Beenden", ConfirmQuit, "", null, "exit");
+        }
+
+        private void ConfirmQuit()
+        {
+            SetPage("confirm_quit");
+            PageTitle("Spiel beenden?", "Bis bald – deine Spielstände bleiben erhalten.");
+            MenuButton("Ja, beenden", () => OnQuit?.Invoke(), "danger", null, "exit");
+            MenuButton("Abbrechen", ShowMain, "ghost", null, "arrow_left");
+        }
+
+        /// <summary>Vorschaubild des Spielstands (beim Speichern aufgenommen) oder farbige Markenkarte.</summary>
+        private static void SlotThumb(VisualElement card, int slot, SaveSummary sum)
+        {
+            var t = UIX.Div(card, "slot-thumb");
+            Texture2D tex = null;
+            try
+            {
+                tex = sum != null ? SaveThumbs.Load(slot) : null;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            if (tex != null)
+            {
+                t.style.backgroundImage = new StyleBackground(tex);
+                return;
+            }
+            t.AddToClassList("fallback");
+            if (sum == null)
+            {
+                UIX.Icon(t, "plus", 26f, Theme.Muted);
+                return;
+            }
+            string brand = string.IsNullOrEmpty(sum.Brand) ? "Spielstand " + slot : sum.Brand;
+            var col = SaveThumbs.BrandColor(brand, slot);
+            t.style.backgroundColor = col;
+            var on = Theme.OnColor(col);
+            UIX.Icon(t, sum.Story == "diner" ? "plate" : (sum.Stage >= 1 ? "building" : "home"), 22f, on);
+            var l = UIX.Text(t, brand.Length > 14 ? brand.Substring(0, 13) + "…" : brand, "slot-thumb-brand");
+            l.style.color = on;
         }
 
         private void ShowNewGame()
@@ -684,6 +749,7 @@ namespace DropshippingGame.UI
                     else ConfirmOverwrite(slot, captured);
                 }, "slot-card");
                 SlotBadge(card, slot, sum == null);
+                SlotThumb(card, slot, sum);
                 var info = UIX.Col(card, 1f);
                 info.style.flexGrow = 1;
                 info.style.flexShrink = 1;
@@ -738,6 +804,7 @@ namespace DropshippingGame.UI
                 }
                 var card = UIX.Row(_content, 0f, "slot-card");
                 SlotBadge(card, slot, sum == null);
+                SlotThumb(card, slot, sum);
                 var info = UIX.Col(card, 1f);
                 info.style.flexGrow = 1;
                 info.style.flexShrink = 1;
@@ -771,6 +838,7 @@ namespace DropshippingGame.UI
                     try
                     {
                         sim.DeleteSave(slot);
+                        SaveThumbs.Delete(slot);
                     }
                     catch (Exception e)
                     {

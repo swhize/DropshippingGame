@@ -69,6 +69,9 @@ namespace DropshippingGame.UI
             if (_panelSettings == null) return;
             float s = Mathf.Clamp(Settings.UiScale, Settings.UiScaleMin, Settings.UiScaleMax);
             if (Mathf.Abs(_panelSettings.scale - s) > 0.001f) _panelSettings.scale = s;
+            // Barrierefreiheit: Farbenblind-Modus (USS-Variablen --good/--bad) und weniger Bewegung
+            Root?.EnableInClassList("cb", Settings.ColorBlind);
+            Root?.EnableInClassList("calm", Settings.CalmEffects);
         }
 
         private void OnDestroy()
@@ -139,12 +142,21 @@ namespace DropshippingGame.UI
         {
             float dt = Time.unscaledDeltaTime;
             try { GameInput.PollDevice(); } catch (Exception e) { Debug.LogException(e); }
+            try { InputBindings.TickCapture(); } catch (Exception e) { Debug.LogException(e); }
             // Jede Ebene einzeln absichern: ein Fehler in einer Ansicht darf die anderen nicht stoppen.
             try { Hud?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
             try { Phone?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
             try { Laptop?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
             try { Dialogue?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
             try { Menu?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
+            try { Pause?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
+            try
+            {
+                // Controller: rechter Stick scrollt auch lange Fenster (Börse, Bank, Hilfe, Kassenbon …)
+                if (BigModal != null && BigModal.IsOpen) UIX.PadScroll(BigModal.Scroll, dt);
+                else if (Modal != null && Modal.IsOpen) UIX.PadScroll(Modal.Scroll, dt);
+            }
+            catch (Exception e) { Debug.LogException(e); }
             try { Admin?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
             try { UpdateFocus(); } catch (Exception e) { Debug.LogException(e); }
         }

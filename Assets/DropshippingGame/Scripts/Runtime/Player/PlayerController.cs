@@ -49,6 +49,13 @@ namespace DropshippingGame
         private float _bobT, _stepAcc;
         private float _camBaseY = StandCamY;
         private Vector2 _sway;
+        private float _shake;
+
+        /// <summary>Kurzes Kamerawackeln (Landung, Stöße). Aus bei Einstellungen › Kamerawackeln / Streamer-Modus.</summary>
+        public void Shake(float amount)
+        {
+            if (Settings.ShakeEnabled) _shake = Mathf.Max(_shake, Mathf.Clamp(amount, 0f, 0.15f));
+        }
         private bool _wasGrounded = true;
         private bool _destroying;
 
@@ -405,7 +412,11 @@ namespace DropshippingGame
 
             // Landung + Kopfwippen + Schritte
             grounded = _cc.isGrounded;
-            if (grounded && !_wasGrounded) Game.Sound("step", 0.1f, -6f);
+            if (grounded && !_wasGrounded)
+            {
+                Game.Sound("step", 0.1f, -6f);
+                if (_velocity.y < -6f) Shake(Mathf.Clamp01((-_velocity.y - 6f) / 10f) * 0.06f);
+            }
             _wasGrounded = grounded;
             float hspeed = new Vector2(_velocity.x, _velocity.z).magnitude;
             bool moving = grounded && hspeed > 0.6f;
@@ -422,7 +433,13 @@ namespace DropshippingGame
             bool bob = moving && Settings.HeadBob;
             float bobY = bob ? Mathf.Sin(_bobT) * 0.035f : 0f;
             float bobX = bob ? Mathf.Cos(_bobT * 0.5f) * 0.02f : 0f;
-            Cam.transform.localPosition = new Vector3(bobX, _camBaseY + bobY, 0);
+            Vector3 shake = Vector3.zero;
+            if (_shake > 0.0005f)
+            {
+                shake = UnityEngine.Random.insideUnitSphere * _shake;
+                _shake = Mathf.MoveTowards(_shake, 0f, dt * 0.3f);
+            }
+            Cam.transform.localPosition = new Vector3(bobX, _camBaseY + bobY, 0) + shake;
             _sway = Vector2.Lerp(_sway, Vector2.zero, Mathf.Min(1f, dt * 8f));
             _handAnchor.localPosition = new Vector3(-_sway.x * 0.6f, -_sway.y * 0.6f + bobY * 0.5f, 0);
 

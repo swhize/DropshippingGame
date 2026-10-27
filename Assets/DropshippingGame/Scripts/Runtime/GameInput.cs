@@ -137,18 +137,19 @@ namespace DropshippingGame
             }
         }
 
-        public static bool InteractDown => Key(KeyId.E) || PadDown(PadButton.West);
-        public static bool DropDown => Key(KeyId.G) || PadDown(PadButton.East);
-        public static bool JumpDown => Key(KeyId.Space) || PadDown(PadButton.South);
-        public static bool SprintHeld => Held(KeyId.Shift) || PadHeld(PadButton.LeftStick);
-        public static bool CrouchHeld => Held(KeyId.Ctrl) || Held(KeyId.C) || PadHeld(PadButton.RightStick);
-        /// <summary>Handy öffnen/schließen (Tab / Y). Schließt auch den Laptop.</summary>
-        public static bool PhoneDown => Key(KeyId.Tab) || PadDown(PadButton.North);
+        // Hauptaktionen: frei belegbar (Einstellungen › Steuerung), siehe InputBindings.
+        public static bool InteractDown => Bound("interact");
+        public static bool DropDown => Bound("drop");
+        public static bool JumpDown => Bound("jump");
+        public static bool SprintHeld => BoundHeld("sprint");
+        public static bool CrouchHeld => BoundHeld("crouch");
+        /// <summary>Handy öffnen/schließen (Standard Tab / Y). Schließt auch den Laptop.</summary>
+        public static bool PhoneDown => Bound("phone");
         /// <summary>Alter Name, bleibt für Kompatibilität erhalten (= <see cref="PhoneDown"/>).</summary>
         public static bool LaptopDown => PhoneDown;
         public static bool PauseDown => Key(KeyId.Escape) || PadDown(PadButton.Start);
         public static bool CancelDown => Key(KeyId.Escape) || PadDown(PadButton.East) || PadDown(PadButton.Start);
-        public static bool HelpDown => Key(KeyId.F1) || PadDown(PadButton.Select);
+        public static bool HelpDown => Bound("help");
         public static bool ScreenshotDown => Key(KeyId.F12);
         /// <summary>Alt (links oder rechts): Noclip/Flugmodus für Tests an/aus.</summary>
         public static bool NoclipDown
@@ -175,10 +176,10 @@ namespace DropshippingGame
         public static bool NextTabDown => PadDown(PadButton.RightShoulder);
 
         /// <summary>Verschiebe-Modus starten/abbrechen (B / Steuerkreuz unten).</summary>
-        public static bool BuildDown => Key(KeyId.B) || PadDown(PadButton.DpadDown);
-        /// <summary>Abstellen im Verschiebe-Modus: E, Linksklick, Enter oder X/A am Controller.</summary>
+        public static bool BuildDown => Bound("build");
+        /// <summary>Abstellen im Verschiebe-Modus: Benutzen-Taste, Linksklick, Enter oder A am Controller.</summary>
         public static bool BuildConfirmDown =>
-            Key(KeyId.E) || Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.West) || PadDown(PadButton.South);
+            Bound("interact") || Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.South);
 
         /// <summary>Drehung im Verschiebe-Modus in Grad für diesen Frame: R = 90°, Mausrad / LB / RB = 15°.</summary>
         public static float BuildRotateDegrees
@@ -206,22 +207,7 @@ namespace DropshippingGame
         /// <summary>Aktion während der TikTok-Aufnahme (Hook, Auspacken, Zeigen): E / X.</summary>
         public static bool RecordActionDown => InteractDown;
         /// <summary>Emote-Rad: gedrückt halten (T / Steuerkreuz links), siehe EmoteController.</summary>
-        public static bool EmoteHeld
-        {
-            get
-            {
-#if ENABLE_INPUT_SYSTEM
-                var kb = Keyboard.current;
-                if (kb != null && kb.tKey.isPressed) return true;
-                var pad = Gamepad.current;
-                return pad != null && pad.dpad.left.isPressed;
-#elif ENABLE_LEGACY_INPUT_MANAGER
-                return Input.GetKey(KeyCode.T);
-#else
-                return false;
-#endif
-            }
-        }
+        public static bool EmoteHeld => BoundHeld("emote");
 
         /// <summary>Zifferntaste 1–4 gedrückt (für die Handy-Apps), sonst 0.</summary>
         public static int NumberDown
@@ -238,7 +224,7 @@ namespace DropshippingGame
 
         /// <summary>Weiter im Dialog: E, Leertaste, Enter, linke Maustaste oder A/X am Controller.</summary>
         public static bool AdvanceDown =>
-            Key(KeyId.E) || Key(KeyId.Space) || Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.South) || PadDown(PadButton.West);
+            Bound("interact") || Key(KeyId.Space) || Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.South) || PadDown(PadButton.West);
 
         public static bool MouseLeftDown
         {
@@ -259,12 +245,13 @@ namespace DropshippingGame
 
         public static string KeyboardLabel(string action)
         {
+            if (InputBindings.Def(action) != null) return InputBindings.KeyLabel(action);
             switch (action)
             {
                 case "interact": return "E";
                 case "drop": return "G";
                 case "phone":
-                case "laptop": return "Tab";
+                case "laptop": return InputBindings.KeyLabel("phone");
                 case "pause": return "Esc";
                 case "back": return "Esc";
                 case "help": return "F1";
@@ -276,8 +263,8 @@ namespace DropshippingGame
                 case "confirm": return "Enter";
                 case "build": return "B";
                 case "rotate": return "R / Mausrad";
-                case "place": return "Linksklick / E";
-                case "rec_action": return "E";
+                case "place": return "Linksklick / " + InputBindings.KeyLabel("interact");
+                case "rec_action": return InputBindings.KeyLabel("interact");
                 case "rec_stop": return "Enter / Linksklick";
                 case "rec_cancel": return "Esc";
                 case "emote": return "T";
@@ -287,12 +274,13 @@ namespace DropshippingGame
 
         public static string PadLabel(string action)
         {
+            if (InputBindings.Def(action) != null) return InputBindings.PadLabel(action);
             switch (action)
             {
                 case "interact": return "X";
                 case "drop": return "B";
                 case "phone":
-                case "laptop": return "Y";
+                case "laptop": return InputBindings.PadLabel("phone");
                 case "pause": return "Start";
                 case "back": return "B";
                 case "help": return "Select";
@@ -305,7 +293,7 @@ namespace DropshippingGame
                 case "build": return "Steuerkreuz ↓";
                 case "rotate": return "LB / RB";
                 case "place": return "X / A";
-                case "rec_action": return "X";
+                case "rec_action": return InputBindings.PadLabel("interact");
                 case "rec_stop": return "RB";
                 case "rec_cancel": return "B";
                 case "emote": return "Steuerkreuz ←";
@@ -313,35 +301,46 @@ namespace DropshippingGame
             return action;
         }
 
-        /// <summary>Tabelle für den Hilfe-Bildschirm: Aktion, Tastatur &amp; Maus, Controller.</summary>
-        public static readonly string[][] HelpTable =
+        /// <summary>Tabelle für den Hilfe-Bildschirm: Aktion, Tastatur &amp; Maus, Controller (mit aktueller Belegung).</summary>
+        public static string[][] HelpTable
         {
-            new[] { "Laufen", "W A S D", "Linker Stick" },
-            new[] { "Umsehen", "Maus", "Rechter Stick" },
-            new[] { "Sprinten", "Shift", "L3" },
-            new[] { "Ducken", "Strg / C", "R3" },
-            new[] { "Springen", "Leertaste", "A" },
-            new[] { "Benutzen / Aufheben", "E", "X" },
-            new[] { "Ablegen", "G", "B" },
-            new[] { "Möbel verschieben (anvisieren)", "B", "Steuerkreuz ↓" },
-            new[] { "Möbel drehen", "R / Mausrad", "LB / RB" },
-            new[] { "Möbel abstellen / abbrechen", "Linksklick / E · Esc", "X / A · B" },
-            new[] { "TikTok aufnehmen (Handy › TikTak, Laptop, Ringlicht am Schreibtisch)", "–", "–" },
-            new[] { "Aufnahme: Aktion / Hook", "E", "X" },
-            new[] { "Aufnahme: Stopp / abbrechen", "Enter / Linksklick · Esc", "RB · B" },
-            new[] { "Noclip / Fliegen (Test): Leertaste hoch, Strg runter", "Alt", "–" },
-            new[] { "Emote-Rad (halten, zielen, loslassen)", "T · Maus / 1–6", "Steuerkreuz ← · Rechter Stick" },
-            new[] { "Handy öffnen / schließen", "Tab", "Y" },
-            new[] { "Handy-App wechseln", "1 2 3 4", "LB / RB" },
-            new[] { "Laptop (am Schreibtisch)", "E", "X" },
-            new[] { "Laptop-App wechseln", "Maus", "LB / RB" },
-            new[] { "Auswählen", "Linksklick / Enter", "A" },
-            new[] { "Zurück / Schließen", "Esc", "B" },
-            new[] { "Scrollen", "Mausrad", "Rechter Stick" },
-            new[] { "Pause-Menü", "Esc", "Start" },
-            new[] { "Hilfe", "F1", "Select" },
-            new[] { "Screenshot", "F12", "–" },
-        };
+            get
+            {
+                string K(string a) => InputBindings.KeyLabel(a);
+                string P(string a) => InputBindings.PadLabel(a);
+                return new[]
+                {
+                    new[] { "Laufen", "W A S D", "Linker Stick" },
+                    new[] { "Umsehen", "Maus", "Rechter Stick" },
+                    new[] { "Sprinten", K("sprint"), P("sprint") },
+                    new[] { "Ducken", K("crouch"), P("crouch") },
+                    new[] { "Springen", K("jump"), P("jump") },
+                    new[] { "Benutzen / Aufheben", K("interact"), P("interact") },
+                    new[] { "Ablegen", K("drop"), P("drop") },
+                    new[] { "Möbel verschieben (anvisieren)", K("build"), P("build") },
+                    new[] { "Möbel drehen", "R / Mausrad", "LB / RB" },
+                    new[] { "Möbel abstellen / abbrechen", "Linksklick / " + K("interact") + " · Esc", "A · B" },
+                    new[] { "TikTok aufnehmen (Handy › TikTak, Laptop, Ringlicht am Schreibtisch)", "–", "–" },
+                    new[] { "Aufnahme: Aktion / Hook", K("interact"), P("interact") },
+                    new[] { "Aufnahme: Stopp / abbrechen", "Enter / Linksklick · Esc", "RB · B" },
+                    new[] { "Emote-Rad (halten, zielen, loslassen)", K("emote") + " · Maus / 1–6", P("emote") + " · Rechter Stick" },
+                    new[] { "Handy öffnen / schließen", K("phone"), P("phone") },
+                    new[] { "Handy-App wechseln", "1 2 3 4", "LB / RB" },
+                    new[] { "Laptop (an der Werkbank / am Schreibtisch)", K("interact"), P("interact") },
+                    new[] { "Laptop-App wechseln", "Maus", "LB / RB" },
+                    new[] { "Auswählen", "Linksklick / Enter", "A" },
+                    new[] { "Zurück / Schließen", "Esc", "B" },
+                    new[] { "Scrollen", "Mausrad", "Rechter Stick" },
+                    new[] { "Pause-Menü", "Esc", "Start" },
+                    new[] { "Hilfe", K("help"), P("help") },
+                    new[] { "Screenshot", "F12", "–" },
+                    new[] { "Noclip / Fliegen (Test): Leertaste hoch, Strg runter", "Alt", "–" },
+                };
+            }
+        }
+
+        private static bool Bound(string action) => InputBindings.Down(action);
+        private static bool BoundHeld(string action) => InputBindings.Held(action);
 
         // ---- Intern -----------------------------------------------------------------------------------
         private enum KeyId
@@ -356,6 +355,7 @@ namespace DropshippingGame
 
         private static bool Key(KeyId k)
         {
+            if (InputBindings.Capturing) return false;
 #if ENABLE_INPUT_SYSTEM
             var kb = Keyboard.current;
             if (kb == null) return false;
@@ -463,6 +463,7 @@ namespace DropshippingGame
 
         private static bool PadDown(PadButton b)
         {
+            if (InputBindings.Capturing) return false;
 #if ENABLE_INPUT_SYSTEM
             var pad = Gamepad.current;
             if (pad == null) return false;

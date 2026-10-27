@@ -43,6 +43,8 @@ namespace DropshippingGame.UI
         public string Current { get; private set; } = "";
         /// <summary>Die Karte (für die Fokus-Steuerung per Controller).</summary>
         public VisualElement Card => _card;
+        /// <summary>Inhalt (für Scrollen mit dem rechten Stick).</summary>
+        public ScrollView Scroll => _scroll;
 
         public ModalView(VisualElement layer, string key)
         {
@@ -265,7 +267,7 @@ namespace DropshippingGame.UI
             if (!Active) return;
             if (Typing)
             {
-                _chars += dt * 55f;
+                _chars += dt * Settings.TextCharsPerSecond;
                 _text.text = _full.Substring(0, Mathf.Min(_full.Length, (int)_chars));
             }
             else if (_text.text != _full) _text.text = _full;

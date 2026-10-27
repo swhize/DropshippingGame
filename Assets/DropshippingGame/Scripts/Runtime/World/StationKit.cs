@@ -316,6 +316,7 @@ namespace DropshippingGame
         {
             var go = Props.Node(root, "Kalle");
             var npc = go.AddComponent<NPC>();
+            npc.DisplayName = "Kalle";
             npc.Setup(new Look
             {
                 Skin = new Color(0.93f, 0.75f, 0.6f), Hair = new Color(0.2f, 0.15f, 0.1f), Shirt = new Color(0.92f, 0.92f, 0.9f),

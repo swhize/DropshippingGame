@@ -13,7 +13,9 @@ namespace DropshippingGame.UI
         public static void Build(VisualElement parent, Action onBack)
         {
             string text = BugReport.CopyToClipboard();
-            bool opened = BugReport.OpenLogFolder();
+            // Streamer-Modus: keinen Explorer mit Benutzerpfad öffnen und keine Pfade/Systeminfos zeigen.
+            bool streamer = Settings.StreamerMode;
+            bool opened = !streamer && BugReport.OpenLogFolder();
 
             var head = UIX.Row(parent, 10f);
             UIX.Text(head, "Feedback & Bug melden", "h1");
@@ -25,8 +27,8 @@ namespace DropshippingGame.UI
             UIX.Icon(ch, "check", 16f, Theme.Good);
             UIX.Text(ch, "INFOS KOPIERT", "eyebrow");
             UIX.Text(card, "Version und Systeminfos liegen jetzt in deiner Zwischenablage" +
-                           (opened ? ", der Ordner mit der Logdatei ist geöffnet." : ". Den Log-Ordner findest du hier:"), "help-step-text");
-            if (!opened) UIX.Text(card, BugReport.LogFolder, "mono", "small");
+                           (opened ? ", der Ordner mit der Logdatei ist geöffnet." : (streamer ? ". (Streamer-Modus: Pfade werden nicht angezeigt.)" : ". Den Log-Ordner findest du hier:")), "help-step-text");
+            if (!opened && !streamer) UIX.Text(card, BugReport.LogFolder, "mono", "small");
 
             string[] steps =
             {
@@ -43,11 +45,14 @@ namespace DropshippingGame.UI
                 UIX.Text(s, steps[i], "help-step-text");
             }
 
-            var info = UIX.Card(parent);
-            UIX.Text(info, "INHALT DER ZWISCHENABLAGE", "eyebrow");
-            var pre = UIX.Text(info, text.TrimEnd(), "mono", "small");
-            pre.enableRichText = false;
-            pre.style.whiteSpace = WhiteSpace.Normal;
+            if (!streamer)
+            {
+                var info = UIX.Card(parent);
+                UIX.Text(info, "INHALT DER ZWISCHENABLAGE", "eyebrow");
+                var pre = UIX.Text(info, (text ?? "").TrimEnd(), "mono", "small");
+                pre.enableRichText = false;
+                pre.style.whiteSpace = WhiteSpace.Normal;
+            }
 
             var row = UIX.Row(parent, 8f);
             UIX.Button(row, "Erneut kopieren", () =>
