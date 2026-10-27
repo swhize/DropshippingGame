@@ -1,0 +1,36 @@
+City Kit (Industrial)
+Autor: Kenney
+Quelle: https://kenney.nl ; Spiegel series-ai/jam-ready-assets (GCS-Mirror run-asset-library)
+Lizenz: CC0 1.0
+Dateien: Models/kenney_city_industrial
+Änderungen: GLB -> FBX konvertiert (Blender 4.2)
+
+--- Original-Lizenzdatei des Packs ---
+	
+
+	City Kit Industrial (1.0)
+
+	Created/distributed by Kenney (www.kenney.nl)
+	Creation date: 25-06-2025 09:56
+	
+			------------------------------
+
+	License: (Creative Commons Zero, CC0)
+	http://creativecommons.org/publicdomain/zero/1.0/
+
+	You can use this content for personal, educational, and commercial purposes.
+
+	Support by crediting 'Kenney' or 'www.kenney.nl' (this is not a requirement)
+
+			------------------------------
+
+	• Website : www.kenney.nl
+	• Donate  : www.kenney.nl/donate
+
+	• Patreon : patreon.com/kenney
+	
+	Follow on social media for updates:
+
+	• Twitter:	 twitter.com/KenneyNL
+	• BlueSky:	 kenney.bsky.social
+	• Instagram: instagram.com/kenney_nl

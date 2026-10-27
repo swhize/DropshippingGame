@@ -1,0 +1,8 @@
+JetBrains Mono 2.304
+Autor: JetBrains
+Quelle: https://github.com/JetBrains/JetBrainsMono/releases/tag/v2.304
+Lizenz: SIL OFL 1.1 (https://openfontlicense.org/)
+Dateien: Fonts/Mono-Regular.ttf, Fonts/Mono-Bold.ttf
+Änderungen: umbenannt
+
+SIL Open Font License 1.1 - vollständiger Text: siehe OFL-1.1.txt in diesem Ordner.

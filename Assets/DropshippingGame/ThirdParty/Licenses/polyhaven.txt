@@ -1,0 +1,10 @@
+Poly Haven Texturen (clean_asphalt, concrete_pavement, concrete_floor_worn_001, painted_metal_shutter)
+Autor: Poly Haven
+Quelle: https://polyhaven.com/textures
+Lizenz: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/)
+Dateien: Textures/Surfaces/{asphalt,sidewalk,concrete_floor,shutter}
+Änderungen: Roughness -> RGBA-Smoothness (halbe Auflösung), PNG->JPG
+
+Creative Commons Zero v1.0 Universal (CC0 1.0) Public Domain Dedication
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+

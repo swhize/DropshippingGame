@@ -1,80 +1,103 @@
-# Schlachtplan – Weg zum vollständigen Spiel
+# Roadmap – Dropshipping Simulator
 
-> Entstanden aus der Sprachnachricht vom 23.09.2026 ("richtig großes, vollständiges
-> Spiel"). Am 25.09.2026 im großen Umbau (v1.0) fast komplett umgesetzt. Für Vision und
-> Ton siehe `GDD.md`, hier steht, was gebaut ist und was als Nächstes kommt.
+Stand: 27.10.2026 · Version **1.0.0-rc1** (Release Candidate) · Hustle Games
 
-## Stand v1.0 (25.09.2026)
+Dieses Dokument zeigt, **was in 1.0 steckt** und **was nach dem Release kommt**. Änderungen pro Version:
+[`CHANGELOG.md`](../CHANGELOG.md). Test vor dem Release: [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md). Steam-Fahrplan,
+Store-Texte und Recht: [`RELEASE.md`](RELEASE.md). Design und Zahlen: [`GDD.md`](GDD.md).
 
-Getroffene Annahmen (vom Nutzer beim Review zu bestätigen oder zu korrigieren):
+Bisheriger Weg: Godot-Prototyp → Unity-6-Port → „Das große Update“ → Inhalts- und Polier-Wellen (Stadt, Läden,
+Finanzviertel, Marketing, Moped, Englisch, Release-Technik) → **1.0 Release Candidate**.
 
-1. **Gastro-Job = kurzes, einmaliges Intro** (drei Teller austragen, Kündigung), danach
-   bleibt Kalle als Nachbar mit Sprüchen und gelegentlichen Anrufen (Event).
-2. **Eine einzige kleine, zusammenhängende Karte** ohne Ladebildschirme: Straße mit Kalles
-   Imbiss, deiner Garage, der Lagerhalle, Park und Skyline.
+---
 
-### Phase A – Fundament ✅
-- [x] Speichern/Laden (JSON, alle Systeme inkl. abgelegter Gegenstände, Spielerposition,
-  gehaltenem Gegenstand, Markt, Postfach), Auto-Save alle 90 s, jeden Morgen und beim Schließen
-- [x] Hauptmenü mit Kamerafahrt, Fortsetzen (mit Spielstand-Vorschau), Neues Spiel (3 Modi),
-  Einstellungen, Credits
-- [x] Pausemenü (Esc) mit Speichern, Einstellungen, Hilfe, Hauptmenü, Beenden
-- [x] Audio: 19 Soundeffekte + 3 Musikstücke, komplett prozedural synthetisiert, gecached,
-  Musik gedämpft im Pausemenü
-- [x] Tutorial: 10 Schritte, zustandsbasiert, danach Ziel-Anzeige
-- [x] Einstellungen: Lautstärken, Maus, Sichtfeld, Vollbild, Kopfwippen
+## 1. Was in 1.0 steckt
 
-### Phase B – Intro & Rahmenhandlung ✅
-- [x] Kalles Imbiss: Schicht, drei Teller an die richtigen Tische, Dialog mit Entscheidung
-- [x] Kündigung → Schwarzblende "Am nächsten Morgen ..." → Garage, 150 € Startkapital
+### Kern: jedes Paket von Hand
+- Intro als Aushilfe in **Kalles Imbiss** (Teller an die richtigen Tische, Kündigung), danach die eigene Marke in der Garage.
+- Physische Kette: Einkauf am Tablet → Lieferwagen/Abholbox → Wareneingang → Regal → Kommissionieren → Karton falten →
+  Packtisch → Labeldrucker → Packstation/Post. Förderband, Palettenplatz, Retourenplatz, Bestell-Monitor, Zonenschilder.
+- **14 Produkte** mit eigenen 3D-Modellen, 3 Lieferanten-Stufen, Kartongrößen S/M/L, Verpackungsmüll, defekte Chargen.
+- Bestellzettel mit Kundschaft, Frist und **Express**; **Retouren** (B-Ware oder Entsorgung); **Großaufträge (B2B)** auf Paletten.
+- Tag von 8 bis 20 Uhr, Kassenbon-Abrechnung, Wochentage (samstags mehr Bestellungen), Energie und Feierabend.
 
-### Phase C – Progression ✅
-- [x] Firmenlevel 1–10 (XP aus Verkäufen) mit Freischaltungen (Produkte, Anbieter, Apps, Upgrades)
-- [x] Garage → Lagerhalle (4.500 €, Level 4): Tor öffnet sich, 6 Hochregale, Personal möglich
-- [x] Upgrades: Shop-Server, eigener Lieferwagen, Förderband (Pakete fahren sichtbar), Hochregal
-- [x] 12 Ziele mit Geldbelohnung, Endziel "Imperium" (100.000 € Umsatz) mit Abschluss-Fenster
+### Business über Handy und Tablet
+- **Handy** (Tab): Bestellzettel, Nachrichten mit Entscheidungen, Wochenziele, Status mit Engpass-Assistent, Wallet, Fakebook/Gugel.
+- **Tablet „HustleOS“** am Schreibtisch mit Dock und Startseite. Web-Parodien: AllesExpress (Einkauf), Mein Shop
+  (shopifly-Admin), iWolke Mail, PaketBlitz, Stadtblatt, TikTak, Fakebook, Gugel, TradingViech, Revoluut, dazu
+  Markt & Trends, Aufträge, Retouren und Firma (Team, Skills, Perks, Ausbau, Einrichtung, Logistik, Erfolge,
+  Statistik, Ziele, Branding, Verpackung, Lifestyle).
+- **Marketing:** Flyer, Influencer, Fakebook- und Gugel-Anzeigen, Fake-Profile und KI-Fake-Seiten (mit Risiko),
+  **Trends & Hype** mit Trendradar, **TikToks selbst drehen** (Ringlicht, Formate, Wertung aus Licht/Hook/Bildaufbau).
+- **Branding:** Markenname, Logo, Farbe – auf Kartons, Van, Moped und Plakatwand.
 
-### Phase D – Ereignisse ✅
-- [x] 20 Ereignisse (Black Friday, viral, Zoll, Transportschaden, Shitstorm, Krypto-Bro,
-  Influencer, Pitch Day, Fake-Reviews, Preiskampf, Finanzamt, Oma, Kalle ruft an,
-  Straßenfest, Wasserschaden, Krypto-Crash ...) mit Entscheidungen, Postfach, Popups
+### Eine ganze Stadt
+- Garage, Lagerhalle, Außenlager; Wohnviertel, **Einkaufsviertel** (MediaMarkd, Fressnix mit Haustieren) und
+  **Finanzviertel** (Bank, Börse mit Maklern, Nachrichten-Laufband).
+- Verkehr mit Linienbus, Müllabfuhr, PaketBlitz-Post, Passanten (mit Untertiteln), Tunnelportale, Emote-Rad.
+- **Moped** mit Arcade-Physik, Ego-/Verfolgerkamera, Hupe, Heckbox (4 Pakete oder 1 Kiste) und Abgabe direkt aus der Box.
+- **Straßenfest/Flohmarkt** mit eigenem Stand, Verkaufsstand vor der Garage, **Pitch Day** vor drei Juroren.
+- Möbel verschieben (Raster, Drehen, gespeichert), Haustier-Ecke, Einrichtung/Ausrüstung.
 
-### Phase E – Personal ✅
-- [x] Lagerist:in, Packer:in, Versandkraft, Social-Media-Praktikant:in – arbeiten automatisch,
-  laufen sichtbar als Figuren in Warnwesten durch die Halle, Löhne jeden Abend
+### Fortschritt & Endspiel
+- Firmenlevel 1–10, Skillbaum (3 Äste × 4 Stufen), Hustle-Perks, Personal (eine Kraft je Rolle, ab Level 10 zwei).
+- Ziele, Wochenziele, **30 Ereignisse** mit Entscheidungen, Kalle als Nachbar.
+- Endziel 100.000 € Umsatz (6–9 h) → Endlos-Modus: Viertelmillion, Außenlager, Halbe Million, **Börsengang** bei 1 Mio., danach verdoppelnde Ziele.
+- **Börse, ETFs, Krypto**, Sparkonto, Kredite, Schufi-Score – nur Spielgeld.
+- Schwierigkeit Entspannt/Normal/Hart, Mama-Notkredit vor der Pleite, Insolvenz mit „Letzten Spielstand laden“.
+- **40 Erfolge** (Steam-API-Namen `ACH_…`) und Gesamtstatistik.
 
-### Phase F – Konkurrenz & Markt ✅
-- [x] 3 Konkurrenten mit täglich schwankenden Preisen, Marktpreis bestimmt die Nachfrage mit
-- [x] Bewertungssystem (Sterne aus Tempo + Qualität), Rezensionen im Webshop
+### Präsentation & Technik
+- Unity 6.3, URP mit Tagesstimmungen, Farbkorrektur, Wetter (sonnig/bewölkt/Regen, nasse Straßen), CC0-Modelle mit prozeduralen Rückfällen.
+- Spielgefühl-System (Packtisch-Sequenz, Münzen, Konfetti, schwebende Zahlen, FOV-Kick, Synth-Sounds).
+- **Deutsch und Englisch**, live umschaltbar. Komplett mit Controller spielbar, Tasten frei belegbar.
+- Einstellungen: Grafik (Fenstermodus, Auflösung, VSync, FPS-Limit, Qualität, Renderskala), Audio, Steuerung,
+  Barrierefreiheit (UI-Größe, Untertitel, Textgeschwindigkeit, Farbenblind-Modus, weniger Bewegung), Streamer-Modus.
+- 3 Spielstände mit Vorschaubild, Auto-Save, Sicherung (`.bak`) mit Wiederherstellung, Sitzungsprotokoll, Fehlerbericht.
+- Build-Menü (Windows Release/Development/Demo, Linux, macOS), Lizenz-Sperre, Demo-Modus (5 Tage), Steam-Schnittstelle.
+- Über 320 NUnit-Tests inkl. Balance-Bot, Chaos-Tests und Lokalisierungs-Vollständigkeit.
 
-### Phase G – PC-OS & Grafik ✅
-- [x] "HustleOS": Seitenleiste mit 12 Apps, Badges, Uhr, Kontostand, Diagramme, TikTok-Handy
-- [x] Komplette Stadt-Kulisse mit prozeduralen Shadern (Ziegel, Beton, Asphalt, Fliesen,
-  Holz, Blech, Fassaden mit nachts beleuchteten Fenstern), Tageslicht-Zyklus, Nebel, Bloom
-- [x] NPCs (Kalle, Gäste, Passanten, Personal), Autoverkehr, Lieferwagen, Laternen
+### Bis 1.0 final noch zu tun
+- [ ] Test-Checkliste [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) im Editor und im Release-Build durchspielen, Funde beheben → `1.0.0-rc2` bzw. `1.0.0`.
+- [ ] Steamworks: App-ID, Steam-Integration (`DS_STEAM`), Erfolge und Steam Cloud im Backend ([`RELEASE.md`](RELEASE.md)).
+- [ ] Store-Seite, Kapseln, Trailer; Lizenz-Stichproben der Assets.
 
-### Phase H – Trading ✅
-- [x] DROPCOIN, GameShop-Aktie, Welt-ETF mit Live-Kursen, Gebühren, Portfolio
+---
 
-### Phase I – Koop/Multiplayer ⏳ offen
-- [ ] Größter offener Brocken. Architektur ist vorbereitet (zentrale Autoloads,
-  Stationen interagieren über einen Spieler-Parameter), aber Netzwerk fehlt komplett.
+## 2. Nach dem Release
 
-### Phase J – Win/Lose ✅
-- [x] Insolvenz unter −500 € mit "Letzten Spielstand laden", Endziel mit Abschluss-Fenster
+Reihenfolge nach Wirkung; Zeitangaben sind Ziele, keine Versprechen.
 
-## Nächste Ideen (nach Review)
-- Koop-Multiplayer (1–4 Spieler, ENet)
-- Echte Grafik-Assets statt Grundformen (z.B. CC0-Pakete oder gekaufte Modelle) –
-  braucht dein OK zum Herunterladen
-- Mehr Produkte, weitere Standorte, Straßenverkauf als eigene Mechanik
-- Pitch Day als Mini-Spiel statt Entscheidungsfenster
-- Controller-Unterstützung, englische Übersetzung, Steam-Anbindung
+### 2.1 Woche 1–4: Pflege
+- Hotfixes aus Fehlerberichten (Pausemenü › Feedback & Bug melden) und Steam-Reviews, Balance-Feinschliff.
+- Komfort: Bildschirmtastatur auf dem Steam Deck („Verified“), PlayStation-Symbole bei DualSense, weitere Tastenhinweise.
 
-## Werkzeuge
-- `tests/compile_all.gd` – kompiliert alle Skripte
-- `tests/run_tests.gd` – 121 Logik-Checks
-- `tests/SelfTest.gd` – 49 Integrations-Checks in der echten Spielszene
-  (`godot --headless --path . res://scenes/Main.tscn -- --selftest`)
-- `tests/balance_sim.gd` – simuliert 25 Spieltage mit menschlichem Tempo
-- `scripts/DebugHarness.gd` – Screenshots und Test-Szenarien per Kommandozeile
+### 2.2 Monat 2–3: Inhalts-Update „Tagesbogen“
+- Feste Abholzeiten, Bestellungen mit mehreren Artikeln und Kartonwahl, Kalles Geschichte in drei Akten.
+- Neue Produkte, Ereignis-Ketten, weitere Erfolge, Kundenservice-Chats auf dem Handy.
+- Ideen-Pool: [`GAME_IDEAS.md`](GAME_IDEAS.md).
+
+### 2.3 Großes Koop-Update (1–4 Spieler)
+- Größter Wachstumstreiber im Genre. Der Spielzustand liegt schon zentral in `Sim` (reines C#), Stationen arbeiten
+  über einen Spieler-Parameter.
+- Plan: Host-autoritativ mit Netcode for GameObjects + Steam-Transport (Lobby, Einladen über Steam), Rollen frei
+  wechselbar (Einkauf, Packen, Versand, Marketing), Personal füllt fehlende Hände, Spielstand gehört dem Host.
+- Eigenes Marketing-Event (Trailer, Rabatt, Next-Fest-artige Demo-Aktion).
+
+### 2.4 DLC-Idee: Krypto-Mining
+- Mining-Rigs in Garage/Lagerhalle: Strom, Hitze und Lärm als neue Ressourcen, Lüfter/Kühlung als Ausbau.
+- DROPCOIN-Schwankungen, „Mining-Pool“ mit Kalle, Satire auf Krypto-Bros; hängt an den vorhandenen Börsen-/Krypto-Systemen.
+- Nur Spielgeld, keine Echtgeld- oder Blockchain-Anbindung.
+
+### 2.5 Update-Idee: Casino
+- Ein Casino im Finanzviertel als satirischer Abstecher (Spielautomat, Roulette, „Business-Poker“ mit NPC-Hustlern).
+- Nur Spielgeld, kein Kauf von Spielwährung, keine Lootboxen – Altersfreigabe vorher prüfen (simuliertes Glücksspiel).
+
+### 2.6 Mehr Stadt
+- Neue Viertel: Hafen/Industriegebiet (Containerware, Zoll), Uni-Viertel (Studenten-Kundschaft), Altstadt mit Markt.
+- Der vorbereitete **Klamottenladen** (verschlossene DLC-Tür im Einkaufsviertel) als kosmetisches Paket:
+  Outfits, Caps, Merch der eigenen Marke – rein kosmetisch.
+- Weitere Läden und Lieferdienste, Moped-Varianten, Lieferfahrten zu Großkunden.
+
+### 2.7 Später
+- Steam Workshop / Mods (Produkte, Ereignisse, Texte), weitere Sprachen, Soundtrack als eigenes Produkt.

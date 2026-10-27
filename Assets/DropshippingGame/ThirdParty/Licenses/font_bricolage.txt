@@ -1,0 +1,8 @@
+Bricolage Grotesque 1.001
+Autor: Mathieu Triay
+Quelle: https://github.com/ateliertriay/bricolage
+Lizenz: SIL OFL 1.1 (https://openfontlicense.org/)
+Dateien: Fonts/Display-Bold.ttf (ExtraBold)
+Änderungen: umbenannt
+
+SIL Open Font License 1.1 - vollständiger Text: siehe OFL-1.1.txt in diesem Ordner.

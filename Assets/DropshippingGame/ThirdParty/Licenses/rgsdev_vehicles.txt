@@ -1,0 +1,20 @@
+Free Low Poly Vehicles Pack (hier nur: Bus)
+Autor: Raphael Gonçalves (Rgsdev)
+Quelle: https://rgsdev.itch.io/free-low-poly-vehicles-pack (Lizenzfeld der itch.io-Seite: Creative Commons Zero v1.0 Universal)
+Datei: GitHub-Spiegel github.com/P3ntest/autobahn-simulator, "assets/Free Low Poly Vehicles Pack by Rgsdev/Bus/Bus.fbx"
+Lizenz: CC0 1.0
+Dateien: Models/rgsdev_vehicles/bus.fbx
+Änderungen: mit Blender 5.2 (bpy) neu als FBX exportiert, keine Geometrieänderung
+
+--- Original-Lizenzdatei des Packs (LICENSE.txt; Kopie aus github.com/Upstander1234/proximate, public/models/vehicles/LICENSE-rgsdev.txt) ---
+Assets created by Raphael Gonçalves (Rgsdev)
+twitter: @rgs_dev
+instagram: @rgs_dev
+email: rgsdev83@gmail.com
+patreon: https://www.patreon.com/rgsdev
+
+This asset is under CC0 License
+
+Public domain and free to use on any project, even commercial.
+
+Credit is not required.

@@ -1,0 +1,513 @@
+using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
+
+namespace DropshippingGame
+{
+    /// <summary>
+    /// Einheitlicher Zugriff auf Tastatur, Maus und Controller. Funktioniert mit dem neuen
+    /// Input System (bevorzugt) und mit dem alten Input Manager - je nachdem, was im Projekt aktiv ist.
+    ///
+    /// Belegung Tastatur: WASD laufen · Maus umsehen · E interagieren · G ablegen · Leertaste springen
+    /// · Shift sprinten · Strg/C ducken · Tab Handy · Esc Pause/Zurück · F1 Hilfe · F12 Screenshot
+    /// · 1–4 Handy-App wählen · B Möbel verschieben (R / Mausrad drehen, Linksklick/E abstellen)
+    /// Controller: linker Stick laufen · rechter Stick umsehen · X/Quadrat interagieren · B/Kreis ablegen
+    /// bzw. zurück · A/Kreuz springen · L3 sprinten · R3 ducken · Y/Dreieck Handy · LB/RB App wechseln
+    /// · Start Pause · Select Hilfe · Steuerkreuz unten Möbel verschieben (LB/RB drehen, X/A abstellen)
+    /// TikTok-Aufnahme: E/X Aktion (Hook) · Enter/Linksklick/RB Stopp · Esc/B abbrechen
+    /// Den vollen Laptop „HustleOS“ gibt es nur am Schreibtisch (Station benutzen).
+    /// </summary>
+    public static class GameInput
+    {
+        public const float MouseDegreesPerPixel = 0.15f;
+        public const float PadDegreesPerSecond = 170f;
+
+        /// <summary>true, wenn zuletzt ein Controller benutzt wurde (für die Tastenhinweise).</summary>
+        public static bool UsingGamepad { get; private set; }
+
+        // ---- Selbsttest (Testing/SelfTest.cs): simulierte Eingaben, nur der Selbsttest setzt sie ----
+        /// <summary>true = Laufen/Umsehen kommen nur vom Selbsttest (echte Maus/Tastatur werden dafür ignoriert).</summary>
+        public static bool TestActive;
+        /// <summary>Simuliertes Laufen bzw. Gas/Lenken (Moped); null = keine Bewegung.</summary>
+        public static Vector2? TestMove;
+        /// <summary>Aktionen (z. B. "interact", "build"), die gerade als „in diesem Frame gedrückt“ gelten.</summary>
+        public static readonly System.Collections.Generic.HashSet<string> TestPressed = new System.Collections.Generic.HashSet<string>();
+        /// <summary>Aktionen (z. B. "emote"), die gerade als gehalten gelten.</summary>
+        public static readonly System.Collections.Generic.HashSet<string> TestHeld = new System.Collections.Generic.HashSet<string>();
+
+        public static Vector2 Move
+        {
+            get
+            {
+                if (TestActive) return Vector2.ClampMagnitude(TestMove ?? Vector2.zero, 1f);
+                Vector2 v = Vector2.zero;
+#if ENABLE_INPUT_SYSTEM
+                var kb = Keyboard.current;
+                if (kb != null)
+                {
+                    if (kb.wKey.isPressed || kb.upArrowKey.isPressed) v.y += 1f;
+                    if (kb.sKey.isPressed || kb.downArrowKey.isPressed) v.y -= 1f;
+                    if (kb.dKey.isPressed || kb.rightArrowKey.isPressed) v.x += 1f;
+                    if (kb.aKey.isPressed || kb.leftArrowKey.isPressed) v.x -= 1f;
+                }
+                var pad = Gamepad.current;
+                if (pad != null)
+                {
+                    Vector2 s = pad.leftStick.ReadValue();
+                    if (s.sqrMagnitude > 0.04f)
+                    {
+                        v += s;
+                        UsingGamepad = true;
+                    }
+                }
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) v.y += 1f;
+                if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) v.y -= 1f;
+                if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) v.x += 1f;
+                if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) v.x -= 1f;
+#endif
+                if (v.sqrMagnitude > 0.001f && !PadActiveThisFrame()) UsingGamepad = false;
+                return Vector2.ClampMagnitude(v, 1f);
+            }
+        }
+
+        /// <summary>Blickänderung in Grad für diesen Frame (x = Gieren, y = Nicken, positiv = nach oben).</summary>
+        public static Vector2 Look
+        {
+            get
+            {
+                if (TestActive) return Vector2.zero;
+                Vector2 d = Vector2.zero;
+#if ENABLE_INPUT_SYSTEM
+                var mouse = Mouse.current;
+                if (mouse != null)
+                {
+                    Vector2 md = mouse.delta.ReadValue();
+                    if (md.sqrMagnitude > 0.01f) UsingGamepad = false;
+                    d += md * (MouseDegreesPerPixel * Settings.MouseSensitivity);
+                }
+                var pad = Gamepad.current;
+                if (pad != null)
+                {
+                    Vector2 s = pad.rightStick.ReadValue();
+                    if (s.sqrMagnitude > 0.02f)
+                    {
+                        UsingGamepad = true;
+                        // Leichte Kurve für feines Zielen
+                        s = s.normalized * Mathf.Pow(s.magnitude, 1.6f);
+                        d += s * (PadDegreesPerSecond * Settings.PadSensitivity * Time.unscaledDeltaTime);
+                    }
+                }
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                Vector2 lm = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y")) * 10f;
+                d += lm * (MouseDegreesPerPixel * Settings.MouseSensitivity);
+#endif
+                if (Settings.InvertY) d.y = -d.y;
+                return d;
+            }
+        }
+
+        /// <summary>
+        /// Einmal pro Frame (aus der Oberfläche) aufrufen: erkennt das zuletzt benutzte Gerät auch dann,
+        /// wenn gerade niemand Laufen/Umsehen abfragt (Menüs, Handy, Laptop).
+        /// </summary>
+        public static void PollDevice()
+        {
+#if ENABLE_INPUT_SYSTEM
+            var pad = Gamepad.current;
+            if (pad != null)
+            {
+                if (pad.dpad.ReadValue().sqrMagnitude > 0.25f || pad.leftStick.ReadValue().sqrMagnitude > 0.25f ||
+                    pad.rightStick.ReadValue().sqrMagnitude > 0.25f || pad.buttonSouth.wasPressedThisFrame ||
+                    pad.buttonEast.wasPressedThisFrame || pad.buttonWest.wasPressedThisFrame || pad.buttonNorth.wasPressedThisFrame ||
+                    pad.startButton.wasPressedThisFrame || pad.leftShoulder.wasPressedThisFrame || pad.rightShoulder.wasPressedThisFrame)
+                    UsingGamepad = true;
+            }
+            var mouse = Mouse.current;
+            if (mouse != null && (mouse.delta.ReadValue().sqrMagnitude > 9f || mouse.leftButton.wasPressedThisFrame)) UsingGamepad = false;
+            var kb = Keyboard.current;
+            if (kb != null && kb.anyKey.wasPressedThisFrame) UsingGamepad = false;
+#endif
+        }
+
+        /// <summary>Rechter Stick (vertikal) zum Scrollen in Handy, Laptop und Menüs. Positiv = nach unten.</summary>
+        public static float UiScroll
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                var pad = Gamepad.current;
+                if (pad == null) return 0f;
+                float y = pad.rightStick.ReadValue().y;
+                if (Mathf.Abs(y) < 0.2f) return 0f;
+                UsingGamepad = true;
+                return -y;
+#else
+                return 0f;
+#endif
+            }
+        }
+
+        // Hauptaktionen: frei belegbar (Einstellungen › Steuerung), siehe InputBindings.
+        public static bool InteractDown => Bound("interact");
+        public static bool DropDown => Bound("drop");
+        public static bool JumpDown => Bound("jump");
+        public static bool SprintHeld => BoundHeld("sprint");
+        public static bool CrouchHeld => BoundHeld("crouch");
+        /// <summary>Handy öffnen/schließen (Standard Tab / Y). Schließt auch den Laptop.</summary>
+        public static bool PhoneDown => Bound("phone");
+        /// <summary>Alter Name, bleibt für Kompatibilität erhalten (= <see cref="PhoneDown"/>).</summary>
+        public static bool LaptopDown => PhoneDown;
+        public static bool PauseDown => Key(KeyId.Escape) || PadDown(PadButton.Start);
+        public static bool CancelDown => Key(KeyId.Escape) || PadDown(PadButton.East) || PadDown(PadButton.Start);
+        public static bool HelpDown => Bound("help");
+        public static bool ScreenshotDown => Key(KeyId.F12);
+        /// <summary>Alt (links oder rechts): Noclip/Flugmodus für Tests an/aus.</summary>
+        public static bool NoclipDown
+        {
+            get
+            {
+                if (!DevTools.Enabled) return false; // Release-Build: kein Noclip
+#if ENABLE_INPUT_SYSTEM
+                var kb = Keyboard.current;
+                return kb != null && (kb.leftAltKey.wasPressedThisFrame || kb.rightAltKey.wasPressedThisFrame);
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt);
+#else
+                return false;
+#endif
+            }
+        }
+
+        /// <summary>F10, F9 oder ^ (links neben der 1): Admin-Panel (Testmodus, nur Editor/Development-Build).</summary>
+        public static bool AdminDown => DevTools.Enabled && (Key(KeyId.F10) || Key(KeyId.F9) || Key(KeyId.Backquote));
+        /// <summary>Vorherige App / vorheriger Reiter (LB).</summary>
+        public static bool PrevTabDown => PadDown(PadButton.LeftShoulder);
+        /// <summary>Nächste App / nächster Reiter (RB).</summary>
+        public static bool NextTabDown => PadDown(PadButton.RightShoulder);
+
+        /// <summary>Verschiebe-Modus starten/abbrechen (B / Steuerkreuz unten).</summary>
+        public static bool BuildDown => Bound("build");
+        /// <summary>Abstellen im Verschiebe-Modus: Benutzen-Taste, Linksklick, Enter oder A am Controller.</summary>
+        public static bool BuildConfirmDown =>
+            Bound("interact") || Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.South);
+
+        /// <summary>Drehung im Verschiebe-Modus in Grad für diesen Frame: R = 90°, Mausrad / LB / RB = 15°.</summary>
+        public static float BuildRotateDegrees
+        {
+            get
+            {
+                float d = 0f;
+                if (Key(KeyId.R)) d += 90f;
+                if (PadDown(PadButton.RightShoulder)) d += 15f;
+                if (PadDown(PadButton.LeftShoulder)) d -= 15f;
+                float wheel = 0f;
+#if ENABLE_INPUT_SYSTEM
+                if (Mouse.current != null) wheel = Mouse.current.scroll.ReadValue().y;
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                wheel = Input.mouseScrollDelta.y;
+#endif
+                if (wheel > 0.01f) d += 15f;
+                else if (wheel < -0.01f) d -= 15f;
+                return d;
+            }
+        }
+
+        /// <summary>TikTok-Aufnahme stoppen: Enter, Linksklick oder RB am Controller.</summary>
+        public static bool RecordStopDown => Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.RightShoulder);
+        /// <summary>Aktion während der TikTok-Aufnahme (Hook, Auspacken, Zeigen): E / X.</summary>
+        public static bool RecordActionDown => InteractDown;
+        /// <summary>Moped: Hupe (H / Steuerkreuz hoch), siehe Vehicles/Moped.</summary>
+        public static bool HornDown => Bound("horn");
+        /// <summary>Moped: Ego-Sicht / Verfolgerkamera umschalten (V / Steuerkreuz rechts).</summary>
+        public static bool VehicleCamDown => Bound("vehcam");
+        /// <summary>Emote-Rad: gedrückt halten (T / Steuerkreuz links), siehe EmoteController.</summary>
+        public static bool EmoteHeld => BoundHeld("emote");
+
+        /// <summary>Zifferntaste 1–4 gedrückt (für die Handy-Apps), sonst 0.</summary>
+        public static int NumberDown
+        {
+            get
+            {
+                if (Key(KeyId.D1)) return 1;
+                if (Key(KeyId.D2)) return 2;
+                if (Key(KeyId.D3)) return 3;
+                if (Key(KeyId.D4)) return 4;
+                return 0;
+            }
+        }
+
+        /// <summary>Weiter im Dialog: E, Leertaste, Enter, linke Maustaste oder A/X am Controller.</summary>
+        public static bool AdvanceDown =>
+            Bound("interact") || Key(KeyId.Space) || Key(KeyId.Enter) || MouseLeftDown || PadDown(PadButton.South) || PadDown(PadButton.West);
+
+        public static bool MouseLeftDown
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                return Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetMouseButtonDown(0);
+#else
+                return false;
+#endif
+            }
+        }
+
+        /// <summary>Beschriftung der Taste für eine Aktion – passend zum zuletzt benutzten Gerät.</summary>
+        public static string KeyLabel(string action) => UsingGamepad ? PadLabel(action) : KeyboardLabel(action);
+
+        public static string KeyboardLabel(string action)
+        {
+            if (InputBindings.Def(action) != null) return InputBindings.KeyLabel(action);
+            switch (action)
+            {
+                case "interact": return "E";
+                case "drop": return "G";
+                case "phone":
+                case "laptop": return InputBindings.KeyLabel("phone");
+                case "pause": return "Esc";
+                case "back": return "Esc";
+                case "help": return "F1";
+                case "jump": return "Leertaste";
+                case "sprint": return "Shift";
+                case "crouch": return "Strg";
+                case "tabs": return "1–4";
+                case "screenshot": return "F12";
+                case "confirm": return "Enter";
+                case "build": return "B";
+                case "rotate": return "R / Mausrad";
+                case "place": return "Linksklick / " + InputBindings.KeyLabel("interact");
+                case "rec_action": return InputBindings.KeyLabel("interact");
+                case "rec_stop": return "Enter / Linksklick";
+                case "rec_cancel": return "Esc";
+                case "emote": return "T";
+            }
+            return action;
+        }
+
+        public static string PadLabel(string action)
+        {
+            if (InputBindings.Def(action) != null) return InputBindings.PadLabel(action);
+            switch (action)
+            {
+                case "interact": return "X";
+                case "drop": return "B";
+                case "phone":
+                case "laptop": return InputBindings.PadLabel("phone");
+                case "pause": return "Start";
+                case "back": return "B";
+                case "help": return "Select";
+                case "jump": return "A";
+                case "sprint": return "L3";
+                case "crouch": return "R3";
+                case "tabs": return "LB/RB";
+                case "screenshot": return "–";
+                case "confirm": return "A";
+                case "build": return "Steuerkreuz ↓";
+                case "rotate": return "LB / RB";
+                case "place": return "X / A";
+                case "rec_action": return InputBindings.PadLabel("interact");
+                case "rec_stop": return "RB";
+                case "rec_cancel": return "B";
+                case "emote": return "Steuerkreuz ←";
+            }
+            return action;
+        }
+
+        /// <summary>Tabelle für den Hilfe-Bildschirm: Aktion, Tastatur &amp; Maus, Controller (mit aktueller Belegung).</summary>
+        public static string[][] HelpTable
+        {
+            get
+            {
+                string K(string a) => InputBindings.KeyLabel(a);
+                string P(string a) => InputBindings.PadLabel(a);
+                return new[]
+                {
+                    new[] { "Laufen", "W A S D", "Linker Stick" },
+                    new[] { "Umsehen", "Maus", "Rechter Stick" },
+                    new[] { "Sprinten", K("sprint"), P("sprint") },
+                    new[] { "Ducken", K("crouch"), P("crouch") },
+                    new[] { "Springen", K("jump"), P("jump") },
+                    new[] { "Benutzen / Aufheben", K("interact"), P("interact") },
+                    new[] { "Ablegen", K("drop"), P("drop") },
+                    new[] { "Möbel verschieben (anvisieren)", K("build"), P("build") },
+                    new[] { "Möbel drehen", "R / Mausrad", "LB / RB" },
+                    new[] { "Möbel abstellen / abbrechen", "Linksklick / " + K("interact") + " · Esc", "A · B" },
+                    new[] { "TikTok aufnehmen (Handy › TikTak, Laptop, Ringlicht am Schreibtisch)", "–", "–" },
+                    new[] { "Aufnahme: Aktion / Hook", K("interact"), P("interact") },
+                    new[] { "Aufnahme: Stopp / abbrechen", "Enter / Linksklick · Esc", "RB · B" },
+                    new[] { "Moped: auf-/absteigen", K("interact"), P("interact") },
+                    new[] { "Moped: Gas / Bremse / Lenken", "W / S / A D", "RT / LT / Linker Stick" },
+                    new[] { "Moped: Hupe · Ansicht", K("horn") + " · " + K("vehcam"), P("horn") + " · " + P("vehcam") },
+                    new[] { "Moped: Heckbox beladen (Pakete in der Hand) / entladen", K("interact"), P("interact") },
+                    new[] { "Emote-Rad (halten, zielen, loslassen)", K("emote") + " · Maus / 1–6", P("emote") + " · Rechter Stick" },
+                    new[] { "Handy öffnen / schließen", K("phone"), P("phone") },
+                    new[] { "Handy-App wechseln", "1 2 3 4", "LB / RB" },
+                    new[] { "Laptop (an der Werkbank / am Schreibtisch)", K("interact"), P("interact") },
+                    new[] { "Laptop-App wechseln", "Maus", "LB / RB" },
+                    new[] { "Auswählen", "Linksklick / Enter", "A" },
+                    new[] { "Zurück / Schließen", "Esc", "B" },
+                    new[] { "Scrollen", "Mausrad", "Rechter Stick" },
+                    new[] { "Pause-Menü", "Esc", "Start" },
+                    new[] { "Hilfe", K("help"), P("help") },
+                    new[] { "Screenshot", "F12", "–" },
+                    new[] { "Noclip / Fliegen (Test): Leertaste hoch, Strg runter", "Alt", "–" },
+                };
+            }
+        }
+
+        private static bool Bound(string action) => TestPressed.Contains(action) || InputBindings.Down(action);
+        private static bool BoundHeld(string action) => TestHeld.Contains(action) || InputBindings.Held(action);
+
+        // ---- Intern -----------------------------------------------------------------------------------
+        private enum KeyId
+        {
+            E, G, Space, Shift, Ctrl, C, Tab, Escape, F1, F9, F10, Backquote, F12, Enter, D1, D2, D3, D4, B, R,
+        }
+
+        private enum PadButton
+        {
+            South, East, West, North, Start, Select, LeftStick, RightStick, LeftShoulder, RightShoulder, DpadDown,
+        }
+
+        private static bool Key(KeyId k)
+        {
+            if (InputBindings.Capturing) return false;
+#if ENABLE_INPUT_SYSTEM
+            var kb = Keyboard.current;
+            if (kb == null) return false;
+            bool down;
+            switch (k)
+            {
+                case KeyId.E: down = kb.eKey.wasPressedThisFrame; break;
+                case KeyId.G: down = kb.gKey.wasPressedThisFrame; break;
+                case KeyId.Space: down = kb.spaceKey.wasPressedThisFrame; break;
+                case KeyId.Shift: down = kb.leftShiftKey.wasPressedThisFrame; break;
+                case KeyId.Ctrl: down = kb.leftCtrlKey.wasPressedThisFrame; break;
+                case KeyId.C: down = kb.cKey.wasPressedThisFrame; break;
+                case KeyId.Tab: down = kb.tabKey.wasPressedThisFrame; break;
+                case KeyId.Escape: down = kb.escapeKey.wasPressedThisFrame; break;
+                case KeyId.F1: down = kb.f1Key.wasPressedThisFrame; break;
+                case KeyId.F9: down = kb.f9Key.wasPressedThisFrame; break;
+                case KeyId.F10: down = kb.f10Key.wasPressedThisFrame; break;
+                case KeyId.Backquote: down = kb.backquoteKey.wasPressedThisFrame; break;
+                case KeyId.F12: down = kb.f12Key.wasPressedThisFrame; break;
+                case KeyId.Enter: down = kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame; break;
+                case KeyId.D1: down = kb.digit1Key.wasPressedThisFrame; break;
+                case KeyId.D2: down = kb.digit2Key.wasPressedThisFrame; break;
+                case KeyId.D3: down = kb.digit3Key.wasPressedThisFrame; break;
+                case KeyId.D4: down = kb.digit4Key.wasPressedThisFrame; break;
+                case KeyId.B: down = kb.bKey.wasPressedThisFrame; break;
+                case KeyId.R: down = kb.rKey.wasPressedThisFrame; break;
+                default: down = false; break;
+            }
+            if (down) UsingGamepad = false;
+            return down;
+#elif ENABLE_LEGACY_INPUT_MANAGER
+            bool down = Input.GetKeyDown(ToKeyCode(k));
+            if (k == KeyId.Enter && !down) down = Input.GetKeyDown(KeyCode.KeypadEnter);
+            if (down) UsingGamepad = false;
+            return down;
+#else
+            return false;
+#endif
+        }
+
+        private static bool Held(KeyId k)
+        {
+#if ENABLE_INPUT_SYSTEM
+            var kb = Keyboard.current;
+            if (kb == null) return false;
+            switch (k)
+            {
+                case KeyId.Shift: return kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed;
+                case KeyId.Ctrl: return kb.leftCtrlKey.isPressed || kb.rightCtrlKey.isPressed;
+                case KeyId.C: return kb.cKey.isPressed;
+                default: return false;
+            }
+#elif ENABLE_LEGACY_INPUT_MANAGER
+            switch (k)
+            {
+                case KeyId.Shift: return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                case KeyId.Ctrl: return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+                case KeyId.C: return Input.GetKey(KeyCode.C);
+                default: return false;
+            }
+#else
+            return false;
+#endif
+        }
+
+#if !ENABLE_INPUT_SYSTEM && ENABLE_LEGACY_INPUT_MANAGER
+        private static KeyCode ToKeyCode(KeyId k)
+        {
+            switch (k)
+            {
+                case KeyId.E: return KeyCode.E;
+                case KeyId.G: return KeyCode.G;
+                case KeyId.Space: return KeyCode.Space;
+                case KeyId.Shift: return KeyCode.LeftShift;
+                case KeyId.Ctrl: return KeyCode.LeftControl;
+                case KeyId.C: return KeyCode.C;
+                case KeyId.Tab: return KeyCode.Tab;
+                case KeyId.Escape: return KeyCode.Escape;
+                case KeyId.F1: return KeyCode.F1;
+                case KeyId.F9: return KeyCode.F9;
+                case KeyId.F10: return KeyCode.F10;
+                case KeyId.Backquote: return KeyCode.BackQuote;
+                case KeyId.F12: return KeyCode.F12;
+                case KeyId.Enter: return KeyCode.Return;
+                case KeyId.D1: return KeyCode.Alpha1;
+                case KeyId.D2: return KeyCode.Alpha2;
+                case KeyId.D3: return KeyCode.Alpha3;
+                case KeyId.D4: return KeyCode.Alpha4;
+                case KeyId.B: return KeyCode.B;
+                case KeyId.R: return KeyCode.R;
+            }
+            return KeyCode.None;
+        }
+#endif
+
+        private static bool PadActiveThisFrame()
+        {
+#if ENABLE_INPUT_SYSTEM
+            var pad = Gamepad.current;
+            return pad != null && pad.leftStick.ReadValue().sqrMagnitude > 0.04f;
+#else
+            return false;
+#endif
+        }
+
+        private static bool PadDown(PadButton b)
+        {
+            if (InputBindings.Capturing) return false;
+#if ENABLE_INPUT_SYSTEM
+            var pad = Gamepad.current;
+            if (pad == null) return false;
+            bool down;
+            switch (b)
+            {
+                case PadButton.South: down = pad.buttonSouth.wasPressedThisFrame; break;
+                case PadButton.East: down = pad.buttonEast.wasPressedThisFrame; break;
+                case PadButton.West: down = pad.buttonWest.wasPressedThisFrame; break;
+                case PadButton.North: down = pad.buttonNorth.wasPressedThisFrame; break;
+                case PadButton.Start: down = pad.startButton.wasPressedThisFrame; break;
+                case PadButton.Select: down = pad.selectButton.wasPressedThisFrame; break;
+                case PadButton.LeftStick: down = pad.leftStickButton.wasPressedThisFrame; break;
+                case PadButton.RightStick: down = pad.rightStickButton.wasPressedThisFrame; break;
+                case PadButton.LeftShoulder: down = pad.leftShoulder.wasPressedThisFrame; break;
+                case PadButton.RightShoulder: down = pad.rightShoulder.wasPressedThisFrame; break;
+                case PadButton.DpadDown: down = pad.dpad.down.wasPressedThisFrame; break;
+                default: down = false; break;
+            }
+            if (down) UsingGamepad = true;
+            return down;
+#else
+            return false;
+#endif
+        }
+    }
+}

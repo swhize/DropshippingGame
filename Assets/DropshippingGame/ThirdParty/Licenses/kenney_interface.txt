@@ -1,0 +1,10 @@
+Interface Sounds
+Autor: Kenney (kenney.nl)
+Quelle: https://kenney.nl/assets/interface-sounds ; https://github.com/series-ai/jam-ready-assets (Mirror, Commit f8206b38)
+Lizenz: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/)
+Dateien: Audio/SFX (click, hover, notify, order, error, bad, phone_*, scanner)
+Änderungen: normalisiert (Peak -1 dBFS), Vorbis
+
+Creative Commons Zero v1.0 Universal (CC0 1.0) Public Domain Dedication
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+

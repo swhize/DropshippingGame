@@ -1,0 +1,831 @@
+<title>HustleOS Frachtbrief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root {
+  --ground: #E7E5DD;
+  --paper: #F6F5F0;
+  --panel: #EFEDE6;
+  --card: #FFFFFF;
+  --ink: #1B1D1F;
+  --ink-2: #3A3E42;
+  --muted: #6B6F72;
+  --rule: #D5D2C7;
+  --rule-strong: #1B1D1F;
+  --accent: #F2B705;
+  --accent-ink: #1B1D1F;
+  --accent-soft: #FBEBB0;
+  --good: #1F8A4C;
+  --bad: #C8372D;
+  --bezel: #22262A;
+  --shadow: 0 1px 0 rgba(27, 29, 31, .06), 0 12px 32px -18px rgba(27, 29, 31, .35);
+  --display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #0C0F11;
+    --paper: #131618;
+    --panel: #181C1F;
+    --card: #1F2428;
+    --ink: #E9EAE4;
+    --ink-2: #C6C9C2;
+    --muted: #8E969B;
+    --rule: #2E353A;
+    --rule-strong: #E9EAE4;
+    --accent: #F5C22E;
+    --accent-ink: #15181A;
+    --accent-soft: #3A3217;
+    --good: #52C98A;
+    --bad: #F0705F;
+    --bezel: #050607;
+    --shadow: 0 1px 0 rgba(0, 0, 0, .4), 0 16px 40px -20px rgba(0, 0, 0, .8);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #0C0F11;
+  --paper: #131618;
+  --panel: #181C1F;
+  --card: #1F2428;
+  --ink: #E9EAE4;
+  --ink-2: #C6C9C2;
+  --muted: #8E969B;
+  --rule: #2E353A;
+  --rule-strong: #E9EAE4;
+  --accent: #F5C22E;
+  --accent-ink: #15181A;
+  --accent-soft: #3A3217;
+  --good: #52C98A;
+  --bad: #F0705F;
+  --bezel: #050607;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .4), 0 16px 40px -20px rgba(0, 0, 0, .8);
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.45;
+  padding: 24px 20px 40px;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.intro {
+  max-width: 1180px;
+  margin: 0 auto 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+.intro h1 {
+  font-family: var(--display);
+  font-stretch: 118%;
+  font-weight: 800;
+  font-size: clamp(22px, 3vw, 30px);
+  letter-spacing: -.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+.intro p { margin: 4px 0 0; color: var(--muted); max-width: 62ch; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.theme-switch {
+  display: inline-flex;
+  border: 1.5px solid var(--rule-strong);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.theme-switch button {
+  border: 0;
+  background: transparent;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.theme-switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+/* Laptop */
+.laptop {
+  max-width: 1180px;
+  margin: 0 auto;
+  background: var(--bezel);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+.screen {
+  background: var(--paper);
+  border-radius: 8px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 208px 1fr;
+  grid-template-rows: auto 1fr;
+  height: min(760px, 78vw);
+  min-height: 560px;
+}
+
+/* Kopfzeile wie ein Frachtbrief-Kopf */
+.topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: stretch;
+  border-bottom: 2px solid var(--rule-strong);
+  background: var(--paper);
+}
+.brandcell {
+  width: 208px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-right: 2px solid var(--rule-strong);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.brandcell b {
+  font-family: var(--display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: .01em;
+}
+.barcode { height: 24px; width: 46px; flex: none; }
+.field {
+  padding: 7px 14px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.field .k {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.field .v {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.field.grow { flex: 1; }
+.field .v.money { color: var(--good); }
+.close {
+  border: 0;
+  background: transparent;
+  padding: 0 18px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  border-left: 1px solid var(--rule);
+}
+.close:hover { background: var(--panel); }
+
+/* Seitenleiste */
+.side {
+  background: var(--panel);
+  border-right: 2px solid var(--rule-strong);
+  overflow-y: auto;
+  padding: 10px 8px 14px;
+}
+.side .grp {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 10px 6px;
+}
+.nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+.nav svg { width: 18px; height: 18px; flex: none; }
+.nav:hover { background: var(--card); }
+.nav[aria-current="page"] {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 700;
+}
+.nav .badge {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: 3px;
+  padding: 0 5px;
+}
+.nav.locked { color: var(--muted); }
+.nav.locked .lock { margin-left: auto; width: 13px; height: 13px; }
+
+/* Inhalt */
+.main { overflow-y: auto; padding: 22px 26px 30px; }
+.apphead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--rule-strong);
+  margin-bottom: 18px;
+}
+.apphead h2 {
+  font-family: var(--display);
+  font-stretch: 120%;
+  font-weight: 800;
+  font-size: 26px;
+  margin: 0;
+  letter-spacing: -.01em;
+}
+.apphead p { margin: 0; color: var(--muted); max-width: 58ch; }
+
+/* Frachtbrief-Formular: Felder in einem Raster */
+.waybill {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1.5px solid var(--rule-strong);
+  background: var(--card);
+  margin-bottom: 20px;
+}
+.waybill > div {
+  padding: 10px 14px 12px;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.waybill > div:nth-child(4n) { border-right: 0; }
+.waybill .k {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.waybill .v {
+  font-family: var(--display);
+  font-stretch: 112%;
+  font-weight: 700;
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.waybill .s { font-size: 12.5px; color: var(--muted); }
+.up { color: var(--good); }
+.down { color: var(--bad); }
+
+.cols { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; }
+.box {
+  background: var(--card);
+  border: 1.5px solid var(--rule-strong);
+}
+.box > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-bottom: 1.5px dashed var(--rule);
+}
+.box > header h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-stretch: 115%;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.box > .in { padding: 12px 14px 14px; }
+
+/* Diagramm */
+.chart { width: 100%; height: 190px; display: block; }
+.chart text { font-family: var(--mono); font-size: 10px; fill: var(--muted); }
+.legend { display: flex; gap: 16px; font-size: 12.5px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 3px; vertical-align: middle; margin-right: 6px; }
+
+/* Bestell-Liste als Paketscheine */
+.orders { list-style: none; margin: 0; padding: 0; }
+.orders li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px 12px;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.orders li:last-child { border-bottom: 0; }
+.sz {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--rule-strong);
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 13px;
+}
+.orders .t { font-weight: 600; }
+.orders .m { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.orders .p { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; }
+.age { font-family: var(--mono); font-size: 11px; padding: 1px 6px; border-radius: 3px; background: var(--panel); }
+.age.late { background: var(--bad); color: #fff; }
+
+/* Einkauf */
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.prod {
+  text-align: left;
+  border: 1.5px solid var(--rule-strong);
+  background: var(--card);
+  padding: 10px 12px;
+  cursor: pointer;
+  position: relative;
+  display: grid;
+  gap: 3px;
+}
+.prod:hover { background: var(--panel); }
+.prod[aria-pressed="true"] { outline: 3px solid var(--accent); outline-offset: -1px; }
+.prod .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.prod .n { font-weight: 700; }
+.prod .sw { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.prod .m { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.prod[disabled] { cursor: not-allowed; border-style: dashed; color: var(--muted); background: transparent; }
+.stamp {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  border: 1.5px solid currentColor;
+  padding: 0 4px;
+  transform: rotate(4deg);
+  color: var(--bad);
+}
+.sect {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+.suppliers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 20px; }
+.sup {
+  text-align: left;
+  border: 1.5px solid var(--rule-strong);
+  background: var(--card);
+  padding: 10px 12px;
+  cursor: pointer;
+}
+.sup[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.sup[aria-pressed="true"] .m { color: var(--paper); opacity: .75; }
+.sup .n { font-weight: 700; display: flex; justify-content: space-between; gap: 6px; }
+.sup .m { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.stars { color: var(--accent); letter-spacing: 1px; }
+.qty { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.buy {
+  border: 1.5px solid var(--rule-strong);
+  background: var(--card);
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+  display: grid;
+  gap: 2px;
+}
+.buy:hover:not([disabled]) { background: var(--accent); color: var(--accent-ink); }
+.buy .q { font-family: var(--display); font-stretch: 115%; font-weight: 800; font-size: 18px; }
+.buy .c { font-family: var(--mono); font-size: 12px; }
+.buy[disabled] { color: var(--muted); border-style: dashed; cursor: not-allowed; background: transparent; }
+.checkline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1.5px dashed var(--rule);
+  font-size: 14px;
+}
+.checkline input { width: 18px; height: 18px; accent-color: var(--ink); }
+
+/* Webshop-Tabelle */
+.tablewrap { overflow-x: auto; border: 1.5px solid var(--rule-strong); background: var(--card); }
+table { width: 100%; border-collapse: collapse; min-width: 640px; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.pricer { display: inline-flex; align-items: center; border: 1.5px solid var(--rule-strong); }
+.pricer button { border: 0; background: transparent; width: 28px; height: 28px; cursor: pointer; font-weight: 700; }
+.pricer button:hover { background: var(--panel); }
+.pricer span { min-width: 60px; text-align: center; font-family: var(--mono); font-weight: 600; }
+.switch { position: relative; width: 38px; height: 22px; display: inline-block; }
+.switch input { opacity: 0; width: 100%; height: 100%; margin: 0; position: absolute; cursor: pointer; }
+.switch i { position: absolute; inset: 0; border: 1.5px solid var(--rule-strong); background: var(--panel); pointer-events: none; }
+.switch i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; background: var(--ink); transition: transform .15s; }
+.switch input:checked + i { background: var(--accent); }
+.switch input:checked + i::after { transform: translateX(16px); }
+.meter { height: 6px; background: var(--panel); width: 100px; }
+.meter b { display: block; height: 100%; background: var(--ink); }
+
+/* Postfach */
+.mailgrid { display: grid; grid-template-columns: 300px 1fr; gap: 16px; }
+.maillist { list-style: none; margin: 0; padding: 0; border: 1.5px solid var(--rule-strong); background: var(--card); }
+.maillist button {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px dashed var(--rule);
+  background: transparent;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: grid;
+  gap: 1px;
+}
+.maillist li:last-child button { border-bottom: 0; }
+.maillist button[aria-current="true"] { background: var(--accent-soft); }
+.maillist .t { font-weight: 700; display: flex; gap: 8px; align-items: center; }
+.maillist .m { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bad); flex: none; }
+.letter { border: 1.5px solid var(--rule-strong); background: var(--card); padding: 18px 20px; }
+.letter h3 { font-family: var(--display); font-stretch: 115%; font-size: 21px; margin: 0 0 2px; }
+.letter .from { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
+.letter p { max-width: 62ch; }
+.choices { display: grid; gap: 8px; margin-top: 12px; }
+.choice {
+  border: 1.5px solid var(--rule-strong);
+  background: var(--card);
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 600;
+}
+.choice:hover { background: var(--accent); color: var(--accent-ink); }
+.choice .c { font-family: var(--mono); font-weight: 500; }
+.placeholder { border: 1.5px dashed var(--rule); padding: 28px; color: var(--muted); max-width: 60ch; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 16px;
+  font-weight: 600;
+  border-left: 5px solid var(--accent);
+  box-shadow: var(--shadow);
+  max-width: calc(100% - 32px);
+}
+
+@media (max-width: 900px) {
+  .cols, .mailgrid { grid-template-columns: 1fr; }
+  .waybill { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .waybill > div:nth-child(4n) { border-right: 1px solid var(--rule); }
+  .waybill > div:nth-child(2n) { border-right: 0; }
+  .qty { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  body { padding-inline: 16px; }
+  .laptop { padding: 8px; border-radius: 12px; }
+  .screen { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; height: auto; min-height: 0; }
+  .brandcell { width: auto; border-right: 1px solid var(--rule); }
+  .topbar { flex-wrap: wrap; }
+  .field.hide-sm, .close { display: none; }
+  .side { display: flex; gap: 4px; overflow-x: auto; border-right: 0; border-bottom: 2px solid var(--rule-strong); padding: 8px; }
+  .side .grp { display: none; }
+  .nav { width: auto; flex: none; white-space: nowrap; }
+  .main { padding: 16px; max-height: none; }
+  .suppliers { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="intro">
+  <div>
+    <div class="eyebrow">Entwurf A · Laptop-Oberfläche</div>
+    <h1>HustleOS Frachtbrief</h1>
+    <p>Die Oberfläche sieht aus wie Papierkram aus dem Lager: Felder wie auf einem Frachtbrief, Pakete als Versandscheine, PaketBlitz-Gelb als einzige Akzentfarbe. Klick dich durch Übersicht, Einkauf, Webshop und Postfach.</p>
+  </div>
+  <div class="theme-switch" role="group" aria-label="Farbschema">
+    <button type="button" data-set="light" aria-pressed="false">Hell</button>
+    <button type="button" data-set="dark" aria-pressed="false">Dunkel</button>
+    <button type="button" data-set="system" aria-pressed="true">System</button>
+  </div>
+</header>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9.5V20h13V9.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 20v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M2.5 4h2.3l2.4 10.3a1 1 0 0 0 1 .7h8.9a1 1 0 0 0 1-.8L20 8H6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="19" r="1.5" fill="currentColor"/><circle cx="17" cy="19" r="1.5" fill="currentColor"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m3 7.5 9 4.5 9-4.5M12 12v9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+    <symbol id="i-mega" viewBox="0 0 24 24"><path d="M3 10v4h3l7 4.5v-13L6 10z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-7 7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="7.5" cy="8" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9.5 5.5 4h13L20 9.5M4 9.5h16c0 1.7-1.3 3-3 3s-3-1.3-3-3c0 1.7-1.3 3-3 3s-3-1.3-3-3c0 1.7-1.3 3-3 3S4 11.2 4 9.5zM5.5 12.3V20h13v-7.7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8M15 7h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18.2 14.2A6.5 6.5 0 0 1 21.5 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-build" viewBox="0 0 24 24"><path d="M3.5 20.5h17M5 20.5V9.5L12 5l7 4.5v11M9.5 20.5v-6h5v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path d="m3 9 9-5 9 5M5 10.5v7M9.7 10.5v7M14.3 10.5v7M19 10.5v7M3 20h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-bars" viewBox="0 0 24 24"><path d="M5 20v-8M11 20V5M17 20v-5M3 20h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4.5M16 6h3a3 3 0 0 1-3 4.5M12 13v4M8.5 20h7M9.5 17h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  </defs>
+</svg>
+
+<div class="laptop">
+  <div class="screen" id="screen">
+    <div class="topbar">
+      <div class="brandcell">
+        <svg class="barcode" viewBox="0 0 46 24" aria-hidden="true"><g fill="currentColor"><rect x="0" width="2" height="24"/><rect x="4" width="1" height="24"/><rect x="7" width="3" height="24"/><rect x="12" width="1" height="24"/><rect x="15" width="2" height="24"/><rect x="19" width="1" height="24"/><rect x="22" width="4" height="24"/><rect x="28" width="1" height="24"/><rect x="31" width="2" height="24"/><rect x="35" width="1" height="24"/><rect x="38" width="3" height="24"/><rect x="43" width="1" height="24"/><rect x="45" width="1" height="24"/></g></svg>
+        <b>HUSTLEOS</b>
+      </div>
+      <div class="field grow"><span class="k">Marke</span><span class="v">NovaGoods</span></div>
+      <div class="field hide-sm"><span class="k">Tag</span><span class="v">06 · <span id="clock">14:32</span></span></div>
+      <div class="field hide-sm"><span class="k">Bewertung</span><span class="v">4,2 ★</span></div>
+      <div class="field"><span class="k">Konto</span><span class="v money" id="money">1.284 €</span></div>
+      <button class="close" type="button">Schließen ✕</button>
+    </div>
+    <nav class="side" id="side" aria-label="Apps"></nav>
+    <main class="main" id="main"></main>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  const root = document.documentElement;
+  const btns = document.querySelectorAll('.theme-switch button');
+  function applyTheme(mode) {
+    if (mode === 'system') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', mode);
+    btns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.set === mode)));
+  }
+  btns.forEach(b => b.addEventListener('click', () => applyTheme(b.dataset.set)));
+  if (root.getAttribute('data-theme')) applyTheme(root.getAttribute('data-theme'));
+
+  const state = {
+    money: 1284, app: 'home', product: 0, supplier: 1, express: false, mail: 1,
+    prices: [22, 39, 99], listed: [true, true, false]
+  };
+  const products = [
+    { name: 'Handyhülle', size: 'S', cost: 2, market: 23, stock: 46, color: '#EE6B9E', demand: 0.78, lvl: 1 },
+    { name: 'LED-Lichterkette', size: 'M', cost: 4, market: 42, stock: 18, color: '#E8B923', demand: 0.55, lvl: 2 },
+    { name: 'Massagepistole', size: 'L', cost: 12, market: 95, stock: 7, color: '#525769', demand: 0.3, lvl: 3 },
+    { name: 'Bluetooth-Kopfhörer', size: 'M', cost: 8, market: 64, stock: 0, color: '#4C8BF5', lock: 'LAGERHALLE' },
+    { name: 'Ringlicht', size: 'M', cost: 6, market: 57, stock: 0, color: '#B9C6E6', lock: 'LEVEL 5' },
+    { name: 'Katzen-Trinkbrunnen', size: 'L', cost: 9, market: 74, stock: 0, color: '#3FB4C0', lock: 'LEVEL 6' }
+  ];
+  const suppliers = [
+    { name: 'Billig-Fabrik', stars: 1, mult: 0.65, lead: 81 },
+    { name: 'Standard-Großhändler', stars: 2, mult: 1.0, lead: 45 },
+    { name: 'Premium-Hersteller', stars: 3, mult: 1.75, lead: 25 }
+  ];
+  const bulks = [
+    { name: 'Klein', qty: 20, disc: 1 }, { name: 'Mittel', qty: 50, disc: 0.85 },
+    { name: 'Groß', qty: 200, disc: 0.68 }, { name: 'Palette', qty: 500, disc: 0.55, lock: 'Lagerhalle' }
+  ];
+  const apps = [
+    ['home', 'Übersicht', 'i-home', 'Betrieb'], ['mail', 'Postfach', 'i-mail', 'Betrieb', 2],
+    ['buy', 'Einkauf', 'i-cart', 'Betrieb'], ['pack', 'Verpackung', 'i-box', 'Betrieb'],
+    ['shop', 'Webshop', 'i-globe', 'Verkauf'], ['mkt', 'Marketing', 'i-mega', 'Verkauf'],
+    ['brand', 'Branding', 'i-tag', 'Verkauf'], ['market', 'Marktanalyse', 'i-store', 'Verkauf'],
+    ['trade', 'Trading', 'i-trend', 'Finanzen'], ['bank', 'Bank', 'i-bank', 'Finanzen'],
+    ['stats', 'Analytics', 'i-bars', 'Finanzen'], ['staff', 'Personal', 'i-users', 'Firma', 0, true],
+    ['build', 'Ausbau', 'i-build', 'Firma'], ['goals', 'Ziele', 'i-trophy', 'Firma']
+  ];
+  const mails = [
+    { t: 'Shitstorm!', from: 'Social Media', time: 'Tag 6, 13:10', pending: true, text: 'Ein Kunde behauptet auf TikTok, dein Produkt hätte sein Handy „geschmolzen“. 40.000 Kommentare. Was tust du?',
+      choices: [['Entschuldigen und Gutscheine verteilen', '100 €'], ['Ignorieren', ''], ['Mit einem Meme antworten', '']] },
+    { t: 'Lieferung angekommen', from: 'PaketBlitz', time: 'Tag 6, 11:52', text: '20 × Handyhülle stehen am Wareneingang neben dem Tor.' },
+    { t: 'Ein Brief von Oma', from: 'Oma Gerda', time: 'Tag 5, 09:03', text: 'Mein Enkel, der Geschäftsmann! Ich hab dir 100 Euro beigelegt. Kauf dir was Warmes.' },
+    { t: 'Viel Erfolg, Schatz!', from: 'Mama', time: 'Tag 1, 08:00', text: 'Ich hab gehört, du machst jetzt was mit Internet. Iss was Ordentliches und vergiss nicht zu schlafen.' }
+  ];
+  const euro = v => (v < 0 ? '−' : '') + Math.abs(Math.round(v)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' €';
+  const cents = v => v.toFixed(2).replace('.', ',') + ' €';
+  const icon = id => `<svg aria-hidden="true"><use href="#${id}"/></svg>`;
+  const main = document.getElementById('main');
+  const side = document.getElementById('side');
+
+  function renderSide() {
+    let html = '', grp = '';
+    apps.forEach(([id, label, ic, g, badge, locked]) => {
+      if (g !== grp) { html += `<div class="grp">${g}</div>`; grp = g; }
+      html += `<button type="button" class="nav${locked ? ' locked' : ''}" data-app="${id}" ${state.app === id ? 'aria-current="page"' : ''}>${icon(ic)}<span>${label}</span>${badge ? `<span class="badge">${badge}</span>` : ''}${locked ? '<svg class="lock" aria-hidden="true"><use href="#i-lock"/></svg>' : ''}</button>`;
+    });
+    side.innerHTML = html;
+  }
+  side.addEventListener('click', e => {
+    const b = e.target.closest('[data-app]');
+    if (!b) return;
+    state.app = b.dataset.app;
+    render();
+  });
+
+  function head(title, sub) {
+    return `<div class="apphead"><h2>${title}</h2><p>${sub}</p></div>`;
+  }
+
+  function chart() {
+    const rev = [96, 188, 240, 205, 361, 452, 412];
+    const prof = [-40, 35, 72, 18, 140, 196, 171];
+    const W = 520, H = 190, L = 44, R = 12, T = 10, B = 24;
+    const lo = -100, hi = 500;
+    const x = i => L + (W - L - R) * i / (rev.length - 1);
+    const y = v => T + (H - T - B) * (1 - (v - lo) / (hi - lo));
+    let g = '';
+    [-100, 100, 300, 500].forEach(v => {
+      g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--rule)" stroke-width="1"/>`;
+      g += `<text x="${L - 6}" y="${y(v) + 3}" text-anchor="end">${v}</text>`;
+    });
+    g += `<line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 3"/>`;
+    rev.forEach((_, i) => { g += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle">T${i}</text>`; });
+    const pts = a => a.map((v, i) => `${x(i)},${y(v)}`).join(' ');
+    const area = `${L},${y(lo)} ${pts(rev)} ${x(rev.length - 1)},${y(lo)}`;
+    g += `<polygon points="${area}" fill="var(--accent)" opacity=".18"/>`;
+    g += `<polyline points="${pts(rev)}" fill="none" stroke="var(--ink)" stroke-width="2.2"/>`;
+    g += `<polyline points="${pts(prof)}" fill="none" stroke="var(--good)" stroke-width="2" stroke-dasharray="5 3"/>`;
+    g += `<circle cx="${x(6)}" cy="${y(412)}" r="4" fill="var(--ink)"/>`;
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Umsatz und Cashflow der letzten sieben Tage">${g}</svg>`;
+  }
+
+  const views = {
+    home() {
+      return head('Übersicht', 'Tag 6 läuft. Vier Bestellungen warten, eine Entscheidung liegt im Postfach.') + `
+      <div class="waybill">
+        <div><div class="k">Umsatz heute <span class="up">+9 %</span></div><div class="v">412 €</div><div class="s">17 Pakete verschickt</div></div>
+        <div><div class="k">Offene Bestellungen</div><div class="v">4 / 6</div><div class="s">älteste seit 48 min</div></div>
+        <div><div class="k">Bewertung</div><div class="v">4,2 ★</div><div class="s">37 Bewertungen</div></div>
+        <div><div class="k">Firmenlevel</div><div class="v">4</div><div class="s">1.840 / 2.500 XP</div></div>
+        <div><div class="k">Lager</div><div class="v">71 / 400</div><div class="s">Garage</div></div>
+        <div><div class="k">Unterwegs</div><div class="v">1 Lieferung</div><div class="s">Ankunft in 18 min</div></div>
+        <div><div class="k">Kartons S · M · L</div><div class="v">12 · 6 · 2</div><div class="s">L wird knapp</div></div>
+        <div><div class="k">Fixkosten heute</div><div class="v down">−15 €</div><div class="s">Miete Garage</div></div>
+      </div>
+      <div class="cols">
+        <section class="box"><header><h3>Umsatz &amp; Cashflow</h3><div class="legend"><span><i style="background:var(--ink)"></i>Umsatz</span><span><i style="background:var(--good)"></i>Cashflow</span></div></header><div class="in">${chart()}</div></section>
+        <section class="box"><header><h3>Paketscheine offen</h3><span class="eyebrow">4 Stück</span></header><div class="in">
+          <ul class="orders">
+            <li><span class="sz">S</span><div><div class="t">Handyhülle</div><div class="m">#A-2231 · Sabine K.</div></div><div class="p">22 € <span class="age late">48m</span></div></li>
+            <li><span class="sz">M</span><div><div class="t">LED-Lichterkette</div><div class="m">#A-2234 · Dennis</div></div><div class="p">39 € <span class="age">21m</span></div></li>
+            <li><span class="sz">S</span><div><div class="t">Handyhülle</div><div class="m">#A-2236 · Oma Gerda</div></div><div class="p">22 € <span class="age">9m</span></div></li>
+            <li><span class="sz">L</span><div><div class="t">Massagepistole</div><div class="m">#A-2237 · Laura M.</div></div><div class="p">99 € <span class="age">2m</span></div></li>
+          </ul></div></section>
+      </div>`;
+    },
+    buy() {
+      const p = products[state.product], s = suppliers[state.supplier];
+      let h = head('Einkauf', 'Jede Bestellung kommt als Kiste am Wareneingang an. Der Lieferwagen hält vor dem Tor.');
+      h += '<p class="sect">Produkt</p><div class="products">';
+      products.forEach((q, i) => {
+        h += `<button type="button" class="prod" data-prod="${i}" ${q.lock ? 'disabled' : `aria-pressed="${i === state.product}"`}>
+          <span class="row"><span class="n">${q.name}</span><span class="sw" style="background:${q.color}"></span></span>
+          <span class="m">Karton ${q.size} · ab ${cents(q.cost)}/Stk</span>
+          <span class="m">${q.lock ? 'gesperrt' : 'Lager ' + q.stock + ' · Markt ~' + q.market + ' €'}</span>
+          ${q.lock ? `<span class="stamp">${q.lock}</span>` : ''}</button>`;
+      });
+      h += '</div><p class="sect">Lieferant</p><div class="suppliers">';
+      suppliers.forEach((q, i) => {
+        const lead = Math.round(q.lead * (state.express ? 0.5 : 1));
+        h += `<button type="button" class="sup" data-sup="${i}" aria-pressed="${i === state.supplier}">
+          <span class="n">${q.name}<span class="stars">${'★'.repeat(q.stars)}</span></span>
+          <span class="m">Preis ×${q.mult.toFixed(2).replace('.', ',')} · Lieferzeit ~${lead} min</span></button>`;
+      });
+      h += `</div><p class="sect">Menge · ${p.name} bei ${s.name}</p><div class="qty">`;
+      bulks.forEach((b, i) => {
+        const cost = Math.round(p.cost * b.qty * b.disc * s.mult) + (state.express ? 8 : 0);
+        const off = b.lock || cost > state.money;
+        h += `<button type="button" class="buy" data-bulk="${i}" ${off ? 'disabled' : ''}>
+          <span class="q">${b.qty} Stück</span><span class="c">${b.lock ? 'braucht ' + b.lock : euro(cost) + ' · ' + cents(cost / b.qty) + '/Stk'}</span></button>`;
+      });
+      h += `</div><label class="checkline"><input type="checkbox" id="express" ${state.express ? 'checked' : ''}> Express-Lieferung: halbe Lieferzeit, +8 € pro Bestellung</label>`;
+      return h;
+    },
+    shop() {
+      let h = head('Webshop · NovaGoods', 'Stell Produkte online und setz Preise. Unter dem Marktpreis steigt die Nachfrage deutlich.');
+      h += `<div class="waybill">
+        <div><div class="k">Bewertung</div><div class="v">4,2 ★</div><div class="s">37 Bewertungen</div></div>
+        <div><div class="k">Bestellungen/Std</div><div class="v">~3,4</div><div class="s">bei aktuellen Preisen</div></div>
+        <div><div class="k">Warteschlange</div><div class="v">4 / 6</div><div class="s">Server-Upgrade ab Level 3</div></div>
+        <div><div class="k">Rabattaktion</div><div class="v">aus</div><div class="s">−20 % auf alles</div></div></div>
+        <div class="tablewrap"><table><thead><tr><th>Online</th><th>Produkt</th><th>Dein Preis</th><th>Markt</th><th>Marge</th><th>Nachfrage</th></tr></thead><tbody>`;
+      products.slice(0, 3).forEach((p, i) => {
+        const pr = state.prices[i];
+        h += `<tr><td><label class="switch"><input type="checkbox" data-list="${i}" ${state.listed[i] ? 'checked' : ''} aria-label="${p.name} online"><i></i></label></td>
+          <td><b>${p.name}</b><br><span class="m" style="font-family:var(--mono);font-size:11.5px;color:var(--muted)">Lager ${p.stock}</span></td>
+          <td><span class="pricer"><button type="button" data-price="${i}" data-d="-1" aria-label="Preis senken">−</button><span>${pr} €</span><button type="button" data-price="${i}" data-d="1" aria-label="Preis erhöhen">+</button></span></td>
+          <td class="num ${pr <= p.market ? 'up' : 'down'}">${p.market} €</td>
+          <td class="num">${euro(pr - p.cost)}/Stk</td>
+          <td><div class="meter"><b style="width:${state.listed[i] ? Math.round(Math.min(1, p.demand * Math.pow(p.market / pr, 1.6)) * 100) : 0}%"></b></div></td></tr>`;
+      });
+      h += '</tbody></table></div>';
+      return h;
+    },
+    mail() {
+      const m = mails[state.mail];
+      let h = head('Postfach', 'Nachrichten und Entscheidungen. Offene Entscheidungen verfallen um 20 Uhr.');
+      h += '<div class="mailgrid"><ul class="maillist">';
+      mails.forEach((q, i) => {
+        h += `<li><button type="button" data-mail="${i}" ${i === state.mail ? 'aria-current="true"' : ''}><span class="t">${q.pending ? '<span class="dot" aria-label="Entscheidung offen"></span>' : ''}${q.t}</span><span class="m">${q.from} · ${q.time}</span></button></li>`;
+      });
+      h += `</ul><article class="letter"><h3>${m.t}</h3><div class="from">Von: ${m.from} · ${m.time}</div><p>${m.text}</p>`;
+      if (m.pending) {
+        h += '<p class="sect">Deine Entscheidung</p><div class="choices">';
+        m.choices.forEach(c => { h += `<button type="button" class="choice"><span>${c[0]}</span><span class="c">${c[1]}</span></button>`; });
+        h += '</div>';
+      }
+      return h + '</article></div>';
+    }
+  };
+
+  function render() {
+    renderSide();
+    const app = apps.find(a => a[0] === state.app);
+    main.innerHTML = views[state.app] ? views[state.app]() :
+      head(app[1], 'Im Entwurf nicht ausgearbeitet.') + `<div class="placeholder">Diese App folgt im Spiel dem gleichen Aufbau: Frachtbrief-Felder oben, darunter Scheine und Tabellen.</div>`;
+    main.scrollTop = 0;
+  }
+
+  let toastTimer;
+  function toast(text) {
+    const t = document.getElementById('toast');
+    t.textContent = text;
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.hidden = true; }, 2600);
+  }
+
+  main.addEventListener('click', e => {
+    const t = e.target;
+    const pb = t.closest('[data-prod]');
+    if (pb && !pb.disabled) { state.product = +pb.dataset.prod; render(); return; }
+    const sb = t.closest('[data-sup]');
+    if (sb) { state.supplier = +sb.dataset.sup; render(); return; }
+    const bb = t.closest('[data-bulk]');
+    if (bb && !bb.disabled) {
+      const p = products[state.product], b = bulks[+bb.dataset.bulk], s = suppliers[state.supplier];
+      const cost = Math.round(p.cost * b.qty * b.disc * s.mult) + (state.express ? 8 : 0);
+      state.money -= cost;
+      document.getElementById('money').textContent = euro(state.money);
+      toast(`${b.qty} × ${p.name} bei ${s.name} bestellt (−${euro(cost)})`);
+      render();
+      return;
+    }
+    const pr = t.closest('[data-price]');
+    if (pr) { const i = +pr.dataset.price; state.prices[i] = Math.max(1, state.prices[i] + (+pr.dataset.d)); render(); return; }
+    const mb = t.closest('[data-mail]');
+    if (mb) { state.mail = +mb.dataset.mail; render(); return; }
+    if (t.closest('.choice')) toast('Im Spiel wird die Entscheidung jetzt ausgewertet.');
+  });
+  main.addEventListener('change', e => {
+    if (e.target.id === 'express') { state.express = e.target.checked; render(); }
+    if (e.target.dataset.list) { state.listed[+e.target.dataset.list] = e.target.checked; render(); }
+  });
+
+  render();
+})();
+</script>
