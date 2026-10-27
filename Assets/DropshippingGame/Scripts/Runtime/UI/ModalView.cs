@@ -212,6 +212,7 @@ namespace DropshippingGame.UI
             var main = UIX.Col(_panel, 0f, "dlg-main");
             _speaker = UIX.Text(main, "", "dlg-speaker");
             _text = UIX.Text(main, "", "dlg-text");
+            _text.AddToClassList(LocSweeper.SkipClass); // Schreibmaschine: Text wird vorab übersetzt (Loc.Tr)
             _choices = UIX.Row(main, 10f, "dlg-choices");
             _foot = UIX.Row(main, 6f, "dlg-foot");
             _hintKey = UIX.Key(_foot, "E", "keycap-sm");
@@ -250,7 +251,7 @@ namespace DropshippingGame.UI
                 bool me = line.Speaker == "Du";
                 UIX.Avatar(_avatarHost, line.Speaker, me ? new Color(0.3f, 0.55f, 0.96f) : new Color(0.89f, 0.34f, 0.23f), 58f);
             }
-            _full = line.Text ?? "";
+            _full = Loc.Tr(line.Text ?? "");
             _text.text = "";
             _chars = 0f;
             _choices.Clear();

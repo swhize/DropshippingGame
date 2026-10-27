@@ -50,6 +50,7 @@ namespace DropshippingGame.UI
         private int _popSum;
         private float _popAt = -10f;
         private string _lastPrompt = "";
+        private string _promptLang = "";
         private string _boostSig = "", _hintSig = "", _toastPlace = "";
         private float _fpsAcc;
         private int _fpsFrames;
@@ -152,9 +153,11 @@ namespace DropshippingGame.UI
             UIX.Div(_crosshair, "cross-dot");
             _prompt = UIX.Col(_layer, 0f, "prompt");
             _promptTitle = UIX.Text(_prompt, "", "prompt-title");
+            _promptTitle.AddToClassList(LocSweeper.SkipClass); // Großschrift: erst übersetzen, dann groß (siehe Tick)
             var pill = UIX.Div(_prompt, "prompt-pill");
             _promptKey = UIX.Key(pill, "E");
             _promptText = UIX.Text(pill, "", "prompt-text");
+            _promptText.AddToClassList(LocSweeper.SkipClass); // übersetzt Tick selbst (Loc.Show: auch schon übersetzte Hinweise)
             UIX.Show(_prompt, false);
 
             // ---- Unten links: gehaltener Gegenstand ----------------------------------------------
@@ -199,7 +202,7 @@ namespace DropshippingGame.UI
             var c = UIX.Row(parent, 4f, "hud-mini");
             UIX.Icon(c, icon, 13f);
             text = UIX.Num(c, "0", true, "hud-mini-text");
-            c.tooltip = tooltip;
+            c.tooltip = Loc.Tr(tooltip);
             return c;
         }
 
@@ -244,14 +247,15 @@ namespace DropshippingGame.UI
             UIX.Show(_prompt, p != "");
             _crosshair.EnableInClassList("active", p != "");
             UIX.Show(_ring, p != "");
-            if (p != _lastPrompt)
+            if (p != _lastPrompt || _promptLang != Loc.Language)
             {
                 _lastPrompt = p;
-                _promptText.text = p;
+                _promptLang = Loc.Language;
+                _promptText.text = Loc.Show(p);
                 string title = "";
                 try
                 {
-                    if (player != null && player.Focus != null) title = (player.Focus.Title ?? "").ToUpperInvariant();
+                    if (player != null && player.Focus != null) title = Loc.Tr(player.Focus.Title ?? "").ToUpperInvariant();
                 }
                 catch (Exception)
                 {
@@ -603,8 +607,8 @@ namespace DropshippingGame.UI
             bar.AddToClassList("ticket-bar");
             var time = UIX.Num(body, v.TimeText, false, "ticket-time");
             time.style.color = TicketToneColor(tone);
-            t.tooltip = v.Number + " · " + v.Product.Name + " · " + v.Customer + " · " + Fmt.Money(v.Price) +
-                        " · nächster Schritt: " + Sim.OrderNextStep(o) + " (" + Sim.OrderNextPlace(o) + ")";
+            t.tooltip = Loc.Tr(v.Number + " · " + v.Product.Name + " · " + v.Customer + " · " + Fmt.Money(v.Price) +
+                        " · nächster Schritt: " + Sim.OrderNextStep(o) + " (" + Sim.OrderNextPlace(o) + ")");
             return new TicketUi { Order = o, Root = t, Bar = bar, Time = time, Tone = tone };
         }
 

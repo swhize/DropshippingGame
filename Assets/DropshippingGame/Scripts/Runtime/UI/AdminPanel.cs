@@ -184,6 +184,7 @@ namespace DropshippingGame.UI
                 SessionLog.Flush();
                 if (!string.IsNullOrEmpty(SessionLog.Folder)) Application.OpenURL("file:///" + SessionLog.Folder.Replace('\\', '/'));
             }));
+            _body.Add(Btn("Fehlende Übersetzungen speichern (" + Loc.MissingCount + ", nur bei Englisch gesammelt)", () => Do(() => Loc.SaveMissing())));
 
             _body.Add(Section("Geld"));
             var money = Row();
@@ -481,7 +482,8 @@ namespace DropshippingGame.UI
 
         private static Label Section(string text)
         {
-            var l = new Label(text.ToUpperInvariant());
+            var l = new Label(Loc.Tr(text).ToUpperInvariant());
+            l.AddToClassList(LocSweeper.SkipClass); // erst übersetzen, dann Großschrift
             l.style.color = Accent;
             l.style.fontSize = 15;
             l.style.unityFontStyleAndWeight = FontStyle.Bold;

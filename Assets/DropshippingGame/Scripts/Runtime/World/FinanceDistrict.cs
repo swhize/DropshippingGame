@@ -216,6 +216,7 @@ namespace DropshippingGame
             // Laufband außen über der Tür
             Props.Box(_static, new Vector3(9f, 0.5f, 0.1f), Mats.Std(new Color(0.03f, 0.03f, 0.04f), 0.4f), new Vector3(96f, 4.2f, ExZ0 - 0.2f));
             _tickerOut = Label3D.Create(_root, "", 55f, new Color(0.4f, 1f, 0.5f), new Vector3(96f, 4.2f, ExZ0 - 0.27f), false, 0f, false, 2.5f);
+            _tickerOut.Verbatim = true; // Laufband: Text ist schon übersetzt (Loc.Tr) und wird zerschnitten
             _tickerOut.transform.localRotation = Quaternion.identity;
             // Innenlicht
             for (int i = 0; i < 3; i++)
@@ -243,6 +244,7 @@ namespace DropshippingGame
             // Laufband innen über der Wand
             Props.Box(wallNode, new Vector3(20f, 0.5f, 0.1f), Mats.Std(new Color(0.03f, 0.03f, 0.04f), 0.4f), new Vector3(0, 1.75f, 0.02f));
             _ticker = Label3D.Create(wallNode, "", 60f, new Color(0.4f, 1f, 0.5f), new Vector3(0, 1.75f, 0.09f), false, 0f, false, 2.5f);
+            _ticker.Verbatim = true;
             // Händlertische (Parkett)
             var desk = Mats.Std(new Color(0.3f, 0.3f, 0.34f), 0.5f);
             foreach (var pos in new[] { new Vector3(90f, 0, 28f), new Vector3(102f, 0, 28f), new Vector3(90f, 0, 21f), new Vector3(102f, 0, 21f) })
@@ -362,7 +364,7 @@ namespace DropshippingGame
                 float c = m.ChangePct(a.Id);
                 sb.Append(a.Id).Append(' ').Append(Price(m.Prices[a.Id])).Append(c >= 0 ? " +" : " -").Append(Fmt.Dec(Mathf.Abs(c * 100f), 1)).Append("%   ");
             }
-            if (m.News.Count > 0) sb.Append("+++ ").Append(m.News[0].Text).Append(" +++   ");
+            if (m.News.Count > 0) sb.Append("+++ ").Append(Loc.Tr(m.News[0].Text)).Append(" +++   ");
             _tickText = sb.ToString();
         }
 

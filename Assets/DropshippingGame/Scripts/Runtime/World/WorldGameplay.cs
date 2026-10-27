@@ -33,6 +33,7 @@ namespace DropshippingGame
             for (int i = 0; i < MaxLines; i++)
             {
                 var l = Label3D.Create(_content, "", size, Color.white, new Vector3(0, h / 2f - lineH * (1.95f + i), 0), false, 0f, false, 1.4f);
+                l.Verbatim = true; // Zeilen werden vor dem Kürzen übersetzt (Loc.Tr), siehe RedrawInner
                 _lines.Add(l);
             }
             _sim = Game.Sim;
@@ -83,9 +84,9 @@ namespace DropshippingGame
             for (int i = 0; i < shown; i++)
             {
                 var o = tickets[i];
-                string pname = GameData.IsProduct(o.Product) ? GameData.Product(o.Product).Short : o.Product;
-                string stage = _stage == 0 ? "" : StageShort(o.Stage);
-                string line = o.Number + (o.Express ? " EXPRESS " : " ") + pname + " · " + sim.OrderTimeLeftText(o) + (stage != "" ? " · " + stage : "");
+                string pname = Loc.Tr(GameData.IsProduct(o.Product) ? GameData.Product(o.Product).Short : o.Product);
+                string stage = _stage == 0 ? "" : Loc.Tr(StageShort(o.Stage));
+                string line = o.Number + (o.Express ? " EXPRESS " : " ") + pname + " · " + Loc.Tr(sim.OrderTimeLeftText(o)) + (stage != "" ? " · " + stage : "");
                 int maxChars = _stage == 0 ? 34 : 46;
                 texts[i] = line.Length > maxChars ? line.Substring(0, maxChars - 3) + "..." : line;
                 float u = sim.OrderUrgency(o);
@@ -93,12 +94,12 @@ namespace DropshippingGame
             }
             if (more)
             {
-                texts[MaxLines - 1] = "+ " + (tickets.Count - shown) + " weitere";
+                texts[MaxLines - 1] = Loc.Tr("+ " + (tickets.Count - shown) + " weitere");
                 cols[MaxLines - 1] = new Color(0.7f, 0.75f, 0.85f);
             }
             if (tickets.Count == 0)
             {
-                texts[0] = "Keine offenen Bestellungen";
+                texts[0] = Loc.Tr("Keine offenen Bestellungen");
                 cols[0] = new Color(0.6f, 0.7f, 0.8f);
             }
             for (int i = 0; i < MaxLines; i++) sb.Append('|').Append(texts[i]);

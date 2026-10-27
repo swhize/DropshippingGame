@@ -290,7 +290,7 @@ namespace DropshippingGame.UI
                 Settings.SetLanguage(Settings.LanguageCodes[i]);
                 Rebuild(false);
             }));
-            if (Settings.Language != "de") Note(l, "English translation is coming with a future update – texts stay German until then.");
+            if (Game.Sim != null) Note(l, "Einzelne Texte, die gerade offen sind, wechseln die Sprache erst beim nächsten Öffnen – ganz sicher nach einer Rückkehr ins Hauptmenü.");
 
             var h = Section(p, "ANZEIGE IM SPIEL", "screen");
             UIX.Toggle(h, "Kompass mit wichtigen Orten (oben)", Settings.ShowCompass, on => { Settings.ShowCompass = on; Settings.Apply(); });

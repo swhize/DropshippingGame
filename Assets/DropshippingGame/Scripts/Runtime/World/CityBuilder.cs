@@ -572,8 +572,8 @@ namespace DropshippingGame
                 for (int i = 0; i < stripes; i++)
                     Props.Box(t, new Vector3(sw + 0.005f, 0.08f, 1.3f), i % 2 == 0 ? a : b, new Vector3(-w * 0.5f + (i + 0.5f) * sw, 3.05f, 0.6f), new Vector3(-12f, 0, 0), 0f);
             // Schild (nicht statisch: Text)
-            var sign = Props.SignBoard(_signs, name.ToUpperInvariant(), sc, sc.r + sc.g * 1.4f + sc.b * 0.4f > 1.4f ? new Color(0.1f, 0.1f, 0.12f) : Color.white,
-                new Vector2(Mathf.Min(w - 1f, 0.5f + name.Length * 0.32f), 0.62f));
+            var sign = Label3D.MakeUpper(Props.SignBoard(_signs, name, sc, sc.r + sc.g * 1.4f + sc.b * 0.4f > 1.4f ? new Color(0.1f, 0.1f, 0.12f) : Color.white,
+                new Vector2(Mathf.Min(w - 1f, 0.5f + name.Length * 0.32f), 0.62f))); // Großschrift nach der Übersetzung
             sign.transform.position = t.TransformPoint(new Vector3(0, 3.75f, 0.12f));
             sign.transform.rotation = t.rotation;
             // Nachts hinterleuchtet (Art Direction: Läden sind die Lichtinseln der Straße)

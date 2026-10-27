@@ -559,7 +559,7 @@ namespace DropshippingGame
             if (!locked)
             {
                 string hint = FurnitureMover.HintFor(Cam);
-                if (!string.IsNullOrEmpty(hint)) text = string.IsNullOrEmpty(text) ? hint : text + "  ·  " + hint;
+                if (!string.IsNullOrEmpty(hint)) text = string.IsNullOrEmpty(text) ? hint : text + "  ·  " + (text[0] == Loc.PreMark ? Loc.Tr(hint) : hint); // schon übersetzt (Loc.Pre): Zusatz auch
             }
             PromptText = text;
         }

@@ -839,7 +839,7 @@ namespace DropshippingGame.UI
                 var captured = sum;
                 var actions = UIX.Row(card, 6f);
                 UIX.Button(actions, "Laden", () => OnLoad?.Invoke(slot), "accent", false, "play");
-                UIX.Button(actions, "", () => ConfirmDelete(slot, captured), "danger", false, "close").tooltip = "Löschen";
+                UIX.Button(actions, "", () => ConfirmDelete(slot, captured), "danger", false, "close").tooltip = Loc.Tr("Löschen");
             }
             MenuButton("Zurück", ShowMain, "ghost", null, "arrow_left");
         }

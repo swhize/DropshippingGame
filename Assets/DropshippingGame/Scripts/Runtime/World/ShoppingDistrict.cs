@@ -217,7 +217,7 @@ namespace DropshippingGame
             GlassFront(x0, x1, z1 - 0.15f, 3.2f, h, red, -80f, -77f, 3.0f);
             Roof(r, h);
             FloorOf(r, Mats.Tiles(0.6f));
-            Label3D.Create(transform, ShopData.ElectroName.ToUpperInvariant(), 300f, Color.white, new Vector3(-78.5f, 4.9f, z1 + 0.05f), false, 0f, false, 3f);
+            Label3D.Create(transform, ShopData.ElectroName, 300f, Color.white, new Vector3(-78.5f, 4.9f, z1 + 0.05f), false, 0f, false, 3f).MakeUpper();
             Label3D.Create(transform, ShopData.ElectroSlogan, 90f, new Color(1f, 0.9f, 0.3f), new Vector3(-78.5f, 3.75f, z1 + 0.05f), false, 0f, false, 2f);
             _megaFacade = Label3D.Create(transform, "", 70f, Color.white, new Vector3(-88f, 3.75f, z1 + 0.05f), false, 0f, false, 2f);
             Props.PointLight(transform, new Vector3(-78.5f, 5.2f, z1 + 1.5f), new Color(1f, 0.4f, 0.35f), 3f, 9f);
@@ -417,7 +417,7 @@ namespace DropshippingGame
             GlassFront(x0, x1, z1 - 0.15f, 2.8f, h, green, -108.5f, -106.5f, 2.6f);
             Roof(r, h);
             FloorOf(r, Mats.WoodFloor(new Color(0.65f, 0.5f, 0.35f)));
-            Label3D.Create(transform, ShopData.PetShopName.ToUpperInvariant(), 220f, FnOrange, new Vector3(-107f, 3.75f, z1 + 0.05f), false, 0f, false, 3f);
+            Label3D.Create(transform, ShopData.PetShopName, 220f, FnOrange, new Vector3(-107f, 3.75f, z1 + 0.05f), false, 0f, false, 3f).MakeUpper();
             Label3D.Create(transform, ShopData.PetShopSlogan, 60f, Color.white, new Vector3(-107f, 3.05f, z1 + 0.05f), false, 0f, false, 1.6f);
             Props.PointLight(transform, new Vector3(-107f, 4.2f, z1 + 1.4f), new Color(1f, 0.75f, 0.4f), 2.2f, 7f);
             Lamp(new Vector3(-107f, h - 0.1f, -14f), 2f, 2.6f, 11f);
@@ -493,7 +493,7 @@ namespace DropshippingGame
             Props.Box(_static, new Vector3(2.2f, 1.6f, 0.03f), paper, new Vector3(-122.4f, 1.6f, z1 + 0.02f), default, 0f, false);
             Label3D.Create(transform, "DEMNÄCHST", 60f, new Color(0.6f, 0.1f, 0.5f), new Vector3(-122.4f, 1.7f, z1 + 0.04f), false);
             Label3D.Create(transform, "(als DLC)", 40f, new Color(0.3f, 0.3f, 0.3f), new Vector3(-122.4f, 1.3f, z1 + 0.04f), false);
-            Label3D.Create(transform, ShopData.ClothesName.ToUpperInvariant(), 120f, new Color(1f, 0.85f, 0.95f), new Vector3((x0 + x1) / 2f, 3.5f, z1 + 0.05f), false, 0f, false, 2f);
+            Label3D.Create(transform, ShopData.ClothesName, 120f, new Color(1f, 0.85f, 0.95f), new Vector3((x0 + x1) / 2f, 3.5f, z1 + 0.05f), false, 0f, false, 2f).MakeUpper();
             // Tür + Brett davor
             var door = NodeAt(_dyn, "LockedDoor", new Vector3(-119.4f, 0f, z1 + 0.02f), 0f);
             Props.Box(door, new Vector3(1.2f, 2.3f, 0.08f), Mats.Std(new Color(0.25f, 0.18f, 0.12f), 0.7f), new Vector3(0f, 1.15f, 0f), default, 0.02f);
