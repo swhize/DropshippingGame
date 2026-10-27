@@ -209,7 +209,7 @@ namespace DropshippingGame.Core
             if (!Holdings.ContainsKey(id) || !Prices.ContainsKey(id)) return 0;
             float units = Holdings[id] * f;
             if (units <= 0f) return 0;
-            int value = Mathx.RoundToInt(units * Prices[id] * (1f - FeeFor(id)));
+            int value = Mathx.RoundToInt(Math.Min((double)units * Prices[id] * (1f - FeeFor(id)), Sim.AdminMoneyLimit));
             if (f >= 0.999f)
             {
                 Holdings[id] = 0f;
@@ -246,7 +246,7 @@ namespace DropshippingGame.Core
 
         public void Shock(string id, float mult)
         {
-            if (!Prices.ContainsKey(id)) return;
+            if (!Prices.ContainsKey(id) || !Sim.Finite(mult) || mult <= 0f) return;
             Prices[id] = Math.Max(Prices[id] * mult, 0.05f);
             History[id].Add(Prices[id]);
             TradingChanged?.Invoke();
@@ -285,6 +285,16 @@ namespace DropshippingGame.Core
             return result;
         }
 
+        /// <summary>
+        /// Kurs aus dem Spielstand: Untergrenze wie im laufenden Spiel (Original-Anlagen 0,05 €, Finanzviertel
+        /// <see cref="MinPrice"/>). Früher galt 0,05 € für alle – ein abgestürzter Krypto-Kurs sprang beim Laden hoch.
+        /// </summary>
+        private static float LoadPrice(float v, AssetDef a)
+        {
+            if (!Sim.Finite(v) || v <= 0f) return a.Start;
+            return Math.Max(a.Legacy ? 0.05f : MinPrice, v);
+        }
+
         public void FromJson(Dictionary<string, object> d)
         {
             if (d == null || d.Count == 0) return;
@@ -310,7 +320,7 @@ namespace DropshippingGame.Core
             var inv = J.O(d, "invested");
             foreach (var a in AllAssets)
             {
-                if (prices.ContainsKey(a.Id)) Prices[a.Id] = Math.Max(0.05f, J.F(prices[a.Id], a.Start));
+                if (prices.ContainsKey(a.Id)) Prices[a.Id] = LoadPrice(J.F(prices[a.Id], a.Start), a);
                 if (hist.TryGetValue(a.Id, out object ho) && ho is List<object> hl && hl.Count > 0)
                 {
                     var h = new List<float>();

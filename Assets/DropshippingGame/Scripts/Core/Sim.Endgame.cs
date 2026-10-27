@@ -276,9 +276,13 @@ namespace DropshippingGame.Core
         /// <summary>Endlos-Ziele prüfen (aus CheckGoals, wenn alle festen Ziele erledigt sind).</summary>
         private void CheckEndlessGoals()
         {
-            if (StoryStage != "business" || NextGoal() != null) return;
+            // Endlos-Ziele folgen auf das letzte feste Umsatzziel (Börsengang). Optionale feste Ziele
+            // (Verkaufsstand, Außenlager, Team …) blockieren sie nicht – sonst bliebe der Endlos-Modus stumm.
+            if (StoryStage != "business" || !FixedRevenueGoalsDone()) return;
             for (int guard = 0; guard < 4; guard++)
             {
+                // Ab hier wäre das Ziel größer als int (Umsatz ist int) – keine weiteren Stufen.
+                if (((long)GameData.EndlessFirstTarget << Math.Min(30, EndlessTier)) > int.MaxValue) return;
                 var g = EndlessGoal();
                 if (GoalValue(g) < g.Target) return;
                 EndlessTier++;
@@ -289,6 +293,14 @@ namespace DropshippingGame.Core
                 Sound("levelup", 0f, -3f);
                 ObjectiveChanged?.Invoke();
             }
+        }
+
+        /// <summary>Alle festen Umsatzziele (bis zum Börsengang) erreicht?</summary>
+        public bool FixedRevenueGoalsDone()
+        {
+            foreach (var g in GameData.Goals)
+                if (g.Type == "revenue" && !GoalsDone.Contains(g.Id)) return false;
+            return true;
         }
 
         /// <summary>Wert für zusätzliche Zieltypen (aus GoalValue).</summary>

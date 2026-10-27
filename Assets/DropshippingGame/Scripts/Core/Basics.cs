@@ -86,12 +86,22 @@ namespace DropshippingGame.Core
 
     public static class Mathx
     {
-        public static float Clamp(float v, float lo, float hi) => v < lo ? lo : (v > hi ? hi : v);
+        /// <summary>Begrenzt v auf [lo, hi]. NaN wird zu lo (nie NaN in den Spielzustand durchreichen).</summary>
+        public static float Clamp(float v, float lo, float hi) => v < lo || float.IsNaN(v) ? lo : (v > hi ? hi : v);
         public static int Clamp(int v, int lo, int hi) => v < lo ? lo : (v > hi ? hi : v);
         public static float Clamp01(float v) => Clamp(v, 0f, 1f);
         public static float Lerp(float a, float b, float t) => a + (b - a) * t;
-        public static int RoundToInt(float v) => (int)Math.Round(v, MidpointRounding.AwayFromZero);
-        public static int RoundToInt(double v) => (int)Math.Round(v, MidpointRounding.AwayFromZero);
+        public static int RoundToInt(float v) => RoundToInt((double)v);
+
+        /// <summary>Rundet kaufmännisch. Außerhalb von int wird begrenzt, NaN wird 0 (kein undefinierter Cast).</summary>
+        public static int RoundToInt(double v)
+        {
+            if (double.IsNaN(v)) return 0;
+            double r = Math.Round(v, MidpointRounding.AwayFromZero);
+            if (r >= int.MaxValue) return int.MaxValue;
+            if (r <= int.MinValue) return int.MinValue;
+            return (int)r;
+        }
     }
 
     /// <summary>Zufallszahlen (seedbar für Tests).</summary>

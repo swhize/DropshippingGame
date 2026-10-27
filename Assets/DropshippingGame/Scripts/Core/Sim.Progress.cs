@@ -500,7 +500,7 @@ namespace DropshippingGame.Core
         public void AddDefectBatch(string pid, int units)
         {
             if (!GameData.IsProduct(pid) || units <= 0) return;
-            DefectUnits[pid] = DefectsOf(pid) + units;
+            DefectUnits[pid] = (int)Math.Min(1000000L, (long)DefectsOf(pid) + units);
             string name = GameData.Product(pid).Name;
             Notify("Qualitätsalarm: " + units + "× " + name + " aus der letzten Lieferung sind defekt! Rückruf im Laptop (Firma › Logistik) – sonst drohen Retouren.", "bad");
             Events.AddMail("Qualitätskontrolle", "Fehlerhafte Charge: " + name,
@@ -752,6 +752,8 @@ namespace DropshippingGame.Core
         /// <summary>Großhändler-Anfrage für deine Markenware (größer und besser bezahlt als normale Aufträge).</summary>
         public Contract GenerateWholesaleOffer(string company = "", string product = "", float payBonus = 1f)
         {
+            if (!Finite(payBonus) || payBonus <= 0f) payBonus = 1f;
+            payBonus = Math.Min(payBonus, 5f);
             var pool = WholesaleProducts();
             if (pool.Count == 0) return null;
             string pid = !string.IsNullOrEmpty(product) && pool.Contains(product) ? product : pool[Rng.Index(pool.Count)];

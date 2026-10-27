@@ -113,6 +113,10 @@ namespace DropshippingGame.Core
                 {
                     string id = Schedule[i].Id;
                     Schedule.RemoveAt(i);
+                    // Morgens eingeplant – die Lage kann sich geändert haben (Lieferung schon da, Lager leer,
+                    // Auftrag erledigt). Dann fällt das Ereignis aus, statt mit fehlenden Daten zu feuern.
+                    var ev = EventData.Find(id);
+                    if (ev == null || !Eligible(ev)) continue;
                     Trigger(id);
                 }
             }
@@ -290,6 +294,11 @@ namespace DropshippingGame.Core
                 MinigameRequested?.Invoke(m, choice.Minigame);
                 return "";
             }
+            // Erst abschließen, dann wirken: eine Wirkung kann den Feierabend auslösen (Zeitsprung), und
+            // ResolvePendingChoices darf diese Mail dann nicht ein zweites Mal (mit der Standardwahl) entscheiden.
+            m.Pending = false;
+            m.Read = true;
+            m.Chosen = choice.Label;
             if (choice.Cost > 0) _sim.AdjustMoney(-choice.Cost, "other");
             var outcomes = choice.Outcomes;
             var probs = Probabilities(outcomes);
@@ -320,6 +329,7 @@ namespace DropshippingGame.Core
         {
             var m = Find(mailId);
             if (m == null || !m.Pending) return "";
+            m.Pending = false;
             var lines = new List<string> { text };
             lines.AddRange(Apply(effects, m));
             m.Pending = false;

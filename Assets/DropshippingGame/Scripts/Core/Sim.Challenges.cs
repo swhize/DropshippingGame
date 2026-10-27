@@ -331,7 +331,7 @@ namespace DropshippingGame.Core
         {
             var c = new WeeklyChallenge
             {
-                Id = "bonus_" + type + "_" + Day + "_" + Challenges.Count, Type = type, Target = Math.Max(1f, target), Reward = reward, Xp = xp,
+                Id = "bonus_" + type + "_" + Day + "_" + Challenges.Count, Type = type, Target = Finite(target) ? Math.Max(1f, target) : 1f, Reward = Math.Max(0, reward), Xp = xp,
                 Week = Week, Bonus = true, Sponsor = sponsor ?? "", Title = title, Desc = desc, Icon = icon, Product = product ?? "",
             };
             Challenges.Add(c);

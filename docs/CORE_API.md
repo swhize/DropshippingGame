@@ -778,3 +778,28 @@ Besucher; Autos pausieren über `StreetFestival.BlocksTraffic`). Gespeichert unt
   `MamaDebt`, automatische Rückzahlung, Notiz in der Tagesabrechnung, Mail).
 * **Balance-Regeln:** `StaffMax(role)` (zweite Kraft je Rolle ab Level 10), `PricePremium/PriceStarPenalty`
   (Wucher), `DemandRateNoPrice/DemandPriceFactor`, `CompressedDemand`, `FestivalPriceAppeal(price)`.
+
+## 17. Robustheit & Chaos-Test (Sim.Robustness.cs, Tests/EditMode/ChaosTests.cs)
+
+* **Chaos-Test:** `ChaosTests.Chaos_Short` (Standard, 6 Seeds × 30 Tage) und `Chaos_Long`
+  (`[Explicit]`, Kategorie `ChaosLong`, 40 Seeds × 30–60 Tage; andere Seeds über die Umgebungsvariablen
+  `CHAOS_SEED_START` / `CHAOS_SEED_COUNT`): zufällige gültige und ungültige Aufrufe der ganzen öffentlichen API,
+  Speichern→Laden mitten im Geschehen, nach jedem Schritt Invarianten (keine Ausnahme, keine NaN/∞, kein
+  negatives Lager, Bewertung 0,5–5, eindeutige Bestellnummern, jeder angefangene Zettel hat einen Gegenstand,
+  Auftrag geliefert ≤ Menge, Level/XP/Uhr monoton, Erfolge/Ziele nur einmal, keine offenen Platzhalter in
+  Toasts/Mails, Pleite-Abrechnung ⇔ `GameOver`, Speichern→Laden→Speichern liefert identisches JSON).
+  Aufruf: `dotnet test tools/compilecheck/Tests.csproj --filter TestCategory=ChaosLong`.
+* **Erlaubte Unterschiede beim Speichern→Laden:** nur `saved_unix`; wird NACH Feierabend gespeichert (vor
+  `StartNextDay`), lädt der Stand eine Minute vor 20 Uhr und rechnet den Tag erneut ab (`time_minutes`).
+* **Garantien der API (neu):** ungültige Indizes (`BuyBulk`, `BuyPackaging`, `StartAdCampaign`, `LoanAvailable` …)
+  und unbekannte IDs (`SetListed`, `SetShopPrice`, `PickItem`, `Hire`, `UpgradeState` → `"unknown"`) ändern nichts
+  und werfen nicht; `null`-Gegenstände werden ignoriert (`ShipPackage` → 0, `ConveyorInsert` → false …);
+  NaN/∞ werden abgefangen (`Mathx.Clamp` macht aus NaN die Untergrenze, `Mathx.RoundToInt` begrenzt auf int).
+  Geld bleibt in ±`Sim.MoneyLimit` (2 Mrd.) über `AdjustMoney`, Admin-Geld in ±`Sim.AdminMoneyLimit`,
+  XP bis `Sim.MaxXp`, Werbebudget bis `Sim.MaxAdBudget`.
+* **Zeit:** `AdvanceMinutes` rechnet nie über 20:00 hinaus (große Zeitschritte/Zeitsprünge landen nicht mehr im
+  nächsten Morgen der Geschäftsuhr). Morgens eingeplante Ereignisse fallen aus, wenn ihre Voraussetzung beim
+  Auslösen nicht mehr gilt (`EventSystem.Eligible`).
+* **Endlos-Modus:** Die Endlos-Umsatzziele starten nach dem letzten festen Umsatzziel (`ipo`,
+  `FixedRevenueGoalsDone()`), auch wenn optionale feste Ziele (Stand, Außenlager, Team) noch offen sind;
+  `CurrentObjective()` zeigt bis dahin weiter das offene feste Ziel.
