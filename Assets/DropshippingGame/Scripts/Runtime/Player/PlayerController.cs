@@ -323,6 +323,7 @@ namespace DropshippingGame
 
         public void SetNoclip(bool on)
         {
+            if (on && !DevTools.Enabled) return;
             Noclip = on;
             if (_cc != null) _cc.enabled = !on;
             _velocity = Vector3.zero;

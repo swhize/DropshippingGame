@@ -49,7 +49,7 @@ namespace DropshippingGame.UI
 
         private void SetOpen(bool open)
         {
-            if (open && S == null) return;
+            if (open && (S == null || !DevTools.Enabled)) return;
             IsOpen = open;
             if (Panel != null) Panel.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
             if (Game.Root != null) Game.Root.Lock("admin", open);

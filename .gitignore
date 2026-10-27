@@ -8,12 +8,19 @@
 /[Uu]ser[Ss]ettings/
 /[Mm]emoryCaptures/
 /[Rr]ecordings/
+/[Ee]xported[Oo]bj/
+*.tmp
+
+# Build-Infos (schreibt BuildTools nur während eines Builds)
+/Assets/DropshippingGame/Resources/build_info.txt
+/Assets/DropshippingGame/Resources/build_info.txt.meta
 
 # IDE / Projektdateien
 .vs/
 .vscode/
 .idea/
 *.csproj
+!/tools/compilecheck/Tests.csproj
 *.sln
 *.suo
 *.user

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -26,6 +27,9 @@ namespace DropshippingGame.EditorTools
         private const string ScenePath = "Assets/Scenes/Game.unity";
         private const string DoneKey = "DropshippingGame.SetupVersion";
         private const int SetupVersion = 1;
+        /// <summary>Erhöhen, wenn sich <see cref="ApplyPlayerSettings"/> ändert – wird dann einmal still nachgezogen.</summary>
+        private const int PlayerSettingsVersion = 2;
+        private const string PlayerKey = "DropshippingGame.PlayerSettingsVersion";
 
         static ProjectSetup()
         {
@@ -49,6 +53,7 @@ namespace DropshippingGame.EditorTools
                     "Tipp: Für Vollbild im Spiel-Fenster oben rechts \"Maximize On Play\" aktivieren.", "Los geht's");
                 return;
             }
+            if (EditorPrefs.GetInt(PlayerKey + "." + Application.dataPath, 0) < PlayerSettingsVersion) ApplyPlayerSettings();
             // Leere, unbenannte Szene offen? Dann direkt die Spielszene öffnen.
             var active = SceneManager.GetActiveScene();
             if (string.IsNullOrEmpty(active.path) && !active.isDirty && File.Exists(ScenePath))
@@ -104,7 +109,7 @@ namespace DropshippingGame.EditorTools
                 SetupMaterials();
 
                 EditorUtility.DisplayProgressBar("Dropshipping Simulator", "Player-Einstellungen …", 0.6f);
-                SetupPlayer();
+                ApplyPlayerSettings();
 
                 EditorUtility.DisplayProgressBar("Dropshipping Simulator", "Spielszene anlegen …", 0.8f);
                 SetupScene();
@@ -319,16 +324,88 @@ namespace DropshippingGame.EditorTools
         }
 
         // ---- Player -------------------------------------------------------------------------------------
-        private static void SetupPlayer()
+        /// <summary>
+        /// Player-Einstellungen für den Release (Steam, Windows zuerst): Name, Icon, Splash, Auflösung, Backend,
+        /// Eingabe, Logs. Wird von „Projekt einrichten“ und vor jedem Build (BuildTools) ausgeführt.
+        /// Firmen- und Produktname bestimmen den Spielstand-Ordner – nicht ändern, sonst sind alte Spielstände „weg“.
+        /// </summary>
+        public static void ApplyPlayerSettings()
         {
-            PlayerSettings.companyName = "Hustle Games";
-            PlayerSettings.productName = "Dropshipping Simulator";
-            if (PlayerSettings.colorSpace != ColorSpace.Linear) PlayerSettings.colorSpace = ColorSpace.Linear;
-            PlayerSettings.runInBackground = true;
-            PlayerSettings.defaultScreenWidth = 1600;
-            PlayerSettings.defaultScreenHeight = 900;
-            PlayerSettings.fullScreenMode = FullScreenMode.Windowed;
-            PlayerSettings.resizableWindow = true;
+            var std = NamedBuildTarget.Standalone;
+            try
+            {
+                PlayerSettings.companyName = BuildTools.CompanyName;
+                PlayerSettings.productName = BuildTools.ProductName;
+                string version = BuildTools.ReadVersion();
+                if (!PlayerSettings.bundleVersion.StartsWith(version, StringComparison.Ordinal)) PlayerSettings.bundleVersion = version;
+                if (PlayerSettings.colorSpace != ColorSpace.Linear) PlayerSettings.colorSpace = ColorSpace.Linear;
+
+                // Fenster: Vollbild (randloses Fenster) in nativer Auflösung; das Spiel selbst merkt sich die Wahl in den Einstellungen.
+                PlayerSettings.runInBackground = false;
+                PlayerSettings.fullScreenMode = FullScreenMode.FullScreenWindow;
+                PlayerSettings.defaultIsNativeResolution = true;
+                PlayerSettings.defaultScreenWidth = 1920;
+                PlayerSettings.defaultScreenHeight = 1080;
+                PlayerSettings.resizableWindow = true;
+                PlayerSettings.allowFullscreenSwitch = true;
+                PlayerSettings.forceSingleInstance = true;   // zwei Instanzen würden sich die Spielstände überschreiben
+                PlayerSettings.usePlayerLog = true;          // Player.log für Fehlerberichte (Pausemenü › Feedback)
+                PlayerSettings.macRetinaSupport = true;
+
+                // Code: IL2CPP x64 (Release), .NET Standard 2.1, minimale Code-Entfernung (Reflection in MarketingKit bleibt heil)
+                PlayerSettings.SetScriptingBackend(std, ScriptingImplementation.IL2CPP);
+                PlayerSettings.SetIl2CppCompilerConfiguration(std, Il2CppCompilerConfiguration.Release);
+                PlayerSettings.SetApiCompatibilityLevel(std, ApiCompatibilityLevel.NET_Standard);
+                PlayerSettings.SetManagedStrippingLevel(std, ManagedStrippingLevel.Minimal);
+                PlayerSettings.gcIncremental = true;
+
+                // Logs: Fehler mit Stacktrace (für Bugreports), normale Logs ohne (spart Zeit)
+                PlayerSettings.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+                PlayerSettings.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+                PlayerSettings.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
+                PlayerSettings.SetStackTraceLogType(LogType.Assert, StackTraceLogType.ScriptOnly);
+                PlayerSettings.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
+
+                // Scripting-Defines: DS_DEV/DS_DEMO gehören nie in die Projekt-Defines (nur pro Build über BuildTools)
+                string defs = PlayerSettings.GetScriptingDefineSymbols(std);
+                if (defs.Contains(BuildTools.DefineDev) || defs.Contains(BuildTools.DefineDemo))
+                {
+                    var keep = new System.Collections.Generic.List<string>();
+                    foreach (var d in defs.Split(';'))
+                        if (d.Length > 0 && d != BuildTools.DefineDev && d != BuildTools.DefineDemo) keep.Add(d);
+                    PlayerSettings.SetScriptingDefineSymbols(std, string.Join(";", keep));
+                    Debug.Log("[Dropshipping] DS_DEV/DS_DEMO aus den Projekt-Defines entfernt (werden pro Build gesetzt).");
+                }
+
+                SetupInputHandling();
+                Branding.Apply();
+                EditorPrefs.SetInt(PlayerKey + "." + Application.dataPath, PlayerSettingsVersion);
+                AssetDatabase.SaveAssets();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("[Dropshipping] Player-Einstellungen unvollständig: " + e);
+            }
+        }
+
+        /// <summary>„Active Input Handling“: neues Input System (oder beide). Wirkt erst nach einem Editor-Neustart.</summary>
+        private static void SetupInputHandling()
+        {
+            try
+            {
+                var ps = Unsupported.GetSerializedAssetInterfaceSingleton("PlayerSettings");
+                if (ps == null) return;
+                var so = new SerializedObject(ps);
+                var p = so.FindProperty("activeInputHandler");
+                if (p == null || p.intValue != 0) return; // 1 = Input System, 2 = beide: passt
+                p.intValue = 1;
+                so.ApplyModifiedPropertiesWithoutUndo();
+                Debug.LogWarning("[Dropshipping] Active Input Handling auf „Input System Package“ gestellt – bitte Unity einmal neu starten.");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("[Dropshipping] Input-Handling nicht gesetzt (optional): " + e.Message);
+            }
         }
 
         // ---- Szene ----------------------------------------------------------------------------------------

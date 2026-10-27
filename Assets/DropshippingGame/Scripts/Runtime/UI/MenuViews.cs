@@ -97,11 +97,13 @@ namespace DropshippingGame.UI
             var hp = UIX.Row(head, 6f, "help-pad");
             UIX.Icon(hp, "gamepad", 13f, Theme.Muted);
             UIX.Text(hp, "CONTROLLER");
+            int shown = 0;
             for (int i = 0; i < GameInput.HelpTable.Length; i++)
             {
                 var r = GameInput.HelpTable[i];
+                if (!DevTools.Enabled && r[0].StartsWith("Noclip", StringComparison.Ordinal)) continue; // Testfunktion
                 var row = UIX.Row(keys, 10f, "help-row");
-                if (i % 2 == 0) row.AddToClassList("alt");
+                if (shown++ % 2 == 0) row.AddToClassList("alt");
                 UIX.Text(row, r[0], "help-action");
                 var kb = UIX.Div(row, "help-kb");
                 KeyCell(kb, r[1]);
@@ -341,12 +343,14 @@ namespace DropshippingGame.UI
             UIX.Button(menu, "Weiterspielen", Close, "accent", false, "play").AddToClassList("btn-big");
             UIX.Button(menu, "Spiel speichern", Save, "", false, "save");
             UIX.Button(menu, "Einstellungen", ShowSettings, "", false, "gear");
-            UIX.Button(menu, "Admin-Panel (Test)", () =>
-            {
-                Close();
-                Game.UI?.Admin?.Open();
-            }, "", false, "bolt");
+            if (DevTools.Enabled)
+                UIX.Button(menu, "Admin-Panel (Test)", () =>
+                {
+                    Close();
+                    Game.UI?.Admin?.Open();
+                }, "", false, "bolt");
             UIX.Button(menu, "Steuerung & Hilfe", ShowHelp, "", false, "help");
+            UIX.Button(menu, "Feedback & Bug melden", ShowFeedback, "", false, "chat");
             UIX.Button(menu, "Zum Hauptmenü", () => OnMainMenu?.Invoke(), "", false, "home");
             UIX.Button(menu, "Spiel beenden", () => OnQuit?.Invoke(), "danger", false, "exit");
         }
@@ -378,6 +382,13 @@ namespace DropshippingGame.UI
             UIX.Spacer(head);
             UIX.Button(head, "Zurück", ShowMenu, "ghost", false, "arrow_left");
             HelpView.Build(col);
+        }
+
+        private void ShowFeedback()
+        {
+            _page = "feedback";
+            var sv = Page(720);
+            BugReportView.Build(UIX.Col(sv.contentContainer, 10f), ShowMenu);
         }
 
         private void Save()
@@ -418,7 +429,7 @@ namespace DropshippingGame.UI
         /// <summary>Esc im Pausemenü: aus Unterseiten zurück, sonst schließen.</summary>
         public void Back()
         {
-            if (_page == "settings" || _page == "help") ShowMenu();
+            if (_page == "settings" || _page == "help" || _page == "feedback") ShowMenu();
             else Close();
         }
     }

@@ -820,6 +820,11 @@ namespace DropshippingGame
 
         private void NextDay()
         {
+            if (DemoMode.ReachedEnd(_sim.Day))
+            {
+                DemoMode.ShowEnd(_ui.BigModal, _sim, ToMenu);
+                return;
+            }
             int next = _sim.Day + 1;
             _ui.Fader.Transition("Tag " + next, DoNextDay, 0.9f, UiFmt.Weekday(next).ToUpperInvariant());
         }

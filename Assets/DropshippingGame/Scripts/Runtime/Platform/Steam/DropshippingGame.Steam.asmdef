@@ -1,0 +1,24 @@
+{
+    "name": "DropshippingGame.Steam",
+    "rootNamespace": "DropshippingGame.Steam",
+    "references": [
+        "DropshippingGame.Runtime",
+        "com.rlabrecque.steamworks.net"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "LinuxStandalone64",
+        "macOSStandalone",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "DS_STEAM"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

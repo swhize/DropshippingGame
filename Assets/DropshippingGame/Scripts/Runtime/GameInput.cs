@@ -155,6 +155,7 @@ namespace DropshippingGame
         {
             get
             {
+                if (!DevTools.Enabled) return false; // Release-Build: kein Noclip
 #if ENABLE_INPUT_SYSTEM
                 var kb = Keyboard.current;
                 return kb != null && (kb.leftAltKey.wasPressedThisFrame || kb.rightAltKey.wasPressedThisFrame);
@@ -166,8 +167,8 @@ namespace DropshippingGame
             }
         }
 
-        /// <summary>F10, F9 oder ^ (links neben der 1): Admin-Panel (Testmodus).</summary>
-        public static bool AdminDown => Key(KeyId.F10) || Key(KeyId.F9) || Key(KeyId.Backquote);
+        /// <summary>F10, F9 oder ^ (links neben der 1): Admin-Panel (Testmodus, nur Editor/Development-Build).</summary>
+        public static bool AdminDown => DevTools.Enabled && (Key(KeyId.F10) || Key(KeyId.F9) || Key(KeyId.Backquote));
         /// <summary>Vorherige App / vorheriger Reiter (LB).</summary>
         public static bool PrevTabDown => PadDown(PadButton.LeftShoulder);
         /// <summary>Nächste App / nächster Reiter (RB).</summary>

@@ -1,86 +1,87 @@
 # Dropshipping Simulator – Vom Imbiss zum Imperium
 
-Ein First-Person-Wirtschaftsspiel in **Unity 6** (URP, UI Toolkit, C#). Du startest als Aushilfe in
-Kalles Imbiss, kündigst und baust aus deiner Garage heraus eine eigene Dropshipping-Marke auf:
-Ware einkaufen, einlagern, verpacken, etikettieren, versenden – und über den Laptop „HustleOS“
-Webshop, Marketing, Bank, Personal, Ausbau und Trading steuern.
+First-Person-Wirtschaftssimulation mit Satire: Du kellnerst in Kalles Imbiss, kündigst und baust aus der Garage
+heraus eine Dropshipping-Marke auf – Ware einkaufen, einräumen, packen, etikettieren, verschicken – und steuerst
+über Handy und den Laptop „HustleOS“ Webshop, Marketing (TikTok), Bank, Börse, Personal und Ausbau.
+Ziel: 100.000 € Umsatz – und weiter, so lange du willst.
 
-Alle Modelle, Texturen, Symbole, Sounds und die Musik werden beim Start prozedural per Code erzeugt –
-es gibt keine importierten Assets.
+Unity 6.3 (6000.3.25f1) · URP · UI Toolkit · Input System · C# 9 · Zielplattform Steam (Windows zuerst).
+Version: siehe Datei [`VERSION`](VERSION). Release-Planung: [`docs/RELEASE.md`](docs/RELEASE.md).
 
-## Spielen – Schritt für Schritt
+## Projekt öffnen
 
-1. **Unity Hub** installieren: <https://unity.com/download>
-2. Im Hub unter **Installs → Install Editor** eine **Unity 6** Version (LTS, „6000.x“) installieren.
-   Zusatzmodule sind nicht nötig.
-3. Dieses Projekt herunterladen (GitHub → Branch `claude/busy-knuth-yehyvb` → **Code → Download ZIP**)
-   und entpacken. Wichtig ist der Ordner, in dem `Assets`, `Packages` und `ProjectSettings` liegen.
-4. Im Hub: **Projects → Add → Add project from disk** und genau diesen Ordner auswählen.
-5. Projekt öffnen. Fragt der Hub nach der Version, deine installierte Unity-6-Version wählen und
-   bestätigen („Continue“ / „Change Version“).
-6. Das erste Öffnen dauert ein paar Minuten (Unity lädt Pakete).
-   - Erscheint die Frage zum **neuen Input System** („enable the new backends?“): **Yes** klicken.
-     Unity startet dann einmal neu – das ist normal.
-7. Es erscheint das Fenster **„Das Projekt ist eingerichtet!“** → oben in der Mitte auf **▶ (Play)** drücken.
+1. Unity Hub installieren, dort **Unity 6000.3.25f1** installieren (für Builds zusätzlich die Module
+   „Windows Build Support (IL2CPP)“, optional Linux/Mac).
+2. Repo klonen (Branch `claude/busy-knuth-yehyvb`) und im Hub **Add project from disk** → den Ordner mit
+   `Assets`, `Packages`, `ProjectSettings` wählen.
+3. Beim ersten Öffnen richtet sich das Projekt selbst ein (Grafik-Pipeline, Szene, Player-Einstellungen, Icon).
+   Fragt Unity nach dem **neuen Input System** → **Yes** (Neustart ist normal).
+4. **▶ Play** drücken. Hakt etwas: Menü **Dropshipping → Projekt einrichten** bzw. **→ Spiel starten**.
 
-Tipp: Im Game-Fenster oben rechts **„Maximize On Play“** einschalten, dann läuft das Spiel groß.
-
-### Falls etwas hakt
-- **Kein Fenster „eingerichtet“ oder alles lila/pink:** Menü oben **Dropshipping → Projekt einrichten**.
-- **Play startet eine leere Szene:** Menü **Dropshipping → Spiel starten**.
-- **Spielstände finden:** Menü **Dropshipping → Spielstände-Ordner öffnen**.
+Spielstände: Menü **Dropshipping → Spielstände-Ordner öffnen** (im Spiel: `%USERPROFILE%\AppData\LocalLow\Hustle Games\Dropshipping Simulator`).
 
 ## Steuerung
 
 | Aktion | Tastatur & Maus | Controller |
 |---|---|---|
 | Laufen / Umsehen | WASD / Maus | linker / rechter Stick |
-| Sprinten / Ducken / Springen | Shift / Strg (C) / Leertaste | linker Stick drücken / rechter Stick drücken / A |
-| Benutzen (auch Laptop am Schreibtisch) | E | X |
-| Ablegen | G | B |
-| **Möbel verschieben** (anvisieren) · drehen · abstellen · abbrechen | B · R / Mausrad · Linksklick / E · Esc | Steuerkreuz ↓ · LB / RB · X / A · B |
-| **Handy** (Bestellzettel, Nachrichten, Nachbestellen, Wochenziele, Status) | Tab | Y |
-| Handy-App bzw. Laptop-Reiter direkt wählen | 1–4 | – |
-| App bzw. Reiter wechseln (Handy & Laptop) | Maus | LB / RB |
-| Zurück / Schließen | Esc | B |
-| Pause | Esc | Start |
-| Hilfe | F1 | Select |
-| Screenshot | F12 | – |
+| Sprinten / Ducken / Springen | Shift / Strg (C) / Leertaste | L3 / R3 / A |
+| Benutzen (auch Laptop am Schreibtisch) / Ablegen | E / G | X / B |
+| Möbel verschieben · drehen · abstellen | B · R / Mausrad · Linksklick | Steuerkreuz ↓ · LB / RB · X |
+| Handy | Tab | Y |
+| Emote-Rad | T | Steuerkreuz ← |
+| Pause · Hilfe · Screenshot | Esc · F1 · F12 | Start · Select · – |
 
-Die Bestellzettel stehen **oben rechts** im HUD. Den vollen HustleOS-Laptop gibt es nur am Schreibtisch
-(hingehen, E / X). Menüs lassen sich komplett mit dem Controller bedienen; die UI-Größe stellst du unter
-**Pause → Einstellungen** ein.
+Nur im Editor und in Development-Builds: **F10** (oder F9 / ^) Admin-Panel, **Alt** Noclip. In Release-Builds
+sind diese Tasten ohne Funktion.
 
-## Was drin ist
+## Bauen
 
-- **Story:** Schicht in Kalles Imbiss (Teller an die richtigen Tische), Kündigung, eigene Garage
-- **Kreislauf:** Einkauf → Kiste annehmen → Regal → Webshop → Bestellung → Kommissionieren →
-  Verpacken → Label drucken → Versand
-- **Handy (Tab / Y):** Bestellzettel mit Kundschaft, Frist und Express, Nachrichten mit Entscheidungen und
-  Großauftrags-Angeboten, Schnell-Nachbestellen, Wochenziele, Status mit Engpass-Assistent
-- **HustleOS-Laptop mit Apps und Reitern:** Übersicht („Warum läuft's nicht?“), Postfach, Einkauf (Ware,
-  Verpackung), Retouren, Shop (Webshop, Marketing inkl. TikTok, Branding), Markt & Trends (Marktanalyse,
-  Trendradar), Aufträge (Angebote, Laufend, Verlauf), Finanzen (Bank, Analytics, Trading), Firma (Team,
-  Skills, Ausbau, Ziele & Wochenziele, Lifestyle)
-- **v3.0:** Bestellzettel & Express, Retouren, Trends/Hype, Großaufträge (B2B), Hustle-Skills, Wochenziele,
-  Kassenbon mit Wochentagen
-- **Zwei Laptop-Designs, jeweils hell oder dunkel:** „Hype“ (Standard) und „Frachtbrief“ – umschaltbar unter
-  **Pause → Einstellungen**. Die HTML-Entwürfe zum Vergleichen liegen in `docs/laptop-designs/`.
-- **10 Produkte**, 3 Lieferanten, 4 Bestellgrößen, Kartons S/M/L (auch ungefaltet)
-- **Verkaufsstand** vor der Garage: Passanten kaufen direkt
-- **Pitch Day als Minispiel:** drei Juroren, deine echten Kennzahlen entscheiden
-- Firmenlevel 1–10, Lagerhalle, Personal, Förderband, 20 Ereignisse, Konkurrenz, Bewertungen,
-  Ziele, Insolvenz und Endziel (100.000 € Umsatz)
-- Tageslicht-Zyklus, Straßenlaternen, NPCs, Verkehr, Bloom, Umgebungsverdeckung (SSAO)
-- **3 Spielstände**, Auto-Save alle 90 Sekunden und jeden Morgen
-- Controller-Unterstützung (Xbox/PlayStation)
+Menü **Dropshipping → Build**:
 
-## Für Entwickler
+| Eintrag | Ergebnis |
+|---|---|
+| Windows (Release) | `Builds/Windows-Release/` – für Steam, IL2CPP, ohne Entwickler-Werkzeuge |
+| Windows (Development) | Development-Build mit Admin-Panel/Noclip (Define `DS_DEV`), Mono |
+| Windows (Demo) | Demo fürs Steam Next Fest (Define `DS_DEMO`, 5 Spieltage) |
+| Linux / macOS | Mono-Builds (macOS am besten auf einem Mac bauen und signieren) |
+| Steam-Integration an/aus | setzt das Define `DS_STEAM` (braucht Steamworks.NET, siehe RELEASE.md) |
 
-- `Assets/DropshippingGame/Scripts/Core` – komplette Spiellogik in reinem C# (ohne Unity),
-  testbar mit `dotnet test` oder im Unity Test Runner (**Window → General → Test Runner → EditMode**)
-- `Assets/DropshippingGame/Scripts/Runtime` – Welt, Spieler, Stationen, Rendering, Audio, UI
-  (`GameRoot` startet alles automatisch)
-- `Assets/DropshippingGame/Scripts/Editor/ProjectSetup.cs` – automatische Einrichtung (URP, Szene)
-- `Assets/DropshippingGame/Resources` – Stylesheets (USS) und die beiden eigenen Shader
-- `docs/` – Game Design Document, Roadmap, Laptop-Design-Entwürfe
+Kommandozeile (z. B. für CI):
+
+```
+Unity.exe -batchmode -nographics -projectPath . -executeMethod DropshippingGame.EditorTools.BuildTools.BuildFromCommandLine ^
+  -dsTarget windows -dsConfig release -dsOut Builds/Steam/Windows -logFile build.log
+```
+
+Optionen: `-dsTarget windows|linux|macos`, `-dsConfig release|development|demo`, `-dsBackend il2cpp|mono`,
+`-dsBuildNumber <n>`. Die Version kommt aus `VERSION` plus Build-Nummer (Anzahl Git-Commits), z. B. `0.9.0.412`.
+Eine Zusammenfassung (Größe, größte Assets, Fehler) steht in der Konsole und in `Builds/<Ziel>-<Variante>_report.txt`.
+
+## Testen
+
+- **Unity:** Window → General → Test Runner → EditMode.
+- **Ohne Unity (Linux/CI):** `tools/compilecheck/setup.sh` (einmalig), dann
+  `tools/compilecheck/build.sh .` (muss `CORE OK`, `RUNTIME OK`, `EDITOR OK` zeigen) und
+  `dotnet test tools/compilecheck/Tests.csproj`.
+
+## Ordner
+
+```
+Assets/DropshippingGame/
+  Scripts/Core/      Spiellogik in reinem C# (ohne UnityEngine), NUnit-getestet
+  Scripts/Runtime/   Unity-Schicht: World/, Player/, Rendering/, Audio/, UI/ (Laptop, Handy, HUD), Platform/ (Steam)
+  Scripts/Editor/    Projekt-Einrichtung, Build-Werkzeuge, Branding, Import-Regeln
+  Resources/         Modelle, Texturen, Audio, Schriften, USS, Shader, credits.json
+  Branding/          App-Icon und Splash-Logo (erzeugt mit tools/branding/make_branding.py)
+  ThirdParty/        Lizenztexte der Fremd-Assets
+  Tests/EditMode/    NUnit-Tests der Spiellogik
+docs/                GDD, Roadmap, Release-Checkliste, Asset- und API-Doku, Agenten-Regeln
+tools/               Compile-Check ohne Unity, Branding-Generator
+```
+
+## Rechte
+
+Spielcode, Texte und eigene Grafiken: © Hustle Games, alle Rechte vorbehalten. Fremd-Assets (CC0, CC BY 3.0,
+SIL OFL 1.1) mit Quellen und Lizenzen: [`CREDITS.md`](CREDITS.md) und im Spiel unter **Credits**.
+Das Spiel sammelt keine Telemetrie und sendet keine Daten.

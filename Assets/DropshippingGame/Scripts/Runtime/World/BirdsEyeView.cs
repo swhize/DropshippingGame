@@ -42,6 +42,7 @@ namespace DropshippingGame
 
         public static void Toggle()
         {
+            if (!DevTools.Enabled && !Active) return;
             var v = Ensure();
             v.SetActive(!Active);
         }

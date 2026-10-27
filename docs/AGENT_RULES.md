@@ -8,6 +8,7 @@
   - einmalig `tools/compilecheck/setup.sh`
   - `tools/compilecheck/build.sh <repo-pfad>` → muss `CORE OK`, `RUNTIME OK`, `EDITOR OK` zeigen
   - `dotnet test tools/compilecheck/Tests.csproj` → alle Tests grün
+- Release: Entwickler-Funktionen (Tasten, Admin-Knöpfe, Debug-Overlays) immer hinter `DevTools.Enabled` (nur Editor/Development/`DS_DEV`); Erfolge über `Platform.UnlockAchievement(id)`; Builds über Menü Dropshipping › Build (`Editor/BuildTools.cs`), Checkliste `docs/RELEASE.md`.
 - Parallelarbeit: neue Features in NEUEN Dateien, in gemeinsamen Dateien (WorldBuilder, Sim, Sim.Save, GameData, LaptopView, PhoneView, GameRoot, GameInput, AdminPanel) nur kleine Hooks, nie umformatieren.
 - Commits: deutsche Nachricht, endet mit
   `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` und `Claude-Session: https://claude.ai/code/session_012JKQQ9oUzF3akk9boUr5S8`. Nicht pushen, wenn man als Sub-Agent arbeitet (der Haupt-Agent führt zusammen).
