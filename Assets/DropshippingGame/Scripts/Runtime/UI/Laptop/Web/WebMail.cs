@@ -15,7 +15,7 @@ namespace DropshippingGame.UI
         public override string AppId => "mail";
         public override string SkinClass => "iw";
         public override WebSkin Skin => WebSkin.Comic;
-        protected override string Domain => "iwolke.de/mail";
+        protected override string Domain => Lang.Pick("iwolke.de/mail", "icloudy.com/mail");
 
         private static int _selected = -1;
 
@@ -80,7 +80,7 @@ namespace DropshippingGame.UI
                 Flex(B(top, m.Sender ?? "", "iw-from"));
                 T(top, "Tag " + m.Day, "iw-time");
                 B(item, (m.Pending ? "[!] " : "") + (m.Title ?? ""), "iw-subject");
-                T(item, Preview(m.Text), "iw-preview");
+                T(item, Preview(Lang.T(m.Text)), "iw-preview"); // erst übersetzen, dann kürzen
                 UIX.PassThrough(item);
             }
             if (shown == 0)
@@ -121,7 +121,7 @@ namespace DropshippingGame.UI
                     var c = mail.Choices[i];
                     int ci = i;
                     int mailId = mail.Id;
-                    string txt = c.Label + (c.Cost > 0 ? " · " + Fmt.Money(c.Cost) : "") + (!string.IsNullOrEmpty(c.Minigame) ? " · Minispiel" : "");
+                    string txt = Lang.T(c.Label) + (c.Cost > 0 ? " · " + Fmt.Money(c.Cost) : "") + (!string.IsNullOrEmpty(c.Minigame) ? " · Minispiel" : "");
                     BtnIf(actions, c.Cost <= s.Money, txt, () =>
                     {
                         S.Events.Choose(mailId, ci);

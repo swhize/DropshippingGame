@@ -16,7 +16,7 @@ namespace DropshippingGame.UI
         public override string AppId => "shop";
         public override string SkinClass => "sf";
         public override WebSkin Skin => WebSkin.Round;
-        protected override string Domain => W.Slug(S != null ? S.BrandName : "") + ".shopifly.de";
+        protected override string Domain => W.Slug(S != null ? S.BrandName : "") + Lang.Pick(".shopifly.de", ".shopifly.com");
 
         public override string Url
         {
@@ -430,7 +430,7 @@ namespace DropshippingGame.UI
             if (_tab == 0)
             {
                 T(body, "Das Original von " + s.BrandName + ". Handverlesen aus dem Lager, liebevoll verpackt in einem Karton mit unserem Logo. " +
-                        fl.Desc.Split('.')[0] + ".", "pp-text");
+                        Lang.T(fl.Desc).Split('.')[0] + ".", "pp-text");
                 T(body, "Versand am selben Tag, wenn der Chef nicht gerade TikToks dreht.", "sf-muted");
             }
             else if (_tab == 1) WebAllesExpress.ReviewsBlock(body, rating, count, reviews, "", W.Hex("#4C6FFF"), WebSkin.Round, true);

@@ -15,7 +15,7 @@ namespace DropshippingGame.UI
         public override string AppId => "stadtblatt";
         public override string SkinClass => "sb";
         public override WebSkin Skin => WebSkin.Comic;
-        protected override string Domain => "stadtblatt.de";
+        protected override string Domain => Lang.Pick("stadtblatt.de", "citygazette.com");
 
         /// <summary>Browser-Tab (Hook in LaptopView.CreateApps).</summary>
         public static LaptopView.AppDef Def() => new LaptopView.AppDef
@@ -103,7 +103,7 @@ namespace DropshippingGame.UI
             {
                 var b = Col(side, 3f, "sb-box");
                 B(b, "Haustier der Woche", "sb-h2");
-                foreach (var p in s.Pets) T(b, p.Name + " – " + s.PetMoodText(p), "sb-text");
+                foreach (var p in s.Pets) T(b, p.Name + " – " + Lang.T(s.PetMoodText(p)), "sb-text");
                 T(b, "Futter im Napf: " + s.PetFoodTotal() + " Portionen", "sb-small");
             }
             var ad = Col(side, 2f, "sb-box", "sb-ad");

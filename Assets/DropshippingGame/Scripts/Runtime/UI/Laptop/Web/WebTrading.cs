@@ -17,7 +17,7 @@ namespace DropshippingGame.UI
         public override string AppId => "trading";
         public override string SkinClass => "tv";
         public override WebSkin Skin => WebSkin.Comic;
-        protected override string Domain => "tradingviech.com/chart";
+        protected override string Domain => Lang.Pick("tradingviech.com/chart", "tradingbeast.com/chart");
 
         private static int _tf = 1;
         private static readonly string[] Tf = { "1T", "1W", "1M", "ALLES" };

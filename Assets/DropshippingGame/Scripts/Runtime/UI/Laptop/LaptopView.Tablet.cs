@@ -46,16 +46,16 @@ namespace DropshippingGame.UI
                 _bar = UIX.Row(_chrome, 8f, "tb-status");
                 _backBtn = UIX.Pressable(_bar, Back, "tb-nb");
                 UIX.Icon(_backBtn, "chevron_left", 16f, null, "tb-icon");
-                _backBtn.tooltip = "Zurück";
+                _backBtn.tooltip = Lang.T("Zurück");
                 UIX.PassThrough(_backBtn);
                 var home = UIX.Pressable(_bar, () => OpenApp("home"), "tb-nb");
                 UIX.Icon(home, "grid", 16f, null, "tb-icon");
-                home.tooltip = "Start";
+                home.tooltip = Lang.T("Start");
                 UIX.PassThrough(home);
                 var urlBox = UIX.PressRow(_bar, 6f, GoHome, "tb-url");
                 urlBox.style.flexGrow = 1;
                 urlBox.style.flexShrink = 1;
-                urlBox.tooltip = "Startseite der App";
+                urlBox.tooltip = Lang.T("Startseite der App");
                 _lock = UIX.Div(urlBox, "br-lock");
                 _url = W.Text(urlBox, "", WebSkin.Neo, WebFonts.Body, "tb-url-text");
                 _url.style.flexShrink = 1;
@@ -68,7 +68,7 @@ namespace DropshippingGame.UI
                 UIX.Icon(_bar, "battery", 18f, null, "tb-icon");
                 var close = UIX.Pressable(_bar, () => Game.Sim?.ClosePc(), "tb-nb", "tb-close");
                 UIX.Icon(close, "close", 14f, null, "tb-icon");
-                close.tooltip = "Schließen (Esc)";
+                close.tooltip = Lang.T("Schließen (Esc)");
                 UIX.PassThrough(close);
 
                 _dock?.RemoveFromHierarchy();
@@ -83,7 +83,7 @@ namespace DropshippingGame.UI
                     string id = a.Id;
                     var tab = UIX.PressCol(inner, 2f, () => OpenApp(id), "tb-app");
                     tab.focusable = false;
-                    tab.tooltip = a.Title;
+                    tab.tooltip = Lang.T(a.Title);
                     var ic = UIX.Div(tab, "tb-app-ic");
                     ic.style.backgroundColor = a.FavColor;
                     UIX.Icon(ic, string.IsNullOrEmpty(a.Icon) ? "dot" : a.Icon, 22f, Color.white, "tb-app-glyph");
