@@ -191,7 +191,7 @@ namespace DropshippingGame
                     pal.transform.localScale = new Vector3(1.3f, 1f, 0.95f);
                 }
             }
-            var sign = Props.SignBoard(root, p.Name.ToUpperInvariant(), pc.Darkened(0.2f), Color.white, new Vector2(2.4f, 0.4f));
+            var sign = Label3D.MakeUpper(Props.SignBoard(root, p.Name, pc.Darkened(0.2f), Color.white, new Vector2(2.4f, 0.4f))); // Großschrift nach der Übersetzung
             sign.transform.localPosition = new Vector3(0, 3.85f, 0.45f);
             return new StationKitResult { Size = new Vector3(4f, 3.6f, 1.1f), Center = new Vector3(0, 1.8f, 0), LabelH = 4.4f, Content = Content(root, Vector3.zero) };
         }

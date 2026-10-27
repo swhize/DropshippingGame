@@ -216,7 +216,7 @@ namespace DropshippingGame.UI
                 if (sim != null && c.Cost > sim.Money)
                 {
                     b.SetEnabled(false);
-                    b.tooltip = "Dafür fehlt dir das Geld.";
+                    b.tooltip = Loc.Tr("Dafür fehlt dir das Geld.");
                 }
             }
             UIX.Text(body, "Du kannst auch später im Handy (" + GameInput.KeyLabel("phone") + ") antworten. Um 20 Uhr gilt automatisch die vorsichtigste Antwort.", "small").style.marginTop = 4;

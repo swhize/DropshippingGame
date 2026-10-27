@@ -37,6 +37,9 @@ namespace DropshippingGame
             SignFonts.Clear();
             FontMaterials.Clear();
             SharedStyled.Clear();
+            Live.Clear();
+            _langHooked = false;
+            _added = 0;
         }
 
         public static Font Font
@@ -221,8 +224,86 @@ namespace DropshippingGame
             text = text ?? "";
             if (_raw != null && string.Equals(_raw, text, System.StringComparison.Ordinal)) return;
             _raw = text;
-            string shown = DropshippingGame.Core.Lang.T(text);
+            Track(this);
+            ApplyLanguage();
+        }
+
+        /// <summary>Rohtext (deutsch) in der aktuellen Sprache anzeigen.</summary>
+        private void ApplyLanguage()
+        {
+            if (!Alive || _raw == null) return;
+            string shown = _verbatim ? _raw : DropshippingGame.Core.Lang.T(_raw);
+            if (_upper) shown = shown.ToUpperInvariant().Replace("ß", "SS");
             Mesh.text = Wrap > 0 ? WordWrap(shown, Wrap) : shown;
+        }
+
+        private bool _upper;
+
+        /// <summary>
+        /// True: Text unverändert anzeigen (nicht übersetzen). Für Texte, die der Code schon selbst übersetzt hat
+        /// (Loc.Tr) und danach kürzt oder scrollt – sonst landen Bruchstücke in Lang.Missing.
+        /// </summary>
+        public bool Verbatim
+        {
+            get => _verbatim;
+            set
+            {
+                if (_verbatim == value) return;
+                _verbatim = value;
+                ApplyLanguage();
+            }
+        }
+
+        private bool _verbatim;
+
+        /// <summary>
+        /// Zeigt den Text in Großbuchstaben – nach der Übersetzung. Für Schilder mit Namen aus den Tabellen
+        /// (Produkt-, Laden-, Firmennamen): Rohtext normal geschrieben übergeben, dann MakeUpper() aufrufen. „ß“ wird zu „SS“.
+        /// </summary>
+        public Label3D MakeUpper()
+        {
+            _upper = true;
+            ApplyLanguage();
+            return this;
+        }
+
+        /// <summary><see cref="MakeUpper()"/> für alle Labels unter <paramref name="go"/> (z. B. Props.SignBoard: Vorder- und Rückseite).</summary>
+        public static GameObject MakeUpper(GameObject go)
+        {
+            if (go == null) return go;
+            foreach (var l in go.GetComponentsInChildren<Label3D>(true)) l.MakeUpper();
+            return go;
+        }
+
+        // ---- Sprachwechsel: alle lebenden Labels neu übersetzen (der deutsche Rohtext bleibt gemerkt) ----
+        private static readonly HashSet<Label3D> Live = new HashSet<Label3D>();
+        private static bool _langHooked;
+        private static int _added;
+
+        private static void Track(Label3D l)
+        {
+            if (!_langHooked)
+            {
+                _langHooked = true;
+                Loc.Changed += _ => RetranslateAll();
+            }
+            if (!Live.Add(l)) return;
+            if (++_added >= 2048)
+            {
+                _added = 0;
+                Live.RemoveWhere(x => x == null);
+            }
+        }
+
+        /// <summary>Alle 3D-Texte in der aktuellen Sprache neu setzen (nach einem Sprachwechsel).</summary>
+        public static void RetranslateAll()
+        {
+            Live.RemoveWhere(x => x == null);
+            foreach (var l in Live)
+            {
+                try { l.ApplyLanguage(); }
+                catch (System.Exception) { }
+            }
         }
 
         public string Text => Alive ? Mesh.text : "";

@@ -98,8 +98,7 @@ namespace DropshippingGame
                 return;
             }
             string name = string.IsNullOrEmpty(sim.FestivalName) ? "Straßenfest" : sim.FestivalName;
-            string upper = name.ToUpperInvariant().Replace("ß", "SS");
-            if (_bannerA != null) _bannerA.SetText(upper);
+            if (_bannerA != null) _bannerA.SetText(name); // Großschrift macht das Label (nach der Übersetzung)
             if (_bannerB != null) _bannerB.SetText(phase == FestivalPhase.Prep ? "AUFBAU · START " + Fmt.Clock(sim.FestivalLiveStart) : "HEUTE BIS " + Fmt.Clock(sim.FestivalLiveEnd));
             if (_stallSign != null) _stallSign.SetText(string.IsNullOrEmpty(sim.BrandName) ? "MEIN STAND" : sim.BrandName.ToUpperInvariant());
             if (_stallInfo != null)
@@ -131,7 +130,7 @@ namespace DropshippingGame
             Props.Box(banner, new Vector3(0.05f, 1.1f, 8.8f), red, new Vector3(0, 4.45f, 0), default, 0f);
             Props.Box(banner, new Vector3(0.06f, 0.12f, 8.8f), white, new Vector3(0, 3.95f, 0), default, 0f, false);
             Props.Box(banner, new Vector3(0.06f, 0.12f, 8.8f), white, new Vector3(0, 4.95f, 0), default, 0f, false);
-            _bannerA = Label3D.Create(banner, "STRASSENFEST", 150f, Color.white, new Vector3(0, 4.55f, 0), true, 60f, false, 1.4f);
+            _bannerA = Label3D.Create(banner, "Straßenfest", 150f, Color.white, new Vector3(0, 4.55f, 0), true, 60f, false, 1.4f).MakeUpper();
             _bannerB = Label3D.Create(banner, "", 60f, new Color(1f, 0.92f, 0.55f), new Vector3(0, 4.12f, 0), true, 40f);
 
             // ---- Wimpelketten entlang der Straße ---------------------------------------------

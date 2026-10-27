@@ -208,7 +208,7 @@ namespace DropshippingGame.Vehicles
             // Drehung: 0 = von −Z lesbar (hinten), −90 = von +X (rechts), 90 = von −X (links)
             foreach (var (pos, rot) in new[] { (new Vector3(0f, h * 0.5f, -d / 2f - 0.004f), 0f), (new Vector3(w / 2f + 0.004f, h * 0.5f, 0f), -90f), (new Vector3(-w / 2f - 0.004f, h * 0.5f, 0f), 90f) })
             {
-                var l = Label3D.Create(b, name.ToUpperInvariant(), size, text, pos, false, 30f, false, 1f, 0, SignFont.Display);
+                var l = Label3D.Create(b, name, size, text, pos, false, 30f, false, 1f, 0, SignFont.Display)?.MakeUpper();
                 if (l == null) continue;
                 l.transform.localRotation = Quaternion.Euler(0f, rot, 0f);
                 labels.Add(l);

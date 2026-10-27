@@ -498,7 +498,7 @@ namespace DropshippingGame
             var active = gm.ActiveContracts();
             if (active.Count == 0) return "Palettenplatz – Aufträge in der App 'Aufträge' annehmen";
             var first = active[0];
-            return first.Company + ": " + first.Delivered + "/" + first.Quantity + " " + ProductName(first.Product) + " · " + gm.ContractDeadlineText(first);
+            return Loc.Pre(first.Company + ": " + first.Delivered + "/" + first.Quantity + " " + Loc.Tr(ProductName(first.Product)) + " · " + Loc.Tr(gm.ContractDeadlineText(first)));
         }
 
         private void InteractRegal(PlayerController player, ItemKind kind, ItemData held)
@@ -736,8 +736,10 @@ namespace DropshippingGame
                 bool urgent = gm.ContractDaysLeft(c) <= 0;
                 var txtCol = urgent ? new Color(1f, 0.55f, 0.45f) : new Color(1f, 0.92f, 0.6f);
                 string pname = GameData.IsProduct(c.Product) ? GameData.Product(c.Product).Short : c.Product;
-                Label3D.Create(slot, c.Company + "\n" + c.Delivered + "/" + c.Quantity + " " + pname, 30f, txtCol,
-                    new Vector3(0, 1.45f, 0), true, 14f, false, 1.2f, 18);
+                // Bausteine einzeln übersetzt, Label zeigt sie unverändert (Verbatim) – sonst wäre "3/10 Produkt" nicht übersetzbar.
+                var palletLabel = Label3D.Create(slot, "", 30f, txtCol, new Vector3(0, 1.45f, 0), true, 14f, false, 1.2f, 18);
+                palletLabel.Verbatim = true;
+                palletLabel.SetText(Loc.Tr(c.Company) + "\n" + c.Delivered + "/" + c.Quantity + " " + Loc.Tr(pname));
             }
         }
 

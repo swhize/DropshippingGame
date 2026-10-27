@@ -27,13 +27,14 @@ namespace DropshippingGame
         /// <summary>Preistext (MediaMarkd nur mit Scanner, mit Großhandels-Vergleich).</summary>
         public static string PriceText(Sim sim, StoreItemDef it)
         {
+            // Bausteine über Loc.F (Vorlagen in EnWorld) – auf Deutsch identisch mit der früheren Verkettung.
             string s = Fmt.Money(sim.ShopPrice(it.Id));
             var deal = sim.ShopDealFor(it.Id);
-            if (deal != null) s += " statt " + Fmt.Money(sim.ShopBasePrice(it.Id));
+            if (deal != null) s = Loc.F("{0} statt {1}", s, Fmt.Money(sim.ShopBasePrice(it.Id)));
             if (it.Kind == "ware")
             {
-                s += " (" + Fmt.Eur(sim.ShopUnitPrice(it.Id)) + "/Stk · Großhandel " + Fmt.Eur(sim.ShopWholesalePackPrice(it.Id) / Mathf.Max(1, it.Pack)) + ")";
-                if (sim.ShopCheaperThanWholesale(it.Id)) s += " · GÜNSTIGER!";
+                s = Loc.F("{0} ({1}/Stk · Großhandel {2})", s, Fmt.Eur(sim.ShopUnitPrice(it.Id)), Fmt.Eur(sim.ShopWholesalePackPrice(it.Id) / Mathf.Max(1, it.Pack)));
+                if (sim.ShopCheaperThanWholesale(it.Id)) s = Loc.F("{0} · GÜNSTIGER!", s);
             }
             return s;
         }
@@ -45,14 +46,18 @@ namespace DropshippingGame
             var d = ShoppingDistrict.Instance;
             if (sim == null || it == null || d == null) return "";
             bool electro = it.Store == ShopData.Electro;
-            if (electro && !d.PushingCart) return it.Name + " · Erst einen Einkaufswagen holen (Eingang)";
-            string price = electro && !d.HasScanner ? "Preis? Scanner am Eingang" : PriceText(sim, it);
+            // Aus übersetzten Bausteinen zusammengesetzt (Loc.F/Loc.Tr) und mit Loc.Pre markiert – sonst wäre der
+            // lange Hinweis mit seinen vielen optionalen Teilen nicht als Ganzes übersetzbar. Deutsch: unverändert.
+            string name = Loc.Tr(it.Name);
+            if (electro && !d.PushingCart) return Loc.Pre(Loc.F("{0} · Erst einen Einkaufswagen holen (Eingang)", name));
+            string price = electro && !d.HasScanner ? Loc.Tr("Preis? Scanner am Eingang") : PriceText(sim, it);
             string why = sim.ShopBlockReason(it.Id);
-            if (why != "") return it.Name + " · " + price + " · " + why;
+            if (why != "") return Loc.Pre(string.Format("{0} · {1} · {2}", name, price, Loc.Tr(why)));
             int inCart = sim.CartQty(it.Id);
-            string pack = it.Kind == "ware" ? " (" + it.Pack + " Stk)" : (it.Kind == "futter" ? " (" + it.Pack + " Portionen)" : "");
-            return (electro ? "In den Wagen: " : "In den Korb: ") + it.Name + pack + " · " + price +
-                   (inCart > 0 ? " · " + inCart + " drin" : "") + " · noch " + sim.ShopLeft(it.Id);
+            string pack = it.Kind == "ware" ? Loc.F(" ({0} Stk)", it.Pack) : (it.Kind == "futter" ? Loc.F(" ({0} Portionen)", it.Pack) : "");
+            string body = string.Format("{0}{1} · {2}", name, pack, price);
+            if (inCart > 0) body = Loc.F("{0} · {1} drin", body, inCart);
+            return Loc.Pre(Loc.F(electro ? "In den Wagen: {0} · noch {1}" : "In den Korb: {0} · noch {1}", body, sim.ShopLeft(it.Id)));
         }
 
         public void Interact(PlayerController player)
