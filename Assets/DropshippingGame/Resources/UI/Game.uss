@@ -1,5 +1,5 @@
 /* ================================================================================
-   Dropshipping Simulator v3.0 – Oberflächen (UI Toolkit)
+   Dropshipping Simulator – Oberflächen (UI Toolkit)
 
    Aufbau:
    1. Grundlagen & Design-Tokens (.ds-root = Spiel-Oberfläche: HUD, Menüs, Fenster)

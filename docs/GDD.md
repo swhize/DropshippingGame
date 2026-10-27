@@ -1,6 +1,41 @@
-# Dropshipping Simulator – Game Design Document (Entwurf v0.1)
+# Dropshipping Simulator – Game Design Document
 
-> Arbeitstitel. Status: Konzeptphase, wird laufend erweitert.
+> Stand: **1.0.0-rc1** (27.10.2026) · Hustle Games. Abschnitt 0 beschreibt das Spiel, wie es in 1.0 ist.
+> Die Abschnitte 1–16 sind die ursprüngliche Vision aus der Konzeptphase und bleiben als Referenz stehen;
+> Abweichungen stehen in Abschnitt 0. Zahlen und Balance: Abschnitt 17. Fahrplan: `docs/ROADMAP.md`.
+
+## 0. Feature-Überblick 1.0 (Ist-Stand)
+
+**Genre & Ton:** First-Person-Wirtschaftssimulation, Einzelspieler, lockere Satire auf Hustle- und Dropshipping-Kultur.
+Zielpreis 6–8 € auf Steam (Windows zuerst). Spielzeit bis zum Endziel 6–9 h, danach Endlos-Modus.
+
+**Kernschleife (ein Tag, 8–20 Uhr):** Bestellungen kommen über den eigenen Shop → Ware am Tablet einkaufen (AllesExpress,
+Läden in der Stadt) → Kisten am Wareneingang → Regal → Kommissionieren → Karton falten → Packtisch → Label → Packstation,
+Post oder Moped-Heckbox. Abends Kassenbon-Abrechnung, Fixkosten, Ereignis-Entscheidungen, Gewinn reinvestieren.
+
+| Bereich | In 1.0 |
+|---|---|
+| Einstieg | Intro-Schicht in Kalles Imbiss, Kündigung, Garage mit Startkapital; Tutorial der ersten Stunde, Erklär-Nachrichten |
+| Logistik | 14 Produkte, 3 Lieferanten, Kartons S/M/L (fertig oder ungefaltet), Bestellzettel mit Frist und Express, Retouren, Großaufträge (B2B) auf Paletten, Förderband, Hochregal, Verpackungsmüll, defekte Chargen, Porto & Paketdienste, Lieferstörungen |
+| Orte | Garage → Lagerhalle (Level 4) → Außenlager (Level 10); Wohn-, Einkaufs- und Finanzviertel; Imbiss, Post, Bank, Börse, MediaMarkd, Fressnix |
+| Bedienung | Handy (Bestellzettel, Nachrichten, Wochenziele, Status/Engpass-Assistent, Wallet) und Tablet „HustleOS“ mit Web-Parodien und Firmen-Apps |
+| Marketing | Eigener Shop mit Preisen und Aktionen, Branding, Flyer, Influencer, Fakebook/Gugel-Anzeigen, Fake-Profile, KI-Fake-Seiten, Trends & Hype mit Trendradar, selbst gedrehte TikToks |
+| Nebenspiele | Straßenfest mit Stand, Verkaufsstand vor der Garage, Pitch Day (drei Juroren), Börse/ETF/Krypto/Sparkonto, Haustiere |
+| Fortschritt | Firmenlevel 1–10, Skillbaum (3 × 4), Hustle-Perks, Einrichtung/Energie, Ausrüstung, Personal, Ziele, Wochenziele, 30 Ereignisse, 40 Erfolge, Statistik |
+| Endspiel | 100.000 € Umsatz → Viertelmillion, Außenlager, Halbe Million, Börsengang bei 1 Mio., danach verdoppelnde Ziele |
+| Fairness | Schwierigkeit Entspannt/Normal/Hart, Mama-Notkredit, Insolvenz unter −500 € mit Laden des letzten Stands |
+| Bewegung | Laufen, Sprinten, Ducken, Moped (Arcade-Physik, Heckbox, Ego-/Verfolgerkamera), Möbel verschieben, Emote-Rad |
+| Präsentation | Unity 6.3 URP, CC0-Modelle mit prozeduralen Rückfällen, Tagesstimmungen, Wetter, Feedback-Effekte, Synth- und CC0-Audio |
+| Komfort | Deutsch/Englisch live, Controller, Tastenbelegung, Barrierefreiheit, Streamer-Modus, 3 Spielstände, Auto-Save, `.bak`-Sicherung |
+
+**Abweichungen von der ursprünglichen Vision (Abschnitte 1–16):**
+- **Koop 1–4 Spieler** ist nicht in 1.0, sondern das erste große Update nach dem Release. 1.0 ist Einzelspieler;
+  die Rolle der Mitspieler übernimmt das NPC-Personal.
+- **Art-Stil:** statt Strichmännchen und PS1-Look ein warmer, satirischer Comic-Realismus mit CC0-Low-Poly-Modellen
+  (siehe `docs/ART_DIRECTION.md`).
+- **Musik:** CC0-Stücke statt Eigenproduktion (streamer-sicher); ein eigener Soundtrack ist für später notiert.
+- **Monetarisierung:** keine Käufe im Spiel. Kosmetische DLCs (Klamottenladen ist vorbereitet) und weitere Ideen
+  (Krypto-Mining, Casino, neue Viertel) stehen in `docs/ROADMAP.md`.
 
 ## 1. High Concept
 
@@ -102,7 +137,7 @@ Rein kosmetische Erweiterungen ohne Gameplay-Einfluss: Kleidung/Caps für die St
 Themen-Packs (z.B. Krypto-Bro-Shirts) – passend zum satirischen Ton. Zusätzlich OST als separater
 Verkauf (Steam/Spotify) wie besprochen.
 
-## 15. E-Commerce/Marken-Kern ("Hustler Simulator"-Erweiterung)
+## 15. E-Commerce/Marken-Kern (Marke statt nur Logistik)
 
 Der Kern ist nicht nur Logistik, sondern eine **echte Marke aufbauen**:
 
@@ -161,8 +196,9 @@ Der Kern ist nicht nur Logistik, sondern eine **echte Marke aufbauen**:
    10 Produkten, 3 Spielständen und Controller-Unterstützung. Details: `docs/ROADMAP.md`.
 
 ### Bewusst vereinfacht / nächste Ausbaustufe
-- Koop-Multiplayer noch nicht umgesetzt (Einzelspieler)
-- Alle Modelle sind stilisierte Grundformen (kein importiertes Art-Asset)
+- Koop-Multiplayer noch nicht umgesetzt (Einzelspieler) – geplant als großes Update nach 1.0
+- Ab v3.0 kamen echte CC0-Modelle, -Texturen und -Sounds dazu; die Phasen danach (Stadt, Läden, Finanzviertel,
+  Marketing, Moped, Englisch, Release-Technik) fasst Abschnitt 0 zusammen.
 
 ## 17. Zahlen & Balance (Kampagne 6–10 h, Stand Okt. 2026)
 
@@ -245,7 +281,7 @@ dem Freischalten) und Firma › Statistik (Gesamtzahlen, nächstes Ziel).
 - [x] Event-Häufigkeit: 0–2 Ereignisse pro Tag ab Tag 2, gewichtete Auswahl mit Abklingzeit
 - [x] Pitch Day: Minispiel mit drei Juroren; Antworten stützen sich auf echte Kennzahlen
 - [x] Social Media: TikTok-Handy-Minispiel + Praktikant:in, der täglich postet
-- [ ] Koop: Rollenverteilung und Netzwerk-Synchronisation
+- [ ] Koop: Rollenverteilung und Netzwerk-Synchronisation (nach 1.0, siehe `docs/ROADMAP.md`)
 
 ## 9. Tech-/Tool-Stack (Referenz)
 

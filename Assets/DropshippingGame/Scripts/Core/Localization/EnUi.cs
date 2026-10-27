@@ -434,7 +434,7 @@ namespace DropshippingGame.Core
               "Products get hot and go cold. Trend radar, flyers, influencers, Fakebook and Gugel ads – and fake profiles for the bold.");
             A("Eine ganze Stadt", "A whole town");
             A("Mit dem Moped durch Wohn-, Einkaufs- und Finanzviertel: MediaMarkd, Fressnix mit Haustieren, Post, Bank und Börse.",
-              "Ride your moped through the residential, shopping and finance districts: MediaMarkd, Fressnix with pets, post office, bank and stock exchange.");
+              "Ride your moped through the residential, shopping and finance districts: MegaMarked, Chewnothing with pets, post office, bank and stock exchange.");
             A("Börse, Krypto, Kredite", "Stocks, crypto, loans");
             A("Aktien, ETFs und Krypto mit Live-Kursen, Sparkonto und Kredite – nur Spielgeld, aber echte Nerven.",
               "Shares, ETFs and crypto with live prices, a savings account and loans – play money only, real nerves.");
@@ -443,10 +443,10 @@ namespace DropshippingGame.Core
               "Your own stall at the street festival, a sales stand outside the garage and a pitch in front of three judges.");
             A("Wachsen bis zum Börsengang", "Grow all the way to an IPO");
             A("Firmenlevel, Skills, Perks, Personal, Lagerhalle und Außenlager – 100.000 € Umsatz sind erst der Anfang.",
-              "Company levels, skills, perks, staff, a warehouse and an outstation – €100,000 in revenue is just the beginning.");
+              "Company levels, skills, perks, staff, a warehouse and an outpost warehouse – 100,000 € in revenue is just the beginning.");
             A("40 Erfolge & 3 Schwierigkeiten", "40 achievements & 3 difficulties");
             A("Wochenziele, Ereignisse, Erfolge und Statistik; Entspannt, Normal oder Hart – mit Mamas Notkredit als Rettungsanker.",
-              "Weekly goals, events, achievements and stats; Relaxed, Normal or Hard – with Mum's emergency loan as a safety net.");
+              "Weekly goals, events, achievements and stats; Relaxed, Normal or Hard – with Mom's emergency loan as a safety net.");
             A("Deutsch & Englisch", "German & English");
             A("Sprache jederzeit umschaltbar, komplett mit Controller spielbar, Streamer-Modus und viele Optionen für Barrierefreiheit.",
               "Switch language any time, full controller support, streamer mode and plenty of accessibility options.");

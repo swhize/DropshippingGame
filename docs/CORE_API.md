@@ -1,5 +1,8 @@
 # Core-API v3.0 – Vertrag für UI und Welt (Welle 2)
 
+> **Hinweis (1.0.0-rc1):** „v3.0“ ist die interne Entwicklungsnummer, mit der diese API entstand; sie gilt weiter und
+> wurde seitdem erweitert (spätere Abschnitte).
+
 > Stand: v3.0 „Das große Update“, Spielstand-Version **4**. Alles hier ist reines C# in
 > `Assets/DropshippingGame/Scripts/Core` (Namespace `DropshippingGame.Core`, ohne UnityEngine).
 > Dieses Dokument listet **jede neue öffentliche Klasse, jedes neue Mitglied und jedes neue

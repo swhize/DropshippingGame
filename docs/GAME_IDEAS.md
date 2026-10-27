@@ -1,5 +1,9 @@
 # Spielideen & Bewertung – Dropshipping Simulator
 
+> **Hinweis (1.0.0-rc1):** Ideen-Pool aus der Entwicklung; Versionsangaben (v3.x/v4.0) sind interne Planungsnummern
+> vor 1.0. Was umgesetzt ist, steht in `docs/ROADMAP.md`. Die erwähnte Laptop-Übersicht `AppHome.BuildTodos` wurde
+> durch die Tablet-Startseite und den Engpass-Assistenten ersetzt.
+
 > **Für wen:** dich (Besitzer) und die Umsetzungs-Agenten. **Von:** Game-Ideas-Agent (Game Design).
 > **Stand:** 25.09.2026, während v3.0 „Das große Update“ läuft.
 > **Grundlage:** der echte Code-Stand v2.0 auf dem Branch `claude/busy-knuth-yehyvb` (Spiellogik, Welt,

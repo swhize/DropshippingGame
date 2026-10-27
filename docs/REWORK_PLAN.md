@@ -1,5 +1,7 @@
 # v3.0 „Das große Update“ – Arbeitsplan
 
+> **Historisch (abgeschlossen).** „v3.0“ war eine interne Entwicklungsnummer vor 1.0; aktueller Stand in `docs/ROADMAP.md`.
+
 > Auftrag des Besitzers (25.09.2026): „Nimm Assets aus dem Netz mit freien Lizenzen – ich brauche
 > auf jeden Fall die Quellen. Man kann an der Idee einiges ändern, entfernen, hinzufügen, Layouts
 > anpassen. Tob dich aus und mach alles fertig. BIG REWORK – ich will ein massives Update sehen!“

@@ -1,5 +1,8 @@
 # Übergabe: Dropshipping Simulator – Stand v3.0 (26.09.2026)
 
+> **Historisch (Stand v3.0, interne Entwicklungsnummer).** Aktueller Stand: Version 1.0.0-rc1 – siehe
+> `docs/ROADMAP.md`, `CHANGELOG.md`, `docs/KNOWN_ISSUES.md` und `docs/AGENT_RULES.md`.
+
 > Diese Datei als erste Nachricht in einen neuen Chat geben. Sie enthält alles Wissen aus der
 > bisherigen Arbeit.
 

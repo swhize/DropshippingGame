@@ -1,4 +1,4 @@
-# Art Direction – „Hustle Simulator“ / Dropshipping Simulator
+# Art Direction – Dropshipping Simulator
 
 Ziel: Das Spiel darf **nicht nach Unity-Standard aussehen** (Hauptkritik an Schedule I, siehe `MARKT_REFERENZEN.md` Punkt 5).
 Wir haben keine Künstler-Pipeline, also entsteht der Look aus Code: Palette, Licht, Farbkorrektur, Materialregeln und

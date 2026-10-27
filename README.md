@@ -1,12 +1,31 @@
 # Dropshipping Simulator – Vom Imbiss zum Imperium
 
-First-Person-Wirtschaftssimulation mit Satire: Du kellnerst in Kalles Imbiss, kündigst und baust aus der Garage
-heraus eine Dropshipping-Marke auf – Ware einkaufen, einräumen, packen, etikettieren, verschicken – und steuerst
-über Handy und den Laptop „HustleOS“ Webshop, Marketing (TikTok), Bank, Börse, Personal und Ausbau.
+First-Person-Wirtschaftssimulation mit Satire von **Hustle Games**: Du kellnerst in Kalles Imbiss, kündigst und baust
+aus der Garage heraus eine Dropshipping-Marke auf – Ware einkaufen, einräumen, packen, etikettieren, verschicken – und
+steuerst über Handy und das Tablet „HustleOS“ Webshop, Marketing, Bank, Börse, Personal und Ausbau.
 Ziel: 100.000 € Umsatz – und weiter, so lange du willst.
 
 Unity 6.3 (6000.3.25f1) · URP · UI Toolkit · Input System · C# 9 · Zielplattform Steam (Windows zuerst).
-Version: siehe Datei [`VERSION`](VERSION). Release-Planung: [`docs/RELEASE.md`](docs/RELEASE.md).
+Version: **1.0.0-rc1** (Release Candidate, Datei [`VERSION`](VERSION)) · Änderungen: [`CHANGELOG.md`](CHANGELOG.md) ·
+Test-Checkliste: [`docs/KNOWN_ISSUES.md`](docs/KNOWN_ISSUES.md) · Fahrplan: [`docs/ROADMAP.md`](docs/ROADMAP.md) ·
+Release-Planung: [`docs/RELEASE.md`](docs/RELEASE.md).
+
+## Features (1.0)
+
+- **Jedes Paket von Hand:** einkaufen, einräumen, kommissionieren, Karton falten, packen, etikettieren, verschicken –
+  mit Bestellzetteln, Express, Retouren und Großaufträgen auf Paletten.
+- **14 Produkte**, 3 Lieferanten-Stufen, Kartongrößen, Förderband, Personal, Lagerhalle und Außenlager.
+- **Handy & Tablet „HustleOS“:** AllesExpress, Mein Shop, iWolke Mail, PaketBlitz, Stadtblatt, TikTak, Fakebook, Gugel,
+  TradingViech, Revoluut, Markt & Trends, Aufträge, Retouren, Firma.
+- **Marketing:** TikToks selbst drehen (Ringlicht, Formate, Wertung), Trends & Hype, Anzeigen, Influencer,
+  Fake-Profile und KI-Fake-Seiten, eigenes Branding auf Karton, Van und Moped.
+- **Eine ganze Stadt:** Wohn-, Einkaufs- und Finanzviertel, Verkehr, Post, Passanten, Haustiere, Straßenfest,
+  Verkaufsstand, Pitch Day, Moped mit Heckbox, Emote-Rad, Möbel verschieben.
+- **Fortschritt:** Level 1–10, Skills, Perks, Wochenziele, 30 Ereignisse, 40 Erfolge, Endlos-Modus bis zum Börsengang,
+  drei Schwierigkeitsgrade.
+- **Finanzen:** Aktien, ETFs, Krypto, Sparkonto, Kredite – nur Spielgeld.
+- **Deutsch & Englisch** (live umschaltbar), volle Controller-Unterstützung, frei belegbare Tasten,
+  Barrierefreiheit, Streamer-Modus, 3 Spielstände mit Auto-Save und Sicherungsdatei.
 
 ## Projekt öffnen
 
@@ -26,10 +45,11 @@ Spielstände: Menü **Dropshipping → Spielstände-Ordner öffnen** (im Spiel: 
 |---|---|---|
 | Laufen / Umsehen | WASD / Maus | linker / rechter Stick |
 | Sprinten / Ducken / Springen | Shift / Strg (C) / Leertaste | L3 / R3 / A |
-| Benutzen (auch Laptop am Schreibtisch) / Ablegen | E / G | X / B |
+| Benutzen (auch Tablet am Schreibtisch, Moped) / Ablegen | E / G | X / B |
 | Möbel verschieben · drehen · abstellen | B · R / Mausrad · Linksklick | Steuerkreuz ↓ · LB / RB · X |
 | Handy | Tab | Y |
 | Emote-Rad | T | Steuerkreuz ← |
+| Moped: Hupe · Ansicht | H · V | Steuerkreuz ↑ · → |
 | Pause · Hilfe · Screenshot | Esc · F1 · F12 | Start · Select · – |
 
 Nur im Editor und in Development-Builds: **F10** (oder F9 / ^) Admin-Panel, **Alt** Noclip. In Release-Builds
@@ -55,7 +75,8 @@ Unity.exe -batchmode -nographics -projectPath . -executeMethod DropshippingGame.
 ```
 
 Optionen: `-dsTarget windows|linux|macos`, `-dsConfig release|development|demo`, `-dsBackend il2cpp|mono`,
-`-dsBuildNumber <n>`. Die Version kommt aus `VERSION` plus Build-Nummer (Anzahl Git-Commits), z. B. `0.9.0.412`.
+`-dsBuildNumber <n>`. Die Version kommt aus `VERSION` plus Build-Nummer (Anzahl Git-Commits), z. B. `1.0.0-rc1.412`
+(Vorab-Kennungen wie `-rc1` sind erlaubt; macOS bekommt intern nur den Zahlenteil).
 Eine Zusammenfassung (Größe, größte Assets, Fehler) steht in der Konsole und in `Builds/<Ziel>-<Variante>_report.txt`.
 
 ## Testen

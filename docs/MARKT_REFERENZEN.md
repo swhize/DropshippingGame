@@ -16,7 +16,7 @@ Recherche im Netz zu den erfolgreichsten Simulatoren der letzten Jahre und darau
 - **Lob:** taktile, befriedigende Kernhandlung (scannen, verpacken, Booster öffnen, Geld zählen); klare „fertig!“-Momente; häufige kleine Belohnungen; Humor; mit Freunden spielen.
 - **Kritik:** Wiederholung ohne Abwechslung, Missionen alle gleich, kein Grund zurückzukommen, fehlendes Endgame, Standard-Unity-Look.
 
-## Konsequenzen für uns („Hustle Simulator“)
+## Konsequenzen für uns (Dropshipping Simulator)
 
 1. **Juice der Kernhandlung:** Picken, Packen, Klebeband, Label drucken, Paket abgeben, Kasse – jede Handlung mit Animation, Sound, kleinem Partikel-/Zahleneffekt und Kamera-Feedback. Das ist unser „Booster öffnen“.
 2. **Häufige Belohnungen + Abschlussmomente:** Bestellung erledigt → Kassenklingeln, Bewertung poppt auf, Tageszusammenfassung mit Konfetti bei Rekord; alle paar Minuten etwas Neues (Level, Perk, Produkt, Event).

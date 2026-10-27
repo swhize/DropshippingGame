@@ -1,6 +1,7 @@
 # Release-Plan: Steam (Windows zuerst)
 
-Stand: 27.10.2026 · Version laut [`VERSION`](../VERSION): **0.9.0** · Zielpreis 6–8 €
+Stand: 27.10.2026 · Version laut [`VERSION`](../VERSION): **1.0.0-rc1** (Release Candidate) · Zielpreis 6–8 €
+Test vor dem Release: [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) · Änderungen: [`CHANGELOG.md`](../CHANGELOG.md) · Fahrplan: [`ROADMAP.md`](ROADMAP.md)
 Bezug: [`MARKT_REFERENZEN.md`](MARKT_REFERENZEN.md) (Vermarktung, Streamer-Tauglichkeit, Koop als Update).
 
 Legende: ✅ erledigt (im Repo) · 🔧 Technik offen · 👤 muss der Inhaber selbst tun (Konto, Geld, Recht, Entscheidung)
@@ -11,7 +12,7 @@ Legende: ✅ erledigt (im Repo) · 🔧 Technik offen · 👤 muss der Inhaber s
 
 ### Name & Marke
 - 👤 **Titel festlegen.** Im Spiel, in GDD und Build heißt es „Dropshipping Simulator – Vom Imbiss zum Imperium“
-  (`BuildTools.ProductName`). Intern taucht „Hustle Simulator“ als Arbeitstitel auf. Vor der Steam-Seite:
+  (`BuildTools.ProductName`), Firma „Hustle Games“ (`BuildTools.CompanyName`) – in Spiel, Doku und Build einheitlich. Vor der Steam-Seite:
   Steam und Google nach gleichnamigen Spielen durchsuchen („Dropshipping Simulator“ ist ein naheliegender Name –
   Verwechslungsgefahr und schlechte Auffindbarkeit). Einen eindeutigen Namen nimmt man am besten **vor** der
   Store-Seite. Ändern heißt: `BuildTools.ProductName`, Wortmarke im Hauptmenü, Splash-Logo (`tools/branding`).
@@ -23,7 +24,8 @@ Legende: ✅ erledigt (im Repo) · 🔧 Technik offen · 👤 muss der Inhaber s
 
 ### Technik (im Repo)
 - ✅ Build-Menü **Dropshipping › Build** (Windows Release/Development/Demo, Linux, macOS) + Kommandozeile (README).
-- ✅ Version aus `VERSION` + Build-Nummer → `Application.version` (z. B. `0.9.0.412`); Details im Fehlerbericht.
+- ✅ Version aus `VERSION` + Build-Nummer → `Application.version` (z. B. `1.0.0-rc1.412`, Vorab-Kennung erlaubt, macOS nur Zahlenteil); Menüs, Fehlerbericht und
+  Sitzungsprotokoll zeigen die Version aus `BuildInfo`.
 - ✅ Release-Builds ohne Entwickler-Werkzeuge: Admin-Panel (F10/F9/^), Noclip (Alt), Vogelperspektive, Teleports
   sind nur im Editor, in Development-Builds oder mit Define `DS_DEV` aktiv (`Runtime/DevTools.cs`).
 - ✅ IL2CPP x64 für Windows-Release, Mono für Development/Linux/macOS (Begründung in `BuildTools.cs`).
@@ -36,15 +38,14 @@ Legende: ✅ erledigt (im Repo) · 🔧 Technik offen · 👤 muss der Inhaber s
   öffnet den Log-Ordner (Player.log). Kontaktziel in `BugReport.Contact` – 👤 ggf. Discord/E-Mail eintragen.
 - ✅ Plattform-Schnittstelle für Erfolge (`Platform.UnlockAchievement(id)`), Steam-Implementierung hinter `DS_STEAM`.
 - ✅ Demo-Modus `DS_DEMO` (5 Spieltage, Abschluss-Bildschirm „Auf die Wunschliste!“).
-- 🔧 **Standard-Vollbild:** `Settings.Fullscreen` startet derzeit mit `false` (Fenster 1600×900) und überschreibt die
-  Player-Einstellung. Für Steam empfohlen: Standard Vollbild, wenn noch keine Einstellung gespeichert ist.
-- 🔧 **Englische Lokalisierung.** Das Spiel ist nur auf Deutsch. Der englischsprachige Markt ist ein Vielfaches
-  größer – Englisch vor dem Release (mindestens UI + Story + Ereignisse) ist die wirkungsvollste Einzelmaßnahme.
-  Bis dahin auf Steam ehrlich nur „Deutsch“ als unterstützte Sprache angeben.
+- ✅ **Standard-Fenstermodus:** neue Installationen starten rahmenlos in Bildschirmauflösung (`Settings.WindowMode`).
+- ✅ **Englische Lokalisierung** (Oberfläche, Inhalte, Ereignisse, Laptop, 3D-Welt), live umschaltbar – siehe
+  `docs/UEBERSETZUNG.md`. Auf Steam „Deutsch“ und „Englisch“ (Oberfläche + Untertitel) angeben, nach dem Test in
+  `KNOWN_ISSUES.md` Abschnitt 11.
 - 🔧 Steam Deck: Controller-Bedienung ist da. Für „Verified“ fehlen: Bildschirmtastatur bei Texteingaben
   (Markenname → `SteamUtils.ShowGamepadTextInput` bzw. Floating Keyboard), Lesbarkeit der UI auf 1280×800 prüfen.
 - 🔧 Optional: PlayStation-Symbole statt „A/B/X/Y“, wenn ein DualSense erkannt wird.
-- 🔧 Streamer-Modus (siehe Abschnitt 6).
+- ✅ Streamer-Modus (Einstellungen › Gameplay, siehe Abschnitt 6).
 
 ### QA vor jedem Upload
 - Release-Build auf einem frischen Windows-Konto starten (kein Unity installiert): Start, neues Spiel, Imbiss-Schicht,
@@ -136,7 +137,7 @@ Legende: ✅ erledigt (im Repo) · 🔧 Technik offen · 👤 muss der Inhaber s
 - Full controller support · 3 save slots · autosave
 - Streamer-friendly: all music is CC0 / public domain
 
-(Englische Texte erst verwenden, wenn das Spiel auf Englisch spielbar ist – sonst „Sprachen: Deutsch“ klar angeben.)
+(Das Spiel ist auf Englisch spielbar; Texte vor dem Upload mit dem englischen Build abgleichen.)
 
 **Tags (max. 20, wichtigste zuerst):** Simulation, Management, Economy, First-Person, Singleplayer, Funny, Satire,
 Capitalism, Shop Keeper, Life Sim, Trading, Casual, Colorful, Stylized, 3D, Sandbox, Building, Comedy, Relaxing,
@@ -189,7 +190,7 @@ Börsencrash, Straßenfest, Imbiss-Chaos, Abendstimmung in der Stadt.
 "AppBuild"
 {
     "AppID" "<APPID>"
-    "Desc" "0.9.0.<Build>"
+    "Desc" "1.0.0-rc1.<Build>"
     "ContentRoot" "<Repo>\Builds\Windows-Release\"
     "BuildOutput" "<Repo>\Builds\_steampipe\"
     "Depots"
@@ -306,8 +307,8 @@ Zu prüfen 👤: Sind 5 Tage genug „Aha“ (Garage, erste Bestellungen, TikTok
 - Für: früher Umsatz und Feedback, Genre-Spieler akzeptieren EA, Koop später als großes Update passt ins EA-Modell.
 - Gegen: kleines Team, Erwartung regelmäßiger Updates; schlechte EA-Reviews hängen lange nach; der Kern ist
   bereits vollständig (Ziel 100.000 €) – ein fertiger 1.0-Release mit klarer Update-Roadmap ist ehrlicher.
-- Empfehlung: **Vollversion 1.0** auf Deutsch+Englisch, wenn Englisch rechtzeitig fertig ist; sonst EA mit
-  „Englisch kommt in Update X“ und offen kommunizierter Roadmap.
+- Empfehlung: **Vollversion 1.0** auf Deutsch+Englisch (Englisch ist enthalten) mit offen kommunizierter Roadmap
+  (`docs/ROADMAP.md`).
 
 **Roadmap nach Release (öffentlich auf der Store-Seite):**
 1. Woche 1–2: Hotfixes aus Fehlerberichten (Pausemenü › Feedback), Balance.
@@ -317,7 +318,7 @@ Zu prüfen 👤: Sind 5 Tage genug „Aha“ (Garage, erste Bestellungen, TikTok
    `Sim`; Netzwerk z. B. Netcode for GameObjects + Steam-Transport. Eigenes Marketing-Event (Trailer, Rabatt).
 5. Später: Workshop/Mods, weitere Sprachen.
 
-**Streamer-Modus (Spezifikation, noch nicht umgesetzt – gehört in die Einstellungen):**
+**Streamer-Modus (umgesetzt in Einstellungen › Gameplay: kein Wackeln/Blinken, Musik optional stumm, Fehlerbericht ohne Pfade; Parodie-Marken-Ersatz noch offen):**
 - Schalter „Streamer-Modus“ unter Einstellungen › Oberfläche.
 - Musik: Alle Stücke sind CC0/gemeinfrei, also unkritisch. Trotzdem Option „nur prozedurale Musik/keine Musik“,
   falls Content-ID-Systeme fälschlich anschlagen (CC0-Tracks werden manchmal von Dritten registriert).
@@ -335,7 +336,7 @@ Kontakt, Impressum. Steam-Keys über das Steamworks-Key-Tool, Anfragen über Key
 1. Titel endgültig festlegen und auf Kollisionen prüfen.
 2. Steamworks-Konto, Steuer/Bank, 100 $ Gebühr, App-IDs (Vollspiel + Demo) in `SteamIds` eintragen.
 3. Icon/Logo prüfen, Steam-Kapseln + Trailer erstellen (lassen).
-4. Englisch-Lokalisierung beauftragen/entscheiden; bis dahin Sprache „Deutsch“.
+4. Englische Version anspielen (`KNOWN_ISSUES.md` Abschnitt 11), ggf. Muttersprachler-Korrektur beauftragen.
 5. Unity 6.3 mit IL2CPP-Modul + Visual Studio C++ installieren, Release-Build bauen, auf fremdem PC testen.
 6. Steamworks.NET installieren, `DS_STEAM` einschalten, Erfolge + Steam Cloud im Backend anlegen.
 7. Next-Fest-Termin wählen, Demo bauen und anmelden.
