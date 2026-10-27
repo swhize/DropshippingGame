@@ -97,13 +97,64 @@ namespace DropshippingGame
             t = 0f;
             while (t < duration)
             {
-                step?.Invoke(Apply(ease, t / duration));
+                // Rückrufe greifen oft auf Weltobjekte zu, die inzwischen zerstört sein können
+                // (Welt neu gebaut, Menü): dann still beenden statt jeden Frame Fehler zu werfen.
+                if (!Invoke(step, Apply(ease, t / duration)))
+                {
+                    if (key != null) RemoveKey(key);
+                    yield break;
+                }
                 t += unscaled ? Time.unscaledDeltaTime : Time.deltaTime;
                 yield return null;
             }
-            step?.Invoke(1f);
-            if (key != null) _keyed.Remove(key);
-            done?.Invoke();
+            bool ok = Invoke(step, 1f);
+            if (key != null) RemoveKey(key);
+            if (!ok || done == null) yield break;
+            try
+            {
+                done();
+            }
+            catch (MissingReferenceException)
+            {
+                // Ziel wurde zerstört – nichts zu tun.
+            }
+            catch (Exception e)
+            {
+                SafeLog.Warn("anim.done", e);
+            }
+        }
+
+        private static bool Invoke(Action<float> step, float t)
+        {
+            if (step == null) return true;
+            try
+            {
+                step(t);
+                return true;
+            }
+            catch (MissingReferenceException)
+            {
+                return false;
+            }
+            catch (Exception e)
+            {
+                SafeLog.Warn("anim.step", e);
+                return false;
+            }
+        }
+
+        /// <summary>Schlüssel entfernen – auch zerstörte Unity-Objekte als Schlüssel (sonst wächst die Tabelle).</summary>
+        private void RemoveKey(object key)
+        {
+            _keyed.Remove(key);
+            if (_keyed.Count < 64) return;
+            List<object> dead = null;
+            foreach (var kv in _keyed)
+                if (kv.Key is UnityEngine.Object uo && uo == null)
+                    (dead ??= new List<object>()).Add(kv.Key);
+            if (dead != null)
+                foreach (var k in dead)
+                    _keyed.Remove(k);
         }
 
         /// <summary>Bewegt ein Objekt zur Zielposition (lokal).</summary>

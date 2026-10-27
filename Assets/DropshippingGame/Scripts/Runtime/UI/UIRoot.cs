@@ -141,24 +141,26 @@ namespace DropshippingGame.UI
         private void Update()
         {
             float dt = Time.unscaledDeltaTime;
-            try { GameInput.PollDevice(); } catch (Exception e) { Debug.LogException(e); }
-            try { InputBindings.TickCapture(); } catch (Exception e) { Debug.LogException(e); }
-            // Jede Ebene einzeln absichern: ein Fehler in einer Ansicht darf die anderen nicht stoppen.
-            try { Hud?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
-            try { Phone?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
-            try { Laptop?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
-            try { Dialogue?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
-            try { Menu?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
-            try { Pause?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
+            try { GameInput.PollDevice(); } catch (Exception e) { SafeLog.Warn("ui.input", e); }
+            try { InputBindings.TickCapture(); } catch (Exception e) { SafeLog.Warn("ui.bindings", e); }
+            // Jede Ebene einzeln absichern: ein Fehler in einer Ansicht darf die anderen nicht stoppen
+            // (rate-begrenzt geloggt, damit ein Dauerfehler das Log nicht flutet).
+            try { Hud?.Tick(dt); } catch (Exception e) { SafeLog.Warn("ui.hud", e); }
+            try { Phone?.Tick(dt); } catch (Exception e) { SafeLog.Warn("ui.phone", e); }
+            try { Laptop?.Tick(dt); } catch (Exception e) { SafeLog.Warn("ui.laptop", e); }
+            try { Dialogue?.Tick(dt); } catch (Exception e) { SafeLog.Warn("ui.dialogue", e); }
+            try { Menu?.Tick(dt); } catch (Exception e) { SafeLog.Warn("ui.menu", e); }
+            try { Pause?.Tick(dt); } catch (Exception e) { SafeLog.Warn("ui.pause", e); }
             try
             {
                 // Controller: rechter Stick scrollt auch lange Fenster (Börse, Bank, Hilfe, Kassenbon …)
                 if (BigModal != null && BigModal.IsOpen) UIX.PadScroll(BigModal.Scroll, dt);
                 else if (Modal != null && Modal.IsOpen) UIX.PadScroll(Modal.Scroll, dt);
             }
-            catch (Exception e) { Debug.LogException(e); }
-            try { Admin?.Tick(dt); } catch (Exception e) { Debug.LogException(e); }
-            try { UpdateFocus(); } catch (Exception e) { Debug.LogException(e); }
+            catch (Exception e) { SafeLog.Warn("ui.modalscroll", e); }
+            try { Admin?.Tick(dt); } catch (Exception e) { SafeLog.Warn("ui.admin", e); }
+            try { Fader?.Tick(); } catch (Exception e) { SafeLog.Warn("ui.fader", e); }
+            try { UpdateFocus(); } catch (Exception e) { SafeLog.Warn("ui.focus", e); }
         }
 
         /// <summary>Oberstes Fenster, das gerade bedient wird (für den Controller-Fokus), sonst null.</summary>

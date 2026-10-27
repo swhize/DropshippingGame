@@ -47,6 +47,14 @@ namespace DropshippingGame
             v.SetActive(!Active);
         }
 
+        /// <summary>Sofort aus (Menü, neues Spiel, Laden) – ohne Hinweis, Sperre wird mit gelöst.</summary>
+        public static void ForceOff()
+        {
+            if (_inst == null || _inst._cam == null) return;
+            _inst._cam.enabled = false;
+            if (Game.Root != null) Game.Root.Lock("birdseye", false);
+        }
+
         private void SetActive(bool on)
         {
             if (_cam == null) return;
@@ -64,6 +72,9 @@ namespace DropshippingGame
         private void Update()
         {
             if (!Active) return;
+            // Admin-Panel darüber: dessen Esc schließt nur das Panel.
+            if (Game.UI != null && Game.UI.Admin != null && Game.UI.Admin.IsOpen) return;
+            if (Time.frameCount == UI.AdminPanel.ToggleFrame) return;
             var kb = Keyboard.current;
             float dt = Time.unscaledDeltaTime;
             if (kb != null)
@@ -73,6 +84,15 @@ namespace DropshippingGame
                     SetActive(false);
                     return;
                 }
+            }
+            // Controller (B/Start) beendet ebenfalls – sonst gäbe es ohne Tastatur keinen Ausweg.
+            if (Time.frameCount > _openedFrame && GameInput.CancelDown)
+            {
+                SetActive(false);
+                return;
+            }
+            if (kb != null)
+            {
                 Vector3 move = Vector3.zero;
                 if (kb.wKey.isPressed || kb.upArrowKey.isPressed) move.z += 1f;
                 if (kb.sKey.isPressed || kb.downArrowKey.isPressed) move.z -= 1f;

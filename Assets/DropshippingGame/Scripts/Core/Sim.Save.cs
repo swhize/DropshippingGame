@@ -12,7 +12,27 @@ namespace DropshippingGame.Core
 
         public string SavePath(int slot) => Path.Combine(SaveDir, "savegame_" + slot + ".json");
 
-        public bool HasSave(int slot) => !string.IsNullOrEmpty(SaveDir) && File.Exists(SavePath(slot));
+        /// <summary>Sicherung des vorigen Spielstands (wird vor jedem Überschreiben angelegt).</summary>
+        public string BackupPath(int slot) => SavePath(slot) + ".bak";
+
+        /// <summary>true, wenn der zuletzt geladene Spielstand aus der Sicherung (.bak/.tmp) kam, weil die Hauptdatei kaputt war.</summary>
+        public bool LoadedFromBackup { get; private set; }
+
+        /// <summary>Grund des letzten Lade-/Speicherfehlers (für das Protokoll), sonst leer.</summary>
+        public string LastLoadError { get; private set; } = "";
+        public string LastSaveError { get; private set; } = "";
+
+        /// <summary>Slot, dessen Hauptdatei in dieser Sitzung nachweislich lesbar war (geladen oder selbst geschrieben).</summary>
+        private int _verifiedSlot;
+
+        /// <summary>
+        /// Slot, dessen Dateien zum laufenden Spiel gehören (geladen oder schon einmal gespeichert). Ein neues
+        /// Spiel in einem belegten Slot sichert den alten, fremden Stand nicht als .bak (ResetState setzt 0).
+        /// </summary>
+        private int _ownedSlot;
+
+        public bool HasSave(int slot) =>
+            !string.IsNullOrEmpty(SaveDir) && (File.Exists(SavePath(slot)) || File.Exists(BackupPath(slot)));
 
         public bool HasAnySave()
         {
@@ -38,18 +58,34 @@ namespace DropshippingGame.Core
             return best;
         }
 
-        private Dictionary<string, object> ReadSaveFile(int slot)
+        /// <summary>Kandidaten in Lade-Reihenfolge: Hauptdatei, Sicherung, abgebrochene Zwischendatei.</summary>
+        private string[] SaveCandidates(int slot) => new[] { SavePath(slot), BackupPath(slot), SavePath(slot) + ".tmp" };
+
+        /// <summary>Liest eine Spielstand-Datei; null, wenn sie fehlt, leer oder kein gültiges JSON-Objekt ist.</summary>
+        private static Dictionary<string, object> ReadJsonFile(string path)
         {
-            if (!HasSave(slot)) return null;
             try
             {
-                string text = File.ReadAllText(SavePath(slot));
+                if (!File.Exists(path)) return null;
+                string text = File.ReadAllText(path);
+                if (string.IsNullOrWhiteSpace(text)) return null;
                 return Json.TryParse(text, out object o) ? o as Dictionary<string, object> : null;
             }
             catch (Exception)
             {
                 return null;
             }
+        }
+
+        private Dictionary<string, object> ReadSaveFile(int slot)
+        {
+            if (string.IsNullOrEmpty(SaveDir)) return null;
+            foreach (var path in SaveCandidates(slot))
+            {
+                var d = ReadJsonFile(path);
+                if (d != null) return d;
+            }
+            return null;
         }
 
         public SaveSummary ReadSummary(int slot)
@@ -189,25 +225,63 @@ namespace DropshippingGame.Core
         public event Action<int> GameSaved;
 
         /// <summary>Speichert in den aktuellen Slot. Das Imbiss-Intro wird nicht gespeichert.</summary>
+        /// <summary>
+        /// Speichert in den aktuellen Slot. Sicher gegen Abstürze und kaputte Dateien: erst in eine
+        /// Zwischendatei schreiben, dann den bisherigen (lesbaren) Stand als .bak sichern, dann ersetzen.
+        /// </summary>
         public bool SaveGame(bool silent = false)
         {
             if (StoryStage == "diner" || string.IsNullOrEmpty(SaveDir)) return false;
-            CollectWorldState?.Invoke();
-            var state = ToJson();
+            try
+            {
+                CollectWorldState?.Invoke();
+            }
+            catch (Exception e)
+            {
+                // Lieber ohne abgelegte Gegenstände speichern als gar nicht.
+                LastSaveError = "Welt: " + e.Message;
+            }
+            Dictionary<string, object> state;
+            string text;
+            try
+            {
+                state = ToJson();
+                text = Json.Write(state);
+            }
+            catch (Exception e)
+            {
+                LastSaveError = e.GetType().Name + ": " + e.Message;
+                Notify("Speichern fehlgeschlagen!", "bad");
+                return false;
+            }
             try
             {
                 Directory.CreateDirectory(SaveDir);
                 string path = SavePath(Slot);
                 string tmp = path + ".tmp";
-                File.WriteAllText(tmp, Json.Write(state));
-                if (File.Exists(path)) File.Delete(path);
+                File.WriteAllText(tmp, text);
+                string bak = BackupPath(Slot);
+                bool own = _ownedSlot == Slot;
+                // Sicherung eines anderen (überschriebenen) Spiels wäre irreführend.
+                if (!own && File.Exists(bak)) File.Delete(bak);
+                if (File.Exists(path))
+                {
+                    // Nur einen lesbaren Stand als Sicherung behalten – eine kaputte Hauptdatei
+                    // darf die gute Sicherung nicht überschreiben.
+                    if (own && (_verifiedSlot == Slot || ReadJsonFile(path) != null)) File.Copy(path, bak, true);
+                    File.Delete(path);
+                }
                 File.Move(tmp, path);
+                _verifiedSlot = Slot;
+                _ownedSlot = Slot;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                LastSaveError = e.GetType().Name + ": " + e.Message;
                 Notify("Speichern fehlgeschlagen!", "bad");
                 return false;
             }
+            LastSaveError = "";
             LastSavedUnix = (long)state["saved_unix"];
             if (!silent) Notify("Spiel gespeichert (Spielstand " + Slot + ").", "good");
             try
@@ -221,14 +295,45 @@ namespace DropshippingGame.Core
             return true;
         }
 
+        /// <summary>
+        /// Lädt einen Slot. Ist die Hauptdatei kaputt (abgebrochen, leer, ungültig), wird die Sicherung
+        /// (.bak) bzw. die Zwischendatei genommen (<see cref="LoadedFromBackup"/>). Scheitert alles, bleibt
+        /// kein halb geladener Zustand zurück (false).
+        /// </summary>
         public bool LoadGame(int slot)
         {
-            var s = ReadSaveFile(slot);
-            if (s == null) return false;
-            ResetState();
-            Slot = slot;
-            FromJson(s);
-            return true;
+            LoadedFromBackup = false;
+            LastLoadError = "";
+            if (string.IsNullOrEmpty(SaveDir)) return false;
+            var candidates = SaveCandidates(slot);
+            bool touched = false;
+            for (int i = 0; i < candidates.Length; i++)
+            {
+                var s = ReadJsonFile(candidates[i]);
+                if (s == null)
+                {
+                    if (File.Exists(candidates[i])) LastLoadError += Path.GetFileName(candidates[i]) + ": unlesbar; ";
+                    continue;
+                }
+                touched = true;
+                try
+                {
+                    ResetState();
+                    Slot = slot;
+                    FromJson(s);
+                }
+                catch (Exception e)
+                {
+                    LastLoadError += Path.GetFileName(candidates[i]) + ": " + e.GetType().Name + " " + e.Message + "; ";
+                    continue;
+                }
+                LoadedFromBackup = i > 0;
+                _verifiedSlot = i == 0 ? slot : 0;
+                _ownedSlot = slot;
+                return true;
+            }
+            if (touched) ResetState();
+            return false;
         }
 
         public void FromJson(Dictionary<string, object> s)
@@ -415,14 +520,19 @@ namespace DropshippingGame.Core
 
         public void DeleteSave(int slot)
         {
-            try
+            if (string.IsNullOrEmpty(SaveDir)) return;
+            foreach (var path in SaveCandidates(slot))
             {
-                if (HasSave(slot)) File.Delete(SavePath(slot));
+                try
+                {
+                    if (File.Exists(path)) File.Delete(path);
+                }
+                catch (Exception)
+                {
+                    // Löschen ist nicht kritisch
+                }
             }
-            catch (Exception)
-            {
-                // Löschen ist nicht kritisch
-            }
+            if (_verifiedSlot == slot) _verifiedSlot = 0;
         }
     }
 }

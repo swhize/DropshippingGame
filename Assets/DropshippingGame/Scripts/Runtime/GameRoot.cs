@@ -100,13 +100,14 @@ namespace DropshippingGame
 
         private void OnApplicationQuit()
         {
-            if (!_inMenu && CanAutosave()) _sim.SaveGame(true);
+            if (!_inMenu && CanAutosave()) SaveSafe();
+            SessionLog.Flush();
         }
 
         private void HookUi()
         {
-            _ui.Menu.OnNewGame = (mode, slot) => _ui.Fader.FadeOut(() => StartNewGame(mode, slot));
-            _ui.Menu.OnLoad = slot => _ui.Fader.FadeOut(() => LoadGame(slot));
+            _ui.Menu.OnNewGame = (mode, slot) => _ui.Fader.FadeOut(() => SafeStart(() => StartNewGame(mode, slot)));
+            _ui.Menu.OnLoad = slot => _ui.Fader.FadeOut(() => SafeStart(() => LoadGame(slot)));
             _ui.Menu.OnQuit = Quit;
             _ui.Pause.OnMainMenu = ToMenu;
             _ui.Pause.OnQuit = Quit;
@@ -346,6 +347,35 @@ namespace DropshippingGame
             _menuCam.transform.LookAt(new Vector3(x * 0.7f - 6f, 2.7f, -9f));
         }
 
+        /// <summary>
+        /// Spielstart abgesichert: Wirft der Aufbau (Welt, Spieler, Spielstand) eine Ausnahme, geht es
+        /// mit Hinweis zurück ins Hauptmenü statt mit schwarzem Bild oder halber Welt hängen zu bleiben.
+        /// </summary>
+        private void SafeStart(Action start)
+        {
+            try
+            {
+                start();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                SessionLog.Note("Spielstart fehlgeschlagen: " + e.Message);
+                try
+                {
+                    _ui.Modal.Close();
+                    _ui.BigModal.Close();
+                    EnterMenu();
+                }
+                catch (Exception e2)
+                {
+                    SafeLog.Warn("menu.fallback", e2);
+                }
+                _ui.Fader.FadeIn(0.5f);
+                _sim.Notify("Das Spiel konnte nicht gestartet werden. Details im Protokoll (logs).", "bad");
+            }
+        }
+
         private void StartNewGame(string mode, int slot)
         {
             _sim.Slot = Mathf.Clamp(slot, 1, Sim.SaveSlots);
@@ -355,13 +385,32 @@ namespace DropshippingGame
 
         private void LoadGame(int slot)
         {
-            if (!_sim.LoadGame(slot))
+            bool ok;
+            try { ok = _sim.LoadGame(slot); }
+            catch (Exception e)
             {
+                SafeLog.Warn("load", e);
+                ok = false;
+            }
+            if (!ok)
+            {
+                SessionLog.Note("Laden fehlgeschlagen: Slot " + slot + " " + _sim.LastLoadError);
+                // Die Simulation ist danach zurückgesetzt – im laufenden Spiel (z. B. „Pleite“ › Laden)
+                // geht es deshalb sicher zurück ins Hauptmenü.
+                if (!_inMenu)
+                {
+                    _ui.Modal.Close();
+                    _ui.BigModal.Close();
+                    EnterMenu();
+                }
                 _ui.Fader.FadeIn(0.5f);
                 _sim.Notify("Spielstand " + slot + " konnte nicht geladen werden.", "bad");
                 return;
             }
+            SessionLog.Note("Spielstand geladen: Slot " + slot + (_sim.LoadedFromBackup ? " (aus Sicherung)" : ""));
             EnterGame(true);
+            if (_sim.LoadedFromBackup)
+                _sim.Notify("Der Spielstand war beschädigt – die letzte Sicherung wurde geladen.", "bad");
         }
 
         private void BuildWorld(bool menuMode)
@@ -375,6 +424,7 @@ namespace DropshippingGame
         /// <summary>Welt und Spieler sofort entfernen (vor dem Neuaufbau im selben Frame).</summary>
         private void DestroyGame()
         {
+            ResetModes();
             if (_player != null) DestroyImmediate(_player.gameObject);
             _player = null;
             Game.Player = null;
@@ -383,6 +433,34 @@ namespace DropshippingGame
             Game.World = null;
             _menuCam = null;
             DroppedItem.All.RemoveAll(d => d == null);
+            Movable.All.RemoveAll(m => m == null);
+            Station.All.RemoveAll(st => st == null);
+            Label3D.ResetCamera();
+        }
+
+        /// <summary>
+        /// Alle Sondermodi beenden, bevor Welt/Spieler neu entstehen (Menü, Neues Spiel, Laden):
+        /// Admin-Panel, Vogelperspektive, Texteingabe, Emote-Rad. Sonst bliebe z. B. eine Sperre oder
+        /// eine Kamera hängen und Esc hätte keine Wirkung mehr.
+        /// </summary>
+        private void ResetModes()
+        {
+            try
+            {
+                if (_ui != null && _ui.Admin != null && _ui.Admin.IsOpen) _ui.Admin.Close();
+                BirdsEyeView.ForceOff();
+                AppBranding.Typing = false;
+                EmoteController.WheelOpen = false;
+                if (_player != null)
+                {
+                    if (_player.Mover.Active) _player.Mover.Cancel();
+                    if (_player.Recorder.Active) _player.Recorder.Cancel(true);
+                }
+            }
+            catch (Exception e)
+            {
+                SafeLog.Warn("reset-modes", e);
+            }
         }
 
         private void EnterGame(bool fromSave)
@@ -469,7 +547,7 @@ namespace DropshippingGame
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                SafeLog.Warn("prune", e);
             }
         }
 
@@ -488,7 +566,7 @@ namespace DropshippingGame
 
         private void ToMenu()
         {
-            if (CanAutosave()) _sim.SaveGame(true);
+            if (CanAutosave()) SaveSafe();
             _ui.Pause.Close();
             _ui.Phone.Close(true);
             _sim.ClosePc();
@@ -503,7 +581,7 @@ namespace DropshippingGame
 
         private void Quit()
         {
-            if (!_inMenu && CanAutosave()) _sim.SaveGame(true);
+            if (!_inMenu && CanAutosave()) SaveSafe();
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -519,22 +597,37 @@ namespace DropshippingGame
             float udt = Time.unscaledDeltaTime;
             if (_inMenu)
             {
-                UpdateMenuCamera(udt);
-                if (!_ui.Fader.Busy && GameInput.CancelDown && _ui.Menu.IsOpen) _ui.Menu.Back();
-                if (_ui.Menu.InSettings && (GameInput.PrevTabDown || GameInput.NextTabDown)) SettingsView.CycleTab(GameInput.PrevTabDown ? -1 : 1);
+                try
+                {
+                    UpdateMenuCamera(udt);
+                    if (!_ui.Fader.Busy && GameInput.CancelDown && _ui.Menu.IsOpen) _ui.Menu.Back();
+                    if (_ui.Menu.InSettings && (GameInput.PrevTabDown || GameInput.NextTabDown)) SettingsView.CycleTab(GameInput.PrevTabDown ? -1 : 1);
+                }
+                catch (Exception e)
+                {
+                    SafeLog.Warn("menu", e);
+                }
                 return;
             }
             if (_player == null || _world == null) return;
-            if (!Paused) _sim.Tick(Time.deltaTime);
-            HandleInput();
+            // Jeder Teil einzeln abgesichert: Ein Fehler in der Simulation darf weder die Eingabe
+            // (Esc/Pause) noch den Rest des Frames blockieren.
+            if (!Paused)
+            {
+                try { _sim.Tick(Time.deltaTime); }
+                catch (Exception e) { SafeLog.Warn("sim.tick", e); }
+            }
+            try { HandleInput(); }
+            catch (Exception e) { SafeLog.Warn("input", e); }
 
             _lightAcc += Time.deltaTime;
             if (_lightAcc >= 0.2f)
             {
                 _lightAcc = 0f;
-                _world.Atmos.SetTimeOfDay(_sim.TimeMinutes / 60f);
+                try { _world.Atmos.SetTimeOfDay(_sim.TimeMinutes / 60f); }
+                catch (Exception e) { SafeLog.Warn("atmos", e); }
             }
-            if (_player.transform.position.y < -20f) _player.Teleport(_world.SpawnPoint(), _world.SpawnYaw());
+            if (_player.transform.position.y < -20f || float.IsNaN(_player.transform.position.y)) _player.Teleport(_world.SpawnPoint(), _world.SpawnYaw());
 
             // Verwaiste Bestellzettel (Artikel existiert nirgends mehr) aus dem HUD räumen.
             _pruneAcc += udt;
@@ -555,7 +648,7 @@ namespace DropshippingGame
                 }
                 catch (Exception e)
                 {
-                    Debug.LogException(e);
+                    SafeLog.Warn("ringlight", e);
                 }
             }
 
@@ -564,8 +657,15 @@ namespace DropshippingGame
             if (_autosaveAcc > 90f && !InputLocked && CanAutosave())
             {
                 _autosaveAcc = 0f;
-                _sim.SaveGame(true);
+                SaveSafe();
             }
+        }
+
+        /// <summary>Speichern, ohne dass ein Fehler den Frame abbricht (Sim meldet Fehlschläge selbst).</summary>
+        private void SaveSafe()
+        {
+            try { _sim.SaveGame(true); }
+            catch (Exception e) { SafeLog.Warn("save", e); }
         }
 
         private void HandleInput()
@@ -581,7 +681,7 @@ namespace DropshippingGame
 
             if (GameInput.ScreenshotDown) TakeScreenshot();
 
-            if (GameInput.AdminDown && _ui.Admin != null)
+            if (GameInput.AdminDown && _ui.Admin != null && !(AppBranding.Typing && _sim.PcOpen))
             {
                 _ui.Admin.Toggle();
                 return;
@@ -603,8 +703,14 @@ namespace DropshippingGame
             {
                 if (AppBranding.Typing)
                 {
-                    if (pause) _ui.Root.panel?.focusController?.focusedElement?.Blur();
-                    return;
+                    var focused = _ui.Root.panel?.focusController?.focusedElement;
+                    // Hängengebliebenes Tipp-Flag (Feld verschwand ohne FocusOut): sonst wäre Esc wirkungslos.
+                    if (focused == null) AppBranding.Typing = false;
+                    else
+                    {
+                        if (pause) focused.Blur();
+                        return;
+                    }
                 }
                 if (_ui.BigModal.IsOpen || _ui.Modal.IsOpen)
                 {
@@ -818,6 +924,7 @@ namespace DropshippingGame
         private void ShowSummary(DaySummary s)
         {
             if (_player != null && _player.Recorder.Active) _player.Recorder.Cancel(true);
+            if (_player != null && _player.Mover.Active) _player.Mover.Cancel();
             if (_sim.PcOpen) _sim.ClosePc();
             _ui.Phone.Close(true);
             _ui.Modal.Close();
@@ -852,7 +959,7 @@ namespace DropshippingGame
             Game.Sound("bad");
             var body = _ui.BigModal.Open("Pleite!", "Dein Konto ist tief im Minus. Die Bank zieht den Stecker.", 540, new[]
             {
-                new ModalButton("Letzten Spielstand laden", () => _ui.Fader.FadeOut(() => LoadGame(_sim.Slot)), "accent", "save"),
+                new ModalButton("Letzten Spielstand laden", () => _ui.Fader.FadeOut(() => SafeStart(() => LoadGame(_sim.Slot))), "accent", "save"),
                 new ModalButton("Hauptmenü", ToMenu, "ghost", "home"),
             }, true, "gameover", null, "trend_down");
             _ui.BigModal.Text(body, "Du hast " + _sim.Day + " Tage durchgehalten, " + _sim.TotalShipped + " Pakete verschickt und " +

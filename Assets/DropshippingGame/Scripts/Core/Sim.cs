@@ -210,6 +210,7 @@ namespace DropshippingGame.Core
         // =====================================================================================
         public void ResetState()
         {
+            _ownedSlot = 0; // Spielstand-Sicherung (Sim.Save.cs): neues Spiel besitzt den Slot noch nicht
             Money = GameData.StartCapital;
             Day = 1;
             TimeMinutes = GameData.DayStart;

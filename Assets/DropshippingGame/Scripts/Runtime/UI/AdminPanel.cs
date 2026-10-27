@@ -47,9 +47,13 @@ namespace DropshippingGame.UI
         public void Open() => SetOpen(true);
         public void Close() => SetOpen(false);
 
+        /// <summary>Frame, in dem das Panel zuletzt geöffnet/geschlossen wurde (dieselbe Taste wirkt dann nicht noch woanders).</summary>
+        public static int ToggleFrame = -1;
+
         private void SetOpen(bool open)
         {
             if (open && (S == null || !DevTools.Enabled)) return;
+            if (IsOpen != open) ToggleFrame = Time.frameCount;
             IsOpen = open;
             if (Panel != null) Panel.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
             if (Game.Root != null) Game.Root.Lock("admin", open);

@@ -325,6 +325,7 @@ namespace DropshippingGame.UI
         private readonly VisualElement _rect, _tipBox;
         private readonly Label _label, _sub, _tip;
         public bool Busy { get; private set; }
+        private float _busySince;
 
         public FaderView(VisualElement layer)
         {
@@ -370,6 +371,9 @@ namespace DropshippingGame.UI
 
         public void FadeIn(float duration = 0.8f)
         {
+            // Eine neue Blende ersetzt eine laufende Überblendung (gleicher Anim-Schlüssel) – sonst bliebe Busy hängen.
+            Busy = false;
+            _rect.pickingMode = PickingMode.Ignore;
             UIX.Show(_layer, true);
             SetTextAlpha(0f);
             Anim.Run(duration, t => _rect.style.opacity = 1f - t, () => UIX.Show(_layer, false), Ease.InOutSine, true, this);
@@ -380,6 +384,7 @@ namespace DropshippingGame.UI
         {
             if (Busy) return;
             Busy = true;
+            _busySince = Time.unscaledTime;
             bool hasText = !string.IsNullOrEmpty(text);
             SetTexts(text, sub, hasText);
             SetTextAlpha(0f);
@@ -395,7 +400,7 @@ namespace DropshippingGame.UI
                     }
                     catch (Exception e)
                     {
-                        Debug.LogException(e);
+                        SafeLog.Warn("fader.mid", e);
                     }
                     Anim.Delay(hasText ? Mathf.Max(hold, 1.4f) : hold, () =>
                     {
@@ -416,14 +421,40 @@ namespace DropshippingGame.UI
         /// <summary>Nur abblenden, dann Callback.</summary>
         public void FadeOut(Action then, float duration = 0.6f)
         {
+            Busy = false;
             UIX.Show(_layer, true);
             SetTextAlpha(0f);
             _rect.pickingMode = PickingMode.Position;
             Anim.Run(duration, t => _rect.style.opacity = t, () =>
             {
                 _rect.pickingMode = PickingMode.Ignore;
-                then?.Invoke();
+                try
+                {
+                    then?.Invoke();
+                }
+                catch (Exception e)
+                {
+                    // Nie mit schwarzem Bild hängen bleiben.
+                    SafeLog.Warn("fader.then", e);
+                    FadeIn(0.4f);
+                }
             }, Ease.InOutSine, true, this);
+        }
+
+        /// <summary>
+        /// Notbremse (jeden Frame aus UIRoot): Eine Überblendung dauert höchstens ein paar Sekunden.
+        /// Hängt sie (abgebrochene Animation, Fehler im Rückruf), wird sie beendet, damit Eingaben wieder gehen.
+        /// </summary>
+        public void Tick()
+        {
+            if (!Busy || Time.unscaledTime - _busySince < 20f) return;
+            SafeLog.Warn("fader", "Überblendung hing – zurückgesetzt");
+            Busy = false;
+            _rect.pickingMode = PickingMode.Ignore;
+            Anim.Stop(this);
+            _rect.style.opacity = 0f;
+            SetTextAlpha(0f);
+            UIX.Show(_layer, false);
         }
     }
 }
