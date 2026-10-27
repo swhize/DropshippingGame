@@ -179,6 +179,11 @@ namespace DropshippingGame.UI
             big.style.fontSize = 20;
             _body.Add(big);
             _body.Add(ToggleRow("Perf-Overlay (FPS, Draw Calls, GC/Frame, NPCs, Lichter)", PerfOverlay.Visible, PerfOverlay.SetVisible));
+            _body.Add(Btn("Protokoll-Ordner öffnen (Fehlerberichte: " + SessionLog.Folder + ")", () =>
+            {
+                SessionLog.Flush();
+                if (!string.IsNullOrEmpty(SessionLog.Folder)) Application.OpenURL("file:///" + SessionLog.Folder.Replace('\\', '/'));
+            }));
 
             _body.Add(Section("Geld"));
             var money = Row();

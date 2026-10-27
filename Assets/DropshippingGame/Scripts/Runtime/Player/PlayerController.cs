@@ -467,7 +467,8 @@ namespace DropshippingGame
                 return;
             }
             UpdateFocus(locked);
-            if (locked) return;
+            // Emote-Rad offen: E/G/B gehören zum Rad, nicht zur Welt.
+            if (locked || EmoteController.WheelOpen) return;
             if (GameInput.BuildDown && Mover.TryBegin(this))
             {
                 ClearFocus();
