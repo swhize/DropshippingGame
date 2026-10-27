@@ -178,6 +178,11 @@ namespace DropshippingGame.UI
             big.style.height = 54;
             big.style.fontSize = 20;
             _body.Add(big);
+            _body.Add(Btn("Selbsttest starten  (ca. 3 Min. · eigener Test-Spielstand · Bericht + Screenshots zum Verschicken)", () =>
+            {
+                Close();
+                DropshippingGame.Testing.SelfTest.Launch();
+            }, Accent));
             _body.Add(ToggleRow("Perf-Overlay (FPS, Draw Calls, GC/Frame, NPCs, Lichter)", PerfOverlay.Visible, PerfOverlay.SetVisible));
             _body.Add(Btn("Protokoll-Ordner öffnen (Fehlerberichte: " + SessionLog.Folder + ")", () =>
             {

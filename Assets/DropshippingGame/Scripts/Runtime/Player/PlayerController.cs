@@ -134,6 +134,17 @@ namespace DropshippingGame
             _cc.enabled = !Noclip;
         }
 
+        /// <summary>Blick (Drehung + Kamera-Neigung) auf einen Punkt richten – für den Selbsttest (Testing/SelfTest.cs).</summary>
+        public void LookAt(Vector3 point)
+        {
+            if (Cam == null) return;
+            var d = point - Cam.transform.position;
+            if (d.sqrMagnitude < 1e-6f) return;
+            Yaw = Mathf.Atan2(d.x, d.z) * Mathf.Rad2Deg;
+            _pitch = Mathf.Clamp(-Mathf.Atan2(d.y, new Vector2(d.x, d.z).magnitude) * Mathf.Rad2Deg, -PitchLimit, PitchLimit);
+            Cam.transform.localRotation = Quaternion.Euler(_pitch, 0, 0);
+        }
+
         /// <summary>Arme und gehaltenen Gegenstand ein-/ausblenden (TikTok-Aufnahme: freie Sicht).</summary>
         public void SetHandsVisible(bool on)
         {

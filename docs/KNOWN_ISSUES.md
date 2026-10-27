@@ -12,6 +12,11 @@ Pausemenü › **Feedback & Bug melden** (kopiert Version + Systeminfos) melden.
 Tipp: Im Editor/Development-Build öffnet **F10** das Admin-Panel (Geld, Level, Zeit, Wetter, Teleport, Ereignisse,
 Vogelperspektive). Damit lassen sich späte Spielphasen schnell erreichen.
 
+**Zuerst den Selbsttest laufen lassen** ([`SELBSTTEST.md`](SELBSTTEST.md)): ▶ Play › im Hauptmenü **F10** ›
+„Selbsttest starten“ (oder Menü Dropshipping › Selbsttest (Play Mode)). Er prüft in ca. 3 Minuten automatisch einen
+großen Teil dieser Liste (Kernschleife, alle Laptop-/Handy-Seiten, Menüs, Moped, Viertel, Wetter, Englisch,
+Speichern/Laden, Feierabend, Bildrate) und legt einen Bericht mit Screenshots an – den Ordner als ZIP schicken.
+
 Code-Kommentare mit TODO/FIXME/HACK: **keine** (Stand rc1). Offene Aufgaben stehen nur in dieser Datei und in
 [`ROADMAP.md`](ROADMAP.md).
 

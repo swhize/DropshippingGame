@@ -6,7 +6,7 @@
 - Regeln: C# 9 (kein `record`/`init`), keine veralteten Unity-APIs, mehrdeutige Namen voll qualifizieren (z. B. `UnityEngine.ShadowQuality`), defensiv coden, immer prozeduraler Fallback wenn ein Asset fehlt, Assets nur CC0/CC-BY/OFL mit Eintrag in `CREDITS.md` + `Resources/credits.json`. Core-Regeln mit NUnit-Tests (`Tests/EditMode`), Speicherstand-Erweiterungen abwärtskompatibel (+ Test).
 - Prüfen ohne Unity (Pflicht vor jedem Commit):
   - einmalig `tools/compilecheck/setup.sh`
-  - `tools/compilecheck/build.sh <repo-pfad>` → muss `CORE OK`, `RUNTIME OK`, `EDITOR OK` zeigen
+  - `tools/compilecheck/build.sh <repo-pfad>` → muss `CORE OK`, `RUNTIME OK`, `EDITOR OK`, `PLAYMODE OK` zeigen (PlayMode-Tests = Selbsttest, `docs/SELBSTTEST.md`)
   - `dotnet test tools/compilecheck/Tests.csproj` → alle Tests grün
 - Release: Entwickler-Funktionen (Tasten, Admin-Knöpfe, Debug-Overlays) immer hinter `DevTools.Enabled` (nur Editor/Development/`DS_DEV`); Erfolge über `Platform.UnlockAchievement(id)`; Builds über Menü Dropshipping › Build (`Editor/BuildTools.cs`), Checkliste `docs/RELEASE.md`.
 - Parallelarbeit: neue Features in NEUEN Dateien, in gemeinsamen Dateien (WorldBuilder, Sim, Sim.Save, GameData, LaptopView, PhoneView, GameRoot, GameInput, AdminPanel) nur kleine Hooks, nie umformatieren.

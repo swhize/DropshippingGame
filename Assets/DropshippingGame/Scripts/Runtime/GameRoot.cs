@@ -621,6 +621,7 @@ namespace DropshippingGame
                 try
                 {
                     UpdateMenuCamera(udt);
+                    if (DropshippingGame.Testing.SelfTestUI.HandleMenuInput()) return; // F10 im Hauptmenü: Selbsttest (nur DevTools)
                     if (!_ui.Fader.Busy && GameInput.CancelDown && _ui.Menu.IsOpen) _ui.Menu.Back();
                     if (_ui.Menu.InSettings && (GameInput.PrevTabDown || GameInput.NextTabDown)) SettingsView.CycleTab(GameInput.PrevTabDown ? -1 : 1);
                 }
