@@ -99,6 +99,8 @@ namespace DropshippingGame
                 // Spielstand-Infos sind optional
             }
             sb.AppendLine("Logdatei: " + (LogFile.Length > 0 ? LogFile : "(unbekannt)"));
+            SessionLog.Flush();
+            sb.AppendLine("Sitzungsprotokoll: " + (SessionLog.CurrentFile.Length > 0 ? SessionLog.CurrentFile : "(nicht verfügbar)") + " (Ordner logs, letzte 5 Sitzungen)");
             if (_errors.Count > 0)
             {
                 sb.AppendLine("Letzte Fehler:");
