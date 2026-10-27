@@ -74,6 +74,8 @@ namespace DropshippingGame
         public static bool ColorBlind;
         /// <summary>Weniger Bewegung: kein Pulsieren/Blinken in der Oberfläche.</summary>
         public static bool ReduceMotion;
+        /// <summary>Für Feedback-Effekte (Runtime/Feel): weniger Bewegung oder Streamer-Modus.</summary>
+        public static bool ReducedMotion => ReduceMotion || StreamerMode;
 
         public static event Action Changed;
         /// <summary>Sprache wurde umgestellt (Parameter: neuer Sprachcode).</summary>

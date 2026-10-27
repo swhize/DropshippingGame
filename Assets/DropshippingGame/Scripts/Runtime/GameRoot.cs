@@ -172,9 +172,10 @@ namespace DropshippingGame
             {
                 if (_world != null) _world.SendVan();
             };
+            FeelDirector.Attach(s);
             s.PackageShipped += (pkg, reward, where) =>
             {
-                if (_world != null && !where.IsZero) _world.SpawnFloatText(where.ToVector3() + Vector3.up * 0.4f, "+" + Fmt.Money(reward), Theme.Good);
+                if (_world != null && !where.IsZero && !FeelDirector.Active) _world.SpawnFloatText(where.ToVector3() + Vector3.up * 0.4f, "+" + Fmt.Money(reward), Theme.Good);
             };
             s.StandSale += (pid, price) =>
             {

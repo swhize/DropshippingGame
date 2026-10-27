@@ -8,7 +8,7 @@ namespace DropshippingGame.Core
     /// (keine Audiodateien im Projekt). Liefert Mono-Samples (-1..1) mit <see cref="Rate"/> Hz.
     /// Reines C#, damit es auch ohne Unity getestet werden kann.
     /// </summary>
-    public static class AudioSynth
+    public static partial class AudioSynth
     {
         public const int Rate = 22050;
         private const int TableSize = 2048;
@@ -18,6 +18,8 @@ namespace DropshippingGame.Core
         {
             "click", "hover", "pickup", "drop", "place", "cash", "notify", "order", "error",
             "tape", "printer", "levelup", "step", "fold", "truck", "door", "whoosh", "plate", "bad",
+            // Feedback-Effekte („Juice“, siehe Runtime/Feel)
+            "tape_rip", "print_whirr", "locker", "coin_cascade", "ding", "pop", "popper", "perk", "stick", "sparkle",
         };
 
         public static readonly string[] MusicNames = { "menu", "work", "diner" };
@@ -323,7 +325,7 @@ namespace DropshippingGame.Core
                     }
                     break;
                 default:
-                    b = Buf(0.05f);
+                    b = RenderFeelSfx(name, rng) ?? Buf(0.05f);
                     break;
             }
             return b;
