@@ -298,6 +298,20 @@ namespace DropshippingGame.Core
             }
         }
 
+        /// <summary>Zahl als double (volle Genauigkeit, z. B. für Spielzeit in Sekunden).</summary>
+        public static double D(Dictionary<string, object> d, string key, double def = 0)
+        {
+            switch (Get(d, key))
+            {
+                case double v: return v;
+                case float f: return f;
+                case int i: return i;
+                case long l: return l;
+                case string s when double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out double r): return r;
+                default: return def;
+            }
+        }
+
         public static object Get(Dictionary<string, object> d, string key) =>
             d != null && d.TryGetValue(key, out object v) ? v : null;
 

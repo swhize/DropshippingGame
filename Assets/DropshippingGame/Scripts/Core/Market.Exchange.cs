@@ -424,6 +424,7 @@ namespace DropshippingGame.Core
         /// <summary>Geld aufs Sparkonto legen. false = nicht genug auf dem Girokonto.</summary>
         public bool Deposit(int amount)
         {
+            amount = Math.Min(amount, Sim.MoneyLimit - Savings); // Sparkonto läuft nie über int
             if (amount <= 0) return false;
             if (_sim.Money < amount)
             {
@@ -442,7 +443,7 @@ namespace DropshippingGame.Core
         /// <summary>Vom Sparkonto abheben. Gibt den abgehobenen Betrag zurück.</summary>
         public int Withdraw(int amount)
         {
-            int take = Math.Min(amount, Savings);
+            int take = Math.Min(amount, Math.Min(Savings, Sim.MoneyLimit - Math.Max(0, _sim.Money)));
             if (take <= 0) return 0;
             Savings -= take;
             _sim.Money += take;
@@ -513,6 +514,7 @@ namespace DropshippingGame.Core
         /// <summary>Alle Aktien und ETFs des Finanzviertels sofort um den Faktor bewegen (Crash/Rallye).</summary>
         public void AdminMoveAll(float mult, bool crypto)
         {
+            if (!Sim.Finite(mult) || mult <= 0f) return;
             foreach (var a in Extra)
             {
                 if ((a.Kind == AssetKind.Crypto) != crypto) continue;

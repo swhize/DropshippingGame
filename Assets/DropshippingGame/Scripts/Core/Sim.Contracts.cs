@@ -222,6 +222,8 @@ namespace DropshippingGame.Core
         /// </summary>
         public Contract GenerateContractOffer(float payBonus = 1f, bool special = false, string product = "", string company = "")
         {
+            if (!Finite(payBonus) || payBonus <= 0f) payBonus = 1f;
+            payBonus = Math.Min(payBonus, 5f);
             var pool = new List<string>();
             foreach (var p in GameData.Products)
             {
@@ -302,7 +304,8 @@ namespace DropshippingGame.Core
         /// <summary>Eilauftrag (Ereignis): Frist 1 Tag kürzer, Vergütung × payMult.</summary>
         public bool RushContract(Contract c, float payMult)
         {
-            if (c == null || c.State != ContractState.Active || c.DeadlineDay - Day < 1) return false;
+            if (c == null || c.State != ContractState.Active || c.DeadlineDay - Day < 1 || !Finite(payMult) || payMult <= 0f) return false;
+            payMult = Math.Min(payMult, 3f); // Eilzuschlag: höchstens ×3 (Ereignis: ×1,3)
             c.DeadlineDay -= 1;
             c.Payment = RoundTo5(c.Payment * payMult);
             c.Penalty = RoundTo5(c.Payment * GameData.ContractPenaltyFactor);

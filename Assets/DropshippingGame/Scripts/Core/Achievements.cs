@@ -127,7 +127,7 @@ namespace DropshippingGame.Core
             s.Lost = Math.Max(0, J.I(d, "lost"));
             float best = J.F(d, "best_tiktok");
             s.BestTikTok = float.IsNaN(best) || float.IsInfinity(best) ? 0f : Mathx.Clamp01(best);
-            double ps = J.F(d, "play_seconds");
+            double ps = J.D(d, "play_seconds");
             s.PlaySeconds = double.IsNaN(ps) || double.IsInfinity(ps) ? 0 : Math.Max(0, ps);
             s.HadDebt = J.B(d, "had_debt");
             return s;

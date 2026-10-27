@@ -399,7 +399,9 @@ namespace DropshippingGame.Core
         {
             RealTime += dt;
             if (!InGame || !IsOpen) return;
-            AdvanceMinutes(dt * GameData.MinutesPerSecond * Math.Max(0f, AdminTimeScale));
+            float scale = Finite(AdminTimeScale) ? Math.Max(0f, AdminTimeScale) : 1f;
+            float step = dt * GameData.MinutesPerSecond * scale;
+            AdvanceMinutes(Finite(step) ? Math.Max(0f, step) : 0f);
             if (!IsOpen) return;
             Market.Process(dt);
             Events.Process();
@@ -407,6 +409,10 @@ namespace DropshippingGame.Core
 
         public void AdvanceMinutes(float m)
         {
+            // Nie über 20 Uhr hinaus rechnen: sonst laufen Bestellungen, Boosts und Lieferungen der Geschäftsuhr
+            // schon in den nächsten Morgen (BClock nach 20:00 = nächster Tag), z. B. bei Rucklern oder Zeitsprüngen.
+            if (!Finite(m) || m < 0f) m = 0f;
+            if (TimeMinutes + m > GameData.DayEnd) m = Math.Max(0f, GameData.DayEnd - TimeMinutes);
             TimeMinutes += m;
             UpdateDeliveries();
             UpdateOrders(m);
@@ -440,7 +446,7 @@ namespace DropshippingGame.Core
 
         public void AdjustMoney(int amount, string category)
         {
-            Money += amount;
+            Money = (int)Math.Max(-MoneyLimit, Math.Min(MoneyLimit, (long)Money + amount));
             Daily.Add(category, amount);
             RaiseEconomyChanged();
         }
@@ -549,7 +555,7 @@ namespace DropshippingGame.Core
         // =====================================================================================
         // Produkte & Nachfrage
         // =====================================================================================
-        public bool ProductUnlocked(string id) => Level >= GameData.Product(id).UnlockLevel;
+        public bool ProductUnlocked(string id) => GameData.IsProduct(id) && Level >= GameData.Product(id).UnlockLevel;
         public bool ProductHasShelf(string id) => GameData.HasGarageShelf(id) || LocationStage >= 1;
         public bool ProductAvailable(string id) => ProductUnlocked(id) && ProductHasShelf(id);
         public bool IsListed(string id) => Listed.TryGetValue(id, out bool v) && v;
@@ -744,10 +750,11 @@ namespace DropshippingGame.Core
         // =====================================================================================
         // Einkauf & Lieferungen
         // =====================================================================================
-        public bool SupplierAvailable(int index) => Level >= GameData.Suppliers[index].Level && !BlockedSuppliers.ContainsKey(index);
+        public bool SupplierAvailable(int index) => ValidIndex(index, GameData.Suppliers.Length) && Level >= GameData.Suppliers[index].Level && !BlockedSuppliers.ContainsKey(index);
 
         public bool BulkAvailable(int bulkIndex)
         {
+            if (!ValidIndex(bulkIndex, GameData.BulkOptions.Length)) return false;
             var b = GameData.BulkOptions[bulkIndex];
             return Level >= b.Level && LocationStage >= b.Stage;
         }
@@ -764,7 +771,7 @@ namespace DropshippingGame.Core
 
         public float LeadMinutes(int supplierIndex)
         {
-            float t = GameData.BaseLeadMinutes * GameData.Suppliers[supplierIndex].LeadMult;
+            float t = GameData.BaseLeadMinutes * GameData.Suppliers[Mathx.Clamp(supplierIndex, 0, GameData.Suppliers.Length - 1)].LeadMult;
             if (ExpressDelivery) t *= 0.5f;
             if (Upgrades.Contains("van")) t *= 0.75f;
             t *= LeadTimeMult();
@@ -773,6 +780,8 @@ namespace DropshippingGame.Core
 
         public bool BuyBulk(int productIndex, int bulkIndex, int supplierIndex)
         {
+            if (!ValidIndex(productIndex, GameData.Products.Length) || !ValidIndex(bulkIndex, GameData.BulkOptions.Length) ||
+                !ValidIndex(supplierIndex, GameData.Suppliers.Length)) return false;
             var p = GameData.Products[productIndex];
             if (!ProductUnlocked(p.Id))
             {
@@ -880,6 +889,7 @@ namespace DropshippingGame.Core
 
         public void ReturnCrate(ItemData crate)
         {
+            if (crate == null || crate.Kind != ItemKind.Crate || !GameData.IsProduct(crate.Product) || crate.Quantity <= 0) return;
             DockCrates.Insert(0, crate);
             RaiseEconomyChanged();
         }
@@ -894,7 +904,9 @@ namespace DropshippingGame.Core
 
         public bool UnboxCrate(string id, int quantity, float quality)
         {
-            if (StockTotal() + quantity > Capacity())
+            if (!GameData.IsProduct(id) || quantity < 0) return false;
+            if (!Finite(quality)) quality = 1f;
+            if ((long)StockTotal() + quantity > Capacity())
             {
                 Notify("Lager voll! (" + StockTotal() + "/" + Capacity() + ") – verkaufe erst etwas oder baue aus.", "bad");
                 Sound("error");
@@ -914,6 +926,7 @@ namespace DropshippingGame.Core
         /// </summary>
         public ItemData PickItem(string id)
         {
+            if (!GameData.IsProduct(id)) return null;
             int idx = -1;
             for (int i = 0; i < OrderQueue.Count; i++)
             {
@@ -1025,6 +1038,7 @@ namespace DropshippingGame.Core
 
         public void ReturnPackage(ItemData pkg)
         {
+            if (pkg == null || !GameData.IsProduct(pkg.Product)) return;
             pkg.Kind = ItemKind.Package;
             PackedPackages.Add(pkg);
             SetOrderStage(pkg.OrderId, OrderStage.Packed);
@@ -1063,6 +1077,7 @@ namespace DropshippingGame.Core
         /// </summary>
         public int ShipPackage(ItemData pkg, V3 where = default)
         {
+            if (pkg == null || !GameData.IsProduct(pkg.Product)) return 0;
             int reward = pkg.Price;
             Money += reward;
             Daily.Revenue += reward;
@@ -1131,7 +1146,7 @@ namespace DropshippingGame.Core
 
         public bool ConveyorInsert(ItemData pkg)
         {
-            if (!Upgrades.Contains("conveyor")) return false;
+            if (!Upgrades.Contains("conveyor") || pkg == null || !GameData.IsProduct(pkg.Product)) return false;
             _conveyorId++;
             ConveyorQueue.Add(new ConveyorEntry { Id = _conveyorId, Pkg = pkg, DoneAt = BClock() + ConveyorMinutes() });
             if (pkg != null) SetOrderStage(pkg.OrderId, OrderStage.Conveyor);
@@ -1182,17 +1197,19 @@ namespace DropshippingGame.Core
 
         public void ChangeReputation(float delta)
         {
+            if (!Finite(delta)) return;
             Reputation = Mathx.Clamp(Reputation + delta, 0.5f, 5f);
             CheckGoals();
             CheckChallenges();
             RaiseEconomyChanged();
         }
 
-        public void AddAwareness(float v) => Awareness = Mathx.Clamp(Awareness + v, 0f, 1.5f);
+        public void AddAwareness(float v) => Awareness = Finite(v) ? Mathx.Clamp(Awareness + v, 0f, 1.5f) : Awareness;
 
         public void AddXp(int n)
         {
-            Xp += n;
+            if (n <= 0) return;
+            Xp = (int)Math.Min(MaxXp, (long)Xp + n);
             while (Level < GameData.MaxLevel && Xp >= GameData.LevelThreshold(Level + 1))
             {
                 Level++;
@@ -1438,6 +1455,7 @@ namespace DropshippingGame.Core
 
         public void SetListed(string id, bool active)
         {
+            if (!GameData.IsProduct(id)) return;
             if (active && !ProductAvailable(id))
             {
                 Notify("Dieses Produkt ist noch nicht verfügbar.", "bad");
@@ -1452,6 +1470,7 @@ namespace DropshippingGame.Core
 
         public void SetShopPrice(string id, int price)
         {
+            if (!GameData.IsProduct(id)) return;
             ShopPrices[id] = Mathx.Clamp(price, 1, 999);
             RaiseEconomyChanged();
         }
@@ -1464,13 +1483,14 @@ namespace DropshippingGame.Core
 
         public int PackagingCost(int size, bool flat, int batch = 0)
         {
-            float cost = GameData.PackagingSizes[size].Cost * GameData.PackagingBatches[batch].Mult;
+            float cost = GameData.PackagingSizes[Mathx.Clamp(size, 0, 2)].Cost * GameData.PackagingBatches[Mathx.Clamp(batch, 0, GameData.PackagingBatches.Length - 1)].Mult;
             if (flat) cost *= GameData.PackagingFlatDiscount;
             return Mathx.RoundToInt(cost);
         }
 
         public bool BuyPackaging(int size, bool flat = false, int batch = 0)
         {
+            if (!ValidIndex(size, 3) || !ValidIndex(batch, GameData.PackagingBatches.Length)) return false;
             int cost = PackagingCost(size, flat, batch);
             if (Money < cost)
             {
@@ -1499,6 +1519,7 @@ namespace DropshippingGame.Core
         // =====================================================================================
         public bool StartAdCampaign(int tierIndex)
         {
+            if (!ValidIndex(tierIndex, GameData.AdTiers.Length)) return false;
             var t = GameData.AdTiers[tierIndex];
             if (Level < t.Level)
             {
@@ -1609,6 +1630,7 @@ namespace DropshippingGame.Core
 
         public bool Hire(string roleId)
         {
+            if (GameData.StaffRole(roleId).Id != roleId) return false;
             var role = GameData.StaffRole(roleId);
             if (!StaffAllowed())
             {
@@ -1754,6 +1776,7 @@ namespace DropshippingGame.Core
         public string UpgradeState(string id)
         {
             var u = GameData.Upgrade(id);
+            if (u == null) return "unknown";
             if (Upgrades.Contains(id)) return "owned";
             if (Level < u.Level) return "level";
             if (!string.IsNullOrEmpty(u.Requires) && !Upgrades.Contains(u.Requires)) return "requires";
@@ -1830,6 +1853,7 @@ namespace DropshippingGame.Core
 
         public bool LoanAvailable(int optionIndex)
         {
+            if (!ValidIndex(optionIndex, GameData.Loans.Length)) return false;
             var o = GameData.Loans[optionIndex];
             return Level >= o.Level && o.Amount <= CreditAvailable();
         }
@@ -1895,6 +1919,7 @@ namespace DropshippingGame.Core
                 Notify("Der Stand ist voll.", "info");
                 return 0;
             }
+            if (!GameData.IsProduct(crate.Product) || crate.Quantity <= 0) return 0;
             int put = Math.Min(space, crate.Quantity);
             StandStock[crate.Product] = (StandStock.TryGetValue(crate.Product, out int n) ? n : 0) + put;
             crate.Quantity -= put;

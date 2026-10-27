@@ -212,6 +212,7 @@ namespace DropshippingGame.Core
             foreach (var c in ActiveAds(platform))
                 if (c.Product == pid) return "Läuft schon";
             if (budget <= 0) return "Kein Budget";
+            if (budget > MaxAdBudget) return "Max. " + Fmt.Money(MaxAdBudget) + " Budget";
             if (Money < budget) return "Zu wenig Geld";
             return "";
         }
@@ -395,7 +396,10 @@ namespace DropshippingGame.Core
 
         private void AdsUpdate(float m)
         {
-            if (AdCampaigns.Count == 0 || m <= 0f) return;
+            // Auch ohne Zeitfortschritt (m = 0, z. B. Zeit angehalten) abgelaufene Kampagnen beenden – sonst
+            // entfernt UpdateBoosts ihren Boost, während die Kampagne als aktiv weiterläuft.
+            if (AdCampaigns.Count == 0) return;
+            if (!(m > 0f)) m = 0f;
             float now = BClock();
             bool changed = false;
             foreach (var c in AdCampaigns)
@@ -509,24 +513,46 @@ namespace DropshippingGame.Core
         /// <summary>Boosts passend zum Werbe-Zustand neu setzen (laufende Kampagnen, Social Proof, SEO).</summary>
         public void AdsSyncBoosts()
         {
-            Boosts.RemoveAll(b => b.Source != null && (b.Source.StartsWith("ad:", StringComparison.Ordinal) || b.Source == "proof" ||
-                                                       b.Source.StartsWith("seo:", StringComparison.Ordinal)));
+            var want = new List<Boost>();
             foreach (var c in AdCampaigns)
             {
                 if (!c.Active) continue;
-                Boosts.Add(new Boost { Source = "ad:" + c.Id, Name = c.PlatformName + "-Ad", Mult = c.Mult, EndsAt = c.EndsAt, Product = c.Product });
+                want.Add(new Boost { Source = "ad:" + c.Id, Name = c.PlatformName + "-Ad", Mult = c.Mult, EndsAt = c.EndsAt, Product = c.Product });
             }
             // Dauer-Boosts bis kurz nach Feierabend; AdsNewDay erneuert sie, bevor sie auslaufen.
             float dayEnd = Day * GameData.BusinessMinutes + 60f;
             if (FakeProfiles > 0)
-                Boosts.Add(new Boost { Source = "proof", Name = "Social Proof", Mult = SocialProofMult(), EndsAt = dayEnd, Product = "" });
+                want.Add(new Boost { Source = "proof", Name = "Social Proof", Mult = SocialProofMult(), EndsAt = dayEnd, Product = "" });
             var done = new HashSet<string>();
             foreach (var s in FakeSites)
             {
                 if (!done.Add(s.Product) || !GameData.IsProduct(s.Product)) continue;
-                Boosts.Add(new Boost { Source = "seo:" + s.Product, Name = "SEO", Mult = SeoMult(s.Product), EndsAt = dayEnd, Product = s.Product });
+                want.Add(new Boost { Source = "seo:" + s.Product, Name = "SEO", Mult = SeoMult(s.Product), EndsAt = dayEnd, Product = s.Product });
             }
+            // Vorhandene Werbe-Boosts an Ort und Stelle aktualisieren (Reihenfolge bleibt – Speichern→Laden ist
+            // damit verlustfrei), überflüssige entfernen, neue hinten anhängen.
+            for (int i = Boosts.Count - 1; i >= 0; i--)
+            {
+                var b = Boosts[i];
+                if (!IsAdBoost(b)) continue;
+                int k = want.FindIndex(w => w.Source == b.Source);
+                if (k < 0)
+                {
+                    Boosts.RemoveAt(i);
+                    continue;
+                }
+                b.Name = want[k].Name;
+                b.Mult = want[k].Mult;
+                b.EndsAt = want[k].EndsAt;
+                b.Product = want[k].Product;
+                want.RemoveAt(k);
+            }
+            Boosts.AddRange(want);
         }
+
+        private static bool IsAdBoost(Boost b) =>
+            b != null && b.Source != null && (b.Source.StartsWith("ad:", StringComparison.Ordinal) || b.Source == "proof" ||
+                                              b.Source.StartsWith("seo:", StringComparison.Ordinal));
 
         // =====================================================================================
         // Speichern / Admin

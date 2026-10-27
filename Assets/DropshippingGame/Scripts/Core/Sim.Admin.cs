@@ -27,15 +27,18 @@ namespace DropshippingGame.Core
             }
         }
 
+        /// <summary>Admin-Geld bleibt in ±1 Mrd., damit spätere Einnahmen nie über int hinauslaufen.</summary>
+        public const int AdminMoneyLimit = 1000000000;
+
         public void AdminAddMoney(int amount)
         {
-            Money += amount;
+            Money = (int)Math.Max(-AdminMoneyLimit, Math.Min(AdminMoneyLimit, (long)Money + amount));
             RaiseEconomyChanged();
         }
 
         public void AdminSetMoney(int amount)
         {
-            Money = amount;
+            Money = Mathx.Clamp(amount, -AdminMoneyLimit, AdminMoneyLimit);
             RaiseEconomyChanged();
         }
 
@@ -121,7 +124,7 @@ namespace DropshippingGame.Core
         public void AdminDeliver(string productId, int quantity, float quality = 1f)
         {
             if (quantity <= 0 || !IsProductId(productId)) return;
-            DockCrates.Add(ItemData.Crate(productId, quantity, quality));
+            DockCrates.Add(ItemData.Crate(productId, Math.Min(quantity, 100000), Finite(quality) ? Mathx.Clamp(quality, 0.1f, 2f) : 1f));
             DeliveryArrived?.Invoke(productId);
             RaiseEconomyChanged();
         }
@@ -190,14 +193,14 @@ namespace DropshippingGame.Core
 
         public void AdminAddPackaging(int n)
         {
-            for (int i = 0; i < Packaging.Length; i++) Packaging[i] += n;
+            for (int i = 0; i < Packaging.Length; i++) Packaging[i] = Math.Max(0, Packaging[i] + n);
             RaiseEconomyChanged();
         }
 
         /// <summary>Spult die Uhr vor (nur im laufenden Geschäftstag).</summary>
         public void AdminSkipMinutes(float minutes)
         {
-            if (!IsOpen || minutes <= 0f) return;
+            if (!IsOpen || !(minutes > 0f)) return;
             float left = GameData.DayEnd - TimeMinutes;
             AdvanceMinutes(Math.Min(minutes, Math.Max(0f, left - 0.01f)));
             RaiseEconomyChanged();

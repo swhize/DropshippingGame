@@ -118,7 +118,9 @@ namespace DropshippingGame.Core
         public void AddSkillPoints(int n)
         {
             if (n == 0) return;
-            BonusSkillPoints = Math.Max(0, BonusSkillPoints + n);
+            // Nie unter die schon gelernten Skills fallen (sonst gäbe es mehr Skills als Punkte).
+            int floor = Math.Max(0, Skills.Count - (GameData.StartSkillPoints + Math.Max(0, Level - 1)));
+            BonusSkillPoints = Math.Max(floor, BonusSkillPoints + n);
             SkillsChanged?.Invoke();
             RaiseEconomyChanged();
         }
