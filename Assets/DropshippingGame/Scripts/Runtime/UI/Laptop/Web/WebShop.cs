@@ -272,14 +272,6 @@ namespace DropshippingGame.UI
             }
         }
 
-        private void ShopStat(VisualElement parent, string key, string value, string sub)
-        {
-            var c = Flex(Col(parent, 2f, "sf-stat"));
-            T(c, key, "sf-stat-key");
-            H(c, value, "sf-stat-value");
-            T(c, sub, "sf-muted");
-        }
-
         private void Card(VisualElement grid, Sim s, ProductDef p)
         {
             string id = p.Id;

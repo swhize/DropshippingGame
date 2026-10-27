@@ -11,8 +11,8 @@ namespace DropshippingGame.UI
     /// App ein Tab), darunter Zurück/Start, Adressleiste und die wichtigsten Kennzahlen (Tag,
     /// Bewertung, Konto). Die Webseiten (AllesExpress, Mein Shop, iWolke Mail, PaketBlitz,
     /// TikTak, TradingViech, Revoluut) sind <see cref="WebApp"/>s mit eigenem Design
-    /// (Resources/UI/Web.uss); die übrigen HustleOS-Seiten (Übersicht, Markt, Aufträge, Retouren,
-    /// Firma) behalten ihr bisheriges Design „Hype“/„Frachtbrief“ samt Unter-Reitern.
+    /// (Resources/UI/Web.uss); die übrigen HustleOS-Seiten (Start, Markt, Aufträge, Retouren,
+    /// Firma) folgen dem gewählten Design „Hype“/„Frachtbrief“ (Einstellungen) samt Unter-Reitern.
     ///
     /// Erweiterungspunkte:
     /// - <see cref="Register"/> fügt eine App (einen Browser-Tab) hinzu, <see cref="RegisterTab"/> einen Unter-Reiter.
@@ -79,7 +79,7 @@ namespace DropshippingGame.UI
             {
                 new AppDef
                 {
-                    Id = "home", Title = "Übersicht", Icon = "home", Group = "BETRIEB", Make = () => new AppHome(),
+                    Id = "home", Title = "Start", Icon = "grid", Group = "BETRIEB", Make = () => new AppTabletHome(),
                     Fav = "H", FavColor = new Color(1f, 0.48f, 0.27f), Url = "hustle.os/start",
                 },
                 new AppDef
@@ -177,7 +177,7 @@ namespace DropshippingGame.UI
                         new TabDef { Id = "goals", Title = "Ziele", Icon = "trophy", Make = () => new AppGoals() },
                         new TabDef { Id = "brand", Title = "Branding", Icon = "tag", Make = () => new AppBranding() },
                         new TabDef { Id = "pack", Title = "Verpackung", Icon = "package", Make = () => new AppPackaging() },
-                        new TabDef { Id = "stats", Title = "Statistik", Icon = "bars", Make = () => new AppAnalytics() },
+                        new TabDef { Id = "stats", Title = "Statistik", Icon = "bars", Make = () => new AppStats() },
                         new TabDef { Id = "lifestyle", Title = "Lifestyle", Icon = "crown", Make = () => new AppLifestyle() },
                     },
                 },
@@ -907,7 +907,6 @@ namespace DropshippingGame.UI
             try
             {
                 if (_app is ILiveApp live) live.LiveUpdate();
-                else if (_app is AppTrading t) t.LiveUpdate();
             }
             catch (Exception e)
             {

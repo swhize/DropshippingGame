@@ -144,11 +144,6 @@ Label {
     -unity-font-style: bold;
 }
 
-.body {
-    font-size: 15px;
-    color: var(--ink-2);
-}
-
 .muted {
     color: var(--muted);
     font-size: 14px;
@@ -180,10 +175,6 @@ Label {
 
 .bad-text {
     color: var(--bad);
-}
-
-.teal-text {
-    color: var(--teal);
 }
 
 .big {
@@ -1158,23 +1149,11 @@ Label {
     border-width: 3px;
 }
 
-.ticket-top {
-    align-items: center;
-}
-
 .ticket-number {
     font-size: 12px;
     color: #23201B;
     -unity-font-style: bold;
     letter-spacing: 0.3px;
-}
-
-.ticket-customer {
-    font-size: 10px;
-    color: #6B645A;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }
 
 .ticket-more {
@@ -1894,29 +1873,6 @@ Label {
     margin-left: 5px;
 }
 
-.reorder-size {
-    padding: 5px 9px;
-    border-radius: 10px;
-    background-color: var(--card-2);
-    border-width: 1px;
-    border-color: var(--rule);
-    margin-right: 6px;
-}
-
-.reorder-size:hover {
-    border-color: var(--rule-strong);
-}
-
-.reorder-size:focus {
-    border-color: var(--accent);
-}
-
-.reorder-size-text {
-    font-size: 11.5px;
-    -unity-font-style: bold;
-    color: var(--ink-2);
-}
-
 .status-hero {
     background-color: var(--card);
     border-radius: 20px;
@@ -2156,10 +2112,6 @@ Label {
 
 .receipt .receipt-muted {
     color: #7A7266;
-}
-
-.receipt-center {
-    -unity-text-align: middle-center;
 }
 
 .receipt-brand {
@@ -2622,14 +2574,6 @@ Label {
     color: rgba(28, 20, 4, 0.72);
 }
 
-.menu-card {
-    background-color: rgba(16, 19, 26, 0.92);
-    border-width: 1px;
-    border-color: rgba(255, 255, 255, 0.08);
-    border-radius: 18px;
-    padding: 18px 20px;
-}
-
 .whatsnew {
     position: absolute;
     right: 72px;
@@ -2907,41 +2851,6 @@ Label {
     overflow: hidden;
 }
 
-.os-glow {
-    position: absolute;
-    left: -220px;
-    top: -330px;
-    width: 980px;
-    height: 700px;
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-background-image-tint-color: var(--glow);
-}
-
-.os-top {
-    flex-direction: row;
-    align-items: center;
-    padding: 14px 18px 8px 18px;
-    flex-shrink: 0;
-}
-
-.os-logo {
-    flex-direction: row;
-    align-items: center;
-}
-
-.os-logo-mark {
-    width: 28px;
-    height: 28px;
-    border-radius: 9px;
-    background-color: var(--accent);
-    align-items: center;
-    justify-content: center;
-}
-
-.os-logo-mark .icon {
-    -unity-background-image-tint-color: var(--accent-ink);
-}
-
 .os-brand-text {
     color: var(--ink);
     font-size: 19px;
@@ -2950,130 +2859,11 @@ Label {
     letter-spacing: -0.3px;
 }
 
-.os-chip {
-    flex-direction: row;
-    align-items: center;
-    background-color: var(--card);
-    border-width: 1px;
-    border-color: var(--rule);
-    border-radius: 10px;
-    padding: 5px 12px;
-    margin-left: 8px;
-}
-
-.os-chip-key {
-    display: none;
-    font-size: 9.5px;
-    letter-spacing: 1.4px;
-    color: var(--muted);
-    -unity-font-style: bold;
-}
-
-.os-chip-text {
-    font-size: 13px;
-    -unity-font-style: bold;
-    color: var(--ink);
-}
-
-.os-chip .icon {
-    margin-right: 6px;
-    -unity-background-image-tint-color: var(--muted);
-}
-
-.os-chip.money .os-chip-text {
-    color: var(--good);
-}
-
-.os-chip.money.neg .os-chip-text {
-    color: var(--bad);
-}
-
-.os-close {
-    width: 34px;
-    height: 34px;
-    min-height: 34px;
-    min-width: 34px;
-    padding: 0;
-    margin-left: 10px;
-    border-radius: 17px;
-    background-color: var(--card-2);
-    border-color: var(--rule);
-}
-
-.os-nav {
-    flex-shrink: 0;
-}
-
-.os-nav-inner {
-    flex-direction: row;
-    padding: 2px 18px 12px 18px;
-}
-
-.os-nav-item {
-    flex-direction: row;
-    align-items: center;
-    background-color: var(--card);
-    border-width: 1px;
-    border-color: var(--rule);
-    border-radius: 10px;
-    padding: 7px 14px 7px 10px;
-    margin-right: 6px;
-    transition-property: background-color, border-color;
-    transition-duration: 0.12s;
-}
-
-.os-nav-item:hover {
-    border-color: var(--rule-strong);
-}
-
-.os-nav-item .icon {
-    -unity-background-image-tint-color: var(--muted);
-}
-
 .nav-label {
     font-size: 13.5px;
     -unity-font-style: bold;
     color: var(--muted);
     margin-left: 7px;
-}
-
-.os-nav-item:hover .nav-label {
-    color: var(--ink);
-}
-
-.os-nav-item.active {
-    background-color: var(--ink);
-    border-color: var(--ink);
-}
-
-.os-nav-item.active .nav-label {
-    color: var(--paper);
-}
-
-.os-nav-item.active .icon {
-    -unity-background-image-tint-color: var(--paper);
-}
-
-.os-nav-item.locked {
-    opacity: 0.55;
-}
-
-.os-nav-item .badge {
-    margin-left: 7px;
-}
-
-.os-group {
-    display: none;
-    font-size: 9.5px;
-    letter-spacing: 1.6px;
-    color: var(--muted);
-    -unity-font-style: bold;
-    padding: 12px 10px 6px 10px;
-}
-
-.os-body {
-    flex-grow: 1;
-    flex-direction: column;
 }
 
 .os-content {
@@ -3167,11 +2957,6 @@ Label {
     background-color: var(--card-2);
 }
 
-.hero {
-    background-color: var(--card);
-    border-color: var(--rule);
-}
-
 .hero-value {
     font-size: 54px;
     -unity-font-style: bold;
@@ -3195,20 +2980,6 @@ Label {
 
 .delta.down .chip-text {
     color: var(--bad);
-}
-
-.mini {
-    background-color: var(--card-2);
-    border-radius: 14px;
-    padding: 10px 12px;
-    flex-grow: 1;
-    flex-basis: 0;
-}
-
-.mini-key {
-    font-size: 12px;
-    color: var(--muted);
-    -unity-font-style: bold;
 }
 
 .mini-value {
@@ -3235,32 +3006,6 @@ Label {
 .feed-sub {
     font-size: 12.5px;
     color: var(--muted);
-}
-
-.todo-item {
-    flex-direction: row;
-    align-items: center;
-    padding: 9px 10px;
-    border-radius: 12px;
-    border-width: 1px;
-    border-color: rgba(0, 0, 0, 0);
-    background-color: var(--card-2);
-    margin-bottom: 6px;
-}
-
-.pressable.todo-item:hover {
-    border-color: var(--rule-strong);
-}
-
-.pressable.todo-item:focus {
-    border-color: var(--accent);
-}
-
-.todo-text {
-    font-size: 14px;
-    color: var(--ink);
-    flex-grow: 1;
-    flex-shrink: 1;
 }
 
 .pending-dot {
@@ -3336,68 +3081,10 @@ Label {
     border-color: var(--good);
 }
 
-.prod-tile {
-    width: 196px;
-}
-
-.prod-img {
-    height: 62px;
-    border-radius: 12px;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 4px;
-}
-
-.pill {
-    background-color: var(--card-2);
-    border-radius: 10px;
-    padding: 2px 8px;
-    align-self: flex-start;
-    margin-top: 2px;
-}
-
 .pill-text {
     font-size: 11px;
     -unity-font-style: bold;
     color: var(--muted);
-}
-
-.opt-tile.selected {
-    background-color: var(--ink);
-    border-color: var(--ink);
-}
-
-.opt-tile.selected Label {
-    color: var(--paper);
-}
-
-.opt-tile.selected .icon {
-    -unity-background-image-tint-color: var(--paper);
-}
-
-.qty-tile {
-    background-color: var(--card-2);
-    border-color: var(--card-2);
-}
-
-.qty-tile:hover {
-    background-color: var(--accent);
-    border-color: var(--accent);
-}
-
-.qty-tile:hover Label {
-    color: var(--accent-ink);
-}
-
-.qty-value {
-    font-size: 23px;
-    -unity-font-style: bold;
-    color: var(--ink);
-}
-
-.qty-cost {
-    font-size: 13px;
-    color: var(--ink-2);
 }
 
 /* Tabellen */
@@ -3433,28 +3120,7 @@ Label {
 }
 
 /* Postfach */
-.mail-item {
-    flex-direction: row;
-    align-items: flex-start;
-    background-color: var(--card);
-    border-width: 1px;
-    border-color: var(--rule);
-    border-radius: 16px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-}
 
-.pressable.mail-item:hover {
-    background-color: var(--card-2);
-}
-
-.pressable.mail-item:focus {
-    border-color: var(--focus);
-}
-
-.mail-item.selected {
-    border-color: var(--accent);
-}
 
 .mail-title {
     font-size: 14px;
@@ -3465,74 +3131,8 @@ Label {
     -unity-font-style: bold;
 }
 
-.mail-meta {
-    font-size: 12px;
-    color: var(--muted);
-}
-
-.msg-title {
-    font-size: 25px;
-    -unity-font-style: bold;
-    color: var(--ink);
-    letter-spacing: -0.4px;
-}
-
-.msg-text {
-    font-size: 15px;
-    color: var(--ink-2);
-    max-width: 640px;
-}
-
 /* Webshop-Zeilen */
-.listing {
-    flex-direction: row;
-    align-items: center;
-    padding: 12px 0;
-    border-top-width: 1px;
-    border-color: var(--rule);
-}
 
-.listing.first {
-    border-top-width: 0;
-}
-
-.stepper {
-    flex-direction: row;
-    align-items: center;
-    background-color: var(--card-2);
-    border-radius: 10px;
-    padding: 3px;
-}
-
-.step-btn {
-    min-width: 34px;
-    height: 32px;
-    min-height: 32px;
-    padding: 0 8px;
-    border-radius: 16px;
-    background-color: var(--card);
-    border-color: var(--card);
-}
-
-.step-btn .btn-label {
-    font-size: 12.5px;
-}
-
-.step-value {
-    min-width: 76px;
-    font-size: 16px;
-    -unity-font-style: bold;
-    color: var(--accent);
-    -unity-text-align: middle-center;
-}
-
-.review-item {
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 10px 0;
-    border-top-width: 1px;
-    border-color: var(--rule);
-}
 
 /* Diagramme */
 .chart {
@@ -3549,12 +3149,6 @@ Label {
 .spark {
     height: 86px;
     margin-top: 8px;
-}
-
-.legend-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
 }
 
 /* Boot-Bildschirm */
@@ -3610,50 +3204,10 @@ Label {
 }
 
 /* TikTok-Minispiel */
-.tiktok-phone {
-    width: 250px;
-    height: 440px;
-    background-color: #0B0B0D;
-    border-radius: 30px;
-    border-width: 3px;
-    border-color: #5A5C66;
-    padding: 12px;
-}
 
-.tiktok-screen {
-    flex-grow: 1;
-    background-color: #1A0D29;
-    border-radius: 20px;
-    padding: 14px;
-    overflow: hidden;
-}
 
 /* ---- Frachtbrief-Variante: Seitenleiste, Felder, strenge Linien ------------------- */
-.os-theme.fb .os-body {
-    flex-direction: row;
-}
 
-.os-theme.fb .os-top {
-    padding: 0;
-    align-items: stretch;
-    border-bottom-width: 2px;
-    border-color: var(--rule-strong);
-    min-height: 52px;
-}
-
-.os-theme.fb .os-logo {
-    width: 212px;
-    padding: 0 16px;
-    background-color: var(--accent);
-    border-right-width: 2px;
-    border-color: var(--rule-strong);
-}
-
-.os-theme.fb .os-logo-mark {
-    background-color: rgba(0, 0, 0, 0);
-    width: 20px;
-    height: 20px;
-}
 
 .os-theme.fb .os-brand-text {
     color: var(--accent-ink);
@@ -3661,87 +3215,11 @@ Label {
     letter-spacing: 1.5px;
 }
 
-.os-theme.fb .os-chip {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0);
-    border-width: 0;
-    border-right-width: 1px;
-    border-color: var(--rule);
-    border-radius: 0;
-    padding: 6px 14px;
-    margin-left: 0;
-}
-
-.os-theme.fb .os-chip .icon {
-    display: none;
-}
-
-.os-theme.fb .os-chip-key {
-    display: flex;
-}
-
-.os-theme.fb .os-chip.brand {
-    flex-grow: 1;
-}
-
-.os-theme.fb .os-close {
-    align-self: center;
-    margin: 0 10px;
-    border-radius: 4px;
-}
-
-.os-theme.fb .os-nav {
-    width: 212px;
-    background-color: var(--panel);
-    border-right-width: 2px;
-    border-color: var(--rule-strong);
-}
-
-.os-theme.fb .os-nav-inner {
-    flex-direction: column;
-    padding: 6px 8px 14px 8px;
-}
-
-.os-theme.fb .os-group {
-    display: flex;
-}
-
-.os-theme.fb .os-nav-item {
-    border-width: 0;
-    border-radius: 4px;
-    background-color: rgba(0, 0, 0, 0);
-    padding: 7px 10px;
-    margin: 0 0 1px 0;
-}
-
-.os-theme.fb .os-nav-item:hover {
-    background-color: var(--card);
-}
-
 .os-theme.fb .nav-label {
     color: var(--ink);
     -unity-font-style: normal;
     flex-grow: 1;
     margin-left: 10px;
-}
-
-.os-theme.fb .os-nav-item .icon {
-    -unity-background-image-tint-color: var(--ink);
-}
-
-.os-theme.fb .os-nav-item.active {
-    background-color: var(--ink);
-}
-
-.os-theme.fb .os-nav-item.active .nav-label {
-    color: var(--paper);
-    -unity-font-style: bold;
-}
-
-.os-theme.fb .os-nav-item.active .icon {
-    -unity-background-image-tint-color: var(--paper);
 }
 
 .os-theme.fb .app-page {
@@ -3781,20 +3259,9 @@ Label {
     border-color: var(--rule);
 }
 
-.os-theme.fb .os-glow {
-    display: none;
-}
-
-.os-theme.fb .mail-item,
 .os-theme.fb .phone-item,
-.os-theme.fb .todo-item,
-.os-theme.fb .feed-item,
-.os-theme.fb .mini {
+.os-theme.fb .feed-item {
     border-radius: 4px;
-}
-
-.os-theme.fb .os-logo-mark .icon {
-    -unity-background-image-tint-color: var(--accent-ink);
 }
 
 /* ===== v3.0 Phase B: Zettel, Auftraege, Skills, Trends, Engpass ===== */
@@ -3846,10 +3313,6 @@ Label {
     height: 92px;
     border-radius: 10px;
     background-color: var(--accent-soft);
-}
-
-.todo-top .todo-text {
-    -unity-font-style: bold;
 }
 
 /* ---- Barrierefreiheit: Farbenblind-Modus (Blau/Orange statt Grün/Rot) ------------ */

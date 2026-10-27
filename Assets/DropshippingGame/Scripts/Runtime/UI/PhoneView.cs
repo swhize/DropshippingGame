@@ -97,17 +97,6 @@ namespace DropshippingGame.UI
             };
         }
 
-        private int AppCount => 4 + VisibleExtraCount();
-
-        private static int VisibleExtraCount()
-        {
-            int n = 0;
-            foreach (var a in ExtraApps)
-                if (a != null && (a.Visible == null || SafeBool(a.Visible)))
-                    n++;
-            return n;
-        }
-
         private static bool SafeBool(Func<bool> f)
         {
             try
@@ -575,7 +564,7 @@ namespace DropshippingGame.UI
                 sw.style.flexShrink = 0;
                 UIX.Round(sw, 12f);
                 sw.style.backgroundColor = m.Pending ? Theme.LaptopAccent : new Color(0.5f, 0.55f, 0.65f, 0.25f);
-                UIX.Icon(sw, AppMail.MailIcon(m.Icon), 18f, m.Pending ? Color.white : (Color?)null);
+                UIX.Icon(sw, Icons.MailIcon(m.Icon), 18f, m.Pending ? Color.white : (Color?)null);
                 var mid = UIX.Col(item, 1f);
                 mid.style.flexGrow = 1;
                 mid.style.flexShrink = 1;

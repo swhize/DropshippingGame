@@ -497,21 +497,5 @@ namespace DropshippingGame
             return false;
 #endif
         }
-
-        private static bool PadHeld(PadButton b)
-        {
-#if ENABLE_INPUT_SYSTEM
-            var pad = Gamepad.current;
-            if (pad == null) return false;
-            switch (b)
-            {
-                case PadButton.LeftStick: return pad.leftStickButton.isPressed;
-                case PadButton.RightStick: return pad.rightStickButton.isPressed;
-                default: return false;
-            }
-#else
-            return false;
-#endif
-        }
     }
 }

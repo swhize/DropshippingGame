@@ -203,7 +203,7 @@ namespace DropshippingGame.UI
             var body = modal.Open(mail.Title, "Von " + mail.Sender + " · " + Fmt.Clock(mail.Time) + " Uhr", 640, new[]
             {
                 new ModalButton("Später beantworten", null, "ghost", "clock"),
-            }, true, "event", null, AppMail.MailIcon(mail.Icon));
+            }, true, "event", null, Icons.MailIcon(mail.Icon));
             modal.Text(body, mail.Text);
             UIX.Text(body, "DEINE ENTSCHEIDUNG", "eyebrow").style.marginTop = 6;
             var list = UIX.Col(body, 8f);

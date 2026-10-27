@@ -337,7 +337,7 @@ namespace DropshippingGame.UI
         }
     }
 
-    /// <summary>Meldet Start-Bildschirm, Fakebook und Gugel im Laptop sowie die Handy-Apps an.</summary>
+    /// <summary>Meldet Fakebook und Gugel im Laptop sowie die Handy-Apps an.</summary>
     public static class MarketingApps
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
@@ -345,11 +345,6 @@ namespace DropshippingGame.UI
         {
             try
             {
-                LaptopView.Register(new LaptopView.AppDef
-                {
-                    Id = "home", Title = "Start", Icon = "grid", Group = "BETRIEB", Make = () => new AppTabletHome(),
-                    Fav = "H", FavColor = new Color(1f, 0.48f, 0.27f), Url = "hustle.os/start",
-                });
                 LaptopView.Register(new LaptopView.AppDef
                 {
                     Id = "fakebook", Title = "Fakebook", Icon = "thumb", Group = "VERKAUF", Make = () => new WebFakebook(),

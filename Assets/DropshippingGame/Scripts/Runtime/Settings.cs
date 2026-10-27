@@ -13,7 +13,7 @@ namespace DropshippingGame
     /// </summary>
     public static class Settings
     {
-        /// <summary>Version der gespeicherten Einstellungen. Ab 3 ist „Hype“ dunkel das Standard-Design.</summary>
+        /// <summary>Version der gespeicherten Einstellungen. Ab 3 ist „Hype“ dunkel das Standard-Design (ältere Tester-Einstellungen werden einmalig umgestellt).</summary>
         private const int PrefsVersion = 3;
 
         public const float UiScaleMin = 0.8f;
@@ -106,8 +106,6 @@ namespace DropshippingGame
         public static bool ShakeEnabled => CameraShake && !StreamerMode && !ReduceMotion;
         /// <summary>Ruhige Effekte: kein Blinken/Pulsieren (weniger Bewegung oder Streamer-Modus).</summary>
         public static bool CalmEffects => ReduceMotion || StreamerMode;
-        /// <summary>Kompatibilität: true bei Vollbild oder Rahmenlos.</summary>
-        public static bool Fullscreen => WindowMode != 2;
 
         /// <summary>Zeichen pro Sekunde im Dialog (sofort = sehr groß).</summary>
         public static float TextCharsPerSecond
@@ -145,7 +143,7 @@ namespace DropshippingGame
                 PadSensitivity = Mathf.Clamp(PlayerPrefs.GetFloat("ds.pad", PadSensitivity), 0.1f, 5f);
                 Fov = Mathf.Clamp(PlayerPrefs.GetFloat("ds.fov", Fov), 55f, 110f);
                 // Fenstermodus: Standard ist rahmenloses Vollbild in Bildschirmauflösung. Das alte „ds.fullscreen“
-                // wurde immer mitgespeichert (Standard war „aus“) und ist daher keine echte Wahl – wird ignoriert.
+                // aus Vorabversionen war keine echte Wahl und wird ignoriert.
                 WindowMode = Mathf.Clamp(PlayerPrefs.GetInt("ds.winmode", WindowMode), 0, 2);
                 ResolutionWidth = Mathf.Max(0, PlayerPrefs.GetInt("ds.resw", 0));
                 ResolutionHeight = Mathf.Max(0, PlayerPrefs.GetInt("ds.resh", 0));
@@ -189,8 +187,8 @@ namespace DropshippingGame
             RenderScale = Sane(RenderScale, RenderScaleMin, 1f, 1f);
             UiScale = Sane(UiScale, UiScaleMin, UiScaleMax, 1f);
 
-            // v3.0: Das neue Standard-Design ist „Hype“ (dunkel). Ältere Einstellungen wurden bei
-            // jeder Änderung komplett gespeichert – deshalb einmalig auf den neuen Standard setzen.
+            // Standard-Design ist „Hype“ (dunkel). Einstellungen aus Vorabversionen wurden bei jeder
+            // Änderung komplett gespeichert – deshalb einmalig auf den Standard setzen.
             if (PlayerPrefs.GetInt("ds.prefsver", 0) < PrefsVersion)
             {
                 LaptopDesign = "hype";
@@ -215,7 +213,6 @@ namespace DropshippingGame
                 PlayerPrefs.SetFloat("ds.pad", PadSensitivity);
                 PlayerPrefs.SetFloat("ds.fov", Fov);
                 PlayerPrefs.SetInt("ds.winmode", WindowMode);
-                PlayerPrefs.SetInt("ds.fullscreen", Fullscreen ? 1 : 0);
                 PlayerPrefs.SetInt("ds.resw", ResolutionWidth);
                 PlayerPrefs.SetInt("ds.resh", ResolutionHeight);
                 PlayerPrefs.SetInt("ds.vsync", VSync ? 1 : 0);

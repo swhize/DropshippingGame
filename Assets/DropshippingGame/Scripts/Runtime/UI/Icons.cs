@@ -271,6 +271,9 @@ namespace DropshippingGame.UI
 
         public static bool Has(string name) => Defs.ContainsKey(name);
 
+        /// <summary>Symbol einer Nachricht (Mail/Handy); unbekannte Namen → "mail".</summary>
+        public static string MailIcon(string icon) => !string.IsNullOrEmpty(icon) && Has(icon) ? icon : "mail";
+
         public static Texture2D Get(string name)
         {
             if (string.IsNullOrEmpty(name) || !Defs.ContainsKey(name)) name = "dot";
